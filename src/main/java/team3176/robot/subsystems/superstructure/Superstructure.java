@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import team3176.robot.commands.superstructure.intakecube.*;
 import team3176.robot.constants.SuperStructureConstants;
 
 public class Superstructure extends SubsystemBase {
@@ -32,7 +31,8 @@ public class Superstructure extends SubsystemBase {
     
 
     public Command groundCube() {
-        return new IntakeGroundCube().andThen(this.prepareCarry()).withName("groundCube");
+        return new WaitCommand(1.0);
+        //return new IntakeGroundCube().andThen(this.prepareCarry()).withName("groundCube");
     }
 
     public Command clawIntakeCube()
