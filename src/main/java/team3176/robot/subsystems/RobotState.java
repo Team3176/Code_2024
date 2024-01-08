@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import team3176.robot.constants.RobotConstants.Status;
 import team3176.robot.constants.SignalingConstants;
 
-import team3176.robot.subsystems.superstructure.Claw;
 
 
 public class RobotState extends SubsystemBase {
@@ -31,7 +30,6 @@ public class RobotState extends SubsystemBase {
   private final RobotStateIOInputs inputs = new RobotStateIOInputs();
   private static RobotState instance;
   private int wantedLEDState;
-  private Claw m_Claw;
   private AddressableLED m_led;
   private AddressableLEDBuffer m_ledBuffer;
   private int i = 0;
@@ -122,7 +120,6 @@ public class RobotState extends SubsystemBase {
 
   private RobotState(RobotStateIO io) {
     this.io = io;
-    m_Claw = Claw.getInstance();
     wantedLEDState = 0;
     isSolid = false;
     isFlashing = false;
@@ -411,39 +408,6 @@ public class RobotState extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.getInstance().processInputs("Intake", inputs);
 
-    //(m_Claw.getLinebreakOne() == false || m_Claw.getLinebreakTwo() == false)
-    if (!m_Claw.getIsLinebreakOne() || !m_Claw.getIsLinebreakTwo()) {
-      isSolid = true;
-      isFlashing = false;
-      if (wantedLEDState == 1) {
-        setallyellow();
-      }
-      else if (wantedLEDState == 2 || wantedLEDState == 3) {
-        setallpurple();
-      }
-    }
-    else if ((m_Claw.getIsLinebreakOne() && m_Claw.getIsLinebreakTwo()) && isSolid)
-    {
-      setallblack();
-      wantedLEDState = 0;
-      isSolid = false;
-    }
-    else if (!isSolid && isFlashing){
-      // System.out.println("isSolid == false and isFlashing = true");
-      // if (wantedLEDState == 1)
-      // {
-      //   setallyellow();
-      // }
-      // else if (wantedLEDState == 2)
-      // {
-      //   setallpurple();
-      // }
-      if (wantedLEDState == 0)
-      {
-        allflash = false;
-      }
-      flashAll();
-    }
   }
 
 }
