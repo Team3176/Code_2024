@@ -1,0 +1,68 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 4.384021505073422,
+        "y": 0.8030596383196352
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.660312715974269,
+        "y": 0.7887192876353561
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.395495148772051,
+        "y": 0.7887192876353561
+      },
+      "prevControl": {
+        "x": 6.391670600872509,
+        "y": 0.7887192876353561
+      },
+      "nextControl": null,
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.15454545454545454,
+      "names": [
+        "CubeChaseOn"
+      ]
+    },
+    {
+      "position": 0.0636363636363636,
+      "names": [
+        "groundCube"
+      ]
+    },
+    {
+      "position": 0.945454545454545,
+      "names": [
+        "CubeChaseOff"
+      ]
+    }
+  ]
+}
