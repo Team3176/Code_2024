@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 /** Template hardware interface for a closed loop subsystem. */
-public interface RobotStateIO{
+public interface RobotStateIO {
   /** Contains all of the input data received from hardware. */
   public static class RobotStateIOInputs implements LoggableInputs {
     public double velocity = 0.0;
@@ -42,7 +42,7 @@ public interface RobotStateIO{
 
   /**
    * Run closed loop at the specified velocity.
-   * 
+   *
    * @param velocityRadPerSec Velocity setpoint.
    */
   public default void setVelocity(double velocityRadPerSec) {}

@@ -4,10 +4,15 @@
 
 package team3176.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -15,15 +20,7 @@ import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import team3176.robot.Constants.RobotType;
-import team3176.robot.subsystems.drivetrain.Drivetrain;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,7 +28,7 @@ import edu.wpi.first.cscore.UsbCamera;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends LoggedRobot{
+public class Robot extends LoggedRobot {
   private Command autonomousCommand;
 
   private RobotContainer robotContainer;
@@ -70,10 +67,9 @@ public class Robot extends LoggedRobot{
       case REAL:
         String folder = Constants.logFolders.get(Constants.getRobot());
         if (folder != null) {
-          try{
+          try {
             Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
-          }
-          catch(Error e) {
+          } catch (Error e) {
             System.out.println("[Error] failed to start local log file");
           }
         }
@@ -99,22 +95,22 @@ public class Robot extends LoggedRobot{
     setUseTiming(Constants.getMode() != Constants.Mode.REPLAY);
     Logger.start();
 
-
     robotContainer = new RobotContainer();
     SmartDashboard.putData(CommandScheduler.getInstance());
-    
-    if(FISHEYE_CAMERA)
-    {
-      fisheyeThread = new Thread( () -> {
-        UsbCamera fisheye = CameraServer.startAutomaticCapture();
-        fisheye.setResolution(640,480);
-        //not using this at the return so commenting for linting: CvSource outputStream = 
-        CameraServer.putVideo("fisheye", 640, 480);
-      });
+
+    if (FISHEYE_CAMERA) {
+      fisheyeThread =
+          new Thread(
+              () -> {
+                UsbCamera fisheye = CameraServer.startAutomaticCapture();
+                fisheye.setResolution(640, 480);
+                // not using this at the return so commenting for linting: CvSource outputStream =
+                CameraServer.putVideo("fisheye", 640, 480);
+              });
       fisheyeThread.setDaemon(true);
       fisheyeThread.start();
     }
-    
+
     Map<String, Integer> commandCounts = new HashMap<>();
     BiConsumer<Command, Boolean> logCommandFunction =
         (Command command, Boolean active) -> {
@@ -122,7 +118,7 @@ public class Robot extends LoggedRobot{
           int count = commandCounts.getOrDefault(name, 0) + (active ? 1 : -1);
           commandCounts.put(name, count);
           Logger.recordOutput(
-                  "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
+              "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
           Logger.recordOutput("CommandsAll/" + name, count > 0);
         };
     CommandScheduler.getInstance()
@@ -140,7 +136,6 @@ public class Robot extends LoggedRobot{
             (Command command) -> {
               logCommandFunction.accept(command, false);
             });
-
   }
 
   /**
@@ -161,9 +156,7 @@ public class Robot extends LoggedRobot{
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-    robotContainer.setArmCoast();
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {
@@ -175,7 +168,6 @@ public class Robot extends LoggedRobot{
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();
-    robotContainer.setArmBrake();
     robotContainer.setThrustBrake();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -188,7 +180,7 @@ public class Robot extends LoggedRobot{
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    //scheduled command executes from init()
+    // scheduled command executes from init()
   }
 
   @Override
@@ -198,7 +190,6 @@ public class Robot extends LoggedRobot{
     // continue until interrupted by another command, remove
     // this line or comment it out.
     robotContainer.clearCanFaults();
-        robotContainer.setArmBrake();
     robotContainer.setThrustCoast();
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
@@ -208,7 +199,7 @@ public class Robot extends LoggedRobot{
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //command scheduler is responsible for actions
+    // command scheduler is responsible for actions
   }
 
   @Override
@@ -220,18 +211,18 @@ public class Robot extends LoggedRobot{
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    //nan
+    // nan
   }
 
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    //nan
+    // nan
   }
 
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    //nan
+    // nan
   }
 }

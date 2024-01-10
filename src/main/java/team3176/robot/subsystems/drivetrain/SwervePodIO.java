@@ -3,23 +3,23 @@ package team3176.robot.subsystems.drivetrain;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface SwervePodIO {
-    @AutoLog
-    public static class SwervePodIOInputs {
-        public double drivePositionRad = 0.0;
-        public double driveVelocityRadPerSec = 0.0;
-        public double driveAppliedVolts = 0.0;
-        public double drivePositionSimNoNoise = 0.0;
-        public double[] driveCurrentAmpsStator = new double[] {};
-        public double[] driveCurrentAmpsSupply = new double[] {};
-        public double[] driveTempCelcius = new double[] {};
+  @AutoLog
+  public static class SwervePodIOInputs {
+    public double drivePositionRad = 0.0;
+    public double driveVelocityRadPerSec = 0.0;
+    public double driveAppliedVolts = 0.0;
+    public double drivePositionSimNoNoise = 0.0;
+    public double[] driveCurrentAmpsStator = new double[] {};
+    public double[] driveCurrentAmpsSupply = new double[] {};
+    public double[] driveTempCelcius = new double[] {};
 
-        public double turnAbsolutePositionDegrees = 0.0;
-        public double turnAbsolutePositionDegreesSimNoNoise = 0.0;
-        public double turnVelocityRPM = 0.0;
-        public double turnAppliedVolts = 0.0;
-        public double[] turnCurrentAmps = new double[] {};
-        public double[] turnTempCelcius = new double[] {};
-    }
+    public double turnAbsolutePositionDegrees = 0.0;
+    public double turnAbsolutePositionDegreesSimNoNoise = 0.0;
+    public double turnVelocityRPM = 0.0;
+    public double turnAppliedVolts = 0.0;
+    public double[] turnCurrentAmps = new double[] {};
+    public double[] turnTempCelcius = new double[] {};
+  }
 
   /** Updates the set of loggable inputs. */
   public default void updateInputs(SwervePodIOInputs inputs) {}

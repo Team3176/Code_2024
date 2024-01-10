@@ -12,13 +12,14 @@ public class Controller {
   private static Controller instance;
 
   public static Controller getInstance() {
-    if (instance == null ) {
+    if (instance == null) {
       instance = new Controller();
     }
-      return instance;}
+    return instance;
+  }
 
   /* The Three Physical Controllers that we have */
-  
+
   public final CommandJoystick transStick;
   public final CommandJoystick rotStick;
   public final CommandXboxController operator;
@@ -34,34 +35,32 @@ public class Controller {
   }
 
   /**
-   * Scale is the power of 1
-   * Deadband of 0.06
+   * Scale is the power of 1 Deadband of 0.06
+   *
    * @return The scales magnitude vector of the Y axis of TransStick if it breaks deadband
    */
-
   public double getForward() {
-    if(Math.abs(transStick.getY()) < 0.06) return 0.0;
+    if (Math.abs(transStick.getY()) < 0.06) return 0.0;
     return ControllerConstants.FORWARD_AXIS_INVERSION * Math.pow(transStick.getY(), 1);
   }
 
   /**
-   * Scale is the power of 1
-   * Deadband of 0.06
+   * Scale is the power of 1 Deadband of 0.06
+   *
    * @return The scales magnitude vector of the X axis of TransStick if it breaks deadband
    */
-
   public double getStrafe() {
-    if(Math.abs(transStick.getX()) < 0.06) return 0.0;
+    if (Math.abs(transStick.getX()) < 0.06) return 0.0;
     return ControllerConstants.STRAFE_AXIS_INVERSION * Math.pow(transStick.getX(), 1);
   }
 
   /**
-   * Scale is the power of 1
-   * Deadband of 0.06
+   * Scale is the power of 1 Deadband of 0.06
+   *
    * @return The scales magnitude vector of the X axis of RotStick if it breaks deadband
    */
   public double getSpin() {
-    if(Math.abs(rotStick.getX()) < 0.06) return 0.0;
+    if (Math.abs(rotStick.getX()) < 0.06) return 0.0;
     return ControllerConstants.SPIN_AXIS_INVERSION * rotStick.getX();
   }
 }
