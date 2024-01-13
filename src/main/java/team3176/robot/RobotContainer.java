@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.io.File;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
@@ -58,7 +60,13 @@ public class RobotContainer {
             () -> controller.getForward() * 0.7,
             () -> controller.getStrafe() * 0.7,
             () -> controller.getSpin() * 3));
-
+    if(Constants.getMode() == Mode.SIM) {
+      drivetrain.setDefaultCommand(
+        drivetrain.swerveDrivePercent(
+            () -> controller.getForward() * 0.7,
+            () -> controller.getStrafe() * 0.7,
+            () -> controller.getSpin() * 3,false));
+    }
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
     for (File f : paths.listFiles()) {
@@ -183,7 +191,6 @@ public class RobotContainer {
       // Updated any things that need to change
       System.out.println("changed alliance");
       checkAutonomousSelection(true);
-      vision.refresh();
     }
   }
   /**

@@ -236,11 +236,13 @@ public class Drivetrain extends SubsystemBase {
     return odom.getPoseMeters();
   }
 
+  @AutoLogOutput
   public Pose2d getSimNoNoisePose() {
     return simNoNoiseOdom.getPoseTrue();
   }
 
   public void addVisionPose(EstimatedRobotPose p) {
+    
     Matrix<N3, N1> cov = new Matrix<>(Nat.N3(), Nat.N1());
     double distance = 0.0;
     for (var t : p.targetsUsed) {
@@ -252,7 +254,7 @@ public class Drivetrain extends SubsystemBase {
       double distance2 = Math.max(Math.pow(distance * 0.4, 2), 0.7);
       cov = VecBuilder.fill(distance2, distance2, 0.9);
     } else {
-      double distance2 = Math.pow(distance, 2);
+      double distance2 = Math.pow(distance * 1.2, 2);
       cov = VecBuilder.fill(distance2, distance2, distance2);
     }
     visionPose3d = p.estimatedPose;
@@ -360,16 +362,22 @@ public class Drivetrain extends SubsystemBase {
           this.driveVelocity(new ChassisSpeeds());
         });
   }
-
-  public Command swerveDrivePercent(
-      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
-    return this.run(
-        () ->
-            driveVelocityFieldCentric(
-                new ChassisSpeeds(
+  public Command swerveDrivePercent(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean isFieldCentric) {
+    return this.run( () -> {
+      ChassisSpeeds speeds = new ChassisSpeeds(
                     forward.getAsDouble() * MAX_WHEEL_SPEED,
                     strafe.getAsDouble() * MAX_WHEEL_SPEED,
-                    spin.getAsDouble() * MAX_WHEEL_SPEED)));
+                    spin.getAsDouble() * MAX_WHEEL_SPEED);
+      if(isFieldCentric) {
+         driveVelocityFieldCentric(speeds);
+      } else {
+        driveVelocity(speeds);
+      }
+  });
+  }
+  public Command swerveDrivePercent(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
+    return swerveDrivePercent(forward, strafe, spin,true);
   }
 
   public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {
