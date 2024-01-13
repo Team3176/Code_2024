@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -46,7 +48,18 @@ public class PhotonVisionSystem extends SubsystemBase {
       new Transform3d(
           new Translation3d(Units.inchesToMeters(25/2-1), Units.inchesToMeters(-25/2+1), Units.inchesToMeters(10)),
           new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(20)));
+  public static final Transform3d Robot2camera3 =
+      new Transform3d(
+          new Translation3d(Units.inchesToMeters(-25/2+1), Units.inchesToMeters(25/2-1), Units.inchesToMeters(10)),
+          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-180+20)));
+  public static final Transform3d Robot2camera4 =
+      new Transform3d(
+          new Translation3d(Units.inchesToMeters(-25/2+1), Units.inchesToMeters(-25/2+1), Units.inchesToMeters(10)),
+          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-180-20)));
   private ArrayList<LoggedPhotonCam> cameras = new ArrayList<LoggedPhotonCam>();
+  
+  List<Pose3d> visionTargets = new ArrayList<>();
+  
   AprilTagFieldLayout field;
   private static PhotonVisionSystem instance;
   private SimPhotonVision simInstance;
@@ -55,6 +68,8 @@ public class PhotonVisionSystem extends SubsystemBase {
   private PhotonVisionSystem() {
     cameras.add(new LoggedPhotonCam("camera1",Robot2camera1));
     cameras.add(new LoggedPhotonCam("camera2",Robot2camera2));
+    cameras.add(new LoggedPhotonCam("camera3",Robot2camera3));
+    cameras.add(new LoggedPhotonCam("camera4",Robot2camera4));
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -75,6 +90,11 @@ public class PhotonVisionSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //Nothing right now but maybe in the future
+    visionTargets.clear();
+    for(LoggedPhotonCam c : cameras) {
+      c.periodic();
+      visionTargets.addAll(c.getCamera2Target());
+    }
+    Logger.recordOutput("photonvision/visionTargets",visionTargets.toArray(new Pose3d[visionTargets.size()]));
   }
 }

@@ -25,17 +25,17 @@ public class SimPhotonVision extends SubsystemBase {
   PhotonPoseEstimator estimator;
 
   
-  public SimPhotonVision(List<PhotonCamera> c, List<Transform3d> t, AprilTagFieldLayout field) {
-    for (int i = 0; i < c.size(); i++) {
-      Transform3d camera2Robot = t.get(i);
-      PhotonCameraSim simCam =
-          new PhotonCameraSim(c.get(i), arducam_720(), 0.07, Units.feetToMeters(30));
-      simVision.addCamera(simCam, camera2Robot);
-    }
+  // public SimPhotonVision(List<PhotonCamera> c, List<Transform3d> t, AprilTagFieldLayout field) {
+  //   for (int i = 0; i < c.size(); i++) {
+  //     Transform3d camera2Robot = t.get(i);
+  //     PhotonCameraSim simCam =
+  //         new PhotonCameraSim(c.get(i), arducam_720(), 0.07, Units.feetToMeters(30));
+  //     simVision.addCamera(simCam, camera2Robot);
+  //   }
 
-    // simVision.addVisionTargets(new VisionTargetSim(t2pose,TargetModel.kTag16h5,2));
-    simVision.addAprilTags(field);
-  }
+  //   // simVision.addVisionTargets(new VisionTargetSim(t2pose,TargetModel.kTag16h5,2));
+  //   simVision.addAprilTags(field);
+  // }
   public SimPhotonVision(List<LoggedPhotonCam> l, AprilTagFieldLayout field) {
     for(LoggedPhotonCam c : l) {
       PhotonCameraSim simCam =

@@ -240,28 +240,8 @@ public class Drivetrain extends SubsystemBase {
   public Pose2d getSimNoNoisePose() {
     return simNoNoiseOdom.getPoseTrue();
   }
-
-  public void addVisionPose(EstimatedRobotPose p) {
-    
-    Matrix<N3, N1> cov = new Matrix<>(Nat.N3(), Nat.N1());
-    double distance = 0.0;
-    for (var t : p.targetsUsed) {
-      distance += t.getBestCameraToTarget().getTranslation().getNorm() / p.targetsUsed.size();
-    }
-    Logger.recordOutput("Drivetrain/distance2target", distance);
-    if (p.targetsUsed.size() > 1) {
-      // multi tag
-      double distance2 = Math.max(Math.pow(distance * 0.4, 2), 0.7);
-      cov = VecBuilder.fill(distance2, distance2, 0.9);
-    } else {
-      double distance2 = Math.pow(distance * 1.2, 2);
-      cov = VecBuilder.fill(distance2, distance2, distance2);
-    }
-    visionPose3d = p.estimatedPose;
-    if(Math.abs(visionPose3d.getZ()) > 1.0 || visionPose3d.minus(new Pose3d(getPose())).getTranslation().getNorm() > 1.0) {
-      return;
-    }
-    poseEstimator.addVisionMeasurement(p.estimatedPose.toPose2d(), p.timestampSeconds, cov);
+  public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
+    poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
   }
 
   public void resetPose(Pose2d pose) {
