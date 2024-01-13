@@ -39,7 +39,7 @@ public class SimPhotonVision extends SubsystemBase {
   public SimPhotonVision(List<LoggedPhotonCam> l, AprilTagFieldLayout field) {
     for(LoggedPhotonCam c : l) {
       PhotonCameraSim simCam =
-          new PhotonCameraSim(c.getCamera(), arducam_720(), 0.07, Units.feetToMeters(30));
+          new PhotonCameraSim(c.getCamera(), arducam_720(), 0.07,6.0);
       simVision.addCamera(simCam, c.getRobot2Camera());
     }
     simVision.addAprilTags(field);
@@ -80,9 +80,9 @@ public class SimPhotonVision extends SubsystemBase {
             0.00018013724744152414,
             0.1608556267669461));
     prop.setCalibError(0.37, 0.06);
-    prop.setFPS(30);
-    prop.setAvgLatencyMs(40);
-    prop.setLatencyStdDevMs(20);
+    prop.setFPS(35);
+    prop.setAvgLatencyMs(25);
+    prop.setLatencyStdDevMs(10);
     return prop;
   }
 }

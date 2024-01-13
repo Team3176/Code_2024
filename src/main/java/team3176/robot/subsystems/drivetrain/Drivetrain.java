@@ -258,6 +258,9 @@ public class Drivetrain extends SubsystemBase {
       cov = VecBuilder.fill(distance2, distance2, distance2);
     }
     visionPose3d = p.estimatedPose;
+    if(Math.abs(visionPose3d.getZ()) > 1.0 || visionPose3d.minus(new Pose3d(getPose())).getTranslation().getNorm() > 1.0) {
+      return;
+    }
     poseEstimator.addVisionMeasurement(p.estimatedPose.toPose2d(), p.timestampSeconds, cov);
   }
 
