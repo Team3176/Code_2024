@@ -238,7 +238,10 @@ public class Drivetrain extends SubsystemBase {
 
   @AutoLogOutput
   public Pose2d getSimNoNoisePose() {
-    return simNoNoiseOdom.getPoseTrue();
+    if(Constants.getMode() == Mode.SIM) {
+      return simNoNoiseOdom.getPoseTrue();
+    }
+    return new Pose2d();
   }
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
     poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
