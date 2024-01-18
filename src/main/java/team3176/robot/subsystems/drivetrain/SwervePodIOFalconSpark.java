@@ -10,8 +10,8 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import team3176.robot.constants.SwervePodHardwareID;
 
 public class SwervePodIOFalconSpark implements SwervePodIO {
@@ -31,7 +31,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
-    turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
+    turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     // reset the motor controllers
     //thrustFalcon.configFactoryDefault();
@@ -39,11 +39,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnSparkMax.restoreFactoryDefaults();
 
     thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+    
     var thrustSlot0 = new Slot0Configs();
     thrustSlot0.kP = 0.07207; //from calculator only really trust 2 sig digits
     thrustSlot0.kI = 0.0;
     thrustSlot0.kD = 0.0;
     thrustSlot0.kV = 0.1081; //from calculator only really trust 2 sig digits
+    
     thrustFalcon.getConfigurator().apply(thrustSlot0);
     thrustFalcon.getConfigurator().apply(thrustFalconConfig);
     // turnSparkMax.setOpenLoopRampRate(0.0);
@@ -87,12 +89,12 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   @Override
   public void setDrive(double velMetersPerSecond) {
-    double velTicsPer100ms =
+    double velRotationsPerSec =
         velMetersPerSecond
             * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI))
             * (1.0 / THRUST_GEAR_RATIO)
     ;
-    thrustFalcon.setControl(thrustVelocity.withVelocity(velTicsPer100ms));
+    thrustFalcon.setControl(thrustVelocity.withVelocity(velRotationsPerSec));
   }
 
   /** Run the turn motor at the specified voltage. */
