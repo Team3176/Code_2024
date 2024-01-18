@@ -40,7 +40,7 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
-import team3176.robot.constants.DrivetrainHardwareMap;
+import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.util.LocalADStarAK;
@@ -99,39 +99,39 @@ public class Drivetrain extends SubsystemBase {
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
-        DrivetrainHardwareMap.FR,
-        DrivetrainHardwareMap.FL,
-        DrivetrainHardwareMap.BR,
-        DrivetrainHardwareMap.BL));
+        Hardwaremap.FR,
+        Hardwaremap.FL,
+        Hardwaremap.BR,
+        Hardwaremap.BL));
     // Instantiate pods
     if (Constants.getMode() != Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2023C:
           System.out.println("[init] normal swervePods");
-          DrivetrainHardwareMap.FR.OFFSET += 180;
-          DrivetrainHardwareMap.FL.OFFSET += 90;
-          DrivetrainHardwareMap.BL.OFFSET += 0;
-          DrivetrainHardwareMap.BR.OFFSET += -90;
+          Hardwaremap.FR.OFFSET += 180;
+          Hardwaremap.FL.OFFSET += 90;
+          Hardwaremap.BL.OFFSET += 0;
+          Hardwaremap.BR.OFFSET += -90;
           podFR =
               new SwervePod(
                   0,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.FR, DrivetrainHardwareMap.STEER_FR_CID));
+                      Hardwaremap.FR, Hardwaremap.STEER_FR_CID));
           podFL =
               new SwervePod(
                   1,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.FL, DrivetrainHardwareMap.STEER_FL_CID));
+                      Hardwaremap.FL, Hardwaremap.STEER_FL_CID));
           podBL =
               new SwervePod(
                   2,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.BL, DrivetrainHardwareMap.STEER_BL_CID));
+                      Hardwaremap.BL, Hardwaremap.STEER_BL_CID));
           podBR =
               new SwervePod(
                   3,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.BR, DrivetrainHardwareMap.STEER_BR_CID));
+                      Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
           break;
         case ROBOT_2023P:
           break;

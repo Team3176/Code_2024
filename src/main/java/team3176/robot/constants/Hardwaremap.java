@@ -15,17 +15,24 @@ public class Hardwaremap {
   /*
    * Drivetrain CIDs
    */
-  public static final SwervePodHardwareID pod001 = new SwervePodHardwareID(10, 12, 0.216);
-  public static final SwervePodHardwareID pod002 = new SwervePodHardwareID(20, 22, -103.48);
-  public static final SwervePodHardwareID pod003 = new SwervePodHardwareID(30, 32, 135.689);
-  public static final SwervePodHardwareID pod004 = new SwervePodHardwareID(40, 42, -89.945);
-  public static final SwervePodHardwareID pod005 = new SwervePodHardwareID(13, 14, 105.586);
-  public static final SwervePodHardwareID pod006 = new SwervePodHardwareID(23, 24, 135.547);
-  public static final SwervePodHardwareID pod007 = new SwervePodHardwareID(33, 34, -35.16);
-  public static final SwervePodHardwareID pod008 = new SwervePodHardwareID(43, 44, 77.557);
+   // statics constants for swerve pods
+   public static final SwervePodHardwareID POD001 = new SwervePodHardwareID(10, 12, -172.135);
+   public static final SwervePodHardwareID POD002 = new SwervePodHardwareID(20, 22, -225.186);
+   public static final SwervePodHardwareID POD003 = new SwervePodHardwareID(30, 32, -40);
+   public static final SwervePodHardwareID POD004 = new SwervePodHardwareID(40, 42, 140.463); // 120.5
+   public static final SwervePodHardwareID POD005 = new SwervePodHardwareID(13, 14, -30.525);
+   public static final SwervePodHardwareID POD006 = new SwervePodHardwareID(23, 24, 120.556);
+   public static final SwervePodHardwareID POD007 = new SwervePodHardwareID(33, 34, 125.508);
+   public static final SwervePodHardwareID POD008 = new SwervePodHardwareID(43, 44, -173);
+   public static final SwervePodHardwareID POD009 = new SwervePodHardwareID(15, 16, -358.330);
+ 
+   public static final SwervePodHardwareID FR = POD009;
+   public static final SwervePodHardwareID FL = POD008;
+   public static final SwervePodHardwareID BL = POD006;
+   public static final SwervePodHardwareID BR = POD003;
 
-  public static final int STEER_FR_CID = 11;
-  public static final int STEER_FL_CID = 21;
-  public static final int STEER_BL_CID = 31;
-  public static final int STEER_BR_CID = 41;
+   public static final int STEER_FR_CID = 11;
+   public static final int STEER_FL_CID = 21;
+   public static final int STEER_BL_CID = 31;
+   public static final int STEER_BR_CID = 41;
 }
