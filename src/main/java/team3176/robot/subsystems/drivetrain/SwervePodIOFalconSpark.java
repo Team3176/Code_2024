@@ -57,7 +57,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
 
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
-    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ AZIMUTH_ENCODER_UNITS_PER_REVOLUTION;
+    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
   }
