@@ -38,11 +38,11 @@ public class SwervePod implements Subsystem {
   // private double kAzimuthEncoderUnitsPerRevolution;
 
   // private double kP_Azimuth;
-  private LoggedTunableNumber kPAzimuth = new LoggedTunableNumber("kP_azimuth", .012);
+  private LoggedTunableNumber kPAzimuth = new LoggedTunableNumber("kP_azimuth", .007);
 
   private LoggedTunableNumber kIAzimuth = new LoggedTunableNumber("kI_azimuth", 0.0);
-  private LoggedTunableNumber kDAzimuth = new LoggedTunableNumber("kD_azimuth", 0.0003);
-  private LoggedTunableNumber turnMaxpercent = new LoggedTunableNumber("turn_max", 0.75);
+  private LoggedTunableNumber kDAzimuth = new LoggedTunableNumber("kD_azimuth", 0.000);
+  private LoggedTunableNumber turnMaxpercent = new LoggedTunableNumber("turn_max", 0.4);
   private double turnMaxpercentLocal = 0.4;
   private double lastDistance = 0.0;
   private double lastDistanceSimNoNoise = 0.0;
