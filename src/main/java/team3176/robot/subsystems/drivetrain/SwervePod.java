@@ -8,6 +8,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -21,7 +23,7 @@ public class SwervePod implements Subsystem {
 
   private SwerveModuleState desiredState = new SwerveModuleState();
   boolean lastHasResetOccurred;
-  public static final double WHEEL_DIAMETER = Units.inchesToMeters(3.00); // Inches
+  public static final double WHEEL_DIAMETER = Units.inchesToMeters(2.93); // Inches
 
   /**
    * Numerical identifier to differentiate between pods. For 4 Pods: 0 = FrontRight (FR), 1 =
@@ -127,7 +129,6 @@ public class SwervePod implements Subsystem {
     return new SwerveModulePosition(
         this.deltaSimNoNoise, Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegreesSimNoNoise));
   }
-
   public double getVelocity() {
     double wheelVelocity = inputs.driveVelocityRadPerSec / (Math.PI * 2) * WHEEL_DIAMETER * Math.PI;
     return wheelVelocity;
@@ -207,6 +208,8 @@ public class SwervePod implements Subsystem {
                     .angle
                     .minus(Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees))
                     .getRadians()));
+    Logger.recordOutput("Drivetrain/Module" + Integer.toString(this.id) + "/CommandOutput", desiredState.speedMetersPerSecond * angleErrorPenalty);
+    Logger.recordOutput("Drivetrain/Module" + Integer.toString(this.id) + "/MeasuredVelocity", getVelocity() );
     io.setDrive(desiredState.speedMetersPerSecond * angleErrorPenalty);
     // if(velAcc.hasChanged(hashCode()) || velMax.hasChanged(hashCode())){
     //     turningPIDController.setConstraints(new Constraints(velMax.get(),velAcc.get()));

@@ -5,6 +5,8 @@
 package team3176.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -201,6 +203,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return new PathPlannerAuto("exit1");
+    //return drivetrain.swerveDriveAuto(1,0,0);
     // if(choosenAutonomousCommand == null) {
     //   //this is if for some reason checkAutonomousSelection is never called
     //   String chosen = autonChooser.get();

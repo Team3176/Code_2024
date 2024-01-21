@@ -8,11 +8,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "to_first_cube"
+            "pathName": "triangle"
           }
         }
       ]
     }
   },
-  "folder": null
+  "folder": null,
+  "choreoAuto": false
 }

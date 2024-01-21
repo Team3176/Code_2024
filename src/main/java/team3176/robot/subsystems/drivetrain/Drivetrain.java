@@ -179,7 +179,8 @@ public class Drivetrain extends SubsystemBase {
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::driveVelocity,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
-        () -> true,
+        //fix later
+        () -> false,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
@@ -364,6 +365,12 @@ public class Drivetrain extends SubsystemBase {
   public Command swerveDrivePercent(
       DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
     return swerveDrivePercent(forward, strafe, spin,true);
+  }
+
+  public Command swerveDriveAuto(
+      double forward, double strafe, double spin) {
+      ChassisSpeeds speeds = new ChassisSpeeds(forward, strafe, spin);
+      return this.run( () ->this.driveVelocityFieldCentric(speeds));
   }
 
   public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {

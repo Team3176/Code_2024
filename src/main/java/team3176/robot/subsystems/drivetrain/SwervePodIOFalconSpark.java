@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import team3176.robot.constants.SwervePodHardwareID;
+import team3176.robot.util.LoggedTunableNumber;
 
 public class SwervePodIOFalconSpark implements SwervePodIO {
   private static final double AZIMUTH_GEAR_RATIO =
@@ -22,23 +23,27 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private TalonFX thrustFalcon;
   private CANCoder azimuthEncoder;
 
+
+
   // public static final double FEET2TICS = 12.0 * (1.0/ (DrivetrainConstants.WHEEL_DIAMETER_INCHES
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
+
     turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     // reset the motor controllers
     thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
 
-    thrustFalcon.configClosedloopRamp(0.5);
+    thrustFalcon.configClosedloopRamp(0.4);
     thrustFalcon.setInverted(false);
-    thrustFalcon.config_kP(0, 0.03);
+    thrustFalcon.config_kP(0, 0.08);
     thrustFalcon.config_kI(0, 0.0);
     thrustFalcon.config_kD(0, 0.0);
-    thrustFalcon.config_kF(0, 0.045);
-
+    thrustFalcon.config_kF(0, 0.05);
+    thrustFalcon.configVoltageCompSaturation(12);
+    thrustFalcon.enableVoltageCompensation(true);
     // turnSparkMax.setOpenLoopRampRate(0.0);
     turnSparkMax.setSmartCurrentLimit(25);
     turnSparkMax.setInverted(true);
@@ -82,6 +87,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   @Override
   public void setDrive(double velMetersPerSecond) {
+    //if(this.thrustP.hasChanged(hashCode())) {
+    //}
     double velTicsPer100ms =
         velMetersPerSecond
             * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI))

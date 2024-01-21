@@ -126,7 +126,7 @@ public class LoggedPhotonCam {
       double distance2 = Math.pow(distance * 1.2, 2);
       cov = VecBuilder.fill(distance2, distance2, distance2);
     }
-    if(Math.abs(p.estimatedPose.getZ()) > 1.0 || p.estimatedPose.minus(new Pose3d(Drivetrain.getInstance().getPose())).getTranslation().getNorm() > 1.0) {
+    if(Math.abs(p.estimatedPose.getZ()) > 1.0 || p.estimatedPose.minus(new Pose3d(Drivetrain.getInstance().getPose())).getTranslation().getNorm() > 10.0) {
       return;
     }
     Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
