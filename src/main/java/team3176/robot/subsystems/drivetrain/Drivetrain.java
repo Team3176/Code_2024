@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -43,7 +44,6 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.constants.DrivetrainHardwareMap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
-import team3176.robot.util.LocalADStarAK;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -182,7 +182,7 @@ public class Drivetrain extends SubsystemBase {
         //fix later
         () -> false,
         this);
-    Pathfinding.setPathfinder(new LocalADStarAK());
+    Pathfinding.setPathfinder(new LocalADStar());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
