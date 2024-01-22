@@ -8,7 +8,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -55,7 +55,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
     var azimuthEncoderConfig = new CANcoderConfiguration();
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
-
+    azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
     azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
