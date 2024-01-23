@@ -27,7 +27,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
     private static Intake instance;
     private final IntakeIO io;
-    private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
         
     private final PIDController turningPIDController;
     public enum States {OPEN_LOOP,CLOSED_LOOP}

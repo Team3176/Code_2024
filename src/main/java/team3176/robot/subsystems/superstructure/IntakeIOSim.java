@@ -28,7 +28,7 @@ public class IntakeIOSim implements IntakeIO{
   }
   /** Updates the set of loggable inputs. */
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(IntakeIOInputs inputs) {
     armSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ARM_SIM_OFFSET;
     inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();

@@ -32,7 +32,7 @@ public class IntakeIOSpark implements IntakeIO{
   }
   /** Updates the set of loggable inputs. */
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(IntakeIOInputs inputs) {
     inputs.Position = armEncoder.getAbsolutePosition();
     inputs.VelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity());
     inputs.AppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
