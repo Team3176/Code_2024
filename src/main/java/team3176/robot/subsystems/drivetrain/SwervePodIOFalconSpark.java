@@ -1,5 +1,7 @@
 package team3176.robot.subsystems.drivetrain;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -11,6 +13,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+
 import com.revrobotics.CANSparkMax;
 import team3176.robot.constants.SwervePodHardwareID;
 
@@ -27,12 +33,22 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
+  private final StatusSignal<Double> drivePosition;
+  private final StatusSignal<Double> driveVelocity;
+  private final StatusSignal<Double> driveAppliedVolts;
+  private final StatusSignal<Double> driveCurrentStator;
+  private final StatusSignal<Double> driveCurrentSupply;
+  private final StatusSignal<Double> driveTemps;
+
+  private final StatusSignal<Double> turnAbsolutePosition;
+
   // public static final double FEET2TICS = 12.0 * (1.0/ (DrivetrainConstants.WHEEL_DIAMETER_INCHES
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
     turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
+    azimuthEncoder = new CANcoder(id.CANCODER_CID);
     // reset the motor controllers
     //thrustFalcon.configFactoryDefault();
     var thrustFalconConfig = new TalonFXConfiguration();
@@ -52,7 +68,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnSparkMax.setSmartCurrentLimit(25);
     turnSparkMax.setInverted(true);
 
-    azimuthEncoder = new CANcoder(id.CANCODER_CID);
+    
     var azimuthEncoderConfig = new CANcoderConfiguration();
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -60,26 +76,47 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
+
+    drivePosition = thrustFalcon.getPosition();
+    driveVelocity = thrustFalcon.getVelocity();
+    driveAppliedVolts = thrustFalcon.getMotorVoltage();
+    driveCurrentStator = thrustFalcon.getStatorCurrent();
+    driveCurrentSupply = thrustFalcon.getSupplyCurrent();
+    driveTemps = thrustFalcon.getDeviceTemp();
+
+    turnAbsolutePosition = azimuthEncoder.getAbsolutePosition();
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        100.0, drivePosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+          50.0,
+          driveVelocity,
+          driveAppliedVolts,
+          driveCurrentStator,
+          driveCurrentSupply,
+          driveTemps,
+          turnAbsolutePosition);
+    thrustFalcon.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(SwervePodIOInputs inputs) {
-    inputs.drivePositionRad =
-        thrustFalcon.getRotorPosition().getValue()
-            * (THRUST_GEAR_RATIO)
-            * 2
-            * Math.PI;
-    inputs.driveVelocityRadPerSec =
-        thrustFalcon.getRotorVelocity().getValue()
-            * (THRUST_GEAR_RATIO)
-            * 2
-            * Math.PI;
-    inputs.driveAppliedVolts = thrustFalcon.getMotorVoltage().getValue();
-    inputs.driveCurrentAmpsStator = new double[] {thrustFalcon.getStatorCurrent().getValue()};
-    inputs.driveCurrentAmpsSupply = new double[] {thrustFalcon.getSupplyCurrent().getValue()};
-    inputs.driveTempCelcius = new double[] {thrustFalcon.getDeviceTemp().getValue()};
+    BaseStatusSignal.refreshAll(
+        drivePosition,
+        driveVelocity,
+        driveAppliedVolts,
+        driveCurrentStator,
+        driveCurrentSupply,
+        driveTemps,
+        turnAbsolutePosition);
+    inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble())* (THRUST_GEAR_RATIO);
+    inputs.driveVelocityRadPerSec = 
+    Units.rotationsToRadians(driveVelocity.getValueAsDouble())* (THRUST_GEAR_RATIO);
+    inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
+    inputs.driveCurrentAmpsStator = new double[] {driveCurrentStator.getValueAsDouble()};
+    inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
+    inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = azimuthEncoder.getAbsolutePosition().getValue() * 360;
+    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
