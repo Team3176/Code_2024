@@ -72,7 +72,7 @@ public class RobotContainer {
             () -> controller.getSpin() * 3,false).withName("default drive"));
     }
     NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
