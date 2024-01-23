@@ -21,10 +21,10 @@ public class Hardwaremap {
    public static final SwervePodHardwareID POD003 = new SwervePodHardwareID(30, 32, -40);
    public static final SwervePodHardwareID POD004 = new SwervePodHardwareID(40, 42, 140.463); // 120.5
    public static final SwervePodHardwareID POD005 = new SwervePodHardwareID(13, 14, -30.525);
-   public static final SwervePodHardwareID POD006 = new SwervePodHardwareID(23, 24, 120.556);
+   public static final SwervePodHardwareID POD006 = new SwervePodHardwareID(23, 24, 105);
    public static final SwervePodHardwareID POD007 = new SwervePodHardwareID(33, 34, 125.508);
    public static final SwervePodHardwareID POD008 = new SwervePodHardwareID(43, 44, -173);
-   public static final SwervePodHardwareID POD009 = new SwervePodHardwareID(15, 16, -358.330);
+   public static final SwervePodHardwareID POD009 = new SwervePodHardwareID(15, 16, -178);
  
    public static final SwervePodHardwareID FR = POD009;
    public static final SwervePodHardwareID FL = POD008;
