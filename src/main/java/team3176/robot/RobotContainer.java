@@ -4,15 +4,21 @@
 
 package team3176.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.io.File;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -41,10 +47,8 @@ public class RobotContainer {
   private final Drivetrain drivetrain;
   private final RobotState robotState;
   private PhotonVisionSystem vision;
-  private LoggedDashboardChooser<String> autonChooser =
-      new LoggedDashboardChooser<>("AutoSelector");
-  private String choosenAutonomousString = "";
-  private Command choosenAutonomousCommand;
+  private LoggedDashboardChooser<Command> autonChooser;
+  private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -59,22 +63,25 @@ public class RobotContainer {
         drivetrain.swerveDrivePercent(
             () -> controller.getForward() * 0.7,
             () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3));
+            () -> controller.getSpin() * 3).withName("default drive"));
     if(Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
         drivetrain.swerveDrivePercent(
             () -> controller.getForward() * 0.7,
             () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3,false));
+            () -> controller.getSpin() * 3,false).withName("default drive"));
     }
+    NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
+     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
-    File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
-    for (File f : paths.listFiles()) {
-      if (!f.isDirectory()) {
-        String s = f.getName().split("\\.", 0)[0];
-        autonChooser.addOption(s, s);
-      }
-    }
+    autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
+    // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
+    // for (File f : paths.listFiles()) {
+    //   if (!f.isDirectory()) {
+    //     String s = f.getName().split("\\.", 0)[0];
+    //     autonChooser.addOption(s, s);
+    //   }
+    // }
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
 
@@ -86,6 +93,8 @@ public class RobotContainer {
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
+    controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+    controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -158,22 +167,22 @@ public class RobotContainer {
 
   public void checkAutonomousSelection(Boolean force) {
     if (autonChooser.get() != null
-        && (!choosenAutonomousString.equals(autonChooser.get()) || force)) {
+        && (!choosenAutonomousCommand.equals(autonChooser.get()) || force)) {
       Long start = System.nanoTime();
-      choosenAutonomousString = autonChooser.get();
+      choosenAutonomousCommand = autonChooser.get();
       try {
         // TODO: re implement this
         choosenAutonomousCommand =
-            new WaitCommand(1.0); // new PathPlannerAuto(choosenAutonomousString).getauto();
+            autonChooser.get();
       } catch (Exception e) {
-        System.out.println("[ERROR] could not find" + choosenAutonomousString);
+        System.out.println("[ERROR] could not find" + autonChooser.get().getName());
         System.out.println(e.toString());
       }
 
       Long totalTime = System.nanoTime() - start;
       System.out.println(
           "Autonomous Selected: ["
-              + choosenAutonomousString
+              + autonChooser.get().getName()
               + "] generated in "
               + (totalTime / 1000000.0)
               + "ms");
@@ -200,7 +209,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new PathPlannerAuto("exit1");
+    return choosenAutonomousCommand;
+    //return drivetrain.swerveDriveAuto(1,0,0);
     // if(choosenAutonomousCommand == null) {
     //   //this is if for some reason checkAutonomousSelection is never called
     //   String chosen = autonChooser.get();
