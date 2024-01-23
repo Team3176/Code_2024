@@ -72,7 +72,7 @@ public class RobotContainer {
             () -> controller.getSpin() * 3,false).withName("default drive"));
     }
     NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+    NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
@@ -93,8 +93,8 @@ public class RobotContainer {
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-    controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+    //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+    //controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick

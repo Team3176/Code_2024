@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -48,8 +49,8 @@ import team3176.robot.util.LocalADStarAK;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = Units.feetToMeters(14.0);
-  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(24.3);
-  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(28.75);
+  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
+  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
   public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
   public static final double WIDTH = EBOT_WIDTH_IN_METERS_2023;
 
@@ -179,9 +180,9 @@ public class Drivetrain extends SubsystemBase {
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::driveVelocity,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
-        () -> true,
+        () -> false,
         this);
-    Pathfinding.setPathfinder(new LocalADStarAK());
+    Pathfinding.setPathfinder(new LocalADStar());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
@@ -248,12 +249,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    wheelOnlyHeading = pose.getRotation();
-    odom.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
-    poseEstimator.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
+   
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.resetSimPose(pose);
     }
+    wheelOnlyHeading = pose.getRotation();
+    odom.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
+    poseEstimator.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
   }
 
   /** Returns the module states (turn angles and drive velocitoes) for all of the modules. */
