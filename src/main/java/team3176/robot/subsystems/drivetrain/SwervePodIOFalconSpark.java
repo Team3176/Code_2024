@@ -80,7 +80,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
-    //azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
+    // Comment out line below to test Akit way
+    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
 
@@ -123,7 +124,9 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
+    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
+    //Akit way
+    //inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
