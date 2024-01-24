@@ -33,6 +33,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
+  private Rotation2d offset;
+
   private final StatusSignal<Double> drivePosition;
   private final StatusSignal<Double> driveVelocity;
   private final StatusSignal<Double> driveAppliedVolts;
@@ -49,6 +51,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
+    
+    offset = Rotation2d.fromDegrees(id.OFFSET);
     // reset the motor controllers
     //thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
@@ -76,7 +80,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
-    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
+    //azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
 
@@ -119,7 +123,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
+    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
