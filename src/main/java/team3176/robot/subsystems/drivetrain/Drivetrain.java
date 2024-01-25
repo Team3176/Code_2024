@@ -182,7 +182,7 @@ public class Drivetrain extends SubsystemBase {
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> false,
         this);
-    Pathfinding.setPathfinder(new LocalADStar());
+    Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
