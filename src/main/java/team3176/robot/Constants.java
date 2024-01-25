@@ -14,7 +14,7 @@ public final class Constants {
   private static final RobotType robot = RobotType.ROBOT_SIMBOT;
   public static final double LOOP_PERIODIC_SECS = 0.02;
   public static final boolean TUNING_MODE = true;
-
+  public static final boolean VISION_CONNECTED = true;
   public static boolean invalidRobotAlertSent = false;
 
   public static RobotType getRobot() {
