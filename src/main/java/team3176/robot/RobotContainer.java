@@ -8,6 +8,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -96,8 +98,14 @@ public class RobotContainer {
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-    //controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+
+    /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
+      use the whileTrue so if the button is released the command is cancelled
+      pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
+    */
+    
+
+    
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick

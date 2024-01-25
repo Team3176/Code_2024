@@ -10,19 +10,19 @@
       "style": "0",
       "userScale": "2",
       "width": "1280",
-      "xpos": "408",
-      "ypos": "169"
+      "xpos": "2318",
+      "ypos": "129"
     }
   },
   "Window": {
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "9,486",
-      "Size": "283,146"
+      "Pos": "16,476",
+      "Size": "283,140"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "250,465",
+      "Pos": "322,477",
       "Size": "796,155"
     },
     "###NetworkTables": {
@@ -42,7 +42,7 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "5,350",
+      "Pos": "138,44",
       "Size": "192,218"
     },
     "###Timing": {
@@ -58,7 +58,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "5,20",
-      "Size": "92,99"
+      "Size": "92,116"
     }
   }
 }

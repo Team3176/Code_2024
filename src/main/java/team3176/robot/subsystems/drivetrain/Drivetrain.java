@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -33,6 +34,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -378,7 +381,13 @@ public class Drivetrain extends SubsystemBase {
           this.driveVelocityFieldCentric(speeds);
         });
   }
-
+  // TODO: Pathplanner pathfinding
+  // complete the following method that returns a command from AutoBuilder that goes to the point given
+  public Command goToPoint(Pose2d point) {
+    
+    //Replace with your command
+    return new WaitCommand(1.0);
+  }
   private void resetPoseToVision() {
     // call resetPose() and pass in visionPose3d
     resetPose(visionPose3d.toPose2d());

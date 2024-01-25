@@ -5,7 +5,8 @@
       "/SmartDashboard/AutoSelector": "String Chooser",
       "/SmartDashboard/Auton Choice": "String Chooser",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/VisionSystemSim-photonvision/Sim Field": "Field2d"
+      "/SmartDashboard/VisionSystemSim-photonvision/Sim Field": "Field2d",
+      "/SmartDashboard/autonChoice": "String Chooser"
     }
   },
   "NetworkTables Info": {
