@@ -57,7 +57,10 @@ public class RobotContainer {
     controller = Controller.getInstance();
     drivetrain = Drivetrain.getInstance();
     robotState = RobotState.getInstance();
-    vision = PhotonVisionSystem.getInstance();
+    if(Constants.VISION_CONNECTED){
+      vision = PhotonVisionSystem.getInstance();
+    }
+    
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
     drivetrain.setDefaultCommand(
         drivetrain.swerveDrivePercent(
