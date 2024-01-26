@@ -55,7 +55,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
     
-    offset = Rotation2d.fromRotations(id.OFFSET);
+    offset = Rotation2d.fromDegrees(id.OFFSET);
     // reset the motor controllers
     //thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
@@ -127,8 +127,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
     inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
-    Logger.recordOutput("Drivetrain/IO/Module" + id + "/raw_encoder" , turnAbsolutePosition.getValueAsDouble());
-    Logger.recordOutput("Drivetrain/IO/Module" + id + "/rot2d_encoder" , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()));
+    Logger.recordOutput("Drivetrain/IO/raw/rawNoOffset_enc" + id, turnAbsolutePosition.getValueAsDouble());
+    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()));
     
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();

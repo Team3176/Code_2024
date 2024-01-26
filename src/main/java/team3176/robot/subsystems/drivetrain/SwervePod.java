@@ -68,7 +68,7 @@ public class SwervePod implements Subsystem {
     this.desiredOptimizedAzimuthPosition = 0.0;
 
     // this.kP_Azimuth = 0.006;
-    offset = new LoggedTunableNumber("Offsets/Module"+id, io.getOffset().getRotations());
+    offset = new LoggedTunableNumber("Offsets/Module"+id, io.getOffset().getDegrees());
     velMax.initDefault(900);
     velAcc.initDefault(900);
 
@@ -178,7 +178,7 @@ public class SwervePod implements Subsystem {
       this.lastDistanceSimNoNoise = currentDistanceSimNoNoise;
     }
     if (offset.hasChanged(hashCode())) {
-      io.setOffset(Rotation2d.fromRotations(offset.get()));
+      io.setOffset(Rotation2d.fromDegrees(offset.get()));
     }
     if (kPAzimuth.hasChanged(hashCode())
         || kIAzimuth.hasChanged(hashCode())

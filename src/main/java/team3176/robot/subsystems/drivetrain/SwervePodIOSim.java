@@ -55,7 +55,8 @@ public class SwervePodIOSim implements SwervePodIO {
     currentDriveSpeed = driveSim.getAngularVelocityRadPerSec();
 
     inputs.turnAbsolutePositionDegreesSimNoNoise = Rotation2d.fromDegrees(turnAbsolutePositionRad).minus(offset).getDegrees();
-    Logger.recordOutput("Drivetrain/IO/Module" + id + "/raw_encoder" , Rotation2d.fromDegrees(turnAbsolutePositionRad));
+    Logger.recordOutput("Drivetrain/IO/raw/rawNoOffset_enc" + id, Rotation2d.fromDegrees(turnAbsolutePositionRad).getRotations());
+    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , turnAbsolutePositionRad);
     inputs.turnAbsolutePositionDegrees = Rotation2d.fromDegrees(turnAbsolutePositionRad).minus(offset).getDegrees() + moduleOffsetError;
     inputs.turnVelocityRPM = turnSim.getAngularVelocityRPM();
     inputs.turnAppliedVolts = turnAppliedVolts;
