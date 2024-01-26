@@ -129,6 +129,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
     inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
     Logger.recordOutput("Drivetrain/IO/Module" + id + "/raw_encoder" , turnAbsolutePosition.getValueAsDouble());
+    Logger.recordOutput("Drivetrain/IO/Module" + id + "/rot2d_encoder" , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()));
     //Akit way
     //inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
 
