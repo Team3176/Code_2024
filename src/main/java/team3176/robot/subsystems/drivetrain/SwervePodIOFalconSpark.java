@@ -1,5 +1,7 @@
 package team3176.robot.subsystems.drivetrain;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -27,7 +29,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   public static final double AZIMUTH_ENCODER_UNITS_PER_REVOLUTION = 4096;
   public static final double THRUST_ENCODER_UNITS_PER_REVOLUTION = 2048;
-
+  private int id;
   private CANSparkMax turnSparkMax;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
   private TalonFX thrustFalcon;
@@ -48,6 +50,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
+    this.id = id.SERIAL;
     turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
@@ -125,6 +128,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
     inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
+    Logger.recordOutput("Drivetrain/IO/Module" + id + "/raw_encoder" , turnAbsolutePosition.getValueAsDouble());
     //Akit way
     //inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
 
