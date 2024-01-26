@@ -109,10 +109,10 @@ public class Drivetrain extends SubsystemBase {
       switch (Constants.getRobot()) {
         case ROBOT_2023C:
           System.out.println("[init] normal swervePods");
-          Hardwaremap.FR.OFFSET += 180;
-          Hardwaremap.FL.OFFSET += 90;
+          Hardwaremap.FR.OFFSET += 0.5;
+          Hardwaremap.FL.OFFSET += 0.25;
           Hardwaremap.BL.OFFSET += 0;
-          Hardwaremap.BR.OFFSET += -90;
+          Hardwaremap.BR.OFFSET += -0.25;
           podFR =
               new SwervePod(
                   0,

@@ -81,7 +81,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
     // Comment out line below to test Akit way
-    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
+    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
 
