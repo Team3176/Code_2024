@@ -45,6 +45,8 @@ public class SwervePod implements Subsystem {
   private LoggedTunableNumber kIAzimuth = new LoggedTunableNumber("kI_azimuth", 0.0);
   private LoggedTunableNumber kDAzimuth = new LoggedTunableNumber("kD_azimuth", 0.0003);
   private LoggedTunableNumber turnMaxpercent = new LoggedTunableNumber("turn_max", 0.75);
+
+  private LoggedTunableNumber offset;
   private double turnMaxpercentLocal = 0.4;
   private double lastDistance = 0.0;
   private double lastDistanceSimNoNoise = 0.0;
@@ -66,7 +68,7 @@ public class SwervePod implements Subsystem {
     this.desiredOptimizedAzimuthPosition = 0.0;
 
     // this.kP_Azimuth = 0.006;
-
+    offset = new LoggedTunableNumber("Offsets/Module"+id, io.getOffset().getRotations());
     velMax.initDefault(900);
     velAcc.initDefault(900);
 
@@ -159,6 +161,7 @@ public class SwervePod implements Subsystem {
     return inputs.driveVelocityRadPerSec;
   }
 
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -174,7 +177,9 @@ public class SwervePod implements Subsystem {
       this.deltaSimNoNoise = currentDistanceSimNoNoise - this.lastDistanceSimNoNoise;
       this.lastDistanceSimNoNoise = currentDistanceSimNoNoise;
     }
-
+    if (offset.hasChanged(hashCode())) {
+      io.setOffset(Rotation2d.fromRotations(offset.get()));
+    }
     if (kPAzimuth.hasChanged(hashCode())
         || kIAzimuth.hasChanged(hashCode())
         || kDAzimuth.hasChanged(hashCode())) {

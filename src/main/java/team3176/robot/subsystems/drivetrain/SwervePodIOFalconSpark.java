@@ -55,7 +55,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
     
-    offset = Rotation2d.fromDegrees(id.OFFSET);
+    offset = Rotation2d.fromRotations(id.OFFSET);
     // reset the motor controllers
     //thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
@@ -84,7 +84,6 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
     // Comment out line below to test Akit way
-    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
 
@@ -127,11 +126,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
+    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
     Logger.recordOutput("Drivetrain/IO/Module" + id + "/raw_encoder" , turnAbsolutePosition.getValueAsDouble());
     Logger.recordOutput("Drivetrain/IO/Module" + id + "/rot2d_encoder" , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()));
-    //Akit way
-    //inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
+    
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
