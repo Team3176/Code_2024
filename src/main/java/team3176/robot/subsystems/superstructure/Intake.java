@@ -175,28 +175,6 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Arm", inputs);
-        armSholder.setAngle(Rotation2d.fromDegrees(inputs.Position-SuperStructureConstants.ARM_ZERO_POS-190));
-        armElbow.setAngle(Rotation2d.fromDegrees(20 + 100 * (SuperStructureConstants.ARM_HIGH_POS - inputs.Position)/(SuperStructureConstants.ARM_HIGH_POS-SuperStructureConstants.ARM_ZERO_POS)));
-        //simSholder.setAngle(Rotation2d.fromDegrees(inputs.Position -90 - SuperStructureConstants.ARM_SIM_OFFSET));
         Logger.recordOutput("Arm/mech2d", mech);
-        double angle = SmartDashboard.getNumber("arm_angle", 0.0);
-        double height = SmartDashboard.getNumber("arm_height", 1.18);
-        double angle_for_vis = (-inputs.Position) + 240 + 130;
-        Pose3d shoulder = new Pose3d(0.199155, 0.0, 1.18, new Rotation3d(0.0, Units.degreesToRadians(angle_for_vis-130), 0.0));
-        Pose3d shoulder_offset = new Pose3d(0.199155, 0.0, 1.18, new Rotation3d(0.0, Units.degreesToRadians(angle_for_vis), 0.0));
-        Pose3d elbow = shoulder_offset.transformBy(
-            new Transform3d(
-                new Translation3d(0.5, 0.0, 0.0),
-                new Rotation3d(0.0, Units.degreesToRadians(-((50 + 120 * (SuperStructureConstants.ARM_HIGH_POS - (inputs.Position))/(SuperStructureConstants.ARM_HIGH_POS-SuperStructureConstants.ARM_ZERO_POS))) + 130 + 240 ), 0.0)));
-        //Pose3d elbow = new Pose3d(-0.106, 0.0, 0.779603, new Rotation3d(0.0, Units.degreesToRadians(angle), 0.0));
-        Pose3d[] arm_joints = {shoulder,elbow}; 
-        Logger.recordOutput("Arm/visual",arm_joints);
-        //SmartDashboard.putNumber("Arm_Position", armEncoder.getAbsolutePosition());
-        //SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() - SuperStructureConstants.ARM_ZERO_POS);
-        if(this.currentState == States.CLOSED_LOOP) {
-            this.armSetpointAngleRaw = MathUtil.clamp(this.armSetpointAngleRaw, SuperStructureConstants.ARM_ZERO_POS, SuperStructureConstants.ARM_HIGH_POS);
-            Logger.recordOutput("Arm/position_error", this.turningPIDController.getPositionError());
-            setPIDPosition(armSetpointAngleRaw);
-        }
     }
 }

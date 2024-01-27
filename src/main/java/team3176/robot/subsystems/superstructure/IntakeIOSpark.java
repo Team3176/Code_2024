@@ -18,33 +18,33 @@ import team3176.robot.constants.Hardwaremap;
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOSpark implements IntakeIO{
   
-  private CANSparkMax armController;
-  private CANcoder armEncoder;
+  private CANSparkMax intakeController;
+  private CANcoder intakeEncoder;
   public IntakeIOSpark() {
-    armController = new CANSparkMax(Hardwaremap.intake_CID, MotorType.kBrushless);
-    armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    armEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    armController.setOpenLoopRampRate(0.5);
+    intakeController = new CANSparkMax(Hardwaremap.intake_CID, MotorType.kBrushless);
+    intakeController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
+    intakeEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
+    intakeController.setOpenLoopRampRate(0.5);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.Position = armEncoder.getAbsolutePosition().getValueAsDouble();
-    inputs.VelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-    inputs.AppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
-    inputs.CurrentAmps = new double[] {armController.getOutputCurrent()};
-    inputs.TempCelcius = new double[] {armController.getMotorTemperature()};
+    inputs.Position = intakeEncoder.getAbsolutePosition().getValueAsDouble();
+    inputs.VelocityRadPerSec = Units.degreesToRadians(intakeEncoder.getVelocity().getValueAsDouble());
+    inputs.AppliedVolts = intakeController.getAppliedOutput() * intakeController.getBusVoltage();
+    inputs.CurrentAmps = new double[] {intakeController.getOutputCurrent()};
+    inputs.TempCelcius = new double[] {intakeController.getMotorTemperature()};
   }
   @Override
   public void set(double percentOuput) {
-    armController.set(percentOuput);
+    intakeController.set(percentOuput);
   }
   @Override
   public void setCoastMode(boolean isCoastMode) {
     if(isCoastMode) {
-      armController.setIdleMode(IdleMode.kCoast);
+      intakeController.setIdleMode(IdleMode.kCoast);
     } else {
-      armController.setIdleMode(IdleMode.kBrake);
+      intakeController.setIdleMode(IdleMode.kBrake);
     }
   }
   @Override

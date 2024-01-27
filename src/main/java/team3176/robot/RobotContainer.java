@@ -30,6 +30,7 @@ import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
+import team3176.robot.subsystems.superstructure.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -47,6 +48,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain;
   private final RobotState robotState;
   private PhotonVisionSystem vision;
+  private Intake intake;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
@@ -141,6 +143,8 @@ public class RobotContainer {
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    
+    controller.transStick.button(1).whileTrue(intake.runIntake(1));
 
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
