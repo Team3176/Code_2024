@@ -7,8 +7,12 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -20,21 +24,18 @@ import team3176.robot.constants.Hardwaremap;
 public class ShooterIOFalcon implements ShooterIO{
   
   private CANSparkMax armController;
-  private CANCoder armEncoder;
+  private CANcoder armEncoder;
   public ShooterIOFalcon() {
     armController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
     armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    armEncoder = new CANCoder(Hardwaremap.armEncoder_CID);
+    armEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
     armController.setOpenLoopRampRate(0.5);
-    armEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
-    armEncoder.configMagnetOffset(SuperStructureConstants.ARM_ENCODER_OFFSET);
-    armEncoder.configSensorDirection(true,100);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.Position = armEncoder.getAbsolutePosition();
-    inputs.VelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity());
+    inputs.Position = armEncoder.getAbsolutePosition().getValueAsDouble();
+    inputs.VelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
     inputs.AppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
     inputs.CurrentAmps = new double[] {armController.getOutputCurrent()};
     inputs.TempCelcius = new double[] {armController.getMotorTemperature()};

@@ -7,10 +7,10 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.SuperStructureConstants;
@@ -19,9 +19,9 @@ import team3176.robot.constants.Hardwaremap;
 public class ElevatorIOFalcon implements ElevatorIO{
  
   TalonFX elevatorMotor; 
+
   public ElevatorIOFalcon() {
     elevatorMotor = new TalonFX(Hardwaremap.elevator_CID);
-    elevatorMotor.configIntegratedSensorAbsoluteRange(null, 0);
   }
   /** Updates the set of loggable inputs. */
   @Override
