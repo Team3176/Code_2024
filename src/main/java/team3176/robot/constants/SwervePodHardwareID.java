@@ -16,6 +16,12 @@ public class SwervePodHardwareID {
     this.CANCODER_CID = cancoder_cid;
     this.OFFSET = offset;
   }
+  SwervePodHardwareID(int serial, int thrust_cid, int cancoder_cid, double offset) {
+    this.THRUST_CID = thrust_cid;
+    this.SERIAL = serial;
+    this.CANCODER_CID = cancoder_cid;
+    this.OFFSET = offset;
+  }
 
   public static boolean check_duplicates(SwervePodHardwareID a, SwervePodHardwareID b) {
     boolean are_duplicates = (a.CANCODER_CID == b.CANCODER_CID) | (a.THRUST_CID == b.THRUST_CID);

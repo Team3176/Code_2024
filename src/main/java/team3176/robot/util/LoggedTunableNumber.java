@@ -54,9 +54,9 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      // if (Constants.tuningMode) {
+      if (Constants.TUNING_MODE) {
       dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
-      // }
+      }
     }
   }
 

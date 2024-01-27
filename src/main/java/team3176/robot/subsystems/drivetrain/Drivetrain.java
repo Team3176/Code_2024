@@ -112,10 +112,6 @@ public class Drivetrain extends SubsystemBase {
       switch (Constants.getRobot()) {
         case ROBOT_2023C:
           System.out.println("[init] normal swervePods");
-          Hardwaremap.FR.OFFSET += 180;
-          Hardwaremap.FL.OFFSET += 90;
-          Hardwaremap.BL.OFFSET += 0;
-          Hardwaremap.BR.OFFSET += -90;
           podFR =
               new SwervePod(
                   0,
@@ -141,10 +137,10 @@ public class Drivetrain extends SubsystemBase {
           break;
         case ROBOT_SIMBOT:
           System.out.println("[init] simulated swervePods");
-          podFR = new SwervePod(0, new SwervePodIOSim());
-          podFL = new SwervePod(1, new SwervePodIOSim());
-          podBL = new SwervePod(2, new SwervePodIOSim());
-          podBR = new SwervePod(3, new SwervePodIOSim());
+          podFR = new SwervePod(0, new SwervePodIOSim(0));
+          podFL = new SwervePod(1, new SwervePodIOSim(1));
+          podBL = new SwervePod(2, new SwervePodIOSim(2));
+          podBR = new SwervePod(3, new SwervePodIOSim(3));
           simNoNoiseOdom = new SimNoNoiseOdom(new ArrayList<>(List.of(podFR, podFL, podBL, podBR)));
           break;
         default:

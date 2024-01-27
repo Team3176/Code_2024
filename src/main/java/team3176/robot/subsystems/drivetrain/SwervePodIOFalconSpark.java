@@ -1,5 +1,7 @@
 package team3176.robot.subsystems.drivetrain;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -14,6 +16,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUsageId;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -27,7 +31,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   public static final double AZIMUTH_ENCODER_UNITS_PER_REVOLUTION = 4096;
   public static final double THRUST_ENCODER_UNITS_PER_REVOLUTION = 2048;
-
+  private int id;
   private CANSparkMax turnSparkMax;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
   private TalonFX thrustFalcon;
@@ -48,6 +52,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
+    this.id = id.SERIAL;
     turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
@@ -81,7 +86,6 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
     // Comment out line below to test Akit way
-    azimuthEncoderConfig.MagnetSensor.MagnetOffset = id.OFFSET/ 360.0;
 
     azimuthEncoder.getConfigurator().apply(azimuthEncoderConfig);
 
@@ -124,9 +128,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees();
-    //Akit way
-    //inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
+    inputs.turnAbsolutePositionDegrees = MathUtil.inputModulus(Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees(), -180, 180);
+    Logger.recordOutput("Drivetrain/IO/raw/rawNoOffset_enc" + id, turnAbsolutePosition.getValueAsDouble());
+    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
+    
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
@@ -168,5 +173,15 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     } else {
       turnSparkMax.setIdleMode(IdleMode.kCoast);
     }
+  }
+
+  @Override
+  public Rotation2d getOffset() {
+      return this.offset;
+  }
+
+  @Override
+  public void setOffset(Rotation2d offset) {
+    this.offset = offset;
   }
 }

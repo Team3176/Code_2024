@@ -16,15 +16,15 @@ public class Hardwaremap {
    * Drivetrain CIDs
    */
    // statics constants for swerve pods
-   public static final SwervePodHardwareID POD001 = new SwervePodHardwareID(10, 12, -172.135);
-   public static final SwervePodHardwareID POD002 = new SwervePodHardwareID(20, 22, -225.186);
-   public static final SwervePodHardwareID POD003 = new SwervePodHardwareID(30, 32, -40);
-   public static final SwervePodHardwareID POD004 = new SwervePodHardwareID(40, 42, 140.463); // 120.5
-   public static final SwervePodHardwareID POD005 = new SwervePodHardwareID(13, 14, -30.525);
-   public static final SwervePodHardwareID POD006 = new SwervePodHardwareID(23, 24, 105);
-   public static final SwervePodHardwareID POD007 = new SwervePodHardwareID(33, 34, 125.508);
-   public static final SwervePodHardwareID POD008 = new SwervePodHardwareID(43, 44, -173);
-   public static final SwervePodHardwareID POD009 = new SwervePodHardwareID(15, 16, -178);
+   public static final SwervePodHardwareID POD001 = new SwervePodHardwareID(1,10, 12, -172.135);
+   public static final SwervePodHardwareID POD002 = new SwervePodHardwareID(2,20, 22, -225.186);
+   public static final SwervePodHardwareID POD003 = new SwervePodHardwareID(3,30, 32, -130);
+   public static final SwervePodHardwareID POD004 = new SwervePodHardwareID(4,40, 42, 140.463); // 120.5
+   public static final SwervePodHardwareID POD005 = new SwervePodHardwareID(5,13, 14, -30.525);
+   public static final SwervePodHardwareID POD006 = new SwervePodHardwareID(6,23, 24, 107);
+   public static final SwervePodHardwareID POD007 = new SwervePodHardwareID(7,33, 34, 125.508);
+   public static final SwervePodHardwareID POD008 = new SwervePodHardwareID(8,43, 44, -79);
+   public static final SwervePodHardwareID POD009 = new SwervePodHardwareID(9,15, 16, -138);
  
    public static final SwervePodHardwareID FR = POD009;
    public static final SwervePodHardwareID FL = POD008;
