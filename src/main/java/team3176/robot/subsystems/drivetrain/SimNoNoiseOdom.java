@@ -11,23 +11,13 @@ import org.littletonrobotics.junction.Logger;
 public class SimNoNoiseOdom {
   private SwerveDriveOdometry odomNoNoise;
   private ArrayList<SwervePod> pods;
-  private Rotation2d wheelOnlyHeading;
+  private Pose2d wheelOnlyPose;
 
   public SimNoNoiseOdom(ArrayList<SwervePod> pods) {
     this.pods = pods;
     System.out.println("pods size " + this.pods.size());
-    wheelOnlyHeading = new Rotation2d();
-    odomNoNoise =
-        new SwerveDriveOdometry(
-            Drivetrain.kinematics,
-            new Rotation2d(),
-            new SwerveModulePosition[] {
-              new SwerveModulePosition(),
-              new SwerveModulePosition(),
-              new SwerveModulePosition(),
-              new SwerveModulePosition()
-            },
-            new Pose2d(0.0, 0.0, new Rotation2d()));
+    wheelOnlyPose = new Pose2d();
+    
   }
 
   public SwerveModulePosition[] getSwerveModulePositionsSimNoNoise() {
@@ -39,11 +29,11 @@ public class SimNoNoiseOdom {
   }
 
   public void resetSimPose(Pose2d p) {
-    odomNoNoise.resetPosition(p.getRotation(), getSwerveModulePositionsSimNoNoise(), p);
+    wheelOnlyPose = p;
   }
 
   public Pose2d getPoseTrue() {
-    return odomNoNoise.getPoseMeters();
+    return wheelOnlyPose;
   }
 
   public void update() {
@@ -52,8 +42,7 @@ public class SimNoNoiseOdom {
       deltas[i] = pods.get(i).getDeltaSimNoNoise();
     }
     Twist2d twist = Drivetrain.kinematics.toTwist2d(deltas);
-    wheelOnlyHeading = odomNoNoise.getPoseMeters().exp(twist).getRotation();
-    odomNoNoise.update(wheelOnlyHeading, getSwerveModulePositionsSimNoNoise());
+    wheelOnlyPose = wheelOnlyPose.exp(twist);
     Logger.recordOutput("Drive/PoseSimNoNoise", getPoseTrue());
   }
 }
