@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -40,7 +41,7 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
-import team3176.robot.constants.DrivetrainHardwareMap;
+import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.util.LocalADStarAK;
@@ -48,8 +49,8 @@ import team3176.robot.util.LocalADStarAK;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = Units.feetToMeters(14.0);
-  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(24.3);
-  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(28.75);
+  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
+  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
   public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
   public static final double WIDTH = EBOT_WIDTH_IN_METERS_2023;
 
@@ -99,48 +100,44 @@ public class Drivetrain extends SubsystemBase {
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
-        DrivetrainHardwareMap.FR,
-        DrivetrainHardwareMap.FL,
-        DrivetrainHardwareMap.BR,
-        DrivetrainHardwareMap.BL));
+        Hardwaremap.FR,
+        Hardwaremap.FL,
+        Hardwaremap.BR,
+        Hardwaremap.BL));
     // Instantiate pods
     if (Constants.getMode() != Mode.REPLAY) {
       switch (Constants.getRobot()) {
         case ROBOT_2023C:
           System.out.println("[init] normal swervePods");
-          DrivetrainHardwareMap.FR.OFFSET += 180;
-          DrivetrainHardwareMap.FL.OFFSET += 90;
-          DrivetrainHardwareMap.BL.OFFSET += 0;
-          DrivetrainHardwareMap.BR.OFFSET += -90;
           podFR =
               new SwervePod(
                   0,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.FR, DrivetrainHardwareMap.STEER_FR_CID));
+                      Hardwaremap.FR, Hardwaremap.STEER_FR_CID));
           podFL =
               new SwervePod(
                   1,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.FL, DrivetrainHardwareMap.STEER_FL_CID));
+                      Hardwaremap.FL, Hardwaremap.STEER_FL_CID));
           podBL =
               new SwervePod(
                   2,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.BL, DrivetrainHardwareMap.STEER_BL_CID));
+                      Hardwaremap.BL, Hardwaremap.STEER_BL_CID));
           podBR =
               new SwervePod(
                   3,
                   new SwervePodIOFalconSpark(
-                      DrivetrainHardwareMap.BR, DrivetrainHardwareMap.STEER_BR_CID));
+                      Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
           break;
         case ROBOT_2023P:
           break;
         case ROBOT_SIMBOT:
           System.out.println("[init] simulated swervePods");
-          podFR = new SwervePod(0, new SwervePodIOSim());
-          podFL = new SwervePod(1, new SwervePodIOSim());
-          podBL = new SwervePod(2, new SwervePodIOSim());
-          podBR = new SwervePod(3, new SwervePodIOSim());
+          podFR = new SwervePod(0, new SwervePodIOSim(0));
+          podFL = new SwervePod(1, new SwervePodIOSim(1));
+          podBL = new SwervePod(2, new SwervePodIOSim(2));
+          podBR = new SwervePod(3, new SwervePodIOSim(3));
           simNoNoiseOdom = new SimNoNoiseOdom(new ArrayList<>(List.of(podFR, podFL, podBL, podBR)));
           break;
         default:
@@ -179,7 +176,7 @@ public class Drivetrain extends SubsystemBase {
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::driveVelocity,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
-        () -> true,
+        () -> false,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
@@ -248,12 +245,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    wheelOnlyHeading = pose.getRotation();
-    odom.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
-    poseEstimator.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
+   
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.resetSimPose(pose);
     }
+    wheelOnlyHeading = pose.getRotation();
+    odom.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
+    poseEstimator.resetPosition(getSensorYaw(), getSwerveModulePositions(), pose);
   }
 
   /** Returns the module states (turn angles and drive velocitoes) for all of the modules. */
