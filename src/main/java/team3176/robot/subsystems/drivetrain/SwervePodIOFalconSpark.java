@@ -16,6 +16,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUsageId;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -126,9 +128,9 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees();
+    inputs.turnAbsolutePositionDegrees = MathUtil.inputModulus(Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees(), -180, 180);
     Logger.recordOutput("Drivetrain/IO/raw/rawNoOffset_enc" + id, turnAbsolutePosition.getValueAsDouble());
-    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()));
+    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
     
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
@@ -171,5 +173,15 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     } else {
       turnSparkMax.setIdleMode(IdleMode.kCoast);
     }
+  }
+
+  @Override
+  public Rotation2d getOffset() {
+      return this.offset;
+  }
+
+  @Override
+  public void setOffset(Rotation2d offset) {
+    this.offset = offset;
   }
 }
