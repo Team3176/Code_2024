@@ -27,8 +27,9 @@ public interface IntakeIO{
     
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-  public default void set(double percentOutput){}
+  public default void setRoller(double percentOutput){}
   public default void setCoastMode(boolean isCoastMode) {}
   public default void reset() {}
+  public default void stopRoller() {}
 }
 

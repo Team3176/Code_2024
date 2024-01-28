@@ -30,7 +30,7 @@ public class TransferIOSim implements TransferIO{
   @Override
   public void updateInputs(TransferIOInputs inputs) {
     shooterSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(shooterSim.getAngleRads()) + 90 + SuperStructureConstants.ARM_SIM_OFFSET;
+    inputs.Position = Units.radiansToDegrees(shooterSim.getAngleRads()) + 90 + SuperStructureConstants.TRANSFER_SIM_OFFSET;
     inputs.VelocityRadPerSec = shooterSim.getVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {shooterSim.getCurrentDrawAmps()};

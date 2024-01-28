@@ -20,7 +20,7 @@ import team3176.robot.Constants;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 
-/** Template hardware interface for a closed loop subsystem. */
+/** Template hardware interface for the Elevator subsystem. */
 public class ElevatorIOSim implements ElevatorIO{
   
   private ElevatorSim elevatorSim;
@@ -32,7 +32,7 @@ public class ElevatorIOSim implements ElevatorIO{
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     elevatorSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(elevatorSim.getPositionMeters() + SuperStructureConstants.ARM_SIM_OFFSET);
+    inputs.Position = Units.radiansToDegrees(elevatorSim.getPositionMeters() + SuperStructureConstants.ELEVATOR_SIM_OFFSET);
     inputs.VelocityRadPerSec = elevatorSim.getVelocityMetersPerSecond();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {elevatorSim.getCurrentDrawAmps()};

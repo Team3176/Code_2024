@@ -30,7 +30,7 @@ public class ShooterIOSim implements ShooterIO{
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     armSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ARM_SIM_OFFSET;
+    inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ANGLER_SIM_OFFSET;
     inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {armSim.getCurrentDrawAmps()};
