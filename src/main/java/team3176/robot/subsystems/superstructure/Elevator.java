@@ -26,6 +26,9 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
+
+/** Elevator handles the height of the intake from the ground.
+ */
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
     private final ElevatorIO io;
@@ -37,10 +40,9 @@ public class Elevator extends SubsystemBase {
    
     private Elevator(ElevatorIO io) {
         this.io = io;
-        SmartDashboard.putNumber("Arm_kp", SuperStructureConstants.ARM_kP);
-        SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.ARM_kg);
-        SmartDashboard.putNumber("arm_angle", 0.0);
-        SmartDashboard.putNumber("arm_height", 1.18);
+        SmartDashboard.putNumber("Elevator_kp", SuperStructureConstants.ELEVATOR_kP);
+        SmartDashboard.putNumber("Elevator_Kg", SuperStructureConstants.ELEVATOR_kg);
+        SmartDashboard.putNumber("elevator_height", 0.0);
     }
 
     public void setCoastMode() {
@@ -54,7 +56,6 @@ public class Elevator extends SubsystemBase {
     public void setElevatorMotor(double position){
 
         if(limitswitch1.get()  || limitswitch2.get()) {
-            System.out.println("Limitswitch value:"+limitswitch1.get());
               io.set(position);
             } else { 
               io.stop();

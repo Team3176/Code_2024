@@ -35,10 +35,10 @@ public class Intake extends SubsystemBase {
 
     private Intake(IntakeIO io) {
         this.io = io;
-        SmartDashboard.putNumber("Arm_kp", SuperStructureConstants.ARM_kP);
-        SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.ARM_kg);
-        SmartDashboard.putNumber("arm_angle", 0.0);
-        SmartDashboard.putNumber("arm_height", 1.18);
+        SmartDashboard.putNumber("Intake_kp", SuperStructureConstants.INTAKE_kP);
+        SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_kg);
+        SmartDashboard.putNumber("Intake_angle", 0.0);
+        SmartDashboard.putNumber("Intake_velocity", 0.0);
     }
 
     public void setCoastMode() {
@@ -53,9 +53,9 @@ public class Intake extends SubsystemBase {
 
         if(linebreak1.get()  || linebreak2.get()) {
             System.out.println("Limitswitch value:"+linebreak1.get());
-              io.set(velocity);
+              io.setRoller(velocity);
             } else { 
-              io.stop();
+              io.stopRoller();
             }
     }
 
