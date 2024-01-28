@@ -28,6 +28,7 @@ public interface ElevatorIO{
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
   public default void set(double percentOutput){}
+  public default void stop() {}
   public default void setCoastMode(boolean isCoastMode) {}
   public default void reset() {}
 }

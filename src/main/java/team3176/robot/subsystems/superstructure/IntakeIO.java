@@ -30,5 +30,6 @@ public interface IntakeIO{
   public default void set(double percentOutput){}
   public default void setCoastMode(boolean isCoastMode) {}
   public default void reset() {}
+  public default void stop() {}
 }
 
