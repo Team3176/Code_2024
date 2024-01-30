@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.*;
+import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -379,11 +382,16 @@ public class Drivetrain extends SubsystemBase {
   }
   // TODO: Pathplanner pathfinding
   // complete the following method that returns a command from AutoBuilder that goes to the point given
-  public Command goToPoint(Pose2d point) {
-    
+  public Command goToPoint(int x, int y) {
+    Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
+    PathConstraints constraints = new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    return AutoBuilder.pathfindToPose(targetPose, constraints);
+    //Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints, AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
     //Replace with your command
-    return new WaitCommand(1.0);
+    
   }
+
+  
   private void resetPoseToVision() {
     // call resetPose() and pass in visionPose3d
     resetPose(visionPose3d.toPose2d());

@@ -98,13 +98,12 @@ public class RobotContainer {
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
-
     /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
       use the whileTrue so if the button is released the command is cancelled
       pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
     */
     
-
+    controller.transStick.button(2).onTrue(drivetrain.goToPoint(2, 2));
     
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
