@@ -40,7 +40,7 @@ public class SwervePod implements Subsystem {
   // private double kAzimuthEncoderUnitsPerRevolution;
 
   // private double kP_Azimuth;
-  private LoggedTunableNumber kPAzimuth = new LoggedTunableNumber("kP_azimuth", .012);
+  private LoggedTunableNumber kPAzimuth = new LoggedTunableNumber("kP_azimuth", .007);
 
   private LoggedTunableNumber kIAzimuth = new LoggedTunableNumber("kI_azimuth", 0.0);
   private LoggedTunableNumber kDAzimuth = new LoggedTunableNumber("kD_azimuth", 0.0003);
