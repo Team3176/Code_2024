@@ -21,19 +21,18 @@ public class IntakeIOSpark implements IntakeIO{
   private CANSparkMax intakeController;
   private CANcoder intakeEncoder;
   public IntakeIOSpark() {
-    intakeController = new CANSparkMax(Hardwaremap.intake_CID, MotorType.kBrushless);
-    intakeController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    intakeEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    intakeController.setOpenLoopRampRate(0.5);
+    intakeController = new CANSparkMax(4, MotorType.kBrushless);
+    //intakeController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
+    //intakeController.setOpenLoopRampRate(0.5);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.Position = intakeEncoder.getAbsolutePosition().getValueAsDouble();
-    inputs.VelocityRadPerSec = Units.degreesToRadians(intakeEncoder.getVelocity().getValueAsDouble());
-    inputs.AppliedVolts = intakeController.getAppliedOutput() * intakeController.getBusVoltage();
-    inputs.CurrentAmps = new double[] {intakeController.getOutputCurrent()};
-    inputs.TempCelcius = new double[] {intakeController.getMotorTemperature()};
+    //inputs.Position = intakeEncoder.getAbsolutePosition().getValueAsDouble();
+    //inputs.VelocityRadPerSec = Units.degreesToRadians(intakeEncoder.getVelocity().getValueAsDouble());
+    //inputs.AppliedVolts = intakeController.getAppliedOutput() * intakeController.getBusVoltage();
+    ///inputs.CurrentAmps = new double[] {intakeController.getOutputCurrent()};
+    ///inputs.TempCelcius = new double[] {intakeController.getMotorTemperature()};
   }
   @Override
   public void set(double percentOuput) {

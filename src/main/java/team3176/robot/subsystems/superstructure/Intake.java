@@ -56,6 +56,14 @@ public class Intake extends SubsystemBase {
         io.setCoastMode(false);
     } 
 
+    public Command runIntake(double percentoutput){
+        return this.run(() -> set(percentoutput));
+    }
+
+    public void set(double outputpercent){
+        io.set(outputpercent);
+    }
+
     private void setArmPidPosMode() {
 
         this.turningPIDController.setTolerance(SuperStructureConstants.ARM_TOLERANCE);
@@ -173,8 +181,8 @@ public class Intake extends SubsystemBase {
     
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Arm", inputs);
-        Logger.recordOutput("Arm/mech2d", mech);
+        //io.updateInputs(inputs);
+        //Logger.processInputs("Arm", inputs);
+        //Logger.recordOutput("Arm/mech2d", mech);
     }
 }

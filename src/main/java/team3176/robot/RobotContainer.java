@@ -59,6 +59,7 @@ public class RobotContainer {
     controller = Controller.getInstance();
     drivetrain = Drivetrain.getInstance();
     robotState = RobotState.getInstance();
+    intake = Intake.getInstance();
     if(Constants.VISION_CONNECTED){
       vision = PhotonVisionSystem.getInstance();
     }
@@ -122,7 +123,7 @@ public class RobotContainer {
         .button(1)
         .whileTrue(
             drivetrain.swerveDrivePercent(
-                () -> controller.getForward() * 1.0,
+                () -> controller.getForward() * -1.0,
                 () -> controller.getStrafe() * 1.0,
                 () -> controller.getSpin() * 7));
 
@@ -144,7 +145,8 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
     
-    controller.transStick.button(1).whileTrue(intake.runIntake(1));
+    controller.transStick.button(1).onTrue(intake.runIntake(-1));
+    controller.transStick.button(1).onFalse(intake.runIntake(0.0));
 
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
