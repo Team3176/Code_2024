@@ -80,7 +80,7 @@ public class RobotContainer {
             () -> controller.getSpin() * 3,false).withName("default drive"));
     }
     NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+    NamedCommands.registerCommand("intake", intake.runIntake(-1.0).withTimeout(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
@@ -105,6 +105,7 @@ public class RobotContainer {
       use the whileTrue so if the button is released the command is cancelled
       pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
     */
+    controller.transStick.button(1).whileTrue(intake.runIntake(-1));
     
     controller.transStick.button(2).onTrue(drivetrain.goToPoint(2, 2));
     
@@ -152,8 +153,7 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
     
-    controller.transStick.button(1).onTrue(intake.runIntake(-1));
-    controller.transStick.button(1).onFalse(intake.runIntake(0.0));
+    
 
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());

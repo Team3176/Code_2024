@@ -25,7 +25,7 @@ public class IntakeIOSim implements IntakeIO{
   private FlywheelSim intakeSim;
   private double appliedVolts;
   public IntakeIOSim() {
-    intakeSim = new FlywheelSim(DCMotor.getNEO(1), 2.0, 0.1);
+    intakeSim = new FlywheelSim(DCMotor.getNEO(1), 2.0, 0.001);
   }
   /** Updates the set of loggable inputs. */
   @Override
@@ -36,6 +36,7 @@ public class IntakeIOSim implements IntakeIO{
   }
   @Override
   public void set(double percentOuput) {
+    
     if(DriverStation.isEnabled()) {
       appliedVolts = percentOuput * 12;
     } else {

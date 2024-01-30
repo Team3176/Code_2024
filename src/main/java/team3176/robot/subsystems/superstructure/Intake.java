@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     } 
 
     public Command runIntake(double percentoutput){
-        return this.run(() -> set(percentoutput));
+        return this.runEnd(() -> set(percentoutput), () -> set(0.0));
     }
 
     public void set(double outputpercent){
@@ -64,8 +64,8 @@ public class Intake extends SubsystemBase {
     
     @Override
     public void periodic() {
-        //io.updateInputs(inputs);
-        //Logger.processInputs("Arm", inputs);
+        io.updateInputs(inputs);
+        Logger.processInputs("Intake", inputs);
         //Logger.recordOutput("Arm/mech2d", mech);
     }
 }
