@@ -14,6 +14,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.Constants;
@@ -21,21 +22,17 @@ import team3176.robot.Constants;
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOSim implements IntakeIO{
   
-  private SingleJointedArmSim armSim;
+  private FlywheelSim intakeSim;
   private double appliedVolts;
   public IntakeIOSim() {
-    armSim = new SingleJointedArmSim(DCMotor.getNEO(1), 75, 0.5, 0.7, -1.0*Math.PI, 3.14,true,0.0);
+    intakeSim = new FlywheelSim(DCMotor.getNEO(1), 2.0, 0.1);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    armSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ARM_SIM_OFFSET;
-    inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();
+    intakeSim.update(Constants.LOOP_PERIODIC_SECS);
+    inputs.VelocityRadPerSec = intakeSim.getAngularVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
-    inputs.CurrentAmps = new double[] {armSim.getCurrentDrawAmps()};
-    inputs.TempCelcius = new double[] {0.0};
-    Logger.recordOutput("Arm/SimPos",armSim.getAngleRads());
   }
   @Override
   public void set(double percentOuput) {
@@ -45,7 +42,7 @@ public class IntakeIOSim implements IntakeIO{
       appliedVolts = 0.0;
     }
     appliedVolts = MathUtil.clamp(appliedVolts,-12,12);
-    armSim.setInputVoltage(appliedVolts);
+    intakeSim.setInputVoltage(appliedVolts);
   }
 }
 
