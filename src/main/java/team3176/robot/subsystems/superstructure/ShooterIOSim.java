@@ -7,45 +7,48 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import org.littletonrobotics.junction.Logger;
-
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import team3176.robot.constants.SuperStructureConstants;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
+import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class ShooterIOSim implements ShooterIO{
-  
+public class ShooterIOSim implements ShooterIO {
+
   private SingleJointedArmSim armSim;
   private double appliedVolts;
+
   public ShooterIOSim() {
-    armSim = new SingleJointedArmSim(DCMotor.getNEO(1), 75, 0.5, 0.7, -1.0*Math.PI, 3.14,true,0.0);
+    armSim =
+        new SingleJointedArmSim(DCMotor.getNEO(1), 75, 0.5, 0.7, -1.0 * Math.PI, 3.14, true, 0.0);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     armSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ANGLER_SIM_OFFSET;
+    inputs.Position =
+        Units.radiansToDegrees(armSim.getAngleRads())
+            + 90
+            + SuperStructureConstants.ANGLER_SIM_OFFSET;
     inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {armSim.getCurrentDrawAmps()};
     inputs.TempCelcius = new double[] {0.0};
-    Logger.recordOutput("Shooter/SimPos",armSim.getAngleRads());
+    Logger.recordOutput("Shooter/SimPos", armSim.getAngleRads());
   }
+
   @Override
   public void set(double percentOuput) {
-    if(DriverStation.isEnabled()) {
+    if (DriverStation.isEnabled()) {
       appliedVolts = percentOuput * 12;
     } else {
       appliedVolts = 0.0;
     }
-    appliedVolts = MathUtil.clamp(appliedVolts,-12,12);
+    appliedVolts = MathUtil.clamp(appliedVolts, -12, 12);
     armSim.setInputVoltage(appliedVolts);
   }
 }
-

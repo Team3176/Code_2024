@@ -6,31 +6,24 @@ package team3176.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import java.io.File;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
-import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -62,27 +55,34 @@ public class RobotContainer {
     robotState = RobotState.getInstance();
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
-    if(Constants.VISION_CONNECTED){
+    if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
-    
+
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
     drivetrain.setDefaultCommand(
-        drivetrain.swerveDrivePercent(
-            () -> controller.getForward() * 0.7,
-            () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3).withName("default drive"));
-    if(Constants.getMode() == Mode.SIM) {
+        drivetrain
+            .swerveDrivePercent(
+                () -> controller.getForward() * 0.7,
+                () -> controller.getStrafe() * 0.7,
+                () -> controller.getSpin() * 3)
+            .withName("default drive"));
+    if (Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
-        drivetrain.swerveDrivePercent(
-            () -> controller.getForward() * 0.7,
-            () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3,false).withName("default drive"));
+          drivetrain
+              .swerveDrivePercent(
+                  () -> controller.getForward() * 0.7,
+                  () -> controller.getStrafe() * 0.7,
+                  () -> controller.getSpin() * 3,
+                  false)
+              .withName("default drive"));
     }
-    NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+    NamedCommands.registerCommand(
+        "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
+    NamedCommands.registerCommand(
+        "intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
-    autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
+    autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
     // for (File f : paths.listFiles()) {
     //   if (!f.isDirectory()) {
@@ -101,8 +101,8 @@ public class RobotContainer {
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-    //controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+    // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+    // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -182,8 +182,7 @@ public class RobotContainer {
       choosenAutonomousCommand = autonChooser.get();
       try {
         // TODO: re implement this
-        choosenAutonomousCommand =
-            autonChooser.get();
+        choosenAutonomousCommand = autonChooser.get();
       } catch (Exception e) {
         System.out.println("[ERROR] could not find" + autonChooser.get().getName());
         System.out.println(e.toString());
@@ -220,7 +219,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return choosenAutonomousCommand;
-    //return drivetrain.swerveDriveAuto(1,0,0);
+    // return drivetrain.swerveDriveAuto(1,0,0);
     // if(choosenAutonomousCommand == null) {
     //   //this is if for some reason checkAutonomousSelection is never called
     //   String chosen = autonChooser.get();
