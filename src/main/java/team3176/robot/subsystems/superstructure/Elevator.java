@@ -27,54 +27,53 @@ import team3176.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-    private static Elevator instance;
-    private final ElevatorIOFalcon io;
-    private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final DigitalInput limitswitch1 = new DigitalInput(3);
-    private final DigitalInput limitswitch2 = new DigitalInput(4);
+  private static Elevator instance;
+  private final ElevatorIOFalcon io;
+  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private final DigitalInput limitswitch1 = new DigitalInput(3);
+  private final DigitalInput limitswitch2 = new DigitalInput(4);
 
    
    
-    private Elevator(ElevatorIOFalcon io) {
-        this.io = io;
-        SmartDashboard.putNumber("Arm_kp", SuperStructureConstants.ARM_kP);
-        SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.ARM_kg);
-        SmartDashboard.putNumber("arm_angle", 0.0);
-        SmartDashboard.putNumber("arm_height", 1.18);
-    }
+  private Elevator(ElevatorIOFalcon io) {
+    this.io = io;
+    SmartDashboard.putNumber("Arm_kp", SuperStructureConstants.ARM_kP);
+    SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.ARM_kg);
+    SmartDashboard.putNumber("arm_angle", 0.0);
+    SmartDashboard.putNumber("arm_height", 1.18);
+   }
 
-    public void setCoastMode() {
-        io.setCoastMode(true);
-    }
-
-    public void setBrakeMode() {
-        io.setCoastMode(false);
-    }
-
-    public void setElevatorMotor(double position){
-
-   //     if(limitswitch1.get()  || limitswitch2.get()) {
-       if(limitswitch1.get() ) {
-            System.out.println("Limitswitch value:"+limitswitch1.get());
-              io.set(position);
-            } else { 
-              io.stop();
-            }
-    }
-    
-    public Command moveElevator(double position){
-        return this.run(() -> setElevatorMotor(position));
-    }
-    
-    @Override
-    public void periodic() {
-    }
-
-     public static Elevator getInstance() {
-    if (instance == null) {
-      instance = new Elevator(new ElevatorIOFalcon() {});
-    }
-    return instance;
+  public void setCoastMode() {
+    io.setCoastMode(true);
   }
 
+  public void setBrakeMode() {
+    io.setCoastMode(false);
+  }
+
+  public void setElevatorMotor(double position){
+
+  //if(limitswitch1.get()  || limitswitch2.get()) {
+  if(limitswitch1.get() ) {
+    System.out.println("Limitswitch value:"+limitswitch1.get());
+      io.set(position);
+    } else { 
+      io.stop();
+    }
+  }
+    
+ 
+    
+  @Override
+  public void periodic() {
+  }
+
+  public static Elevator getInstance() {
+    if (instance == null) {
+      if(Constants.getMode() == Mode.REAL) {
+        instance = new Elevator(new ElevatorIOFalcon() {});
+      }
+    }
+  return instance;
+  }
 }

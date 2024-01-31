@@ -59,10 +59,7 @@ public class Intake extends SubsystemBase {
             }
     }
 
-    public Command moveIntake(double velocity){
-        return this.run(() -> setIntakeMotor(velocity));
-    }
-    
+
     
     
     @Override
@@ -70,6 +67,9 @@ public class Intake extends SubsystemBase {
 
     public static Intake getInstance() {
         if (instance == null) {
+          if (Constants.getMode() == Mode.REAL) {}
+            instance = new Intake(new IntakeIOFalcon() {});
+        } else {
           instance = new Intake(new IntakeIO() {});
         }
         return instance;

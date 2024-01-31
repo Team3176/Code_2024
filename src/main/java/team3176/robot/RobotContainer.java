@@ -47,8 +47,7 @@ public class RobotContainer {
   // is this why we don't have a compressor? private final Compressor m_Compressor
   //private final Drivetrain drivetrain;
   private final RobotState robotState;
-  private final Elevator elevator;
-  private final Intake intake;
+  private final Superstructure superstructure;
   private PhotonVisionSystem vision;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
@@ -59,9 +58,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     controller = Controller.getInstance();
     //drivetrain = Drivetrain.getInstance();
+    superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    elevator = Elevator.getInstance();
-    intake = Intake.getInstance();
     if(Constants.VISION_CONNECTED){
       vision = PhotonVisionSystem.getInstance();
     }
@@ -148,8 +146,8 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 */
-    controller.operator.a().onTrue(elevator.moveElevator(.5));
-    controller.operator.y().onTrue(intake.moveIntake(50));
+    controller.operator.a().onTrue(superstructure.moveElevator(.5));
+    controller.operator.y().onTrue(superstructure.moveIntake(50));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 

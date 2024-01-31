@@ -17,18 +17,22 @@ public class Superstructure extends SubsystemBase {
     public Superstructure() {
         elevator = Elevator.getInstance();
         intake = Intake.getInstance();
-        shooter = Shooter.getInstance();
-        transfer = Transfer  .getInstance();
+        //shooter = Shooter.getInstance();
+        //transfer = Transfer  .getInstance();
     }
     public static Superstructure getInstance() {
         if (instance == null){instance = new Superstructure();}
         return instance;
     }
     
-    
+    public Command moveElevator(double position){
+        return this.run(() -> elevator.setElevatorMotor(position));
+      }
 
-    public enum GamePiece {CUBE, CONE, NONE}
-    
+
+    public Command moveIntake(double velocity){
+        return this.run(() -> intake.setIntakeMotor(velocity));
+    }
 
     
 }
