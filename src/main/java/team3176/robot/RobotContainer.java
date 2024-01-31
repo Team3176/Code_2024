@@ -24,11 +24,11 @@ import java.io.File;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import team3176.robot.Constants.Mode;
-import team3176.robot.commands.drivetrain.*;
+//import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.controller.Controller;
-import team3176.robot.subsystems.drivetrain.Drivetrain;
+//import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.subsystems.superstructure.*;
 
@@ -45,7 +45,7 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private final Drivetrain drivetrain;
+  //private final Drivetrain drivetrain;
   private final RobotState robotState;
   private final Elevator elevator;
   private final Intake intake;
@@ -58,7 +58,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-    drivetrain = Drivetrain.getInstance();
+    //drivetrain = Drivetrain.getInstance();
     robotState = RobotState.getInstance();
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
@@ -67,7 +67,7 @@ public class RobotContainer {
     }
     
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
-    drivetrain.setDefaultCommand(
+ /*
         drivetrain.swerveDrivePercent(
             () -> controller.getForward() * 0.7,
             () -> controller.getStrafe() * 0.7,
@@ -92,13 +92,14 @@ public class RobotContainer {
     // }
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
+    */
 
     configureBindings();
   }
 
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
+/*
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
     //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
@@ -146,8 +147,8 @@ public class RobotContainer {
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
-    controller.operator.a().onTrue(elevator.moveElevator(50));
+*/
+    controller.operator.a().onTrue(elevator.moveElevator(.5));
     controller.operator.y().onTrue(intake.moveIntake(50));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
@@ -158,7 +159,7 @@ public class RobotContainer {
     // m_Controller.operator.rightBumper().and(m_Controller.operator.leftBumper().negate()).onFalse(m_Superstructure.prepareCarry());
 
   }
-
+/*
   public void setThrustCoast() {
     drivetrain.setCoastMode();
   }
@@ -166,6 +167,7 @@ public class RobotContainer {
   public void setThrustBrake() {
     drivetrain.setBrakeMode();
   }
+*/
 
   public void clearCanFaults() {
     pdh.clearStickyFaults();
@@ -174,7 +176,7 @@ public class RobotContainer {
   public void printCanFaults() {
     pdh.getStickyFaults();
   }
-
+/*
   public void checkAutonomousSelection(Boolean force) {
     if (autonChooser.get() != null
         && (!choosenAutonomousCommand.equals(autonChooser.get()) || force)) {
@@ -212,12 +214,13 @@ public class RobotContainer {
       checkAutonomousSelection(true);
     }
   }
+  */
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+/* public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return choosenAutonomousCommand;
     //return drivetrain.swerveDriveAuto(1,0,0);
@@ -231,4 +234,5 @@ public class RobotContainer {
     // choosenAutonomousCommand = new PathPlannerAuto("wall_3nSteal_3").getauto();
     // return choosenAutonomousCommand;
   }
+  */
 }

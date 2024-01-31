@@ -29,7 +29,6 @@ public class ElevatorIOFalcon implements ElevatorIO{
   NeutralOut brake;
   DigitalInput limitswitch1;
   DigitalInput limitswitch2;
-  XboxController joystick;
 
   public ElevatorIOFalcon() {
     TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -51,6 +50,7 @@ public class ElevatorIOFalcon implements ElevatorIO{
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
       status = elevatorMotor.getConfigurator().apply(configs);
+      System.out.println("Applied configs to: " + Hardwaremap.elevator_CID);
       if (status.isOK()) break;
     }
     if(!status.isOK()) {
@@ -68,8 +68,8 @@ public class ElevatorIOFalcon implements ElevatorIO{
 
   @Override
   public void set(double position) {
-    double desiredRotations = joystick.getLeftX() * 10; 
-    //elevatorMotor.setControl(voltPosition.withPosition(position));
+    System.out.println("ElevatorIOFalcon.set was called");
+    elevatorMotor.setControl(voltPosition.withPosition(position));
     
  
 
