@@ -7,23 +7,18 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import org.littletonrobotics.junction.Logger;
-
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.Constants;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class IntakeIOSim implements IntakeIO{
-  
+public class IntakeIOSim implements IntakeIO {
+
   private FlywheelSim intakeSim;
   private double appliedVolts;
+
   public IntakeIOSim() {
     intakeSim = new FlywheelSim(DCMotor.getNEO(1), 2.0, 0.001);
   }
@@ -34,16 +29,16 @@ public class IntakeIOSim implements IntakeIO{
     inputs.VelocityRadPerSec = intakeSim.getAngularVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
   }
+
   @Override
   public void set(double percentOuput) {
-    
-    if(DriverStation.isEnabled()) {
+
+    if (DriverStation.isEnabled()) {
       appliedVolts = percentOuput * 12;
     } else {
       appliedVolts = 0.0;
     }
-    appliedVolts = MathUtil.clamp(appliedVolts,-12,12);
+    appliedVolts = MathUtil.clamp(appliedVolts, -12, 12);
     intakeSim.setInputVoltage(appliedVolts);
   }
 }
-

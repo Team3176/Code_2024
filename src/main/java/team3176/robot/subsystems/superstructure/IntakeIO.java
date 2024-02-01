@@ -10,25 +10,26 @@ package team3176.robot.subsystems.superstructure;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Template hardware interface for a closed loop subsystem. */
-public interface IntakeIO{
+public interface IntakeIO {
   /** Contains all of the input data received from hardware. */
   @AutoLog
   public static class IntakeIOInputs {
-      public double Position = 0.0;
-      public double VelocityRadPerSec = 0.0;
-      public double AppliedVolts = 0.0;
-      public double[] CurrentAmps = new double[] {};
-      public double[] TempCelcius = new double[] {};
+    public double Position = 0.0;
+    public double VelocityRadPerSec = 0.0;
+    public double AppliedVolts = 0.0;
+    public double[] CurrentAmps = new double[] {};
+    public double[] TempCelcius = new double[] {};
 
-      //constructor if needed for some inputs
-      IntakeIOInputs() {
-      }
+    // constructor if needed for some inputs
+    IntakeIOInputs() {}
   }
-    
+
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-  public default void set(double percentOutput){}
+
+  public default void set(double percentOutput) {}
+
   public default void setCoastMode(boolean isCoastMode) {}
+
   public default void reset() {}
 }
-

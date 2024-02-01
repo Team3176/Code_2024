@@ -16,6 +16,7 @@ public class SwervePodHardwareID {
     this.CANCODER_CID = cancoder_cid;
     this.OFFSET = offset;
   }
+
   SwervePodHardwareID(int serial, int thrust_cid, int cancoder_cid, double offset) {
     this.THRUST_CID = thrust_cid;
     this.SERIAL = serial;

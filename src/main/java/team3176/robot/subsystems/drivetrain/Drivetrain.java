@@ -5,17 +5,13 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -28,7 +24,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.*;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -36,15 +31,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.Hardwaremap;
@@ -55,8 +46,8 @@ import team3176.robot.util.LocalADStarAK;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = Units.feetToMeters(14.0);
-  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
-  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30-6);
+  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
+  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
   public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
   public static final double WIDTH = EBOT_WIDTH_IN_METERS_2023;
 
@@ -106,10 +97,7 @@ public class Drivetrain extends SubsystemBase {
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
-        Hardwaremap.FR,
-        Hardwaremap.FL,
-        Hardwaremap.BR,
-        Hardwaremap.BL));
+        Hardwaremap.FR, Hardwaremap.FL, Hardwaremap.BR, Hardwaremap.BL));
     // Instantiate pods
     if (Constants.getMode() != Mode.REPLAY) {
       switch (Constants.getRobot()) {
@@ -117,24 +105,16 @@ public class Drivetrain extends SubsystemBase {
           System.out.println("[init] normal swervePods");
           podFR =
               new SwervePod(
-                  0,
-                  new SwervePodIOFalconSpark(
-                      Hardwaremap.FR, Hardwaremap.STEER_FR_CID));
+                  0, new SwervePodIOFalconSpark(Hardwaremap.FR, Hardwaremap.STEER_FR_CID));
           podFL =
               new SwervePod(
-                  1,
-                  new SwervePodIOFalconSpark(
-                      Hardwaremap.FL, Hardwaremap.STEER_FL_CID));
+                  1, new SwervePodIOFalconSpark(Hardwaremap.FL, Hardwaremap.STEER_FL_CID));
           podBL =
               new SwervePod(
-                  2,
-                  new SwervePodIOFalconSpark(
-                      Hardwaremap.BL, Hardwaremap.STEER_BL_CID));
+                  2, new SwervePodIOFalconSpark(Hardwaremap.BL, Hardwaremap.STEER_BL_CID));
           podBR =
               new SwervePod(
-                  3,
-                  new SwervePodIOFalconSpark(
-                      Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
+                  3, new SwervePodIOFalconSpark(Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
           break;
         case ROBOT_2023P:
           break;
@@ -251,17 +231,18 @@ public class Drivetrain extends SubsystemBase {
 
   @AutoLogOutput
   public Pose2d getSimNoNoisePose() {
-    if(Constants.getMode() == Mode.SIM) {
+    if (Constants.getMode() == Mode.SIM) {
       return simNoNoiseOdom.getPoseTrue();
     }
     return new Pose2d();
   }
+
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
     poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
   }
 
   public void resetPose(Pose2d pose) {
-   
+
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.resetSimPose(pose);
     }
@@ -362,22 +343,27 @@ public class Drivetrain extends SubsystemBase {
           this.driveVelocity(new ChassisSpeeds());
         });
   }
-  public Command swerveDrivePercent(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean isFieldCentric) {
-    return this.run( () -> {
-      ChassisSpeeds speeds = new ChassisSpeeds(
-                    forward.getAsDouble() * MAX_WHEEL_SPEED,
-                    strafe.getAsDouble() * MAX_WHEEL_SPEED,
-                    spin.getAsDouble() * MAX_WHEEL_SPEED);
-      if(isFieldCentric) {
-         driveVelocityFieldCentric(speeds);
-      } else {
-        driveVelocity(speeds);
-      }
-  });
+
+  public Command swerveDrivePercent(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean isFieldCentric) {
+    return this.run(
+        () -> {
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  forward.getAsDouble() * MAX_WHEEL_SPEED,
+                  strafe.getAsDouble() * MAX_WHEEL_SPEED,
+                  spin.getAsDouble() * MAX_WHEEL_SPEED);
+          if (isFieldCentric) {
+            driveVelocityFieldCentric(speeds);
+          } else {
+            driveVelocity(speeds);
+          }
+        });
   }
+
   public Command swerveDrivePercent(
       DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
-    return swerveDrivePercent(forward, strafe, spin,true);
+    return swerveDrivePercent(forward, strafe, spin, true);
   }
 
   public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {
@@ -391,17 +377,19 @@ public class Drivetrain extends SubsystemBase {
         });
   }
   // TODO: Pathplanner pathfinding
-  // complete the following method that returns a command from AutoBuilder that goes to the point given
+  // complete the following method that returns a command from AutoBuilder that goes to the point
+  // given
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
-    PathConstraints constraints = new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    PathConstraints constraints =
+        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     return AutoBuilder.pathfindToPose(targetPose, constraints);
-    //Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints, AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
-    //Replace with your command
-    
+    // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
+    // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
+    // Replace with your command
+
   }
 
-  
   private void resetPoseToVision() {
     // call resetPose() and pass in visionPose3d
     resetPose(visionPose3d.toPose2d());
