@@ -30,13 +30,9 @@ public class PhotonVisionSystem extends SubsystemBase {
    * cameras have the convention similar reporting position in the camera frame with +x being the axis through the lense and +y to the left, z up
    */
   public static final Transform3d Robot2camera1 =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(25 / 2 - 1),
-              Units.inchesToMeters(25 / 2 - 1),
-              Units.inchesToMeters(10)),
-          new Rotation3d(
-              Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
+  new Transform3d(
+    new Translation3d(Units.inchesToMeters(13), Units.inchesToMeters(-10), Units.inchesToMeters(8)),
+    new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25), Units.degreesToRadians(0)));
   public static final Transform3d Robot2camera2 =
       new Transform3d(
           new Translation3d(
@@ -76,9 +72,9 @@ public class PhotonVisionSystem extends SubsystemBase {
 
   private PhotonVisionSystem() {
     cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
-    cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
-    cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
-    cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
+    //cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
+    //cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
+    //cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
