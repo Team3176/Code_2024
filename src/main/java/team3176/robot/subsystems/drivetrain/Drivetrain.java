@@ -16,6 +16,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -48,7 +49,7 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
 
-  public static final double MAX_WHEEL_SPEED = Units.feetToMeters(14.0);
+  public static final double MAX_WHEEL_SPEED = 4.2;
   public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
   public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
   public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
@@ -81,7 +82,7 @@ public class Drivetrain extends SubsystemBase {
       new SwerveDriveKinematics(SwerveModuleTranslations);
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(4.2, 8.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
@@ -396,6 +397,51 @@ public class Drivetrain extends SubsystemBase {
   public Command swerveDrivePercent(
       DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
     return swerveDrivePercent(forward, strafe, spin, true);
+  }
+
+  /*
+   * Does Deadbanding and such within drivetrain
+   */
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, Boolean isFieldCentric) {
+    return this.run(
+        () -> {
+          double DEADBAND = 0.05;
+          double linearMagnitude =
+              MathUtil.applyDeadband(
+                  Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
+          Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
+          double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+
+          // Square values
+          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0);
+          omega = Math.copySign(omega * omega, omega);
+
+          // Calcaulate new linear velocity
+          Translation2d linearVelocity =
+              new Pose2d(new Translation2d(), linearDirection)
+                  .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+                  .getTranslation();
+          if (DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+              && isFieldCentric) {
+            linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+          }
+
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  linearVelocity.getX() * MAX_WHEEL_SPEED, linearVelocity.getY() * MAX_WHEEL_SPEED, omega * 10.5);
+          if (isFieldCentric) {
+            driveVelocityFieldCentric(speeds);
+          } else {
+            driveVelocity(speeds);
+          }
+        });
+  }
+
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
+    return swerveDriveJoysticks(forward, strafe, spin, true);
   }
 
   public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {

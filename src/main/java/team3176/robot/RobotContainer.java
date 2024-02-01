@@ -60,18 +60,18 @@ public class RobotContainer {
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
     drivetrain.setDefaultCommand(
         drivetrain
-            .swerveDrivePercent(
-                () -> controller.getForward() * 0.7,
-                () -> controller.getStrafe() * 0.7,
-                () -> controller.getSpin() * 3)
+            .swerveDriveJoysticks(
+                () -> controller.getForward(),
+                () -> controller.getStrafe(),
+                () -> controller.getSpin())
             .withName("default drive"));
     if (Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
           drivetrain
-              .swerveDrivePercent(
-                  () -> controller.getForward() * 0.7,
-                  () -> controller.getStrafe() * 0.7,
-                  () -> controller.getSpin() * 3,
+              .swerveDriveJoysticks(
+                  () -> controller.getForward(),
+                  () -> controller.getStrafe(),
+                  () -> controller.getSpin(),
                   false)
               .withName("default drive"));
     }
