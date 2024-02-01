@@ -53,7 +53,8 @@ public class ElevatorIOFalcon implements ElevatorIO {
     /* Retry config apply up to 5 times, report if failure */
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = controller.getConfigurator().apply(configs);
+      status = elevatorMotor.getConfigurator().apply(configs);
+      System.out.println("Applied configs to: " + Hardwaremap.elevator_CID);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
@@ -67,6 +68,11 @@ public class ElevatorIOFalcon implements ElevatorIO {
 
   @Override
   public void set(double position) {
-    elevatorLeaderMotor.setControl(voltPosition.withPosition(position));
+    System.out.println("ElevatorIOFalcon.set was called");
+    elevatorMotor.setControl(voltPosition.withPosition(position));
+    
+ 
+
+
   }
 }

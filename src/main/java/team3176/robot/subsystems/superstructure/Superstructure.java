@@ -16,6 +16,11 @@ public class Superstructure extends SubsystemBase {
     transfer = Transfer.getInstance();
   }
 
+    public Command moveIntake(double velocity){
+        return this.run(() -> intake.setIntakeMotor(velocity));
+    }
+
+    
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();

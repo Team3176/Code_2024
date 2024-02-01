@@ -31,24 +31,27 @@ public class Elevator extends SubsystemBase {
 
   public void setElevatorMotor(double position) {
 
-    if (limitswitch1.get() || limitswitch2.get()) {
+  //if(limitswitch1.get()  || limitswitch2.get()) {
+  if(limitswitch1.get() ) {
+    System.out.println("Limitswitch value:"+limitswitch1.get());
       io.set(position);
-    } else {
+    } else { 
       io.stop();
     }
   }
-
-  public Command moveElevator(double position) {
-    return this.run(() -> setElevatorMotor(position));
-  }
-
+    
+ 
+    
   @Override
-  public void periodic() {}
+  public void periodic() {
+  }
 
   public static Elevator getInstance() {
     if (instance == null) {
-      instance = new Elevator(new ElevatorIO() {});
+      if(Constants.getMode() == Mode.REAL) {
+        instance = new Elevator(new ElevatorIOFalcon() {});
+      }
     }
-    return instance;
+  return instance;
   }
 }

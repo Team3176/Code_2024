@@ -39,17 +39,14 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public Command moveIntake(double velocity) {
-    return this.run(() -> setIntakeMotor(velocity));
-  }
-
-  @Override
-  public void periodic() {}
-
-  public static Intake getInstance() {
-    if (instance == null) {
-      instance = new Intake(new IntakeIO() {});
-    }
-    return instance;
-  }
+    public static Intake getInstance() {
+        if (instance == null) {
+          if (Constants.getMode() == Mode.REAL) {}
+            instance = new Intake(new IntakeIOFalcon() {});
+        } else {
+          instance = new Intake(new IntakeIO() {});
+        }
+        return instance;
+      }
+    
 }

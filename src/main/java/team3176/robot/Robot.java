@@ -160,21 +160,21 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    robotContainer.checkAutonomousSelection();
-    robotContainer.checkAllaince();
+//    robotContainer.checkAutonomousSelection();
+//    robotContainer.checkAllaince();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();
-    robotContainer.setThrustBrake();
-    autonomousCommand = robotContainer.getAutonomousCommand();
+//    robotContainer.setThrustBrake();
+//    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
-    }
+//    if (autonomousCommand != null) {
+//      autonomousCommand.schedule();
+//    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -190,10 +190,10 @@ public class Robot extends LoggedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     robotContainer.clearCanFaults();
-    robotContainer.setThrustCoast();
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
+ //   robotContainer.setThrustCoast();
+ //  if (autonomousCommand != null) {
+ //     autonomousCommand.cancel();
+//    }
   }
 
   /** This function is called periodically during operator control. */
