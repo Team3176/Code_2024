@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure;
 
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -9,13 +8,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,7 +19,7 @@ import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TunablePID;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
-import org.littletonrobotics.junction.Logger;
+import team3176.robot.constants.SuperStructureConstants;
 
 public class Shooter extends SubsystemBase {
     private static Shooter instance;
@@ -82,4 +78,5 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
         PIDPositionPeriodic();
     }
+  }
 }

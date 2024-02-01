@@ -8,18 +8,19 @@
 package team3176.robot.subsystems.superstructure;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.util.Units;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
+
 /** Template hardware interface for a closed loop subsystem. */
-public class TransferIOSpark implements TransferIO{
-  
+public class TransferIOSpark implements TransferIO {
+
   private CANSparkMax armController;
   private CANcoder armEncoder;
+
   public TransferIOSpark() {
     armController = new CANSparkMax(Hardwaremap.transfer_CID, MotorType.kBrushless);
     armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
@@ -35,21 +36,23 @@ public class TransferIOSpark implements TransferIO{
     inputs.CurrentAmps = new double[] {armController.getOutputCurrent()};
     inputs.TempCelcius = new double[] {armController.getMotorTemperature()};
   }
+
   @Override
   public void set(double percentOuput) {
     armController.set(percentOuput);
   }
+
   @Override
   public void setCoastMode(boolean isCoastMode) {
-    if(isCoastMode) {
+    if (isCoastMode) {
       armController.setIdleMode(IdleMode.kCoast);
     } else {
       armController.setIdleMode(IdleMode.kBrake);
     }
   }
+
   @Override
   public void reset() {
-    //to be implemented
+    // to be implemented
   }
 }
-

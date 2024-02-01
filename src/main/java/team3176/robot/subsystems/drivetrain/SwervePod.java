@@ -8,8 +8,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -69,7 +67,7 @@ public class SwervePod implements Subsystem {
     this.desiredOptimizedAzimuthPosition = 0.0;
 
     // this.kP_Azimuth = 0.006;
-    offset = new LoggedTunableNumber("Offsets/Module"+ this.id, io.getOffset().getDegrees());
+    offset = new LoggedTunableNumber("Offsets/Module" + this.id, io.getOffset().getDegrees());
     velMax.initDefault(900);
     velAcc.initDefault(900);
 
@@ -132,6 +130,7 @@ public class SwervePod implements Subsystem {
     return new SwerveModulePosition(
         this.deltaSimNoNoise, Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegreesSimNoNoise));
   }
+
   public double getVelocity() {
     double wheelVelocity = inputs.driveVelocityRadPerSec / (Math.PI * 2) * WHEEL_DIAMETER * Math.PI;
     return wheelVelocity;
@@ -161,7 +160,6 @@ public class SwervePod implements Subsystem {
   public double getThrustEncoderVelocity() {
     return inputs.driveVelocityRadPerSec;
   }
-
 
   @Override
   public void periodic() {
@@ -201,10 +199,8 @@ public class SwervePod implements Subsystem {
     // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) + "", id);
     io.setTurn(MathUtil.clamp(turnOutput, -turnMaxpercentLocal, turnMaxpercentLocal));
     Logger.recordOutput(
-        "Drivetrain/Module" + this.id + "/error",
-        turningPIDController.getPositionError());
-    Logger.recordOutput(
-        "Drivetrain/Module" + this.id + "/deltanonoise", this.deltaSimNoNoise);
+        "Drivetrain/Module" + this.id + "/error", turningPIDController.getPositionError());
+    Logger.recordOutput("Drivetrain/Module" + this.id + "/deltanonoise", this.deltaSimNoNoise);
     // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) +
     // "/setpoint",turningPIDController.getSetpoint().position);
     double angleErrorPenalty =
@@ -214,8 +210,10 @@ public class SwervePod implements Subsystem {
                     .angle
                     .minus(Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees))
                     .getRadians()));
-    Logger.recordOutput("Drivetrain/Module" + this.id + "/CommandOutput", desiredState.speedMetersPerSecond * angleErrorPenalty);
-    Logger.recordOutput("Drivetrain/Module" + this.id + "/MeasuredVelocity", getVelocity() );
+    Logger.recordOutput(
+        "Drivetrain/Module" + this.id + "/CommandOutput",
+        desiredState.speedMetersPerSecond * angleErrorPenalty);
+    Logger.recordOutput("Drivetrain/Module" + this.id + "/MeasuredVelocity", getVelocity());
     io.setDrive(desiredState.speedMetersPerSecond * angleErrorPenalty);
     // if(velAcc.hasChanged(hashCode()) || velMax.hasChanged(hashCode())){
     //     turningPIDController.setConstraints(new Constraints(velMax.get(),velAcc.get()));

@@ -7,25 +7,22 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
+
 /** Template hardware interface for a closed loop subsystem. */
-public class ShooterIOFalcon implements ShooterIO{
-  
+public class ShooterIOFalcon implements ShooterIO {
+
   private CANSparkMax armController;
   private CANcoder armEncoder;
+
   public ShooterIOFalcon() {
     armController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
     armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
@@ -40,13 +37,23 @@ public class ShooterIOFalcon implements ShooterIO{
     inputs.wheelVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
     inputs.pivotAppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
   }
+
   @Override
   public void setPivotVoltage(double voltage) {
     armController.setVoltage(voltage);
   }
+
+  @Override
+  public void setCoastMode(boolean isCoastMode) {
+    if (isCoastMode) {
+      armController.setIdleMode(IdleMode.kCoast);
+    } else {
+      armController.setIdleMode(IdleMode.kBrake);
+    }
+  }
+
   @Override
   public void reset() {
-    //to be implemented
+    // to be implemented
   }
 }
-

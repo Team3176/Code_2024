@@ -7,9 +7,6 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import org.littletonrobotics.junction.Logger;
-
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -17,8 +14,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import team3176.robot.constants.SuperStructureConstants;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
+import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOSim implements ShooterIO{
@@ -43,6 +41,7 @@ public class ShooterIOSim implements ShooterIO{
     inputs.wheelVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
     inputs.wheelAppliedVolts = wheelAppliedVolts;
   }
+
   @Override
   public void setWheelVoltage(double voltage) {
     wheelAppliedVolts = MathUtil.clamp(voltage,-12,12);
@@ -54,4 +53,3 @@ public class ShooterIOSim implements ShooterIO{
       pivotSim.setInputVoltage(pivotAppliedVolts);
   }
 }
-
