@@ -7,45 +7,47 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import org.littletonrobotics.junction.Logger;
-
-
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.Constants;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class ShooterIOSim implements ShooterIO{
-  
-  private SingleJointedArmSim armSim;
-  private double appliedVolts;
+public class ShooterIOSim implements ShooterIO {
+
+  private FlywheelSim wheelSim;
+  private SingleJointedArmSim pivotSim;
+
+  private double wheelAppliedVolts;
+  private double pivotAppliedVolts;
+
   public ShooterIOSim() {
-    armSim = new SingleJointedArmSim(DCMotor.getNEO(1), 75, 0.5, 0.7, -1.0*Math.PI, 3.14,true,0.0);
+    wheelSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    pivotSim =
+        new SingleJointedArmSim(DCMotor.getFalcon500(1), 50.0, 1.0, 0.2, 0.0, 1.0, false, 0.0);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    armSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position = Units.radiansToDegrees(armSim.getAngleRads()) + 90 + SuperStructureConstants.ARM_SIM_OFFSET;
-    inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();
-    inputs.AppliedVolts = appliedVolts;
-    inputs.CurrentAmps = new double[] {armSim.getCurrentDrawAmps()};
-    inputs.TempCelcius = new double[] {0.0};
-    Logger.recordOutput("Shooter/SimPos",armSim.getAngleRads());
+    wheelSim.update(Constants.LOOP_PERIODIC_SECS);
+    pivotSim.update(Constants.LOOP_PERIODIC_SECS);
+    inputs.pivotAppliedVolts = pivotAppliedVolts;
+    inputs.pivotPosition = Rotation2d.fromRadians(pivotSim.getAngleRads());
+    inputs.wheelVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
+    inputs.wheelAppliedVolts = wheelAppliedVolts;
   }
+
   @Override
-  public void set(double percentOuput) {
-    if(DriverStation.isEnabled()) {
-      appliedVolts = percentOuput * 12;
-    } else {
-      appliedVolts = 0.0;
-    }
-    appliedVolts = MathUtil.clamp(appliedVolts,-12,12);
-    armSim.setInputVoltage(appliedVolts);
+  public void setWheelVoltage(double voltage) {
+    wheelAppliedVolts = MathUtil.clamp(voltage, -12, 12);
+    wheelSim.setInputVoltage(wheelAppliedVolts);
+  }
+
+  @Override
+  public void setPivotVoltage(double voltage) {
+    pivotAppliedVolts = MathUtil.clamp(voltage, -12, 12);
+    pivotSim.setInputVoltage(pivotAppliedVolts);
   }
 }
-

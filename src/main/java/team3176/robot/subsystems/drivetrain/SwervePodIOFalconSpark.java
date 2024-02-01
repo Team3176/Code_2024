@@ -1,11 +1,8 @@
 package team3176.robot.subsystems.drivetrain;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -15,13 +12,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.MathUsageId;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-
-import com.revrobotics.CANSparkMax;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.constants.SwervePodHardwareID;
 
 public class SwervePodIOFalconSpark implements SwervePodIO {
@@ -53,36 +48,33 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
     this.id = id.SERIAL;
-    turnSparkMax = new CANSparkMax(sparkMaxID,MotorType.kBrushless);
+    turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID);
     azimuthEncoder = new CANcoder(id.CANCODER_CID);
-    
+
     offset = Rotation2d.fromDegrees(id.OFFSET);
     // reset the motor controllers
-    //thrustFalcon.configFactoryDefault();
+    // thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
     var thrustFalconConfig = new TalonFXConfiguration();
-   
 
     thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
     thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    //thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
-    
-    
-    thrustFalconConfig.Slot0.kP = 0.1; 
+    // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+
+    thrustFalconConfig.Slot0.kP = 0.1;
     thrustFalconConfig.Slot0.kI = 0.0;
     thrustFalconConfig.Slot0.kD = 0.0;
     thrustFalconConfig.Slot0.kV = 0.12;
-    
 
     thrustFalcon.getConfigurator().apply(thrustFalconConfig);
     // turnSparkMax.setOpenLoopRampRate(0.0);
     turnSparkMax.setSmartCurrentLimit(25);
     turnSparkMax.setInverted(true);
 
-    
     var azimuthEncoderConfig = new CANcoderConfiguration();
-    azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    azimuthEncoderConfig.MagnetSensor.AbsoluteSensorRange =
+        AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     azimuthEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // TODO: convert offset values to be from -1 to 1 in revolution instead of encoder tics;
     // Comment out line below to test Akit way
@@ -97,16 +89,15 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     driveTemps = thrustFalcon.getDeviceTemp();
 
     turnAbsolutePosition = azimuthEncoder.getAbsolutePosition();
+    BaseStatusSignal.setUpdateFrequencyForAll(100.0, drivePosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0, drivePosition);
-    BaseStatusSignal.setUpdateFrequencyForAll(
-          50.0,
-          driveVelocity,
-          driveAppliedVolts,
-          driveCurrentStator,
-          driveCurrentSupply,
-          driveTemps,
-          turnAbsolutePosition);
+        50.0,
+        driveVelocity,
+        driveAppliedVolts,
+        driveCurrentStator,
+        driveCurrentSupply,
+        driveTemps,
+        turnAbsolutePosition);
     thrustFalcon.optimizeBusUtilization();
   }
 
@@ -120,18 +111,27 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         driveCurrentSupply,
         driveTemps,
         turnAbsolutePosition);
-    inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble())* (THRUST_GEAR_RATIO);
-    inputs.driveVelocityRadPerSec = 
-    Units.rotationsToRadians(driveVelocity.getValueAsDouble())* (THRUST_GEAR_RATIO);
+    inputs.drivePositionRad =
+        Units.rotationsToRadians(drivePosition.getValueAsDouble()) * (THRUST_GEAR_RATIO);
+    inputs.driveVelocityRadPerSec =
+        Units.rotationsToRadians(driveVelocity.getValueAsDouble()) * (THRUST_GEAR_RATIO);
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmpsStator = new double[] {driveCurrentStator.getValueAsDouble()};
     inputs.driveCurrentAmpsSupply = new double[] {driveCurrentSupply.getValueAsDouble()};
     inputs.driveTempCelcius = new double[] {driveTemps.getValueAsDouble()};
 
-    inputs.turnAbsolutePositionDegrees = MathUtil.inputModulus(Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).minus(offset).getDegrees(), -180, 180);
-    Logger.recordOutput("Drivetrain/IO/raw/rawNoOffset_enc" + id, turnAbsolutePosition.getValueAsDouble());
-    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id , Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
-    
+    inputs.turnAbsolutePositionDegrees =
+        MathUtil.inputModulus(
+            Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
+                .minus(offset)
+                .getDegrees(),
+            -180,
+            180);
+    Logger.recordOutput(
+        "Drivetrain/IO/raw/rawNoOffset_enc" + id, turnAbsolutePosition.getValueAsDouble());
+    Logger.recordOutput(
+        "Drivetrain/IO/degreesNoOffset_enc" + id,
+        Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
 
     inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
@@ -144,8 +144,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     double velRotationsPerSec =
         velMetersPerSecond
             * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI))
-            * (1.0 / THRUST_GEAR_RATIO)
-    ;
+            * (1.0 / THRUST_GEAR_RATIO);
     thrustFalcon.setControl(this.thrustVelocity.withVelocity(velRotationsPerSec));
   }
 
@@ -177,7 +176,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   @Override
   public Rotation2d getOffset() {
-      return this.offset;
+    return this.offset;
   }
 
   @Override
