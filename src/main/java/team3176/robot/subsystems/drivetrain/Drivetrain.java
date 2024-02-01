@@ -42,6 +42,9 @@ import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.swerve.ModuleLimits;
+import team3176.robot.util.swerve.SwerveSetpoint;
+import team3176.robot.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -68,16 +71,17 @@ public class Drivetrain extends SubsystemBase {
   private ArrayList<SwervePod> pods;
 
   Rotation2d fieldAngleOffset = Rotation2d.fromDegrees(0.0);
-
+  public static final Translation2d[] SwerveModuleTranslations = {
+    new Translation2d(LENGTH / 2.0, -WIDTH / 2.0), // FR where +x=forward and -y=starboard
+    new Translation2d(LENGTH / 2.0, WIDTH / 2.0), // FL where +x=forward and +y=port
+    new Translation2d(-LENGTH / 2.0, WIDTH / 2.0), // BL where -x=backward(aft) and +y=port
+    new Translation2d(-LENGTH / 2.0, -WIDTH / 2.0) // BR where -x=backward(aft) and -y=starboard
+  };
   public static final SwerveDriveKinematics kinematics =
-      new SwerveDriveKinematics(
-          new Translation2d(LENGTH / 2.0, -WIDTH / 2.0), // FR where +x=forward and -y=starboard
-          new Translation2d(LENGTH / 2.0, WIDTH / 2.0), // FL where +x=forward and +y=port
-          new Translation2d(-LENGTH / 2.0, WIDTH / 2.0), // BL where -x=backward(aft) and +y=port
-          new Translation2d(
-              -LENGTH / 2.0, -WIDTH / 2.0) // BR where -x=backward(aft) and -y=starboard
-          );
-
+      new SwerveDriveKinematics(SwerveModuleTranslations);
+  // TODO: Update values
+  public static ModuleLimits moduleLimits =
+      new ModuleLimits(4.2, 20.0, Units.degreesToRadians(1080.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
@@ -88,7 +92,16 @@ public class Drivetrain extends SubsystemBase {
   private GyroIOInputs inputs;
   Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
-
+  SwerveSetpointGenerator setpointGenerator;
+  SwerveSetpoint prevSetpoint =
+      new SwerveSetpoint(
+          new ChassisSpeeds(),
+          new SwerveModuleState[] {
+            new SwerveModuleState(),
+            new SwerveModuleState(),
+            new SwerveModuleState(),
+            new SwerveModuleState()
+          });
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
@@ -184,6 +197,11 @@ public class Drivetrain extends SubsystemBase {
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
+    setpointGenerator =
+        SwerveSetpointGenerator.builder()
+            .kinematics(kinematics)
+            .moduleLocations(SwerveModuleTranslations)
+            .build();
   }
 
   // Prevents more than one instance of drivetrian
@@ -200,12 +218,25 @@ public class Drivetrain extends SubsystemBase {
 
   public void driveVelocity(ChassisSpeeds speeds) {
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
+    Logger.recordOutput(
+        "SwerveStates/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
+    SwerveSetpoint output =
+        setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
+    SwerveModuleState[] podStates = output.moduleStates();
+    prevSetpoint = output;
+    // SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
     for (int idx = 0; idx < (pods.size()); idx++) {
       optimizedStates[idx] = pods.get(idx).setModule(podStates[idx]);
     }
+    Logger.recordOutput(
+        "Drivetrain/speeds",
+        new double[] {
+          output.chassisSpeeds().vxMetersPerSecond,
+          output.chassisSpeeds().vyMetersPerSecond,
+          output.chassisSpeeds().omegaRadiansPerSecond
+        });
     Logger.recordOutput("Drivetrain/Setpoints", podStates);
     Logger.recordOutput("Drivetrain/SetpointsOptimized", optimizedStates);
   }
