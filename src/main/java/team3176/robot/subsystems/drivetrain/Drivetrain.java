@@ -81,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
       new SwerveDriveKinematics(SwerveModuleTranslations);
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(4.2, 20.0, Units.degreesToRadians(1080.0));
+      new ModuleLimits(4.2, 8.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
