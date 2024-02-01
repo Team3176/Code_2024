@@ -238,7 +238,7 @@ public class Transfer extends SubsystemBase {
     // Pose3d elbow = new Pose3d(-0.106, 0.0, 0.779603, new Rotation3d(0.0,
     // Units.degreesToRadians(angle), 0.0));
     Pose3d[] arm_joints = {shoulder, elbow};
-    Logger.recordOutput("Arm/visual", arm_joints);
+    Logger.recordOutput("Transfer/visual", arm_joints);
     // SmartDashboard.putNumber("Arm_Position", armEncoder.getAbsolutePosition());
     // SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() -
     // SuperStructureConstants.ARM_ZERO_POS);
