@@ -46,7 +46,7 @@ public class SwervePod implements Subsystem {
   private String[] podNames = {"FR", "FL", "BL", "BR"};
 
   private LoggedTunableNumber offset;
-  private double turnMaxpercentLocal = 0.4;
+  private double turnMaxpercentLocal = 0.7;
   private double lastDistance = 0.0;
   private double lastDistanceSimNoNoise = 0.0;
   private double delta = 0.0;

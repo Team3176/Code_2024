@@ -218,8 +218,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void driveVelocity(ChassisSpeeds speeds) {
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    Logger.recordOutput("Drivetrain/speedsRaw", discreteSpeeds);
     Logger.recordOutput(
-        "SwerveStates/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
+        "SwerveSetpoints/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
     SwerveSetpoint output =
         setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
     SwerveModuleState[] podStates = output.moduleStates();
@@ -231,14 +232,14 @@ public class Drivetrain extends SubsystemBase {
       optimizedStates[idx] = pods.get(idx).setModule(podStates[idx]);
     }
     Logger.recordOutput(
-        "Drivetrain/speeds",
+        "Drivetrain/speedsOptimized",
         new double[] {
           output.chassisSpeeds().vxMetersPerSecond,
           output.chassisSpeeds().vyMetersPerSecond,
           output.chassisSpeeds().omegaRadiansPerSecond
         });
-    Logger.recordOutput("Drivetrain/Setpoints", podStates);
-    Logger.recordOutput("Drivetrain/SetpointsOptimized", optimizedStates);
+    Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
+    Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
 
   public void driveVelocityFieldCentric(ChassisSpeeds speeds) {
@@ -283,7 +284,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocitoes) for all of the modules. */
-  @AutoLogOutput
+  @AutoLogOutput(key = "SwerveSetpoints/ModuleStates")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
