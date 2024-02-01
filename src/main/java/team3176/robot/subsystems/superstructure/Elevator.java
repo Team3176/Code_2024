@@ -2,8 +2,9 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team3176.robot.constants.*;
+import team3176.robot.constants.RobotConstants.Mode;
 import team3176.robot.constants.SuperStructureConstants;
 
 /** Elevator handles the height of the intake from the ground. */
@@ -31,27 +32,24 @@ public class Elevator extends SubsystemBase {
 
   public void setElevatorMotor(double position) {
 
-  //if(limitswitch1.get()  || limitswitch2.get()) {
-  if(limitswitch1.get() ) {
-    System.out.println("Limitswitch value:"+limitswitch1.get());
+    // if(limitswitch1.get()  || limitswitch2.get()) {
+    if (limitswitch1.get()) {
+      System.out.println("Limitswitch value:" + limitswitch1.get());
       io.set(position);
-    } else { 
+    } else {
       io.stop();
     }
   }
-    
- 
-    
+
   @Override
-  public void periodic() {
-  }
+  public void periodic() {}
 
   public static Elevator getInstance() {
     if (instance == null) {
-      if(Constants.getMode() == Mode.REAL) {
+      if (RobotConstants.getMode() == Mode.REAL) {
         instance = new Elevator(new ElevatorIOFalcon() {});
       }
     }
-  return instance;
+    return instance;
   }
 }

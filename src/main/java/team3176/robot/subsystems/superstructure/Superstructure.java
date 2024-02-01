@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
@@ -16,11 +17,18 @@ public class Superstructure extends SubsystemBase {
     transfer = Transfer.getInstance();
   }
 
-    public Command moveIntake(double velocity){
-        return this.run(() -> intake.setIntakeMotor(velocity));
-    }
+  public Command positiveIntake(double velocity) {
+    return this.run(() -> intake.setIntakeMotor(velocity));
+  }
 
-    
+  public Command negativeIntake(double velocity) {
+    return this.run(() -> intake.setIntakeMotor(-velocity));
+  }
+
+  public Command moveElevator(double position) {
+    return this.run(() -> elevator.setElevatorMotor(position));
+  }
+
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();

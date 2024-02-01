@@ -31,9 +31,9 @@ public class ElevatorIOFalcon implements ElevatorIO {
     DigitalInput limitswitch1 = new DigitalInput(Hardwaremap.elevatorLeaderLimitSwitch_DIO);
     DigitalInput limitswitch2 = new DigitalInput(Hardwaremap.elevatorFollowerLimitSwitch_DIO);
     elevatorLeaderMotor =
-        new TalonFX(Hardwaremap.elevatorLeaderMotor_CID, Hardwaremap.elevatorLeaderMotor_CBN);
+        new TalonFX(Hardwaremap.elevatorLeader_CID, Hardwaremap.elevatorLeaderMotor_CBN);
     elevatorFollowerMotor =
-        new TalonFX(Hardwaremap.elevatorFollowerMotor_CID, Hardwaremap.elevatorFollowerMotor_CBN);
+        new TalonFX(Hardwaremap.elevatorFollower_CID, Hardwaremap.elevatorFollowerMotor_CBN);
     // config setting
     configs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     configs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
@@ -53,8 +53,8 @@ public class ElevatorIOFalcon implements ElevatorIO {
     /* Retry config apply up to 5 times, report if failure */
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = elevatorMotor.getConfigurator().apply(configs);
-      System.out.println("Applied configs to: " + Hardwaremap.elevator_CID);
+      status = elevatorLeaderMotor.getConfigurator().apply(configs);
+      System.out.println("Applied configs to: " + Hardwaremap.elevatorLeader_CID);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
@@ -69,10 +69,6 @@ public class ElevatorIOFalcon implements ElevatorIO {
   @Override
   public void set(double position) {
     System.out.println("ElevatorIOFalcon.set was called");
-    elevatorMotor.setControl(voltPosition.withPosition(position));
-    
- 
-
-
+    elevatorLeaderMotor.setControl(voltPosition.withPosition(position));
   }
 }

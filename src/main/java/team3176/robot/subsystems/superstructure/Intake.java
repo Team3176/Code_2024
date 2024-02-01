@@ -2,8 +2,9 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team3176.robot.constants.*;
+import team3176.robot.constants.RobotConstants.Mode;
 import team3176.robot.constants.SuperStructureConstants;
 
 public class Intake extends SubsystemBase {
@@ -39,14 +40,13 @@ public class Intake extends SubsystemBase {
     }
   }
 
-    public static Intake getInstance() {
-        if (instance == null) {
-          if (Constants.getMode() == Mode.REAL) {}
-            instance = new Intake(new IntakeIOFalcon() {});
-        } else {
-          instance = new Intake(new IntakeIO() {});
-        }
-        return instance;
-      }
-    
+  public static Intake getInstance() {
+    if (instance == null) {
+      if (RobotConstants.getMode() == Mode.REAL) {}
+      instance = new Intake(new IntakeIOFalcon() {});
+    } else {
+      instance = new Intake(new IntakeIO() {});
+    }
+    return instance;
+  }
 }

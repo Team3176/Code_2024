@@ -5,8 +5,8 @@ public class Hardwaremap {
   /*
    * Superstructer CIDs & CBNs
    */
-  public static final int elevatorLeaderMotor_CID = 3;
-  public static final int elevatorFollowerMotor_CID = 4;
+  public static final int elevatorLeader_CID = 3;
+  public static final int elevatorFollower_CID = 4;
   public static final int transfer_CID = 5;
   public static final int shooter_CID = 6;
   public static final int intakeRoller_CID = 7;
