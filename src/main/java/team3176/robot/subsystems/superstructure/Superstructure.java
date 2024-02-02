@@ -18,7 +18,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(velocity));
+    return this.run(() -> intake.setIntakeMotor(50));
   }
 
   public Command negativeIntake(double velocity) {
@@ -26,7 +26,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command moveElevator(double position) {
-    return this.run(() -> elevator.setElevatorMotor(position));
+    return this.run(() -> elevator.setElevatorMotor(.5));
   }
 
   public static Superstructure getInstance() {

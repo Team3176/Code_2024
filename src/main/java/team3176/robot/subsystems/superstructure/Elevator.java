@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.constants.*;
@@ -12,8 +11,6 @@ public class Elevator extends SubsystemBase {
   private static Elevator instance;
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-  private final DigitalInput limitswitch1 = new DigitalInput(3);
-  private final DigitalInput limitswitch2 = new DigitalInput(4);
 
   private Elevator(ElevatorIO io) {
     this.io = io;
@@ -33,12 +30,7 @@ public class Elevator extends SubsystemBase {
   public void setElevatorMotor(double position) {
 
     // if(limitswitch1.get()  || limitswitch2.get()) {
-    if (limitswitch1.get()) {
-      System.out.println("Limitswitch value:" + limitswitch1.get());
-      io.set(position);
-    } else {
-      io.stop();
-    }
+    io.set(position);
   }
 
   @Override

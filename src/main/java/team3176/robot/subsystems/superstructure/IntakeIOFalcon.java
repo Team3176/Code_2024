@@ -21,19 +21,19 @@ public class IntakeIOFalcon implements IntakeIO {
 
   TalonFX rollerController, pivotController;
   VelocityVoltage voltVelocity;
-  DigitalInput linebreak1 = new DigitalInput(9);
-  DigitalInput linebreak2 = new DigitalInput(9);
-  NeutralOut v_brake;
+  DigitalInput linebreak1;
+  DigitalInput linebreak2;
+  NeutralOut brake;
   XboxController joystick;
 
   public IntakeIOFalcon() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     TalonFXConfiguration pivotConfigs = new TalonFXConfiguration();
-    NeutralOut v_brake = new NeutralOut();
-    VelocityVoltage voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
-    DigitalInput linebreak1 = new DigitalInput(9);
-    DigitalInput linebreak2 = new DigitalInput(8);
+    brake = new NeutralOut();
+    voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
+    linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
+    linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
 
@@ -65,11 +65,24 @@ public class IntakeIOFalcon implements IntakeIO {
   }
 
   public void stopRoller() {
-    rollerController.setControl(v_brake);
+    rollerController.setControl(brake);
   }
 
   @Override
   public void setRoller(double velocity) {
-    double desiredRotations = joystick.getLeftX() * 10;
+    if (linebreak1.get() || linebreak2.get()) {
+      System.out.println("Limitswitch value:" + linebreak1.get());
+      rollerController.set(50);
+    } else {
+      stopRoller();
+    }
   }
+
+  // public boolean getlinebreak1() {
+  // return linebreak1.get();
+  // }
+
+  // public boolean getlinebreak2() {
+  // return linebreak1.get();
+  // }
 }

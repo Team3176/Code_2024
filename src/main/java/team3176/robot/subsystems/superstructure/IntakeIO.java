@@ -31,6 +31,14 @@ public interface IntakeIO {
 
   public default void setCoastMode(boolean isCoastMode) {}
 
+  // public default boolean getlinebreak1() {
+  // return true;
+  // }
+
+  // public default boolean getlinebreak2() {
+  // return true;
+  // }
+
   public default void reset() {}
 
   public default void stopRoller() {}
