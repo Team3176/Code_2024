@@ -9,6 +9,21 @@
       "/SmartDashboard/autonChoice": "String Chooser"
     }
   },
+  "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
+    "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Auton Choice": {
+          "open": true
+        }
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
   }
