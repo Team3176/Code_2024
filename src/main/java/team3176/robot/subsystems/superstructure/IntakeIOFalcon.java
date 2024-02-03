@@ -22,7 +22,7 @@ public class IntakeIOFalcon implements IntakeIO {
   TalonFX rollerController, pivotController;
   VelocityVoltage voltVelocity;
   DigitalInput linebreak1;
-  DigitalInput linebreak2;
+  // DigitalInput linebreak2;
   NeutralOut brake;
   XboxController joystick;
 
@@ -33,7 +33,7 @@ public class IntakeIOFalcon implements IntakeIO {
     brake = new NeutralOut();
     voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
-    linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
+    // linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
 
@@ -70,7 +70,7 @@ public class IntakeIOFalcon implements IntakeIO {
 
   @Override
   public void setRoller(double velocity) {
-    if (linebreak1.get() || linebreak2.get()) {
+    if (linebreak1.get()) { // ||linebreak2.get()) {
       System.out.println("Limitswitch value:" + linebreak1.get());
       rollerController.set(50);
     } else {

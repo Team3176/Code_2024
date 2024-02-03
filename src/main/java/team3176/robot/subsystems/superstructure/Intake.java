@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.constants.*;
 import team3176.robot.constants.RobotConstants.Mode;
-import team3176.robot.constants.SuperStructureConstants;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
@@ -29,6 +28,10 @@ public class Intake extends SubsystemBase {
 
   public void setIntakeMotor(double velocity) {
     io.setRoller(velocity);
+  }
+
+  public void setStop() {
+    io.setRoller(0);
   }
 
   public static Intake getInstance() {
