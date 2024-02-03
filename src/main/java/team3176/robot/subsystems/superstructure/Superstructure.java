@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,7 +18,9 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(50)).until(() -> intake.getIsLinebreakOne()).andThen(() -> intake.setStop());
+    return this.run(() -> intake.setIntakeMotor(50))
+        .until(() -> intake.getIsLinebreakOne())
+        .andThen(() -> intake.setStop());
   }
 
   public Command negativeIntake(double velocity) {

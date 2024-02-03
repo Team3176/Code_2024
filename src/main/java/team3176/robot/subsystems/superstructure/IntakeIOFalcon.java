@@ -12,7 +12,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import team3176.robot.constants.Hardwaremap;
 
@@ -21,7 +20,7 @@ public class IntakeIOFalcon implements IntakeIO {
 
   TalonFX rollerController, pivotController;
   VelocityVoltage voltVelocity;
-  DigitalInput linebreak1;
+  // DigitalInput limitswitch1;
   // DigitalInput linebreak2;
   NeutralOut brake;
   XboxController joystick;
@@ -32,7 +31,7 @@ public class IntakeIOFalcon implements IntakeIO {
     TalonFXConfiguration pivotConfigs = new TalonFXConfiguration();
     brake = new NeutralOut();
     voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
-    linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
+    // limitswitch1 = new DigitalInput(Hardwaremap.intakeLimitswitch1_DIO);
     // linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
@@ -51,7 +50,7 @@ public class IntakeIOFalcon implements IntakeIO {
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.isLinebreakOne = linebreak1.get();
+    // inputs.isLimitswitchOne = limitswitch1.get();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -72,12 +71,7 @@ public class IntakeIOFalcon implements IntakeIO {
 
   @Override
   public void setRoller(double velocity) {
-    if (linebreak1.get()) { // ||linebreak2.get()) {
-      System.out.println("Limitswitch value:" + linebreak1.get());
-      rollerController.set(50);
-    } else {
-      stopRoller();
-    }
+    rollerController.set(50);
   }
 
   // public boolean getlinebreak1() {
