@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 
@@ -65,15 +68,21 @@ public class PhotonVisionSystem extends SubsystemBase {
               Units.degreesToRadians(-180 - 20)));
   private ArrayList<LoggedPhotonCam> cameras = new ArrayList<LoggedPhotonCam>();
 
+  public double noteYaw;
+  public double notePitch;
+  public boolean seeNote;
+
   List<Pose3d> visionTargets = new ArrayList<>();
 
   AprilTagFieldLayout field;
   private static PhotonVisionSystem instance;
   private SimPhotonVision simInstance;
   EstimatedRobotPose currentEstimate;
+  PhotonCamera notecamera;
 
   private PhotonVisionSystem() {
     cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
+    notecamera = new PhotonCamera("notecam");
     // cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
     // cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
     // cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
@@ -105,5 +114,21 @@ public class PhotonVisionSystem extends SubsystemBase {
     }
     Logger.recordOutput(
         "photonvision/visionTargets", visionTargets.toArray(new Pose3d[visionTargets.size()]));
+
+    PhotonPipelineResult result = notecamera.getLatestResult();
+    Logger.recordOutput("photonvision/noteraw", result);
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      Logger.recordOutput("photonvision/noteyaw", target.getYaw());
+      Logger.recordOutput("photonvision/notepitch", target.getPitch());
+      noteYaw = target.getYaw();
+      notePitch = target.getPitch();
+      double noteskew = target.getSkew();
+      double notearea = target.getArea();
+      seeNote = true;
+
+    } else {
+      seeNote = false;
+    }
   }
 }

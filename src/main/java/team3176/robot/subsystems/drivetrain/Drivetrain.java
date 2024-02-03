@@ -42,6 +42,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.LocalADStarAK;
 import team3176.robot.util.swerve.ModuleLimits;
 import team3176.robot.util.swerve.SwerveSetpoint;
@@ -468,6 +469,25 @@ public class Drivetrain extends SubsystemBase {
     // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
     // Replace with your command
 
+  }
+
+  public Command chaseNote() {
+    return this.run(
+        () -> {
+          if (PhotonVisionSystem.getInstance().seeNote) {
+            double yawError = -8 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -20 - PhotonVisionSystem.getInstance().notePitch;
+            ChassisSpeeds speed =
+                new ChassisSpeeds(
+                    MathUtil.clamp(pitchError * (1 / 10.0), -1.0, 1.0), 0, yawError * (1 / 20.0));
+            driveVelocity(speed);
+          } else {
+            if (PhotonVisionSystem.getInstance().notePitch < -12) {
+              driveVelocity(new ChassisSpeeds(-0.7, 0.0, 0.0));
+            }
+            driveVelocity(new ChassisSpeeds());
+          }
+        });
   }
 
   private void resetPoseToVision() {

@@ -108,7 +108,12 @@ public class RobotContainer {
       use the whileTrue so if the button is released the command is cancelled
       pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
     */
-    controller.transStick.button(1).whileTrue(intake.runIntake(-1));
+    controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
+
+    controller
+        .transStick
+        .button(3)
+        .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
     controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
 

@@ -82,9 +82,10 @@ public class LoggedPhotonCam {
   }
 
   public void generateLoggingData(PhotonPipelineResult results) {
+    targets.clear();
     if (results.hasTargets()) {
       Pose3d current3d = new Pose3d(Drivetrain.getInstance().getPose());
-      targets.clear();
+
       estimates.clear();
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
@@ -140,7 +141,8 @@ public class LoggedPhotonCam {
                   .minus(new Pose3d(Drivetrain.getInstance().getPose()))
                   .getTranslation()
                   .getNorm()
-              > 1.0) {
+              > 1.0
+          || distance > 7.0) {
         return;
       }
     }
