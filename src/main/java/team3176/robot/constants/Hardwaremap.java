@@ -20,6 +20,9 @@ public class Hardwaremap {
   public static final String elevatorFollowerMotor_CBN = "rio";
   public static final String transfer_CBN = "rio";
   public static final String shooter_CBN = "rio";
+  public static final String shooterWheelPort_CBN = "rio";
+  public static final String shooterWheelStarbrd_CBN = "rio";
+  public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "rio";
   public static final String intakePivot_CBN = "rio";
   public static String PDH_CBN = "rio";

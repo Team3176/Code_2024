@@ -32,9 +32,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 public class Shooter extends SubsystemBase {
     private static Shooter instance;
     private final ShooterIO io;
-    private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-    private TalonFXConfiguration configsWheelPort = new TalonFXConfiguration();
-    private TalonFXConfiguration configsWheelStarbrd = new TalonFXConfiguration();
+    private TalonFXConfiguration configsWheelPort;
+    private TalonFXConfiguration configsWheelStarbrd;
+    private TalonFXConfiguration configsPivot;
         
     private final TunablePID pivotPIDController;
     private Rotation2d pivotSetpoint = new Rotation2d();
@@ -45,24 +45,9 @@ public class Shooter extends SubsystemBase {
         this.io = io;
         this.pivotPIDController = new TunablePID("shooter/pid",0.0,0.0,0.0);
         pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
-          
-        /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */
-        configsWheelPort.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
-        configsWheelPort.Slot0.kI = 0.5; // An error of 1 rotation per second increases output by 0.5V every second
-        configsWheelPort.Slot0.kD = 0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
-        configsWheelPort.Slot0.kV = 0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / Rotation per second
-        // Peak output of 8 volts
-        configsWheelPort.Voltage.PeakForwardVoltage = 8;
-        configsWheelPort.Voltage.PeakReverseVoltage = -8;
-
-        configsWheelStarbrd.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
-        configsWheelStarbrd.Slot0.kI = 0.5; // An error of 1 rotation per second increases output by 0.5V every second
-        configsWheelStarbrd.Slot0.kD = 0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
-        configsWheelStarbrd.Slot0.kV = 0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / Rotation per second
-        // Peak output of 8 volts
-        configsWheelStarbrd.Voltage.PeakForwardVoltage = 8;
-        configsWheelStarbrd.Voltage.PeakReverseVoltage = -8;
-
+    configsWheelPort = new TalonFXConfiguration();
+    configsWheelStarbrd = new TalonFXConfiguration();
+    configsPivot = new TalonFXConfiguration();
 
     }
 
