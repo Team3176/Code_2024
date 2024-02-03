@@ -40,11 +40,17 @@ public class ShooterIOSim implements ShooterIO{
     pivotSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.pivotAppliedVolts = pivotAppliedVolts;
     inputs.pivotPosition = Rotation2d.fromRadians(pivotSim.getAngleRads());
-    inputs.wheelVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
-    inputs.wheelAppliedVolts = wheelAppliedVolts;
+    inputs.wheelPortVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
+    inputs.wheelStarbrdVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
+    inputs.wheelPortAppliedVolts = wheelAppliedVolts;
+    inputs.wheelStarbrdAppliedVolts = wheelAppliedVolts;
   }
   @Override
-  public void setWheelVoltage(double voltage) {
+  public void setWheelPortVoltage(double voltage) {
+    wheelAppliedVolts = MathUtil.clamp(voltage,-12,12);
+    wheelSim.setInputVoltage(wheelAppliedVolts);
+  }
+  public void setWheelStarbrdVoltage(double voltage) {
     wheelAppliedVolts = MathUtil.clamp(voltage,-12,12);
     wheelSim.setInputVoltage(wheelAppliedVolts);
   }
