@@ -34,6 +34,10 @@ public class Intake extends SubsystemBase {
     io.setRoller(0);
   }
 
+  public boolean getIsLinebreakOne() {
+    return inputs.isLinebreakOne;
+  }
+
   public static Intake getInstance() {
     if (instance == null) {
       if (RobotConstants.getMode() == Mode.REAL) {}

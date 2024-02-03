@@ -50,7 +50,9 @@ public class IntakeIOFalcon implements IntakeIO {
   }
   /** Updates the set of loggable inputs. */
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {}
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.isLinebreakOne = linebreak1.get();
+  }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
     /* Retry config apply up to 5 times, report if failure */

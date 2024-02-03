@@ -10,7 +10,6 @@ public class Superstructure extends SubsystemBase {
   private Intake intake;
   private Transfer transfer;
   private Shooter shooter;
-  private static DigitalInput linebreak1;
 
   public Superstructure() {
     elevator = Elevator.getInstance();
@@ -20,7 +19,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.startEnd(() -> intake.setIntakeMotor(50), () -> intake.setStop());
+    return this.run(() -> intake.setIntakeMotor(50)).until(() -> intake.getIsLinebreakOne()).andThen(() -> intake.setStop());
   }
 
   public Command negativeIntake(double velocity) {
@@ -29,10 +28,6 @@ public class Superstructure extends SubsystemBase {
 
   public Command moveElevator(double position) {
     return this.run(() -> elevator.setElevatorMotor(.5));
-  }
-
-  public boolean linebreak1() {
-    return linebreak1.get();
   }
 
   public static Superstructure getInstance() {

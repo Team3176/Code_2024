@@ -140,7 +140,7 @@ public class RobotContainer {
     controller
         .operator
         .y()
-        .onTrue(superstructure.positiveIntake(50).until(() -> superstructure.linebreak1()));
+        .onTrue(superstructure.positiveIntake(50));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 

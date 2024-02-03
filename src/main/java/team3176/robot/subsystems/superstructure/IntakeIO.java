@@ -19,13 +19,16 @@ public interface IntakeIO {
     public double AppliedVolts = 0.0;
     public double[] CurrentAmps = new double[] {};
     public double[] TempCelcius = new double[] {};
+    public boolean isLinebreakOne = true;
+    public boolean isLinebreakTwo = true;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(IntakeIOInputs inputs) {}
+  public default void updateInputs(IntakeIOInputs inputs) {
+  }
 
   public default void setRoller(double percentOutput) {}
 
