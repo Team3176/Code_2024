@@ -23,6 +23,8 @@ import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.subsystems.superstructure.Shooter.States;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -51,7 +53,6 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.SHOOTER_kg);
         SmartDashboard.putNumber("arm_angle", 0.0);
         SmartDashboard.putNumber("arm_height", 1.18);
-        setArmPidPosMode();
     }
 
     public void setCoastMode() {
@@ -74,13 +75,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public static Shooter getInstance() {
-        if (instance == null){
+        if (instance == null) {
             if(Constants.getMode() != Mode.SIM) {
                 instance = new Shooter(new ShooterIOFalcon() {});
             } else {
-                instance = new Shooter(new ShooterIOSim() {});
+                return instance;
             }
-            
         }
         return instance;
     }
@@ -176,7 +176,7 @@ public class Shooter extends SubsystemBase {
         return this.runEnd(this::armAnalogDown, this::idle);
     }
     
-    @Override
+
     public void robotInit() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
   
@@ -217,26 +217,7 @@ public class Shooter extends SubsystemBase {
             setPIDPosition(armSetpointAngleRaw);
         }
     }
-    @Override
-    public void robotPeriodic() {
-        m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
-    }
-    @Override
-    public void ShooterPIDVelocity(double Joyvalue) {
-        if (joyValue > -0.1 && joyValue < 0.1) joyValue = 0;
-
-        double desiredRotationsPerSecond = joyValue * 50; // Go for plus/minus 10 rotations per second
-        if (Math.abs(desiredRotationsPerSecond) <= 1) { // Joystick deadzone
-        desiredRotationsPerSecond = 0;
-        }
-        if (m_joystick.getLeftBumper()) {
-        /* Use voltage velocity */
-        m_fx.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
-        return m_fx.getaver
-        }
-        else {
-        /* Disable the motor instead */
-        m_fx.setControl(m_brake);
+    
         
-  }
 }
+
