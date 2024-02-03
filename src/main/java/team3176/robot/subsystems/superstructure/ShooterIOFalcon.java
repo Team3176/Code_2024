@@ -11,38 +11,32 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
-/** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO{
   
-  private CANSparkMax armController;
-  private CANcoder armEncoder;
+  private TalonFX wheelPortController = new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+  private TalonFX wheelStarbrdController = new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+  private TalonFX pivotController = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooter_CBN);
+
+
   public ShooterIOFalcon() {
-    armController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
-    armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    armEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    armController.setOpenLoopRampRate(0.5);
+    wheelPortController.
+//    pivotController.
   }
-  /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    //TODO: garbage needed to compile nothing is correct
-    inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-    inputs.pivotAppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
+ //   inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
+//    inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
+//    inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
+//    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
   }
   @Override
   public void setPivotVoltage(double voltage) {
-    armController.setVoltage(voltage);
+    pivotController.setVoltage(voltage);
   }
   @Override
   public void reset() {
