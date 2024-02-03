@@ -7,8 +7,11 @@
 
 package team3176.robot.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 import team3176.robot.Constants;
 
@@ -17,7 +20,7 @@ import team3176.robot.Constants;
  * value not in dashboard.
  */
 public class LoggedTunableNumber {
-  private static final String TABLE_KEY = "TunableNumbers";
+  private static final String tableKey = "TunableNumbers";
 
   private final String key;
   private boolean hasDefault = false;
@@ -31,7 +34,7 @@ public class LoggedTunableNumber {
    * @param dashboardKey Key on dashboard
    */
   public LoggedTunableNumber(String dashboardKey) {
-    this.key = TABLE_KEY + "/" + dashboardKey;
+    this.key = tableKey + "/" + dashboardKey;
   }
 
   /**
@@ -55,7 +58,7 @@ public class LoggedTunableNumber {
       hasDefault = true;
       this.defaultValue = defaultValue;
       if (Constants.TUNING_MODE) {
-      dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
+        dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
       }
     }
   }
@@ -82,6 +85,7 @@ public class LoggedTunableNumber {
    *     otherwise.
    */
   public boolean hasChanged(int id) {
+    if (!Constants.TUNING_MODE) return false;
     double currentValue = get();
     Double lastValue = lastHasChangedValues.get(id);
     if (lastValue == null || currentValue != lastValue) {
@@ -90,5 +94,26 @@ public class LoggedTunableNumber {
     }
 
     return false;
+  }
+
+  /**
+   * Runs action if any of the tunableNumbers have changed
+   *
+   * @param id Unique identifier for the caller to avoid conflicts when shared between multiple *
+   *     objects. Recommended approach is to pass the result of "hashCode()"
+   * @param action Callback to run when any of the tunable numbers have changed. Access tunable
+   *     numbers in order inputted in method
+   * @param tunableNumbers All tunable numbers to check
+   */
+  public static void ifChanged(
+      int id, Consumer<double[]> action, LoggedTunableNumber... tunableNumbers) {
+    if (Arrays.stream(tunableNumbers).anyMatch(tunableNumber -> tunableNumber.hasChanged(id))) {
+      action.accept(Arrays.stream(tunableNumbers).mapToDouble(LoggedTunableNumber::get).toArray());
+    }
+  }
+
+  /** Runs action if any of the tunableNumbers have changed */
+  public static void ifChanged(int id, Runnable action, LoggedTunableNumber... tunableNumbers) {
+    ifChanged(id, values -> action.run(), tunableNumbers);
   }
 }

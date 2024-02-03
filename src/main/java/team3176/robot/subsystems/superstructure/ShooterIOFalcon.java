@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
@@ -34,23 +35,14 @@ public class ShooterIOFalcon implements ShooterIO{
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.Position = armEncoder.getAbsolutePosition().getValueAsDouble();
-    inputs.VelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-    inputs.AppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
-    inputs.CurrentAmps = new double[] {armController.getOutputCurrent()};
-    inputs.TempCelcius = new double[] {armController.getMotorTemperature()};
+    //TODO: garbage needed to compile nothing is correct
+    inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
   }
   @Override
-  public void set(double percentOuput) {
-    armController.set(percentOuput);
-  }
-  @Override
-  public void setCoastMode(boolean isCoastMode) {
-    if(isCoastMode) {
-      armController.setIdleMode(IdleMode.kCoast);
-    } else {
-      armController.setIdleMode(IdleMode.kBrake);
-    }
+  public void setPivotVoltage(double voltage) {
+    armController.setVoltage(voltage);
   }
   @Override
   public void reset() {

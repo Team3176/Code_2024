@@ -49,6 +49,7 @@ public class RobotContainer {
   private final RobotState robotState;
   private final Elevator elevator;
   private final Intake intake;
+  private final Shooter shooter;
   private PhotonVisionSystem vision;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
@@ -62,6 +63,7 @@ public class RobotContainer {
     robotState = RobotState.getInstance();
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
+    shooter = Shooter.getInstance();
     if(Constants.VISION_CONNECTED){
       vision = PhotonVisionSystem.getInstance();
     }
@@ -80,7 +82,7 @@ public class RobotContainer {
             () -> controller.getSpin() * 3,false).withName("default drive"));
     }
     NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-     NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+    NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
@@ -103,6 +105,7 @@ public class RobotContainer {
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
     //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
     //controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+    controller.transStick.button(2).onTrue(shooter.pivotSetPositionOnce(45)).onFalse(shooter.pivotSetPositionOnce(0));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
