@@ -110,7 +110,7 @@ public class RobotContainer {
     */
     controller.transStick.button(1).whileTrue(intake.runIntake(-1));
 
-    controller.transStick.button(2).onTrue(drivetrain.goToPoint(2, 2));
+    controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
 
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller

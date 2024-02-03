@@ -91,7 +91,7 @@ public class Drivetrain extends SubsystemBase {
   Rotation2d wheelOnlyHeading = new Rotation2d();
   private final GyroIO io;
   private GyroIOInputs inputs;
-  Pose3d visionPose3d;
+  public Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
   SwerveSetpointGenerator setpointGenerator;
   SwerveSetpoint prevSetpoint =
@@ -271,6 +271,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
+    visionPose3d = p;
     poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
   }
 
@@ -414,9 +415,8 @@ public class Drivetrain extends SubsystemBase {
           double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
 
           // Square values
-          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0);
+          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
           omega = Math.copySign(omega * omega, omega);
-
           // Calcaulate new linear velocity
           Translation2d linearVelocity =
               new Pose2d(new Translation2d(), linearDirection)
@@ -430,7 +430,9 @@ public class Drivetrain extends SubsystemBase {
 
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * MAX_WHEEL_SPEED, linearVelocity.getY() * MAX_WHEEL_SPEED, omega * 10.5);
+                  linearVelocity.getX() * MAX_WHEEL_SPEED,
+                  linearVelocity.getY() * MAX_WHEEL_SPEED,
+                  omega * 10.5);
           if (isFieldCentric) {
             driveVelocityFieldCentric(speeds);
           } else {
@@ -460,7 +462,7 @@ public class Drivetrain extends SubsystemBase {
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
     PathConstraints constraints =
-        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+        new PathConstraints(3.0, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     return AutoBuilder.pathfindToPose(targetPose, constraints);
     // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
     // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
