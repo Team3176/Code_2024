@@ -44,8 +44,16 @@ public class Intake extends SubsystemBase {
     io.setRoller(velocity);
   }
 
+  public void setPivotMotor(double position) {
+    io.setPivot(position);
+  }
+
   public void setStop() {
     io.stopRoller();
+  }
+
+  public void setPivotStop() {
+    io.stopPivot();
   }
 
   public boolean getIsLinebreakOne() {

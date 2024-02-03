@@ -10,7 +10,7 @@ public class Hardwaremap {
   public static final int transfer_CID = 5;
   public static final int shooter_CID = 6;
   public static final int intakeRoller_CID = 3;
-  public static final int intakePivot_CID = 8;
+  public static final int intakePivot_CID = 3;
   public static final int armEncoder_CID = 2;
   public static int PDH_CID = 1;
 

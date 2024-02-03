@@ -23,6 +23,14 @@ public class Superstructure extends SubsystemBase {
         .andThen(() -> intake.setStop());
   }
 
+  public Command movePivotUp(double position) {
+    return this.run(() -> intake.setPivotMotor(.25)).andThen(() -> intake.setPivotStop());
+  }
+
+  public Command movePivotDown(double position) {
+    return this.run(() -> intake.setPivotMotor(-position)).andThen(() -> intake.setPivotStop());
+  }
+
   public Command negativeIntake(double velocity) {
     return this.run(() -> intake.setIntakeMotor(-velocity));
   }

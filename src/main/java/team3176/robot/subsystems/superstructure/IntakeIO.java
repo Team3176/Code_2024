@@ -31,6 +31,8 @@ public interface IntakeIO {
 
   public default void setRoller(double percentOutput) {}
 
+  public default void setPivot(double percentOutput) {}
+
   public default void setCoastMode(boolean isCoastMode) {}
 
   // public default boolean getlinebreak1() {
@@ -44,4 +46,6 @@ public interface IntakeIO {
   public default void reset() {}
 
   public default void stopRoller() {}
+
+  public default void stopPivot() {}
 }
