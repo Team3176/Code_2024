@@ -26,10 +26,10 @@ public class ElevatorIOFalcon implements ElevatorIO {
 
   public ElevatorIOFalcon() {
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    NeutralOut brake = new NeutralOut();
-    PositionVoltage voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
-    DigitalInput limitswitch1 = new DigitalInput(Hardwaremap.elevatorLeaderLimitSwitch_DIO);
-    DigitalInput limitswitch2 = new DigitalInput(Hardwaremap.elevatorFollowerLimitSwitch_DIO);
+    brake = new NeutralOut();
+    voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+    limitswitch1 = new DigitalInput(Hardwaremap.elevatorLeaderLimitSwitch_DIO);
+    limitswitch2 = new DigitalInput(Hardwaremap.elevatorFollowerLimitSwitch_DIO);
     elevatorLeaderMotor =
         new TalonFX(Hardwaremap.elevatorLeader_CID, Hardwaremap.elevatorLeaderMotor_CBN);
     elevatorFollowerMotor =
@@ -68,7 +68,15 @@ public class ElevatorIOFalcon implements ElevatorIO {
 
   @Override
   public void set(double position) {
-    System.out.println("ElevatorIOFalcon.set was called");
-    elevatorLeaderMotor.setControl(voltPosition.withPosition(position));
+    // if(limitswitch1.get()  || limitswitch2.get()) {
+    if (limitswitch1.get()) {
+      System.out.println("Limitswitch value:" + limitswitch1.get());
+      elevatorLeaderMotor.set(.5);
+    } else {
+      stop();
+    }
+    // System.out.println("ElevatorIOFalcon.set was called");
+    // elevatorLeaderMotor.setControl(voltPosition.withPosition(.25));
+    // elevatorLeaderMotor.set(1);
   }
 }

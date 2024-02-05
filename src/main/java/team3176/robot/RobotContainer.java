@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-// import team3176.robot.commands.drivetrain.*;
+import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.controller.Controller;
@@ -34,6 +34,7 @@ public class RobotContainer {
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
+  private Intake intake;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
@@ -45,30 +46,39 @@ public class RobotContainer {
     // drivetrain = Drivetrain.getInstance();
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
+    intake = Intake.getInstance();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
     /*
-        drivetrain.swerveDrivePercent(
-            () -> controller.getForward() * 0.7,
-            () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3).withName("default drive"));
-    if(Constants.getMode() == Mode.SIM) {
+    drivetrain.setDefaultCommand(
+        drivetrain
+            .swerveDriveJoysticks(
+                () -> controller.getForward(),
+                () -> controller.getStrafe(),
+                () -> controller.getSpin())
+            .withName("default drive"));
+    if (Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
           drivetrain
-              .swerveDrivePercent(
-                  () -> controller.getForward() * 0.7,
-                  () -> controller.getStrafe() * 0.7,
-                  () -> controller.getSpin() * 3,
+              .swerveDriveJoysticks(
+                  () -> controller.getForward(),
+                  () -> controller.getStrafe(),
+                  () -> controller.getSpin(),
                   false)
               .withName("default drive"));
     }
     NamedCommands.registerCommand(
         "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
     NamedCommands.registerCommand(
-        "intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+        "intake",
+        intake
+            .runIntake(-1.0)
+            .withTimeout(0.5)
+            .alongWith(new PrintCommand("intake"))
+            .withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
@@ -104,9 +114,33 @@ public class RobotContainer {
         //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
         // m_Drivetrain));
 
-        // m_Controller.getRotStick_Button2().whileTrue(new FlipField);
-        // controller.transStick.button(14).and(controller.transStick.button(15)).onTrue(drivetrain.setFieldCentric());
-        // controller.transStick.button(14).and(controller.transStick.button(16)).onTrue(drivetrain.setRobotCentric());
+    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
+    // m_Drivetrain.setTurbo(false), m_Drivetrain));
+    /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
+      use the whileTrue so if the button is released the command is cancelled
+      pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
+    */
+    /*
+    controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
+
+    controller
+        .transStick
+        .button(3)
+        .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
+
+    controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
+
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
+    controller
+        .transStick
+        .button(10)
+        .whileTrue(
+            new InstantCommand(drivetrain::setBrakeMode)
+                .andThen(drivetrain.swerveDefenseCommand())
+                .withName("swerveDefense"));
+    // m_Controller.getTransStick_Button10()
+    //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
+    // m_Drivetrain));
 
         // controller.rotStick.button(1).whileTrue(new CubeChase(
         controller
@@ -118,10 +152,15 @@ public class RobotContainer {
                     () -> controller.getStrafe() * 1.0,
                     () -> controller.getSpin() * 7));
 
-        controller
-            .rotStick
-            .button(2)
-            .whileTrue(drivetrain.SpinLockDrive(controller::getForward, controller::getStrafe));
+    // controller.rotStick.button(1).whileTrue(new CubeChase(
+    controller
+        .rotStick
+        .button(1)
+        .whileTrue(
+            drivetrain.swerveDrivePercent(
+                () -> controller.getForward() * -1.0,
+                () -> controller.getStrafe() * 1.0,
+                () -> controller.getSpin() * 7));
 
         controller
             .rotStick

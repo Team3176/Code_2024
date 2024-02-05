@@ -5,14 +5,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.constants.*;
 import team3176.robot.constants.RobotConstants.Mode;
-import team3176.robot.constants.SuperStructureConstants;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final DigitalInput linebreak1 = new DigitalInput(5);
-  private final DigitalInput linebreak2 = new DigitalInput(6);
+  private int x = 0;
+  DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
 
   private Intake(IntakeIO io) {
     this.io = io;
@@ -20,6 +19,17 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_kg);
     SmartDashboard.putNumber("Intake_angle", 0.0);
     SmartDashboard.putNumber("Intake_velocity", 0.0);
+  }
+
+  public void periodic() {
+    if (x > 20) {
+      // System.out.println("IsLinebreakOne = " + inputs.isLimitswitchOne);
+      // System.out.println("IntakeLimitswitch - " + limitswitch1.get());
+      x = 0;
+
+    } else {
+      x = x + 1;
+    }
   }
 
   public void setCoastMode() {
@@ -31,13 +41,24 @@ public class Intake extends SubsystemBase {
   }
 
   public void setIntakeMotor(double velocity) {
+    io.setRoller(velocity);
+  }
 
-    if (linebreak1.get() || linebreak2.get()) {
-      System.out.println("Limitswitch value:" + linebreak1.get());
-      io.setRoller(velocity);
-    } else {
-      io.stopRoller();
-    }
+  public void setPivotMotor(double position) {
+    io.setPivot(position);
+  }
+
+  public void setStop() {
+    io.stopRoller();
+  }
+
+  public void setPivotStop() {
+    io.stopPivot();
+  }
+
+  public boolean getIsLinebreakOne() {
+    // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
+    return (!linebreak1.get());
   }
 
   public static Intake getInstance() {

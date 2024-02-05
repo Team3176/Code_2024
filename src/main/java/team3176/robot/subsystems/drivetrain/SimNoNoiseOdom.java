@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import java.util.ArrayList;
-import org.littletonrobotics.junction.Logger;
 
 public class SimNoNoiseOdom {
   private SwerveDriveOdometry odomNoNoise;
@@ -41,6 +40,5 @@ public class SimNoNoiseOdom {
     }
     Twist2d twist = Drivetrain.kinematics.toTwist2d(deltas);
     wheelOnlyPose = wheelOnlyPose.exp(twist);
-    Logger.recordOutput("Drive/PoseSimNoNoise", getPoseTrue());
   }
 }

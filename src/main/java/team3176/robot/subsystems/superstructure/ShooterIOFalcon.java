@@ -7,50 +7,95 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 
-/** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO {
 
-  private CANSparkMax armController;
-  private CANcoder armEncoder;
+  private TalonFX wheelPortController;
+  private TalonFXConfiguration wheelPortConfigs;
+  private TalonFX wheelStarbrdController;
+  private TalonFXConfiguration wheelStarbrdConfigs;
+  private TalonFX pivotController;
+  private final VelocityVoltage m_voltageVelocity =
+      new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
+  private TalonFXConfiguration pivotConfigs;
+  private final NeutralOut m_brake = new NeutralOut();
 
   public ShooterIOFalcon() {
-    armController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
-    armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    armEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    armController.setOpenLoopRampRate(0.5);
+    wheelPortController =
+        new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooterWheelPort_CBN);
+    wheelPortConfigs = new TalonFXConfiguration();
+    wheelStarbrdController =
+        new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooterWheelStarbrd_CBN);
+    wheelStarbrdConfigs = new TalonFXConfiguration();
+    pivotController = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
+    pivotConfigs = new TalonFXConfiguration();
+
+    wheelPortConfigs.Slot0.kP = 0.001;
+    wheelPortConfigs.Slot0.kI = 0.000;
+    wheelPortConfigs.Slot0.kD = 0.000;
+    wheelPortConfigs.Slot0.kV = 0.12;
+
+    wheelStarbrdConfigs.Slot0.kP = 0.001;
+    wheelStarbrdConfigs.Slot0.kI = 0.000;
+    wheelStarbrdConfigs.Slot0.kD = 0.000;
+    wheelStarbrdConfigs.Slot0.kV = 0.12;
+
+    pivotConfigs.Slot0.kP = 0.001;
+    pivotConfigs.Slot0.kI = 0.000;
+    pivotConfigs.Slot0.kD = 0.000;
+    pivotConfigs.Slot0.kV = 0.12;
+
+    applyTalonFxConfigs(wheelPortController, wheelPortConfigs);
+    applyTalonFxConfigs(wheelStarbrdController, wheelStarbrdConfigs);
+    applyTalonFxConfigs(pivotController, pivotConfigs);
   }
-  /** Updates the set of loggable inputs. */
+
+  public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
+    wheelPortController.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
+  }
+
+  public void brakeWheelPort() {
+    /* Disable the motor instead */
+    wheelPortController.setControl(m_brake);
+  }
+
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    // TODO: garbage needed to compile nothing is correct
     inputs.pivotPosition =
-        Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelVelocityRadPerSec =
-        Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-    inputs.pivotAppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
+        Rotation2d.fromRotations(pivotController.getPosition().getValueAsDouble());
+    inputs.wheelPortVelocityRadPerSec =
+        Units.degreesToRadians(wheelPortController.getVelocity().getValueAsDouble());
+    inputs.wheelStarbrdVelocityRadPerSec =
+        Units.degreesToRadians(wheelStarbrdController.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts =
+        pivotController.getMotorVoltage().getValueAsDouble()
+            * pivotController.getSupplyVoltage().getValueAsDouble();
+  }
+
+  public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
+    /* Retry config apply up to 5 times, report if failure */
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i < 5; ++i) {
+      status = controller.getConfigurator().apply(configs);
+      System.out.println("Applied configs to: " + controller.getDeviceID());
+      if (status.isOK()) break;
+    }
+    if (!status.isOK()) {
+      System.out.println("Could not apply configs, error code: " + status.toString());
+    }
   }
 
   @Override
   public void setPivotVoltage(double voltage) {
-    armController.setVoltage(voltage);
-  }
-
-  @Override
-  public void setCoastMode(boolean isCoastMode) {
-    if (isCoastMode) {
-      armController.setIdleMode(IdleMode.kCoast);
-    } else {
-      armController.setIdleMode(IdleMode.kBrake);
-    }
+    pivotController.setVoltage(voltage);
   }
 
   @Override

@@ -18,7 +18,17 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(velocity));
+    return this.run(() -> intake.setIntakeMotor(50))
+        .until(() -> intake.getIsLinebreakOne())
+        .andThen(() -> intake.setStop());
+  }
+
+  public Command movePivotUp(double position) {
+    return this.run(() -> intake.setPivotMotor(.25)).andThen(() -> intake.setPivotStop());
+  }
+
+  public Command movePivotDown(double position) {
+    return this.run(() -> intake.setPivotMotor(-position)).andThen(() -> intake.setPivotStop());
   }
 
   public Command negativeIntake(double velocity) {
@@ -26,7 +36,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command moveElevator(double position) {
-    return this.run(() -> elevator.setElevatorMotor(position));
+    return this.run(() -> elevator.setElevatorMotor(.5));
   }
 
   public static Superstructure getInstance() {
@@ -36,9 +46,11 @@ public class Superstructure extends SubsystemBase {
     return instance;
   }
 
-  public enum GamePiece {
-    CUBE,
-    CONE,
-    NONE
-  }
+  /*
+    public boolean getlinebreak1(){
+
+      return linebreak1.get();
+    }
+  /* */
+
 }

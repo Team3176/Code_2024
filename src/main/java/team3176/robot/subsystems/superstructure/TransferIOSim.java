@@ -9,12 +9,10 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
-import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class TransferIOSim implements TransferIO {
@@ -30,10 +28,6 @@ public class TransferIOSim implements TransferIO {
   @Override
   public void updateInputs(TransferIOInputs inputs) {
     shooterSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.Position =
-        Units.radiansToDegrees(shooterSim.getAngleRads())
-            + 90
-            + SuperStructureConstants.TRANSFER_SIM_OFFSET;
     inputs.VelocityRadPerSec = shooterSim.getVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {shooterSim.getCurrentDrawAmps()};

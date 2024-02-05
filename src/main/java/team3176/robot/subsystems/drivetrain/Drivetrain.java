@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -40,11 +42,15 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.swerve.ModuleLimits;
+import team3176.robot.util.swerve.SwerveSetpoint;
+import team3176.robot.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
 
-  public static final double MAX_WHEEL_SPEED = Units.feetToMeters(14.0);
+  public static final double MAX_WHEEL_SPEED = 4.2;
   public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
   public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
   public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
@@ -67,16 +73,17 @@ public class Drivetrain extends SubsystemBase {
   private ArrayList<SwervePod> pods;
 
   Rotation2d fieldAngleOffset = Rotation2d.fromDegrees(0.0);
-
+  public static final Translation2d[] SwerveModuleTranslations = {
+    new Translation2d(LENGTH / 2.0, -WIDTH / 2.0), // FR where +x=forward and -y=starboard
+    new Translation2d(LENGTH / 2.0, WIDTH / 2.0), // FL where +x=forward and +y=port
+    new Translation2d(-LENGTH / 2.0, WIDTH / 2.0), // BL where -x=backward(aft) and +y=port
+    new Translation2d(-LENGTH / 2.0, -WIDTH / 2.0) // BR where -x=backward(aft) and -y=starboard
+  };
   public static final SwerveDriveKinematics kinematics =
-      new SwerveDriveKinematics(
-          new Translation2d(LENGTH / 2.0, -WIDTH / 2.0), // FR where +x=forward and -y=starboard
-          new Translation2d(LENGTH / 2.0, WIDTH / 2.0), // FL where +x=forward and +y=port
-          new Translation2d(-LENGTH / 2.0, WIDTH / 2.0), // BL where -x=backward(aft) and +y=port
-          new Translation2d(
-              -LENGTH / 2.0, -WIDTH / 2.0) // BR where -x=backward(aft) and -y=starboard
-          );
-
+      new SwerveDriveKinematics(SwerveModuleTranslations);
+  // TODO: Update values
+  public static ModuleLimits moduleLimits =
+      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
@@ -85,9 +92,18 @@ public class Drivetrain extends SubsystemBase {
   Rotation2d wheelOnlyHeading = new Rotation2d();
   private final GyroIO io;
   private GyroIOInputs inputs;
-  Pose3d visionPose3d;
+  public Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
-
+  SwerveSetpointGenerator setpointGenerator;
+  SwerveSetpoint prevSetpoint =
+      new SwerveSetpoint(
+          new ChassisSpeeds(),
+          new SwerveModuleState[] {
+            new SwerveModuleState(),
+            new SwerveModuleState(),
+            new SwerveModuleState(),
+            new SwerveModuleState()
+          });
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
@@ -161,7 +177,17 @@ public class Drivetrain extends SubsystemBase {
         () -> kinematics.toChassisSpeeds(getModuleStates()),
         this::driveVelocity,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
-        () -> false,
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
@@ -173,6 +199,11 @@ public class Drivetrain extends SubsystemBase {
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
+    setpointGenerator =
+        SwerveSetpointGenerator.builder()
+            .kinematics(kinematics)
+            .moduleLocations(SwerveModuleTranslations)
+            .build();
   }
 
   // Prevents more than one instance of drivetrian
@@ -189,14 +220,28 @@ public class Drivetrain extends SubsystemBase {
 
   public void driveVelocity(ChassisSpeeds speeds) {
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
+    Logger.recordOutput("Drivetrain/speedsRaw", discreteSpeeds);
+    Logger.recordOutput(
+        "SwerveSetpoints/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
+    SwerveSetpoint output =
+        setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
+    SwerveModuleState[] podStates = output.moduleStates();
+    prevSetpoint = output;
+    // SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
     for (int idx = 0; idx < (pods.size()); idx++) {
       optimizedStates[idx] = pods.get(idx).setModule(podStates[idx]);
     }
-    Logger.recordOutput("Drivetrain/Setpoints", podStates);
-    Logger.recordOutput("Drivetrain/SetpointsOptimized", optimizedStates);
+    Logger.recordOutput(
+        "Drivetrain/speedsOptimized",
+        new double[] {
+          output.chassisSpeeds().vxMetersPerSecond,
+          output.chassisSpeeds().vyMetersPerSecond,
+          output.chassisSpeeds().omegaRadiansPerSecond
+        });
+    Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
+    Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
 
   public void driveVelocityFieldCentric(ChassisSpeeds speeds) {
@@ -227,6 +272,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
+    visionPose3d = p;
     poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
   }
 
@@ -241,7 +287,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /** Returns the module states (turn angles and drive velocitoes) for all of the modules. */
-  @AutoLogOutput
+  @AutoLogOutput(key = "SwerveSetpoints/ModuleStates")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -355,6 +401,52 @@ public class Drivetrain extends SubsystemBase {
     return swerveDrivePercent(forward, strafe, spin, true);
   }
 
+  /*
+   * Does Deadbanding and such within drivetrain
+   */
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, Boolean isFieldCentric) {
+    return this.run(
+        () -> {
+          double DEADBAND = 0.05;
+          double linearMagnitude =
+              MathUtil.applyDeadband(
+                  Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
+          Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
+          double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+
+          // Square values
+          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+          omega = Math.copySign(omega * omega, omega);
+          // Calcaulate new linear velocity
+          Translation2d linearVelocity =
+              new Pose2d(new Translation2d(), linearDirection)
+                  .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+                  .getTranslation();
+          if (DriverStation.getAlliance().isPresent()
+              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+              && isFieldCentric) {
+            linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+          }
+
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  linearVelocity.getX() * MAX_WHEEL_SPEED,
+                  linearVelocity.getY() * MAX_WHEEL_SPEED,
+                  omega * 10.5);
+          if (isFieldCentric) {
+            driveVelocityFieldCentric(speeds);
+          } else {
+            driveVelocity(speeds);
+          }
+        });
+  }
+
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
+    return swerveDriveJoysticks(forward, strafe, spin, true);
+  }
+
   public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {
     return this.run(
         () -> {
@@ -363,6 +455,38 @@ public class Drivetrain extends SubsystemBase {
                   x.getAsDouble() * MAX_WHEEL_SPEED, y.getAsDouble() * MAX_WHEEL_SPEED, 0.0);
           // TODO: figure out a PID loop inside this logic...
           this.driveVelocityFieldCentric(speeds);
+        });
+  }
+  // TODO: Pathplanner pathfinding
+  // complete the following method that returns a command from AutoBuilder that goes to the point
+  // given
+  public Command goToPoint(int x, int y) {
+    Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
+    PathConstraints constraints =
+        new PathConstraints(3.0, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    return AutoBuilder.pathfindToPose(targetPose, constraints);
+    // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
+    // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
+    // Replace with your command
+
+  }
+
+  public Command chaseNote() {
+    return this.run(
+        () -> {
+          if (PhotonVisionSystem.getInstance().seeNote) {
+            double yawError = -8 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -20 - PhotonVisionSystem.getInstance().notePitch;
+            ChassisSpeeds speed =
+                new ChassisSpeeds(
+                    MathUtil.clamp(pitchError * (1 / 10.0), -1.0, 1.0), 0, yawError * (1 / 20.0));
+            driveVelocity(speed);
+          } else {
+            if (PhotonVisionSystem.getInstance().notePitch < -12) {
+              driveVelocity(new ChassisSpeeds(-0.7, 0.0, 0.0));
+            }
+            driveVelocity(new ChassisSpeeds());
+          }
         });
   }
 

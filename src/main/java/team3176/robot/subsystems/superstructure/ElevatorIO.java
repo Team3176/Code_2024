@@ -30,7 +30,6 @@ public interface ElevatorIO {
   public default void set(double percentOutput) {}
 
   public default void setPIDPosition(int encoderValue) {}
-  ;
 
   public default void stop() {}
 

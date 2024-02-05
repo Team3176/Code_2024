@@ -19,6 +19,8 @@ public interface IntakeIO {
     public double AppliedVolts = 0.0;
     public double[] CurrentAmps = new double[] {};
     public double[] TempCelcius = new double[] {};
+    public boolean isLimitswitchOne = true;
+    // public boolean isLinebreakTwo = true;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
@@ -29,9 +31,21 @@ public interface IntakeIO {
 
   public default void setRoller(double percentOutput) {}
 
+  public default void setPivot(double percentOutput) {}
+
   public default void setCoastMode(boolean isCoastMode) {}
+
+  // public default boolean getlinebreak1() {
+  // return true;
+  // }
+
+  // public default boolean getlinebreak2() {
+  // return true;
+  // }
 
   public default void reset() {}
 
   public default void stopRoller() {}
+
+  public default void stopPivot() {}
 }
