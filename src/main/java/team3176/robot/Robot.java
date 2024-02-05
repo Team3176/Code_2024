@@ -6,6 +6,7 @@ package team3176.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import team3176.robot.Constants.RobotType;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -160,21 +162,22 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    robotContainer.checkAutonomousSelection();
-    robotContainer.checkAllaince();
+    //    robotContainer.checkAutonomousSelection();
+    //    robotContainer.checkAllaince();
+    Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();
-    robotContainer.setThrustBrake();
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    //    robotContainer.setThrustBrake();
+    //    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
-    }
+    //    if (autonomousCommand != null) {
+    //      autonomousCommand.schedule();
+    //    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -190,10 +193,10 @@ public class Robot extends LoggedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     robotContainer.clearCanFaults();
-    robotContainer.setThrustCoast();
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
+    //   robotContainer.setThrustCoast();
+    //  if (autonomousCommand != null) {
+    //     autonomousCommand.cancel();
+    //    }
   }
 
   /** This function is called periodically during operator control. */

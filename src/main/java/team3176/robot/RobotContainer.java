@@ -4,33 +4,18 @@
 
 package team3176.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import java.io.File;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.controller.Controller;
-import team3176.robot.subsystems.drivetrain.Drivetrain;
-import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,12 +30,11 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private final Drivetrain drivetrain;
+  // private final Drivetrain drivetrain;
   private final RobotState robotState;
-  private final Elevator elevator;
-  private final Intake intake;
-  private final Shooter shooter;
+  private final Superstructure superstructure;
   private PhotonVisionSystem vision;
+  private Intake intake;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
@@ -59,32 +43,44 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-    drivetrain = Drivetrain.getInstance();
+    // drivetrain = Drivetrain.getInstance();
+    superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    elevator = Elevator.getInstance();
     intake = Intake.getInstance();
-    shooter = Shooter.getInstance();
-    if(Constants.VISION_CONNECTED){
+    if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
-    
+
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
+    /*
     drivetrain.setDefaultCommand(
-        drivetrain.swerveDrivePercent(
-            () -> controller.getForward() * 0.7,
-            () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3).withName("default drive"));
-    if(Constants.getMode() == Mode.SIM) {
+        drivetrain
+            .swerveDriveJoysticks(
+                () -> controller.getForward(),
+                () -> controller.getStrafe(),
+                () -> controller.getSpin())
+            .withName("default drive"));
+    if (Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
-        drivetrain.swerveDrivePercent(
-            () -> controller.getForward() * 0.7,
-            () -> controller.getStrafe() * 0.7,
-            () -> controller.getSpin() * 3,false).withName("default drive"));
+          drivetrain
+              .swerveDriveJoysticks(
+                  () -> controller.getForward(),
+                  () -> controller.getStrafe(),
+                  () -> controller.getSpin(),
+                  false)
+              .withName("default drive"));
     }
-    NamedCommands.registerCommand("shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    NamedCommands.registerCommand("intake", new WaitCommand(0.5).alongWith(new PrintCommand("intake")).withName("intaking"));
+    NamedCommands.registerCommand(
+        "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
+    NamedCommands.registerCommand(
+        "intake",
+        intake
+            .runIntake(-1.0)
+            .withTimeout(0.5)
+            .alongWith(new PrintCommand("intake"))
+            .withName("intaking"));
     // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
-    autonChooser = new LoggedDashboardChooser<>("autonChoice",  AutoBuilder.buildAutoChooser());
+    autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
     // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
     // for (File f : paths.listFiles()) {
     //   if (!f.isDirectory()) {
@@ -94,18 +90,46 @@ public class RobotContainer {
     // }
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
+    */
 
     configureBindings();
   }
 
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+    /*
+        // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
+        // m_Drivetrain.setTurbo(false), m_Drivetrain));
+        // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+        // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+        controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
+        controller
+            .transStick
+            .button(10)
+            .whileTrue(
+                new InstantCommand(drivetrain::setBrakeMode)
+                    .andThen(drivetrain.swerveDefenseCommand())
+                    .withName("swerveDefense"));
+        // m_Controller.getTransStick_Button10()
+        //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
+        // m_Drivetrain));
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    //controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-    //controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
-    controller.transStick.button(2).onTrue(shooter.pivotSetPositionOnce(45)).onFalse(shooter.pivotSetPositionOnce(0));
+    /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
+      use the whileTrue so if the button is released the command is cancelled
+      pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
+    */
+    /*
+    controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
+
+    controller
+        .transStick
+        .button(3)
+        .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
+
+    controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
+
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -118,9 +142,15 @@ public class RobotContainer {
     //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
     // m_Drivetrain));
 
-    // m_Controller.getRotStick_Button2().whileTrue(new FlipField);
-    // controller.transStick.button(14).and(controller.transStick.button(15)).onTrue(drivetrain.setFieldCentric());
-    // controller.transStick.button(14).and(controller.transStick.button(16)).onTrue(drivetrain.setRobotCentric());
+        // controller.rotStick.button(1).whileTrue(new CubeChase(
+        controller
+            .rotStick
+            .button(1)
+            .whileTrue(
+                drivetrain.swerveDrivePercent(
+                    () -> controller.getForward() * 1.0,
+                    () -> controller.getStrafe() * 1.0,
+                    () -> controller.getSpin() * 7));
 
     // controller.rotStick.button(1).whileTrue(new CubeChase(
     controller
@@ -128,30 +158,25 @@ public class RobotContainer {
         .button(1)
         .whileTrue(
             drivetrain.swerveDrivePercent(
-                () -> controller.getForward() * 1.0,
+                () -> controller.getForward() * -1.0,
                 () -> controller.getStrafe() * 1.0,
                 () -> controller.getSpin() * 7));
 
-    controller
-        .rotStick
-        .button(2)
-        .whileTrue(drivetrain.SpinLockDrive(controller::getForward, controller::getStrafe));
+        controller
+            .rotStick
+            .button(3)
+            .whileTrue(
+                new InstantCommand(drivetrain::setBrakeMode)
+                    .andThen(drivetrain.swerveDefenseCommand())
+                    .withName("setBrakeMode"));
 
-    controller
-        .rotStick
-        .button(3)
-        .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("setBrakeMode"));
-
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
-    controller.operator.a().onTrue(elevator.moveElevator(50));
-    controller.operator.y().onTrue(intake.moveIntake(50));
+        controller
+            .rotStick
+            .button(8)
+            .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    */
+    controller.operator.a().onTrue(superstructure.moveElevator(.5));
+    controller.operator.y().onTrue(superstructure.positiveIntake(50));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 
@@ -161,14 +186,15 @@ public class RobotContainer {
     // m_Controller.operator.rightBumper().and(m_Controller.operator.leftBumper().negate()).onFalse(m_Superstructure.prepareCarry());
 
   }
+  /*
+    public void setThrustCoast() {
+      drivetrain.setCoastMode();
+    }
 
-  public void setThrustCoast() {
-    drivetrain.setCoastMode();
-  }
-
-  public void setThrustBrake() {
-    drivetrain.setBrakeMode();
-  }
+    public void setThrustBrake() {
+      drivetrain.setBrakeMode();
+    }
+  */
 
   public void clearCanFaults() {
     pdh.clearStickyFaults();
@@ -177,7 +203,7 @@ public class RobotContainer {
   public void printCanFaults() {
     pdh.getStickyFaults();
   }
-
+  /*
   public void checkAutonomousSelection(Boolean force) {
     if (autonChooser.get() != null
         && (!choosenAutonomousCommand.equals(autonChooser.get()) || force)) {
@@ -185,8 +211,7 @@ public class RobotContainer {
       choosenAutonomousCommand = autonChooser.get();
       try {
         // TODO: re implement this
-        choosenAutonomousCommand =
-            autonChooser.get();
+        choosenAutonomousCommand = autonChooser.get();
       } catch (Exception e) {
         System.out.println("[ERROR] could not find" + autonChooser.get().getName());
         System.out.println(e.toString());
@@ -215,15 +240,16 @@ public class RobotContainer {
       checkAutonomousSelection(true);
     }
   }
+  */
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  /* public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return choosenAutonomousCommand;
-    //return drivetrain.swerveDriveAuto(1,0,0);
+    // return drivetrain.swerveDriveAuto(1,0,0);
     // if(choosenAutonomousCommand == null) {
     //   //this is if for some reason checkAutonomousSelection is never called
     //   String chosen = autonChooser.get();
@@ -234,4 +260,5 @@ public class RobotContainer {
     // choosenAutonomousCommand = new PathPlannerAuto("wall_3nSteal_3").getauto();
     // return choosenAutonomousCommand;
   }
+  */
 }

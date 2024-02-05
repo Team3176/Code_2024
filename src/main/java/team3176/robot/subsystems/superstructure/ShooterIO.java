@@ -7,12 +7,11 @@
 
 package team3176.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 /** Template hardware interface for a closed loop subsystem. */
-public interface ShooterIO{
+public interface ShooterIO {
   /** Contains all of the input data received from hardware. */
   @AutoLog
   public static class ShooterIOInputs {
@@ -25,11 +24,10 @@ public interface ShooterIO{
       //public double[] CurrentAmps = new double[] {};
       //public double[] TempCelcius = new double[] {};
 
-      //constructor if needed for some inputs
-      ShooterIOInputs() {
-      }
+    // constructor if needed for some inputs
+    ShooterIOInputs() {}
   }
-    
+
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ShooterIOInputs inputs) {}
   public default void setWheelPortVoltage(double voltage){}
@@ -37,4 +35,3 @@ public interface ShooterIO{
   public default void setPivotVoltage(double voltage){}
   public default void reset() {}
 }
-
