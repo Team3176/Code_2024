@@ -24,25 +24,29 @@ import team3176.robot.constants.Hardwaremap;
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO{
   
-  private CANSparkMax armController;
-  private CANcoder armEncoder;
+  private CANSparkMax pivotController;
+  private CANcoder pivotEncoder;
+  private TalonFX wheelPortController, wheelStarbrdController;
+  private TalonFXConfigurator wheelPortConfigs, wheelStarbrdConfigs;
+
   public ShooterIOFalcon() {
-    armController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
-    armController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    armEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    armController.setOpenLoopRampRate(0.5);
+    pivotController = new CANSparkMax(Hardwaremap.shooter_CID, MotorType.kBrushless);
+    pivotController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
+    pivotEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
+    pivotController.setOpenLoopRampRate(0.5);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     //TODO: garbage needed to compile nothing is correct
-    inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-    inputs.pivotAppliedVolts = armController.getAppliedOutput() * armController.getBusVoltage();
+    inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
   }
   @Override
   public void setPivotVoltage(double voltage) {
-    armController.setVoltage(voltage);
+    pivotController.setVoltage(voltage);
   }
   @Override
   public void reset() {

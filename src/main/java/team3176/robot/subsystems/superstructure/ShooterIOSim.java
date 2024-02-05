@@ -23,30 +23,39 @@ import team3176.robot.Constants;
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOSim implements ShooterIO{
   
-  private FlywheelSim wheelSim;
+  private FlywheelSim wheelPortSim, wheelStarbrdSim;
   private SingleJointedArmSim pivotSim;
 
-  private double wheelAppliedVolts;
+  private double wheelPortAppliedVolts, wheelStarbrdAppliedVolts;
   private double pivotAppliedVolts;
   public ShooterIOSim() {
-    wheelSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    wheelPortSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    wheelStarbrdSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
     pivotSim = new SingleJointedArmSim(DCMotor.getFalcon500(1),50.0,1.0,0.2,0.0,1.0, false,0.0);
 
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    wheelSim.update(Constants.LOOP_PERIODIC_SECS);
+    wheelPortSim.update(Constants.LOOP_PERIODIC_SECS);
+    wheelStarbrdSim.update(Constants.LOOP_PERIODIC_SECS);
     pivotSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.pivotAppliedVolts = pivotAppliedVolts;
     inputs.pivotPosition = Rotation2d.fromRadians(pivotSim.getAngleRads());
-    inputs.wheelVelocityRadPerSec = wheelSim.getAngularVelocityRadPerSec();
-    inputs.wheelAppliedVolts = wheelAppliedVolts;
+    inputs.wheelPortVelocityRadPerSec = wheelPortSim.getAngularVelocityRadPerSec();
+    inputs.wheelStarbrdVelocityRadPerSec = wheelPortSim.getAngularVelocityRadPerSec();
+    inputs.wheelPortAppliedVolts = wheelPortAppliedVolts;
+    inputs.wheelStarbrdAppliedVolts = wheelStarbrdAppliedVolts;
   }
   @Override
-  public void setWheelVoltage(double voltage) {
-    wheelAppliedVolts = MathUtil.clamp(voltage,-12,12);
-    wheelSim.setInputVoltage(wheelAppliedVolts);
+  public void setWheelPortVoltage(double voltage) {
+    wheelPortAppliedVolts = MathUtil.clamp(voltage,-12,12);
+    wheelPortSim.setInputVoltage(wheelPortAppliedVolts);
+  }
+  @Override
+  public void setWheelStarbrdVoltage(double voltage) {
+    wheelStarbrdAppliedVolts = MathUtil.clamp(voltage,-12,12);
+    wheelStarbrdSim.setInputVoltage(wheelPortAppliedVolts);
   }
   @Override
   public void setPivotVoltage(double voltage) {
