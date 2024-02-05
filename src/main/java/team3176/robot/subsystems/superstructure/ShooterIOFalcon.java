@@ -15,28 +15,39 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
-
-public class ShooterIOFalcon implements ShooterIO {
-
-  private TalonFX wheelPortController;
-  private TalonFXConfiguration wheelPortConfigs;
-  private TalonFX wheelStarbrdController;
-  private TalonFXConfiguration wheelStarbrdConfigs;
-  private TalonFX pivotController;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import team3176.robot.constants.SuperStructureConstants;
+import team3176.robot.constants.Hardwaremap;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+/** Template hardware interface for a closed loop subsystem. */
+public class ShooterIOFalcon implements ShooterIO{
+  
+  private CANSparkMax pivotController;
+  private CANcoder pivotEncoder;
+  private TalonFX wheelPortController, wheelStarbrdController;
+  private TalonFXConfiguration wheelPortConfigs, wheelStarbrdConfigs;
   private final VelocityVoltage m_voltageVelocity =
       new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
   private TalonFXConfiguration pivotConfigs;
   private final NeutralOut m_brake = new NeutralOut();
 
   public ShooterIOFalcon() {
+    pivotController = new CANSparkMax(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
+    pivotController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
+    pivotEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
+    pivotController.setOpenLoopRampRate(0.5);
     wheelPortController =
         new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooterWheelPort_CBN);
     wheelPortConfigs = new TalonFXConfiguration();
     wheelStarbrdController =
         new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooterWheelStarbrd_CBN);
     wheelStarbrdConfigs = new TalonFXConfiguration();
-    pivotController = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
-    pivotConfigs = new TalonFXConfiguration();
 
     wheelPortConfigs.Slot0.kP = 0.001;
     wheelPortConfigs.Slot0.kI = 0.000;
@@ -55,7 +66,7 @@ public class ShooterIOFalcon implements ShooterIO {
 
     applyTalonFxConfigs(wheelPortController, wheelPortConfigs);
     applyTalonFxConfigs(wheelStarbrdController, wheelStarbrdConfigs);
-    applyTalonFxConfigs(pivotController, pivotConfigs);
+    
   }
 
   public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
@@ -69,15 +80,11 @@ public class ShooterIOFalcon implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.pivotPosition =
-        Rotation2d.fromRotations(pivotController.getPosition().getValueAsDouble());
-    inputs.wheelPortVelocityRadPerSec =
-        Units.degreesToRadians(wheelPortController.getVelocity().getValueAsDouble());
-    inputs.wheelStarbrdVelocityRadPerSec =
-        Units.degreesToRadians(wheelStarbrdController.getVelocity().getValueAsDouble());
-    inputs.pivotAppliedVolts =
-        pivotController.getMotorVoltage().getValueAsDouble()
-            * pivotController.getSupplyVoltage().getValueAsDouble();
+    //TODO: garbage needed to compile nothing is correct
+    inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
