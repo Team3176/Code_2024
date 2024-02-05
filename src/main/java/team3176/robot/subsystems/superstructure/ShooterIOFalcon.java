@@ -7,45 +7,42 @@
 
 package team3176.robot.subsystems.superstructure;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
-import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
+import team3176.robot.constants.SuperStructureConstants;
 
-public class ShooterIOFalcon implements ShooterIO{
-  
-  private TalonFX wheelPortController = new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
-  private TalonFXConfiguration wheelPortConfigs;
-  private TalonFX wheelStarbrdController;
-  private TalonFXConfiguration wheelStarbrdConfigs;
-  private TalonFX pivotController;
-  private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
+/** Template hardware interface for a closed loop subsystem. */
+public class ShooterIOFalcon implements ShooterIO {
+
+  private CANSparkFlex pivotController;
+  private CANcoder pivotEncoder;
+  private TalonFX wheelPortController, wheelStarbrdController;
+  private TalonFXConfiguration wheelPortConfigs, wheelStarbrdConfigs;
+  private final VelocityVoltage m_voltageVelocity =
+      new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
   private TalonFXConfiguration pivotConfigs;
   private final NeutralOut m_brake = new NeutralOut();
 
-
   public ShooterIOFalcon() {
-    wheelPortController = new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+    pivotController = new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
+    pivotController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
+    pivotEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
+    pivotController.setOpenLoopRampRate(0.5);
+    wheelPortController =
+        new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooterWheelPort_CBN);
     wheelPortConfigs = new TalonFXConfiguration();
-    wheelStarbrdController = new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+    wheelStarbrdController =
+        new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooterWheelStarbrd_CBN);
     wheelStarbrdConfigs = new TalonFXConfiguration();
-    pivotController = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
-    pivotConfigs = new TalonFXConfiguration();
-
 
     wheelPortConfigs.Slot0.kP = 0.001;
     wheelPortConfigs.Slot0.kI = 0.000;
@@ -64,24 +61,27 @@ public class ShooterIOFalcon implements ShooterIO{
 
     applyTalonFxConfigs(wheelPortController, wheelPortConfigs);
     applyTalonFxConfigs(wheelStarbrdController, wheelStarbrdConfigs);
-    applyTalonFxConfigs(pivotController, pivotConfigs);
   }
 
   public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
     wheelPortController.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
   }
-  
-  public void brakeWheelPort() {/* Disable the motor instead */
-        wheelPortController.setControl(m_brake);
-  }
 
+  public void brakeWheelPort() {
+    /* Disable the motor instead */
+    wheelPortController.setControl(m_brake);
+  }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-      inputs.pivotPosition = Rotation2d.fromRotations(pivotController.getPosition().getValueAsDouble());
-      inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(wheelPortController.getVelocity().getValueAsDouble());
-      inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(wheelStarbrdController.getVelocity().getValueAsDouble());
-      inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble() * pivotController.getSupplyVoltage().getValueAsDouble();
+    // TODO: garbage needed to compile nothing is correct
+    inputs.pivotPosition =
+        Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelPortVelocityRadPerSec =
+        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.wheelStarbrdVelocityRadPerSec =
+        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -97,14 +97,13 @@ public class ShooterIOFalcon implements ShooterIO{
     }
   }
 
-
   @Override
   public void setPivotVoltage(double voltage) {
     pivotController.setVoltage(voltage);
   }
+
   @Override
   public void reset() {
-    //to be implemented
+    // to be implemented
   }
 }
-

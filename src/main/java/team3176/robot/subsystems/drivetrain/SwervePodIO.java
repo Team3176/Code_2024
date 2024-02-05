@@ -1,8 +1,7 @@
 package team3176.robot.subsystems.drivetrain;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface SwervePodIO {
   @AutoLog

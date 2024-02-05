@@ -1,9 +1,9 @@
 #MotorSensorMap
 ## DRIVETRAIN
     ### SWERVEPODS
-        - Azimuth Controller =  SparkMax    PID Position
-        - Thrust Controller =   TalonFX     PID Velocity
-        - Encoder = CANCoder
+        - Azimuth Controller =  SparkMax    PID Position        rio
+        - Thrust Controller =   TalonFX     PID Velocity        canivore
+        - Encoder = CANCoder                                    canivore
     ### Atag Recog  
         - Vision unit FR =      Photonvision/OrangePi
         - Vision unit FL =      Photonvision/OrangePi
@@ -11,11 +11,11 @@
         - Vision unit BR =      Photonvision/OrangePi
 ## INTAKE
     ### Grabber
-        - Grab Controller =     TalonFX     PID Velocity or OutputPercent
+        - Grab Controller =     TalonFX     PID Velocity or %    
     ### Pivot
         - Pivot Controller =    TalonFX     PID Position 
     ### Damper 
-        - Damper Controller =   SparkFlex   OutputPercent
+        - Damper Controller =   SparkFlex   OutputPercent       rio
     ### Elevator
         - Elevator Controller1= TalonFX     PID Position
         - Elevator Controller2= TalonFX     Follower
