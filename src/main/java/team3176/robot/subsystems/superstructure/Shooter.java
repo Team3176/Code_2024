@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
     private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);  
     private final NeutralOut m_brake = new NeutralOut();  
-    private final PIDController turningPIDController;
+    private final PIDController pivotPIDController;
     private final TalonFX m_fx = new TalonFX(0);
     public enum States {OPEN_LOOP,CLOSED_LOOP}
     private States currentState = States.OPEN_LOOP;
@@ -47,59 +47,19 @@ public class Shooter extends SubsystemBase {
     private MechanismLigament2d armSholder = root.append(new MechanismLigament2d("armLigament",.4,90));
     //private MechanismLigament2d simSholder = root.append(new MechanismLigament2d("simLigament",3,90,10,new Color8Bit(Color.kAqua)));
     private MechanismLigament2d armElbow = armSholder.append(new MechanismLigament2d("armELigament",0.5,90));
+    private TalonFXConfiguration configsWheelPort;
+    private TalonFXConfiguration configsWheelStarbrd;
+    private TalonFXConfiguration configsPivot;
+//    private final TunablePID pivotPIDController;
+    private Rotation2d pivotSetpoint = new Rotation2d();
+
     private Shooter(ShooterIO io) {
         this.io = io;
-        this.turningPIDController = new PIDController(SuperStructureConstants.ANGLER_kP, SuperStructureConstants.ANGLER_kI, SuperStructureConstants.ANGLER_kD);
+        this.pivotPIDController = new PIDController(SuperStructureConstants.ANGLER_kP, SuperStructureConstants.ANGLER_kI, SuperStructureConstants.ANGLER_kD);
         SmartDashboard.putNumber("Arm_kp", SuperStructureConstants.SHOOTER_kP);
         SmartDashboard.putNumber("Arm_Kg", SuperStructureConstants.SHOOTER_kg);
         SmartDashboard.putNumber("arm_angle", 0.0);
         SmartDashboard.putNumber("arm_height", 1.18);
-    }
-    private TalonFXConfiguration configsWheelPort;
-    private TalonFXConfiguration configsWheelStarbrd;
-    private TalonFXConfiguration configsPivot;
-        
-    private final TunablePID pivotPIDController;
-    private Rotation2d pivotSetpoint = new Rotation2d();
-
-
-
-    private Shooter(ShooterIO io) {
-        this.io = io;
-        this.pivotPIDController = new TunablePID("shooter/pid",0.0,0.0,0.0);
-        pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
-    configsWheelPort = new TalonFXConfiguration();
-    configsWheelStarbrd = new TalonFXConfiguration();
-    configsPivot = new TalonFXConfiguration();
-
-    }
-
-
-    public static Shooter getInstance() {
-        if (instance == null) {
-            if(Constants.getMode() != Mode.SIM) {
-        if (instance == null){
-            if (Constants.getMode() != Mode.SIM) {
-                instance = new Shooter(new ShooterIOFalcon() {});
-            } else {
-                return instance;
-            }
-        }
-    }
-    
-    private void PIDPositionPeriodic() {
-        double pivotVoltage = pivotPIDController.calculate(inputs.pivotPosition.getRadians(), pivotSetpoint.getRadians());
-        pivotVoltage = MathUtil.clamp(pivotVoltage,-12,12);
-        io.setPivotVoltage(pivotVoltage);
-    }
-    public Command pivotSetPositionOnce(double angleInDegrees) {
-        return this.runOnce(() -> {
-            this.pivotSetpoint = Rotation2d.fromDegrees(angleInDegrees);}).withName("armSetPosition"+angleInDegrees);
-    }
-
-    
-
-    public void robotInit() {
       TalonFXConfiguration configs = new TalonFXConfiguration();
   
       /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */
@@ -111,13 +71,36 @@ public class Shooter extends SubsystemBase {
       configs.Voltage.PeakForwardVoltage = 8;
       configs.Voltage.PeakReverseVoltage = -8;
     }
-    @Override
+
+  public static Shooter getInstance() {
+    if (instance == null) {
+      instance = new Shooter(new ShooterIO() {});
+    }
+    return instance;
+  }
+
+
+    
+    private void setPIDPosition(double position) {
+        double pivotVoltage = pivotPIDController.calculate(inputs.pivotPosition.getRadians(), pivotSetpoint.getRadians());
+        pivotVoltage = MathUtil.clamp(pivotVoltage,-12,12);
+        io.setPivotVoltage(pivotVoltage);
+    }
+
+    public Command pivotSetPositionOnce(double angleInDegrees) {
+        return this.runOnce(() -> {
+            this.pivotSetpoint = Rotation2d.fromDegrees(angleInDegrees);}).withName("armSetPosition"+angleInDegrees);
+    }
+
+    
+
+    public void robotInit() {
+    }
     
     
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        pivotPIDController.checkParemeterUpdate();
         Logger.processInputs("Shooter", inputs);
         Logger.recordOutput("Shooter/desired", pivotSetpoint);
         //simSholder.setAngle(Rotation2d.fromDegrees(inputs.Position -90 - SuperStructureConstants.ARM_SIM_OFFSET))
@@ -126,16 +109,10 @@ public class Shooter extends SubsystemBase {
         //SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() - SuperStructureConstants.ARM_ZERO_POS);
         if(this.currentState == States.CLOSED_LOOP) {
             this.armSetpointAngleRaw = MathUtil.clamp(this.armSetpointAngleRaw, SuperStructureConstants.ANGLER_ZERO_POS, SuperStructureConstants.ANGLER_HIGH_POS);
-            Logger.recordOutput("Arm/position_error", this.turningPIDController.getPositionError());
+            Logger.recordOutput("Arm/position_error", this.pivotPIDController.getPositionError());
             setPIDPosition(armSetpointAngleRaw);
         }
-    }
-    
-       
-        
         Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
-        PIDPositionPeriodic();
-        m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
     }
     
     public void ShooterPIDVelocity(double velocity) {
@@ -144,11 +121,9 @@ public class Shooter extends SubsystemBase {
         
         /* Use voltage velocity */
         m_fx.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
-        return m_fx.getaver
-        }
-        else {
         /* Disable the motor instead */
-        m_fx.setControl(m_brake);
+        //m_fx.setControl(m_brake);
+    }
         
 }
 

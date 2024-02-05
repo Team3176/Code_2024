@@ -18,6 +18,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.constants.Hardwaremap;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 public class ShooterIOFalcon implements ShooterIO{
   
   private TalonFX wheelPortController = new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
@@ -25,7 +33,9 @@ public class ShooterIOFalcon implements ShooterIO{
   private TalonFX wheelStarbrdController;
   private TalonFXConfiguration wheelStarbrdConfigs;
   private TalonFX pivotController;
+  private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
   private TalonFXConfiguration pivotConfigs;
+  private final NeutralOut m_brake = new NeutralOut();
 
 
   public ShooterIOFalcon() {
@@ -57,21 +67,21 @@ public class ShooterIOFalcon implements ShooterIO{
     applyTalonFxConfigs(pivotController, pivotConfigs);
   }
 
-
-  wheelPortController.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
-        return wheelPortControler.getaver
-        }
-        else {
-        /* Disable the motor instead */
+  public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
+    wheelPortController.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
+  }
+  
+  public void brakeWheelPort() {/* Disable the motor instead */
         wheelPortController.setControl(m_brake);
+  }
 
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-      inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-      inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-      inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-      inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
+      inputs.pivotPosition = Rotation2d.fromRotations(pivotController.getPosition().getValueAsDouble());
+      inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(wheelPortController.getVelocity().getValueAsDouble());
+      inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(wheelStarbrdController.getVelocity().getValueAsDouble());
+      inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble() * pivotController.getSupplyVoltage().getValueAsDouble();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
