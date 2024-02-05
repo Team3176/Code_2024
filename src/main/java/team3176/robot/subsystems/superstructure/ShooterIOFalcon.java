@@ -11,10 +11,14 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -26,8 +30,8 @@ import team3176.robot.constants.Hardwaremap;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 /** Template hardware interface for a closed loop subsystem. */
-public class ShooterIOFalcon implements ShooterIO{
-  
+public class ShooterIOFalcon implements ShooterIO {
+
   private CANSparkMax pivotController;
   private CANcoder pivotEncoder;
   private TalonFX wheelPortController, wheelStarbrdController;
@@ -66,7 +70,6 @@ public class ShooterIOFalcon implements ShooterIO{
 
     applyTalonFxConfigs(wheelPortController, wheelPortConfigs);
     applyTalonFxConfigs(wheelStarbrdController, wheelStarbrdConfigs);
-    
   }
 
   public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
@@ -80,10 +83,13 @@ public class ShooterIOFalcon implements ShooterIO{
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    //TODO: garbage needed to compile nothing is correct
-    inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
-    inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    // TODO: garbage needed to compile nothing is correct
+    inputs.pivotPosition =
+        Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelPortVelocityRadPerSec =
+        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+    inputs.wheelStarbrdVelocityRadPerSec =
+        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
     inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
   }
 
