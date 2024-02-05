@@ -13,8 +13,8 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
@@ -23,7 +23,7 @@ import team3176.robot.constants.SuperStructureConstants;
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO {
 
-  private CANSparkMax pivotController;
+  private CANSparkFlex pivotController;
   private CANcoder pivotEncoder;
   private TalonFX wheelPortController, wheelStarbrdController;
   private TalonFXConfiguration wheelPortConfigs, wheelStarbrdConfigs;
@@ -33,7 +33,7 @@ public class ShooterIOFalcon implements ShooterIO {
   private final NeutralOut m_brake = new NeutralOut();
 
   public ShooterIOFalcon() {
-    pivotController = new CANSparkMax(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
+    pivotController = new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
     pivotController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
     pivotEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
     pivotController.setOpenLoopRampRate(0.5);

@@ -33,7 +33,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.Position =
         Units.radiansToDegrees(armSim.getAngleRads())
             + 90
-            + SuperStructureConstants.INTAKE_SIM_OFFSET;
+            + SuperStructureConstants.INTAKE_PIVOT_SIM_OFFSET;
     inputs.VelocityRadPerSec = armSim.getVelocityRadPerSec();
     inputs.AppliedVolts = appliedVolts;
     inputs.CurrentAmps = new double[] {armSim.getCurrentDrawAmps()};
@@ -42,7 +42,7 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void setRoller(double percentOuput) {
+  public void setRollerPercent(double percentOuput) {
     if (DriverStation.isEnabled()) {
       appliedVolts = percentOuput * 12;
     } else {

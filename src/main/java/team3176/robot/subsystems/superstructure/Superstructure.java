@@ -18,21 +18,21 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(50))
+    return this.run(() -> intake.setRollerVelocity(50))
         .until(() -> intake.getIsLinebreakOne())
-        .andThen(() -> intake.setStop());
+        .andThen(() -> intake.stopRoller());
   }
 
   public Command movePivotUp(double position) {
-    return this.run(() -> intake.setPivotMotor(.25)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotPosition(.25)).andThen(() -> intake.stopPivot());
   }
 
   public Command movePivotDown(double position) {
-    return this.run(() -> intake.setPivotMotor(-position)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
   }
 
   public Command negativeIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(-velocity));
+    return this.run(() -> intake.setRollerVelocity(-velocity));
   }
 
   public Command moveElevator(double position) {

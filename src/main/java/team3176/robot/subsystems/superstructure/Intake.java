@@ -15,8 +15,8 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    SmartDashboard.putNumber("Intake_kp", SuperStructureConstants.INTAKE_kP);
-    SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_kg);
+    SmartDashboard.putNumber("Intake_kp", SuperStructureConstants.INTAKE_PIVOT_kP);
+    SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_PIVOT_kg);
     SmartDashboard.putNumber("Intake_angle", 0.0);
     SmartDashboard.putNumber("Intake_velocity", 0.0);
   }
@@ -40,19 +40,19 @@ public class Intake extends SubsystemBase {
     io.setCoastMode(false);
   }
 
-  public void setIntakeMotor(double velocity) {
-    io.setRoller(velocity);
+  public void setRollerVelocity(double velocity) {
+    io.setRollerPercent(velocity);
   }
 
-  public void setPivotMotor(double position) {
+  public void setPivotPosition(double position) {
     io.setPivot(position);
   }
 
-  public void setStop() {
+  public void stopRoller() {
     io.stopRoller();
   }
 
-  public void setPivotStop() {
+  public void stopPivot() {
     io.stopPivot();
   }
 
