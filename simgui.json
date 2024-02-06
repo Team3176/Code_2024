@@ -1,4 +1,11 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "window": {
+        "visible": false
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -10,17 +17,45 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "Retained Values": {
       "open": false
     },
     "transitory": {
+      "AdvantageKit": {
+        "open": true
+      },
       "FMSInfo": {
+        "open": true
+      },
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        ".recording": {
+          "open": true
+        },
         "open": true
       },
       "SmartDashboard": {
         "Auton Choice": {
           "open": true
-        }
+        },
+        "autonChoice": {
+          "open": true
+        },
+        "open": true
+      },
+      "photonvision": {
+        "camera1": {
+          "double[]##v_/photonvision/camera1/targetPose": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
       }
     }
   },
