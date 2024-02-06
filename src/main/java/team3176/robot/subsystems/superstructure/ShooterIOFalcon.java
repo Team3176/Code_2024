@@ -9,6 +9,7 @@ package team3176.robot.subsystems.superstructure;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO {
@@ -31,6 +33,20 @@ public class ShooterIOFalcon implements ShooterIO {
       new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
   private TalonFXConfiguration pivotConfigs;
   private final NeutralOut m_brake = new NeutralOut();
+  public enum NeutralModeValue
+  {
+    Coast(0),
+    Brake(1),;
+
+    public final int value;
+
+    NeutralModeValue(int initValue)
+    {
+      this.value = initValue;
+    }
+
+    
+  }
 
   public ShooterIOFalcon() {
     pivotController = new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
@@ -70,6 +86,10 @@ public class ShooterIOFalcon implements ShooterIO {
   public void brakeWheelPort() {
     /* Disable the motor instead */
     wheelPortController.setControl(m_brake);
+  }
+  public void setCoastMode()
+  {
+    wheelPortController.coast
   }
 
   @Override
