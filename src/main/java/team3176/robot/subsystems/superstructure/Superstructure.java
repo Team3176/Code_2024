@@ -24,11 +24,23 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command movePivotUp(double position) {
-    return this.run(() -> intake.setPivotMotor(.25)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotMotor(position)).andThen(() -> intake.setPivotStop());
   }
 
   public Command movePivotDown(double position) {
-    return this.run(() -> intake.setPivotMotor(-position)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotMotor(position)).andThen(() -> intake.setPivotStop());
+  }
+
+  public Command stopPivot() {
+    return this.run(() -> intake.setPivotStop());
+  }
+
+  public Command stopElevator() {
+    return this.run(() -> elevator.stopElevator());
+  }
+
+  public Command stopIntake() {
+    return this.run(() -> intake.stopIntakeMotor());
   }
 
   public Command negativeIntake(double velocity) {

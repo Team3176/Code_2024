@@ -136,10 +136,30 @@ public class RobotContainer {
             .button(8)
             .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
     */
-    controller.operator.a().onTrue(superstructure.moveElevator(.5));
-    controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    controller.operator.x().onTrue(superstructure.movePivotUp(.25));
-    controller.operator.b().onTrue(superstructure.movePivotDown(-.25));
+
+    controller
+        .operator
+        .b()
+        .whileTrue(superstructure.movePivotDown(-.25))
+        .onFalse(superstructure.stopPivot());
+
+    controller
+        .operator
+        .a()
+        .whileTrue(superstructure.moveElevator(.5))
+        .onFalse(superstructure.stopElevator());
+
+    controller
+        .operator
+        .y()
+        .whileTrue(superstructure.positiveIntake(50))
+        .onFalse(superstructure.stopIntake());
+
+    controller
+        .operator
+        .x()
+        .whileTrue(superstructure.movePivotUp(.25))
+        .onFalse(superstructure.stopPivot());
 
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());

@@ -44,6 +44,10 @@ public class Intake extends SubsystemBase {
     io.setRoller(velocity);
   }
 
+  public void stopIntakeMotor() {
+    io.stopRoller();
+  }
+
   public void setPivotMotor(double position) {
     io.setPivot(position);
   }

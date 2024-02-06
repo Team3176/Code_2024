@@ -42,22 +42,22 @@ public class IntakeIOFalcon implements IntakeIO {
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
 
     // config setting
-    rollerConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    rollerConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
     rollerConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     rollerConfigs.Voltage.PeakForwardVoltage = 8;
     rollerConfigs.Voltage.PeakReverseVoltage = -8;
 
-    rollerConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
+    rollerConfigs.Slot1.kP = 0.001; // An error of 1 rotations results in 40 amps output
     rollerConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     // pivot configs
 
-    pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    pivotConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
     pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     // Peak output of 8 volts
     pivotConfigs.Voltage.PeakForwardVoltage = 8;
     pivotConfigs.Voltage.PeakReverseVoltage = -8;
 
-    pivotConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
+    pivotConfigs.Slot1.kP = 0.001; // An error of 1 rotations results in 40 amps output
     pivotConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     applyTalonFxConfigs(rollerController, rollerConfigs);
     applyTalonFxConfigs(pivotController, pivotConfigs);
@@ -96,6 +96,7 @@ public class IntakeIOFalcon implements IntakeIO {
   @Override
   public void setPivot(double position) {
     pivotController.setControl(voltPosition.withPosition(position));
+    System.out.println("Pivot encoder="+pivotController.getPosition());
 
     // if(liitswitch1.get()  || limitswitch2.get()) {
     // System.out.println("ElevatorIOFalcon.set was called");

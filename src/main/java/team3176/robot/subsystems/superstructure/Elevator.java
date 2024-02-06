@@ -33,6 +33,10 @@ public class Elevator extends SubsystemBase {
     io.set(position);
   }
 
+  public void stopElevator() {
+    io.stop();
+  }
+
   @Override
   public void periodic() {}
 
