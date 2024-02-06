@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.590966167847829,
-        "y": 4.523784822217532
+        "x": 0.39337881492758836,
+        "y": 7.0530574863956055
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.056205661707098,
-        "y": 6.446032046993672
+        "x": 1.6507886536899836,
+        "y": 6.2147842605544374
       },
       "isLocked": false,
-      "linkedName": "CNote3"
+      "linkedName": "BlueAmpStart"
     },
     {
       "anchor": {
-        "x": 6.969487741792386,
-        "y": 6.229237247206889
+        "x": 2.48906187953221,
+        "y": 5.607758821151446
       },
       "prevControl": {
-        "x": 7.1356970882955855,
-        "y": 6.098257055669041
-      },
-      "nextControl": {
-        "x": 6.803278395289186,
-        "y": 6.360217438744737
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 4.888257663839272,
-        "y": 6.229237247206889
-      },
-      "prevControl": {
-        "x": 6.506992168913915,
-        "y": 6.200331273901985
+        "x": 1.0437632142869928,
+        "y": 6.706185806737811
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AmpShoot"
+      "linkedName": "BlueWing2"
     }
   ],
   "rotationTargets": [],
@@ -59,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "BlueAmp",
   "previewStartingState": null,
   "useDefaultConstraints": false
 }
