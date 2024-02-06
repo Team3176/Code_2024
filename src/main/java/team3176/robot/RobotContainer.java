@@ -20,6 +20,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
+import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.*;
@@ -45,6 +46,7 @@ public class RobotContainer {
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
+  private Visualization vis;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -53,6 +55,7 @@ public class RobotContainer {
     drivetrain = Drivetrain.getInstance();
     robotState = RobotState.getInstance();
     intake = Intake.getInstance();
+    vis = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
