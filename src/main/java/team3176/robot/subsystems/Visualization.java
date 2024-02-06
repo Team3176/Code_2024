@@ -17,11 +17,11 @@ public class Visualization extends SubsystemBase {
 
     Pose3d intake =
         new Pose3d(
-            new Translation3d(-0.2541, 0.0, 0.12),
+            new Translation3d(0.2541, 0.0, 0.12),
             new Rotation3d(0, Units.degreesToRadians(intakeAngle.get()), 0));
     Pose3d shooter =
         new Pose3d(
-            new Translation3d(0.01, 0.0, 0.4309),
+            new Translation3d(-0.01, 0.0, 0.4309),
             new Rotation3d(0, Units.degreesToRadians(shooterAngle.get()), 0));
     Pose3d[] components = {intake, shooter};
     Logger.recordOutput("component_vis", components);
