@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.constants.*;
@@ -11,7 +10,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private int x = 0;
-  DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
+  // DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
 
   private Intake(IntakeIO io) {
     this.io = io;
@@ -58,7 +57,7 @@ public class Intake extends SubsystemBase {
 
   public boolean getIsLinebreakOne() {
     // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
-    return (!linebreak1.get());
+    return false; // (!linebreak1.get());
   }
 
   public static Intake getInstance() {

@@ -9,36 +9,69 @@ package team3176.robot.subsystems.superstructure;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
-import team3176.robot.constants.Hardwaremap;
-public class ShooterIOFalcon implements ShooterIO{
-  
-  private TalonFX wheelPortController = new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
-  private TalonFX wheelStarbrdController = new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
-  private TalonFX pivotController = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooter_CBN);
 
+public class ShooterIOFalcon implements ShooterIO {
+
+  private TalonFX wheelUpperController =
+      new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+  private TalonFX wheelLowerController =
+      new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+  private CANSparkFlex pivotController =
+      new CANSparkFlex(
+          Hardwaremap.shooterPivot_CID,
+          MotorType
+              .kBrushless); // = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooter_CBN);
+  private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
+  private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
   public ShooterIOFalcon() {
-    wheelPortController.
-//    pivotController.
+
+    configsWheelUpper.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
+    configsWheelUpper.Slot0.kI =
+        0.5; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelUpper.Slot0.kD =
+        0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelUpper.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    // Rotation per second
+    // Peak output of 8 volts
+    configsWheelUpper.Voltage.PeakForwardVoltage = 8;
+    configsWheelUpper.Voltage.PeakReverseVoltage = -8;
+
+    configsWheelLower.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
+    configsWheelLower.Slot0.kI =
+        0.5; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelLower.Slot0.kD =
+        0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelLower.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    // Rotation per second
+    // Peak output of 8 volts
+    configsWheelLower.Voltage.PeakForwardVoltage = 8;
+    configsWheelLower.Voltage.PeakReverseVoltage = -8;
+
+    wheelUpperController.getConfigurator().apply(configsWheelUpper);
+    wheelLowerController.getConfigurator().apply(configsWheelLower);
   }
+
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
- //   inputs.pivotPosition = Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-//    inputs.wheelPortVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-//    inputs.wheelStarbrdVelocityRadPerSec = Units.degreesToRadians(armEncoder.getVelocity().getValueAsDouble());
-//    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
+    // TODO: position is some gear math I don't know the gear sizes so do this later
+    inputs.pivotPosition =
+        new Rotation2d(); // Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelUpperVelocityRadPerSec =
+        Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec =
+        Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
+    inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
+    inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
