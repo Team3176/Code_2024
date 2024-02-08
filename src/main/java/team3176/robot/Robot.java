@@ -76,7 +76,7 @@ public class Robot extends LoggedRobot {
           }
         }
         Logger.addDataReceiver(new NT4Publisher());
-        if (Constants.getRobot() == RobotType.ROBOT_2023C) {
+        if (Constants.getRobot() == RobotType.ROBOT_2024C) {
           LoggedPowerDistribution.getInstance(50, ModuleType.kRev);
         }
         break;
