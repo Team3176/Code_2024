@@ -104,6 +104,7 @@ public class Drivetrain extends SubsystemBase {
             new SwerveModuleState(),
             new SwerveModuleState()
           });
+  private ChassisSpeeds desiredSpeeds;
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
@@ -490,6 +491,10 @@ public class Drivetrain extends SubsystemBase {
         });
   }
 
+  public Command stop() {
+    return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
+  }
+
   private void resetPoseToVision() {
     // call resetPose() and pass in visionPose3d
     resetPose(visionPose3d.toPose2d());
@@ -512,6 +517,10 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    if (!DriverStation.isEnabled()) {
+      prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
+      driveVelocity(new ChassisSpeeds());
+    }
     Logger.processInputs("Drivetrain/gyro", inputs);
     SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 

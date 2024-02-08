@@ -1,0 +1,65 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.39337881492758836,
+        "y": 7.0530574863956055
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.3933788149275883,
+        "y": 6.5530574863956055
+      },
+      "isLocked": false,
+      "linkedName": "BlueAmpStart"
+    },
+    {
+      "anchor": {
+        "x": 5.408565183327549,
+        "y": 6.243690233859341
+      },
+      "prevControl": {
+        "x": 3.5152239318563145,
+        "y": 6.113613353987272
+      },
+      "nextControl": {
+        "x": 6.819452967045239,
+        "y": 6.340621455641471
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.706590061067446,
+        "y": 5.76674167432842
+      },
+      "prevControl": {
+        "x": 5.336300250065289,
+        "y": 6.431579060341219
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "CNote2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "BlueAmp",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

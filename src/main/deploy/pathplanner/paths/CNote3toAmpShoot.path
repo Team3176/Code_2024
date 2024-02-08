@@ -1,0 +1,65 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.590966167847829,
+        "y": 4.523784822217532
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.056205661707098,
+        "y": 6.446032046993672
+      },
+      "isLocked": false,
+      "linkedName": "CNote3"
+    },
+    {
+      "anchor": {
+        "x": 6.969487741792386,
+        "y": 6.229237247206889
+      },
+      "prevControl": {
+        "x": 7.1356970882955855,
+        "y": 6.098257055669041
+      },
+      "nextControl": {
+        "x": 6.803278395289186,
+        "y": 6.360217438744737
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.888257663839272,
+        "y": 6.229237247206889
+      },
+      "prevControl": {
+        "x": 6.506992168913915,
+        "y": 6.200331273901985
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "AmpShoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
