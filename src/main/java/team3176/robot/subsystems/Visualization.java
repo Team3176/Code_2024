@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import team3176.robot.subsystems.superstructure.Elevator;
 import team3176.robot.util.LoggedTunableNumber;
 
 public class Visualization extends SubsystemBase {
@@ -14,10 +15,10 @@ public class Visualization extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    Double elevatorPosition = Elevator.getInstance().getPosition();
     Pose3d intake =
         new Pose3d(
-            new Translation3d(0.2541, 0.0, 0.12),
+            new Translation3d(0.2541, 0.0, 0.12 + elevatorPosition),
             new Rotation3d(0, Units.degreesToRadians(intakeAngle.get()), 0));
     Pose3d shooter =
         new Pose3d(

@@ -13,7 +13,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
+import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -30,11 +32,12 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  // private final Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
   private Intake intake;
+  private Visualization vis;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
@@ -43,16 +46,17 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-    // drivetrain = Drivetrain.getInstance();
+    drivetrain = Drivetrain.getInstance();
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
     intake = Intake.getInstance();
+    vis = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
-    /*
+
     drivetrain.setDefaultCommand(
         drivetrain
             .swerveDriveJoysticks(
@@ -60,6 +64,7 @@ public class RobotContainer {
                 () -> controller.getStrafe(),
                 () -> controller.getSpin())
             .withName("default drive"));
+    /*
     if (Constants.getMode() == Mode.SIM) {
       drivetrain.setDefaultCommand(
           drivetrain
@@ -177,6 +182,11 @@ public class RobotContainer {
     */
     controller.operator.a().onTrue(superstructure.moveElevator(.5));
     controller.operator.y().onTrue(superstructure.positiveIntake(50));
+    controller
+        .rotStick
+        .button(1)
+        .whileTrue(Elevator.getInstance().goToPosition(0.6).withName("setpose"))
+        .onFalse(Elevator.getInstance().goToPosition(0.0).withName("setpose"));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 
