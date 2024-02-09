@@ -39,12 +39,10 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private final Drivetrain drivetrain;
+  private Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
-  private Intake intake;
-  private Drivetrain drivetrain;
   private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
@@ -60,7 +58,6 @@ public class RobotContainer {
     }
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    intake = Intake.getInstance();
     visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
@@ -149,19 +146,19 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
-        controller
-            .rotStick
-            .button(3)
-            .whileTrue(
-                new InstantCommand(drivetrain::setBrakeMode)
-                    .andThen(drivetrain.swerveDefenseCommand())
-                    .withName("setBrakeMode"));
+    controller
+        .rotStick
+        .button(3)
+        .whileTrue(
+            new InstantCommand(drivetrain::setBrakeMode)
+                .andThen(drivetrain.swerveDefenseCommand())
+                .withName("setBrakeMode"));
 
-        controller
-            .rotStick
-            .button(8)
-            .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-    */
+    controller
+        .rotStick
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
     controller
