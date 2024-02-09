@@ -1,22 +1,22 @@
 package team3176.robot.subsystems.superstructure;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.constants.*;
 import team3176.robot.constants.RobotConstants.Mode;
-import team3176.robot.constants.SuperStructureConstants;
+import team3176.robot.util.TunablePID;
 
 /** Elevator handles the height of the intake from the ground. */
 public class Elevator extends SubsystemBase {
   private static Elevator instance;
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private TunablePID pid;
 
   private Elevator(ElevatorIO io) {
     this.io = io;
-    SmartDashboard.putNumber("Elevator_kp", SuperStructureConstants.ELEVATOR_kP);
-    SmartDashboard.putNumber("Elevator_Kg", SuperStructureConstants.ELEVATOR_kg);
-    SmartDashboard.putNumber("elevator_height", 0.0);
+    pid = new TunablePID("Elevator/PID", 50.0, 0.0, 0.0);
   }
 
   public void setCoastMode() {
@@ -37,13 +37,31 @@ public class Elevator extends SubsystemBase {
     io.stop();
   }
 
+  public double getPosition() {
+    return inputs.Position;
+  }
+
+  public Command goToPosition(double position) {
+    return this.runEnd(
+        () -> {
+          io.set(pid.calculate(getPosition(), position));
+        },
+        io::stop);
+  }
+
   @Override
-  public void periodic() {}
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Elevator", inputs);
+    pid.checkParemeterUpdate();
+  }
 
   public static Elevator getInstance() {
     if (instance == null) {
       if (RobotConstants.getMode() == Mode.REAL) {
         instance = new Elevator(new ElevatorIOFalcon() {});
+      } else {
+        instance = new Elevator(new ElevatorIOSim() {});
       }
     }
     return instance;

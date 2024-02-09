@@ -104,6 +104,7 @@ public class Drivetrain extends SubsystemBase {
             new SwerveModuleState(),
             new SwerveModuleState()
           });
+  private ChassisSpeeds desiredSpeeds;
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
@@ -116,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
     // Instantiate pods
     if (Constants.getMode() != Mode.REPLAY) {
       switch (Constants.getRobot()) {
-        case ROBOT_2023C:
+        case ROBOT_2024C:
           System.out.println("[init] normal swervePods");
           podFR =
               new SwervePod(
@@ -131,8 +132,7 @@ public class Drivetrain extends SubsystemBase {
               new SwervePod(
                   3, new SwervePodIOFalconSpark(Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
           break;
-        case ROBOT_2023P:
-          break;
+        case CTRL_BOARD:
         case ROBOT_SIMBOT:
           System.out.println("[init] simulated swervePods");
           podFR = new SwervePod(0, new SwervePodIOSim(0));
@@ -490,6 +490,10 @@ public class Drivetrain extends SubsystemBase {
         });
   }
 
+  public Command stop() {
+    return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
+  }
+
   private void resetPoseToVision() {
     // call resetPose() and pass in visionPose3d
     resetPose(visionPose3d.toPose2d());
@@ -512,6 +516,10 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    if (!DriverStation.isEnabled()) {
+      prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
+      driveVelocity(new ChassisSpeeds());
+    }
     Logger.processInputs("Drivetrain/gyro", inputs);
     SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 

@@ -9,79 +9,69 @@ package team3176.robot.subsystems.superstructure;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 
-/** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOFalcon implements ShooterIO {
 
-  private CANSparkFlex pivotController;
-  private CANcoder pivotEncoder;
-  private TalonFX wheelPortController, wheelStarbrdController;
-  private TalonFXConfiguration wheelPortConfigs, wheelStarbrdConfigs;
-  private final VelocityVoltage m_voltageVelocity =
-      new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
-  private TalonFXConfiguration pivotConfigs;
-  private final NeutralOut m_brake = new NeutralOut();
+  private TalonFX wheelUpperController =
+      new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+  private TalonFX wheelLowerController =
+      new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+  private CANSparkFlex pivotController =
+      new CANSparkFlex(
+          Hardwaremap.shooterPivot_CID,
+          MotorType
+              .kBrushless); // = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooter_CBN);
+  private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
+  private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
   public ShooterIOFalcon() {
-    pivotController = new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
-    pivotController.setSmartCurrentLimit(SuperStructureConstants.ARM_CURRENT_LIMIT_A);
-    pivotEncoder = new CANcoder(Hardwaremap.armEncoder_CID);
-    pivotController.setOpenLoopRampRate(0.5);
-    wheelPortController =
-        new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooterWheelPort_CBN);
-    wheelPortConfigs = new TalonFXConfiguration();
-    wheelStarbrdController =
-        new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooterWheelStarbrd_CBN);
-    wheelStarbrdConfigs = new TalonFXConfiguration();
 
-    wheelPortConfigs.Slot0.kP = 0.001;
-    wheelPortConfigs.Slot0.kI = 0.000;
-    wheelPortConfigs.Slot0.kD = 0.000;
-    wheelPortConfigs.Slot0.kV = 0.12;
+    configsWheelUpper.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
+    configsWheelUpper.Slot0.kI =
+        0.5; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelUpper.Slot0.kD =
+        0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelUpper.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    // Rotation per second
+    // Peak output of 8 volts
+    configsWheelUpper.Voltage.PeakForwardVoltage = 8;
+    configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
-    wheelStarbrdConfigs.Slot0.kP = 0.001;
-    wheelStarbrdConfigs.Slot0.kI = 0.000;
-    wheelStarbrdConfigs.Slot0.kD = 0.000;
-    wheelStarbrdConfigs.Slot0.kV = 0.12;
+    configsWheelLower.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
+    configsWheelLower.Slot0.kI =
+        0.5; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelLower.Slot0.kD =
+        0.0001; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelLower.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    // Rotation per second
+    // Peak output of 8 volts
+    configsWheelLower.Voltage.PeakForwardVoltage = 8;
+    configsWheelLower.Voltage.PeakReverseVoltage = -8;
 
-    pivotConfigs.Slot0.kP = 0.001;
-    pivotConfigs.Slot0.kI = 0.000;
-    pivotConfigs.Slot0.kD = 0.000;
-    pivotConfigs.Slot0.kV = 0.12;
-
-    applyTalonFxConfigs(wheelPortController, wheelPortConfigs);
-    applyTalonFxConfigs(wheelStarbrdController, wheelStarbrdConfigs);
-  }
-
-  public void setWheelPortPIDVelocity(double desiredRotationsPerSecond) {
-    wheelPortController.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
-  }
-
-  public void brakeWheelPort() {
-    /* Disable the motor instead */
-    wheelPortController.setControl(m_brake);
+    wheelUpperController.getConfigurator().apply(configsWheelUpper);
+    wheelLowerController.getConfigurator().apply(configsWheelLower);
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    // TODO: garbage needed to compile nothing is correct
+    // TODO: position is some gear math I don't know the gear sizes so do this later
     inputs.pivotPosition =
-        Rotation2d.fromRotations(pivotEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelPortVelocityRadPerSec =
-        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
-    inputs.wheelStarbrdVelocityRadPerSec =
-        Units.degreesToRadians(pivotEncoder.getVelocity().getValueAsDouble());
+        new Rotation2d(); // Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
+    inputs.wheelUpperVelocityRadPerSec =
+        Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec =
+        Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
     inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
+    inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
+    inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {

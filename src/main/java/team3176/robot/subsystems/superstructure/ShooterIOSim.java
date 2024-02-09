@@ -17,42 +17,49 @@ import team3176.robot.Constants;
 /** Template hardware interface for a closed loop subsystem. */
 public class ShooterIOSim implements ShooterIO {
 
-  private FlywheelSim wheelPortSim, wheelStarbrdSim;
+  private FlywheelSim wheelSimUpper, wheelSimLower;
   private SingleJointedArmSim pivotSim;
 
-  private double wheelPortAppliedVolts, wheelStarbrdAppliedVolts;
+  private double wheelUpperAppliedVolts, wheelLowerAppliedVolts;
   private double pivotAppliedVolts;
 
   public ShooterIOSim() {
-    wheelPortSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
-    wheelStarbrdSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    wheelSimUpper = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    wheelSimLower = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
     pivotSim =
-        new SingleJointedArmSim(DCMotor.getFalcon500(1), 50.0, 1.0, 0.2, 0.0, 1.0, false, 0.0);
+        new SingleJointedArmSim(
+            DCMotor.getFalcon500(1),
+            50.0,
+            1.0,
+            0.2,
+            Shooter.LOWER_LIMIT.getRadians(),
+            Shooter.UPPER_LIMIT.getRadians(),
+            false,
+            Shooter.LOWER_LIMIT.getRadians());
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    wheelPortSim.update(Constants.LOOP_PERIODIC_SECS);
-    wheelStarbrdSim.update(Constants.LOOP_PERIODIC_SECS);
+    wheelSimUpper.update(Constants.LOOP_PERIODIC_SECS);
+    wheelSimLower.update(Constants.LOOP_PERIODIC_SECS);
     pivotSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.pivotAppliedVolts = pivotAppliedVolts;
     inputs.pivotPosition = Rotation2d.fromRadians(pivotSim.getAngleRads());
-    inputs.wheelPortVelocityRadPerSec = wheelPortSim.getAngularVelocityRadPerSec();
-    inputs.wheelStarbrdVelocityRadPerSec = wheelPortSim.getAngularVelocityRadPerSec();
-    inputs.wheelPortAppliedVolts = wheelPortAppliedVolts;
-    inputs.wheelStarbrdAppliedVolts = wheelStarbrdAppliedVolts;
+    inputs.wheelUpperVelocityRadPerSec = wheelSimUpper.getAngularVelocityRadPerSec();
+    inputs.wheelLowerVelocityRadPerSec = wheelSimLower.getAngularVelocityRadPerSec();
+    inputs.wheelUpperAppliedVolts = wheelUpperAppliedVolts;
+    inputs.wheelLowerAppliedVolts = wheelLowerAppliedVolts;
   }
 
   @Override
-  public void setWheelPortVoltage(double voltage) {
-    wheelPortAppliedVolts = MathUtil.clamp(voltage, -12, 12);
-    wheelPortSim.setInputVoltage(wheelPortAppliedVolts);
+  public void setWheelUpperVoltage(double voltage) {
+    wheelUpperAppliedVolts = MathUtil.clamp(voltage, -12, 12);
+    wheelSimUpper.setInputVoltage(wheelUpperAppliedVolts);
   }
 
-  @Override
-  public void setWheelStarbrdVoltage(double voltage) {
-    wheelStarbrdAppliedVolts = MathUtil.clamp(voltage, -12, 12);
-    wheelStarbrdSim.setInputVoltage(wheelPortAppliedVolts);
+  public void setWheelLowerVoltage(double voltage) {
+    wheelLowerAppliedVolts = MathUtil.clamp(voltage, -12, 12);
+    wheelSimLower.setInputVoltage(wheelLowerAppliedVolts);
   }
 
   @Override

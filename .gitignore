@@ -168,6 +168,10 @@ Code_2022.code-workspace
 #BuildConstants.java
 #**/BuildConstants.java
 /src/main/java/team3176/robot/BuildConstants.java
+simgui-sd.json
+simgui-window.json
+simgui.json
+ctre_sim/*
 #.wpilib
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode

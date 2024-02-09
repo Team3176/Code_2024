@@ -16,11 +16,11 @@ public interface ShooterIO {
   @AutoLog
   public static class ShooterIOInputs {
     public Rotation2d pivotPosition = new Rotation2d();
-    public double wheelPortVelocityRadPerSec = 0.0;
-    public double wheelStarbrdVelocityRadPerSec = 0.0;
+    public double wheelUpperVelocityRadPerSec = 0.0;
+    public double wheelLowerVelocityRadPerSec = 0.0;
     public double pivotAppliedVolts = 0.0;
-    public double wheelPortAppliedVolts = 0.0;
-    public double wheelStarbrdAppliedVolts = 0.0;
+    public double wheelUpperAppliedVolts = 0.0;
+    public double wheelLowerAppliedVolts = 0.0;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 
@@ -31,9 +31,9 @@ public interface ShooterIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void setWheelPortVoltage(double voltage) {}
+  public default void setWheelUpperVoltage(double voltage) {}
 
-  public default void setWheelStarbrdVoltage(double voltage) {}
+  public default void setWheelLowerVoltage(double voltage) {}
 
   public default void setPivotVoltage(double voltage) {}
 

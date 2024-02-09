@@ -14,7 +14,7 @@ public final class Constants {
   private static final RobotType robot = RobotType.ROBOT_SIMBOT;
   public static final double LOOP_PERIODIC_SECS = 0.02;
   public static final boolean TUNING_MODE = true;
-  public static final boolean VISION_CONNECTED = true;
+  public static final boolean VISION_CONNECTED = false;
   public static boolean invalidRobotAlertSent = false;
 
   public static RobotType getRobot() {
@@ -23,7 +23,7 @@ public final class Constants {
         if (!invalidRobotAlertSent) {
           invalidRobotAlertSent = true;
         }
-        return RobotType.ROBOT_2023C;
+        return RobotType.ROBOT_2024C;
       } else {
         return robot;
       }
@@ -34,8 +34,8 @@ public final class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023C:
-      case ROBOT_2023P:
+      case ROBOT_2024C:
+      case CTRL_BOARD:
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
 
       case ROBOT_SIMBOT:
@@ -47,11 +47,11 @@ public final class Constants {
   }
 
   public static final Map<RobotType, String> logFolders =
-      Map.of(RobotType.ROBOT_2023C, "/media/sda1/");
+      Map.of(RobotType.ROBOT_2024C, "/media/sda1/");
 
   public static enum RobotType {
-    ROBOT_2023C,
-    ROBOT_2023P,
+    ROBOT_2024C,
+    CTRL_BOARD,
     ROBOT_SIMBOT
   }
 
