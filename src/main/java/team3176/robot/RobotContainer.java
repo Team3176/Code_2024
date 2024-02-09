@@ -160,11 +160,6 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
     controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
-    controller
         .operator
         .b()
         .whileTrue(superstructure.movePivotDown(-.25))
