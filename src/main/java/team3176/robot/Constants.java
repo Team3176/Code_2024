@@ -23,7 +23,7 @@ public final class Constants {
         if (!invalidRobotAlertSent) {
           invalidRobotAlertSent = true;
         }
-        return RobotType.ROBOT_2023C;
+        return RobotType.ROBOT_2024C;
       } else {
         return robot;
       }
@@ -34,8 +34,8 @@ public final class Constants {
 
   public static Mode getMode() {
     switch (getRobot()) {
-      case ROBOT_2023C:
-      case ROBOT_2023P:
+      case ROBOT_2024C:
+      case CTRL_BOARD:
         return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
 
       case ROBOT_SIMBOT:
@@ -47,11 +47,11 @@ public final class Constants {
   }
 
   public static final Map<RobotType, String> logFolders =
-      Map.of(RobotType.ROBOT_2023C, "/media/sda1/");
+      Map.of(RobotType.ROBOT_2024C, "/media/sda1/");
 
   public static enum RobotType {
-    ROBOT_2023C,
-    ROBOT_2023P,
+    ROBOT_2024C,
+    CTRL_BOARD,
     ROBOT_SIMBOT
   }
 

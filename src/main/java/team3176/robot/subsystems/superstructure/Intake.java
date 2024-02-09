@@ -2,6 +2,7 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.constants.*;
 import team3176.robot.constants.RobotConstants.Mode;
 
@@ -18,17 +19,6 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_PIVOT_kg);
     SmartDashboard.putNumber("Intake_angle", 0.0);
     SmartDashboard.putNumber("Intake_velocity", 0.0);
-  }
-
-  public void periodic() {
-    if (x > 20) {
-      // System.out.println("IsLinebreakOne = " + inputs.isLimitswitchOne);
-      // System.out.println("IntakeLimitswitch - " + limitswitch1.get());
-      x = 0;
-
-    } else {
-      x = x + 1;
-    }
   }
 
   public void setCoastMode() {
@@ -65,8 +55,15 @@ public class Intake extends SubsystemBase {
       if (RobotConstants.getMode() == Mode.REAL) {}
       instance = new Intake(new IntakeIOFalcon() {});
     } else {
-      instance = new Intake(new IntakeIO() {});
+      instance = new Intake(new IntakeIOSim() {});
     }
     return instance;
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
+    // Logger.recordOutput("Arm/mech2d", mech);
   }
 }

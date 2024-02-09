@@ -76,7 +76,7 @@ public class Robot extends LoggedRobot {
           }
         }
         Logger.addDataReceiver(new NT4Publisher());
-        if (Constants.getRobot() == RobotType.ROBOT_2023C) {
+        if (Constants.getRobot() == RobotType.ROBOT_2024C) {
           LoggedPowerDistribution.getInstance(50, ModuleType.kRev);
         }
         break;
@@ -162,8 +162,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    //    robotContainer.checkAutonomousSelection();
-    //    robotContainer.checkAllaince();
+    robotContainer.checkAutonomousSelection();
+    robotContainer.checkAllaince();
     Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
   }
 
@@ -172,12 +172,12 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     robotContainer.clearCanFaults();
     //    robotContainer.setThrustBrake();
-    //    autonomousCommand = robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    //    if (autonomousCommand != null) {
-    //      autonomousCommand.schedule();
-    //    }
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */

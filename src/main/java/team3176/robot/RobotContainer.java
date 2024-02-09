@@ -4,10 +4,16 @@
 
 package team3176.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.Constants.Mode;
@@ -33,7 +39,7 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  // private final Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
@@ -43,6 +49,7 @@ public class RobotContainer {
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
+  private Visualization vis;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -60,7 +67,7 @@ public class RobotContainer {
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
-    /*
+
     drivetrain.setDefaultCommand(
         drivetrain
             .swerveDriveJoysticks(
@@ -80,25 +87,17 @@ public class RobotContainer {
     }
     NamedCommands.registerCommand(
         "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    NamedCommands.registerCommand(
-        "intake",
-        intake
-            .runIntake(-1.0)
-            .withTimeout(0.5)
-            .alongWith(new PrintCommand("intake"))
-            .withName("intaking"));
-    // autonChooser.addDefaultOption("wall_3_cube_poop_4_steal", "wall_3_cube_poop_4_steal");
+    // NamedCommands.registerCommand(
+    //     "intake",
+    //     intake
+    //         .runIntake(-1.0)
+    //         .withTimeout(0.5)
+    //         .alongWith(new PrintCommand("intake"))
+    //         .withName("intaking"));
+
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
-    // File paths = new File(Filesystem.getDeployDirectory(), "pathplanner");
-    // for (File f : paths.listFiles()) {
-    //   if (!f.isDirectory()) {
-    //     String s = f.getName().split("\\.", 0)[0];
-    //     autonChooser.addOption(s, s);
-    //   }
-    // }
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
-    */
 
     configureBindings();
   }
@@ -128,13 +127,12 @@ public class RobotContainer {
       use the whileTrue so if the button is released the command is cancelled
       pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
     */
-    /*
-    controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
+    // controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
 
-    controller
-        .transStick
-        .button(3)
-        .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
+    // controller
+    //     .transStick
+    //     .button(3)
+    //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
     controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
 
@@ -146,29 +144,10 @@ public class RobotContainer {
             new InstantCommand(drivetrain::setBrakeMode)
                 .andThen(drivetrain.swerveDefenseCommand())
                 .withName("swerveDefense"));
-    // m_Controller.getTransStick_Button10()
-    //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
-    // m_Drivetrain));
-
-        // controller.rotStick.button(1).whileTrue(new CubeChase(
-        controller
-            .rotStick
-            .button(1)
-            .whileTrue(
-                drivetrain.swerveDrivePercent(
-                    () -> controller.getForward() * 1.0,
-                    () -> controller.getStrafe() * 1.0,
-                    () -> controller.getSpin() * 7));
-
-    // controller.rotStick.button(1).whileTrue(new CubeChase(
     controller
         .rotStick
-        .button(1)
-        .whileTrue(
-            drivetrain.swerveDrivePercent(
-                () -> controller.getForward() * -1.0,
-                () -> controller.getStrafe() * 1.0,
-                () -> controller.getSpin() * 7));
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
         controller
             .rotStick
@@ -216,7 +195,7 @@ public class RobotContainer {
   public void printCanFaults() {
     pdh.getStickyFaults();
   }
-  /*
+
   public void checkAutonomousSelection(Boolean force) {
     if (autonChooser.get() != null
         && (!choosenAutonomousCommand.equals(autonChooser.get()) || force)) {
@@ -253,13 +232,13 @@ public class RobotContainer {
       checkAutonomousSelection(true);
     }
   }
-  */
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  /* public Command getAutonomousCommand() {
+  public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return choosenAutonomousCommand;
     // return drivetrain.swerveDriveAuto(1,0,0);
@@ -273,5 +252,4 @@ public class RobotContainer {
     // choosenAutonomousCommand = new PathPlannerAuto("wall_3nSteal_3").getauto();
     // return choosenAutonomousCommand;
   }
-  */
 }

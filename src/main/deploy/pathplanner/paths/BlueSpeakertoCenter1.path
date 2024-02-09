@@ -1,0 +1,65 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2605580140737749,
+        "y": 5.463228954626923
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8675834534767664,
+        "y": 6.229237247206889
+      },
+      "isLocked": false,
+      "linkedName": "BlueSpeaker"
+    },
+    {
+      "anchor": {
+        "x": 4.2089672911740195,
+        "y": 6.532749966908384
+      },
+      "prevControl": {
+        "x": 2.2578140930929753,
+        "y": 6.200331273901985
+      },
+      "nextControl": {
+        "x": 5.603092597039568,
+        "y": 6.770267611611404
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.677684087762542,
+        "y": 7.371023192750611
+      },
+      "prevControl": {
+        "x": 4.917163637144175,
+        "y": 6.576108926865741
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "CNote1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "BlueSpeaker",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
