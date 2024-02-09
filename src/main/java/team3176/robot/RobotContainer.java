@@ -39,11 +39,11 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private final Drivetrain drivetrain;
+  private Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
-  private Intake intake;
+  private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
@@ -53,11 +53,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-    drivetrain = Drivetrain.getInstance();
+    if (Constants.getMode() == Mode.SIM) {
+      drivetrain = Drivetrain.getInstance();
+    }
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    intake = Intake.getInstance();
-    vis = new Visualization();
+    visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
@@ -145,13 +146,26 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
-    controller.operator.a().onTrue(superstructure.moveElevator(.5));
-    controller.operator.y().onTrue(superstructure.positiveIntake(50));
     controller
         .rotStick
+        .button(3)
+        .whileTrue(
+            new InstantCommand(drivetrain::setBrakeMode)
+                .andThen(drivetrain.swerveDefenseCommand())
+                .withName("setBrakeMode"));
+
+    controller
+        .rotStick
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+
+    // controller.operator.a().onTrue(superstructure.moveElevator(.5));
+    // controller.operator.y().onTrue(superstructure.positiveIntake(50));
+    controller
+        .transStick
         .button(1)
-        .whileTrue(Elevator.getInstance().goToPosition(0.6).withName("setpose"))
-        .onFalse(Elevator.getInstance().goToPosition(0.0).withName("setpose"));
+        .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
+        .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 
