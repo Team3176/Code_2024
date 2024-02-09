@@ -168,7 +168,9 @@ Code_2022.code-workspace
 #BuildConstants.java
 #**/BuildConstants.java
 /src/main/java/team3176/robot/BuildConstants.java
-simgui-*
+simgui-sd.json
+simgui-window.json
+simgui.json
 ctre_sim/*
 #.wpilib
 
