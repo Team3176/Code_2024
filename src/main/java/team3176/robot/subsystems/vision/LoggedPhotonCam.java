@@ -47,7 +47,9 @@ public class LoggedPhotonCam {
               Units.inchesToMeters(10)),
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
-  private PhotonCamera realCam;
+  // private PhotonCamera realCam;
+  private PhotonCameraIO io;
+  private PhotonCameraInputsAutoLogged inputs;
   private List<Pose3d> targets = new ArrayList<Pose3d>();
   private List<Pose3d> estimates = new ArrayList<Pose3d>();
   String name = "";
@@ -57,7 +59,8 @@ public class LoggedPhotonCam {
 
   public LoggedPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
-    realCam = new PhotonCamera(name);
+    this.io = new PhotonCameraIO(name);
+    this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -67,10 +70,7 @@ public class LoggedPhotonCam {
     }
     estimator =
         new PhotonPoseEstimator(
-            field,
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            realCam,
-            robot2Camera);
+            field, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robot2Camera);
   }
 
   public Transform3d getRobot2Camera() {
@@ -78,7 +78,7 @@ public class LoggedPhotonCam {
   }
 
   public PhotonCamera getCamera() {
-    return realCam;
+    return io.getCamera();
   }
 
   public void generateLoggingData(PhotonPipelineResult results) {
@@ -151,7 +151,8 @@ public class LoggedPhotonCam {
 
   public void periodic() {
     LogCameraPose();
-    var results = realCam.getLatestResult();
+    io.updateInputs(inputs);
+    var results = inputs.results;
     Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
 

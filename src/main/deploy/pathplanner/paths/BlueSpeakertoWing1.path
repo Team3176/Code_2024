@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2605580140737749,
+        "y": 5.463228954626923
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6796946269970534,
+        "y": 6.084707380687026
+      },
+      "isLocked": false,
+      "linkedName": "BlueSpeaker"
+    },
+    {
+      "anchor": {
+        "x": 2.5757797994478397,
+        "y": 6.995245539793603
+      },
+      "prevControl": {
+        "x": 1.8242244935203267,
+        "y": 6.128066340646473
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlueWing1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "BlueSpeaker",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

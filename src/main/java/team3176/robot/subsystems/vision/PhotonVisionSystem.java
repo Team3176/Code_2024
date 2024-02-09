@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -72,6 +73,13 @@ public class PhotonVisionSystem extends SubsystemBase {
   public double notePitch;
   public boolean seeNote;
 
+  public Integer camera1tagSeen;
+  public double camera1yaw;
+  public double camera1pitch;
+  public boolean camera1seetag;
+  public Transform2d camer1tagposition2d;
+  public Transform3d camera1tagposition3d;
+
   List<Pose3d> visionTargets = new ArrayList<>();
 
   AprilTagFieldLayout field;
@@ -79,10 +87,12 @@ public class PhotonVisionSystem extends SubsystemBase {
   private SimPhotonVision simInstance;
   EstimatedRobotPose currentEstimate;
   PhotonCamera notecamera;
+  PhotonCamera camera1;
 
   private PhotonVisionSystem() {
-    cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
+    // cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
     notecamera = new PhotonCamera("notecam");
+    camera1 = new PhotonCamera("camera1");
     // cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
     // cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
     // cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
@@ -125,10 +135,21 @@ public class PhotonVisionSystem extends SubsystemBase {
       notePitch = target.getPitch();
       double noteskew = target.getSkew();
       double notearea = target.getArea();
-      seeNote = true;
 
     } else {
       seeNote = false;
+    }
+
+    PhotonPipelineResult result2 = camera1.getLatestResult();
+    if (result2.hasTargets()) {
+      PhotonTrackedTarget target2 = result2.getBestTarget();
+      camera1pitch = target2.getPitch();
+      camera1yaw = target2.getYaw();
+      camera1tagSeen = target2.getFiducialId();
+      camera1tagposition3d = target2.getBestCameraToTarget();
+      // camer1tagposition2d = target2.getCameraToTarget();
+    } else {
+      camera1seetag = false;
     }
   }
 }
