@@ -48,12 +48,12 @@ public class IntakeIOFalcon implements IntakeIO {
     pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
 
     // config setting
-    rollerConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    rollerConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
     rollerConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     rollerConfigs.Voltage.PeakForwardVoltage = 8;
     rollerConfigs.Voltage.PeakReverseVoltage = -8;
 
-    rollerConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
+    rollerConfigs.Slot1.kP = 0.001; // An error of 1 rotations results in 40 amps output
     rollerConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     // pivot configs
 
@@ -75,6 +75,7 @@ public class IntakeIOFalcon implements IntakeIO {
     pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
 
     applyTalonFxConfigs(rollerController, rollerConfigs);
+    // applyTalonFxConfigs(pivotController, pivotConfigs);
   }
   /** Updates the set of loggable inputs. */
   @Override
