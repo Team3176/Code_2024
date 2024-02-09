@@ -18,37 +18,37 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(50))
+    return this.run(() -> intake.setRollerVelocity(50))
         .until(() -> intake.getIsLinebreakOne())
-        .andThen(() -> intake.setStop());
+        .andThen(() -> intake.stopRoller());
   }
 
   public Command movePivotUp(double position) {
-    return this.run(() -> intake.setPivotMotor(position)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotPosition(.25)).andThen(() -> intake.stopPivot());
   }
 
   public Command movePivotDown(double position) {
-    return this.run(() -> intake.setPivotMotor(position)).andThen(() -> intake.setPivotStop());
+    return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
   }
 
   public Command stopPivot() {
-    return this.run(() -> intake.setPivotStop());
-  }
-
-  public Command stopElevator() {
-    return this.run(() -> elevator.stopElevator());
-  }
-
-  public Command stopIntake() {
-    return this.run(() -> intake.stopIntakeMotor());
+    return this.run(() -> intake.stopPivot());
   }
 
   public Command negativeIntake(double velocity) {
-    return this.run(() -> intake.setIntakeMotor(-velocity));
+    return this.run(() -> intake.setRollerVelocity(-velocity));
+  }
+
+  public Command stopIntake() {
+    return this.run(() -> intake.stopRoller());
   }
 
   public Command moveElevator(double position) {
     return this.run(() -> elevator.setElevatorMotor(.5));
+  }
+
+  public Command stopElevator() {
+    return this.run(() -> elevator.stopElevator());
   }
 
   public static Superstructure getInstance() {
@@ -64,9 +64,5 @@ public class Superstructure extends SubsystemBase {
       return linebreak1.get();
     }
   /* */
-  public enum GamePiece {
-    CUBE,
-    CONE,
-    NONE
-  }
+
 }

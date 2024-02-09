@@ -29,7 +29,9 @@ public interface IntakeIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void setRoller(double percentOutput) {}
+  public default void setRollerPercent(double percentOutput) {}
+
+  public default void setRollerPID(double rpm) {}
 
   public default void setPivot(double percentOutput) {}
 

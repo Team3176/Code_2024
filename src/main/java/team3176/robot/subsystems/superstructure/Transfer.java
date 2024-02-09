@@ -2,12 +2,6 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -139,10 +133,6 @@ public class Transfer extends SubsystemBase {
     this.armSetpointAngleRaw -= delta * 0.5;
   }
 
-  public double getArmPosition() {
-    return inputs.Position;
-  }
-
   public boolean isArmAtPosition() {
     return Math.abs(this.turningPIDController.getPositionError()) < 7;
   }
@@ -202,54 +192,10 @@ public class Transfer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
-    armSholder.setAngle(
-        Rotation2d.fromDegrees(inputs.Position - SuperStructureConstants.TRANSFER_ZERO_POS - 190));
     // simSholder.setAngle(Rotation2d.fromDegrees(inputs.Position -90 -
     // SuperStructureConstants.ARM_SIM_OFFSET));
     Logger.recordOutput("Arm/mech2d", mech);
     double angle = SmartDashboard.getNumber("arm_angle", 0.0);
     double height = SmartDashboard.getNumber("arm_height", 1.18);
-    double angle_for_vis = (-inputs.Position) + 240 + 130;
-    Pose3d shoulder =
-        new Pose3d(
-            0.199155,
-            0.0,
-            1.18,
-            new Rotation3d(0.0, Units.degreesToRadians(angle_for_vis - 130), 0.0));
-    Pose3d shoulder_offset =
-        new Pose3d(
-            0.199155, 0.0, 1.18, new Rotation3d(0.0, Units.degreesToRadians(angle_for_vis), 0.0));
-    Pose3d elbow =
-        shoulder_offset.transformBy(
-            new Transform3d(
-                new Translation3d(0.5, 0.0, 0.0),
-                new Rotation3d(
-                    0.0,
-                    Units.degreesToRadians(
-                        -((50
-                                + 120
-                                    * (SuperStructureConstants.TRANSFER_CARRY_POS
-                                        - (inputs.Position))
-                                    / (SuperStructureConstants.TRANSFER_CARRY_POS
-                                        - SuperStructureConstants.TRANSFER_ZERO_POS)))
-                            + 130
-                            + 240),
-                    0.0)));
-    // Pose3d elbow = new Pose3d(-0.106, 0.0, 0.779603, new Rotation3d(0.0,
-    // Units.degreesToRadians(angle), 0.0));
-    Pose3d[] arm_joints = {shoulder, elbow};
-    Logger.recordOutput("Transfer/visual", arm_joints);
-    // SmartDashboard.putNumber("Arm_Position", armEncoder.getAbsolutePosition());
-    // SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() -
-    // SuperStructureConstants.ARM_ZERO_POS);
-    if (this.currentState == States.CLOSED_LOOP) {
-      this.armSetpointAngleRaw =
-          MathUtil.clamp(
-              this.armSetpointAngleRaw,
-              SuperStructureConstants.TRANSFER_ZERO_POS,
-              SuperStructureConstants.TRANSFER_PICKUP_POS);
-      Logger.recordOutput("Arm/position_error", this.turningPIDController.getPositionError());
-      setPIDPosition(armSetpointAngleRaw);
-    }
   }
 }

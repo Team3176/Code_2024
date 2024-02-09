@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,9 +82,10 @@ public class LoggedPhotonCam {
   }
 
   public void generateLoggingData(PhotonPipelineResult results) {
+    targets.clear();
     if (results.hasTargets()) {
       Pose3d current3d = new Pose3d(Drivetrain.getInstance().getPose());
-      targets.clear();
+
       estimates.clear();
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
@@ -133,13 +135,16 @@ public class LoggedPhotonCam {
       double distance2 = Math.pow(distance * 1.2, 2);
       cov = VecBuilder.fill(distance2, distance2, distance2);
     }
-    if (Math.abs(p.estimatedPose.getZ()) > 1.0
-        || p.estimatedPose
-                .minus(new Pose3d(Drivetrain.getInstance().getPose()))
-                .getTranslation()
-                .getNorm()
-            > 1.0) {
-      return;
+    if (!DriverStation.isDisabled()) {
+      if (Math.abs(p.estimatedPose.getZ()) > 1.0
+          || p.estimatedPose
+                  .minus(new Pose3d(Drivetrain.getInstance().getPose()))
+                  .getTranslation()
+                  .getNorm()
+              > 1.0
+          || distance > 7.0) {
+        return;
+      }
     }
     Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
   }

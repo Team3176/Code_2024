@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 
@@ -32,11 +35,9 @@ public class PhotonVisionSystem extends SubsystemBase {
   public static final Transform3d Robot2camera1 =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(25 / 2 - 1),
-              Units.inchesToMeters(25 / 2 - 1),
-              Units.inchesToMeters(10)),
+              Units.inchesToMeters(13), Units.inchesToMeters(-10), Units.inchesToMeters(8)),
           new Rotation3d(
-              Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
+              Units.degreesToRadians(0), Units.degreesToRadians(-25), Units.degreesToRadians(0)));
   public static final Transform3d Robot2camera2 =
       new Transform3d(
           new Translation3d(
@@ -67,18 +68,24 @@ public class PhotonVisionSystem extends SubsystemBase {
               Units.degreesToRadians(-180 - 20)));
   private ArrayList<LoggedPhotonCam> cameras = new ArrayList<LoggedPhotonCam>();
 
+  public double noteYaw;
+  public double notePitch;
+  public boolean seeNote;
+
   List<Pose3d> visionTargets = new ArrayList<>();
 
   AprilTagFieldLayout field;
   private static PhotonVisionSystem instance;
   private SimPhotonVision simInstance;
   EstimatedRobotPose currentEstimate;
+  PhotonCamera notecamera;
 
   private PhotonVisionSystem() {
     cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
-    cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
-    cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
-    cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
+    notecamera = new PhotonCamera("notecam");
+    // cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
+    // cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
+    // cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -100,11 +107,28 @@ public class PhotonVisionSystem extends SubsystemBase {
   @Override
   public void periodic() {
     visionTargets.clear();
+    // Drivetrain.getInstance().visionPose3d = cameras.get(0).getPoseEstimates().get(0)
     for (LoggedPhotonCam c : cameras) {
       c.periodic();
       visionTargets.addAll(c.getCamera2Target());
     }
     Logger.recordOutput(
         "photonvision/visionTargets", visionTargets.toArray(new Pose3d[visionTargets.size()]));
+
+    PhotonPipelineResult result = notecamera.getLatestResult();
+    Logger.recordOutput("photonvision/noteraw", result);
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      Logger.recordOutput("photonvision/noteyaw", target.getYaw());
+      Logger.recordOutput("photonvision/notepitch", target.getPitch());
+      noteYaw = target.getYaw();
+      notePitch = target.getPitch();
+      double noteskew = target.getSkew();
+      double notearea = target.getArea();
+      seeNote = true;
+
+    } else {
+      seeNote = false;
+    }
   }
 }

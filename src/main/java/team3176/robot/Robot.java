@@ -6,6 +6,7 @@ package team3176.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import team3176.robot.Constants.RobotType;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -162,6 +164,7 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     //    robotContainer.checkAutonomousSelection();
     //    robotContainer.checkAllaince();
+    Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
