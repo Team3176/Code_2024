@@ -19,9 +19,9 @@ import team3176.robot.constants.Hardwaremap;
 public class ShooterIOTalonSpark implements ShooterIO {
 
   private TalonFX wheelUpperController =
-      new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
   private TalonFX wheelLowerController =
-      new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
   private CANSparkFlex pivotController =
       new CANSparkFlex(
           Hardwaremap.shooterPivot_CID,
