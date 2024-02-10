@@ -26,8 +26,8 @@ public class Hardwaremap {
 
   public static final int elevatorLeaderLimitSwitch_DIO = 9;
   public static final int elevatorFollowerLimitSwitch_DIO = 8;
-  public static final int intakeLinebreak1_DIO = 0;
-  public static final int intakeLinebreak2_DIO = 1;
+  public static final int intakeRollerLinebreak_DIO = 0;
+  public static final int intakePivotLinebreak_DIO = 1;
 
   /*
    * Drivetrain CIDs

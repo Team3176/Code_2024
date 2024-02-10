@@ -45,11 +45,17 @@ public class Intake extends SubsystemBase {
     io.stopPivot();
   }
 
-  public boolean getIsLinebreakOne() {
+  public boolean getIsRollerLinebreak() {
     // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
-    //eturn false; // 
-    return (inputs.isLinebreakOne);
+    return (inputs.isRollerLinebreak);
   }
+
+  /*
+  public boolean getIsPivotLinebreak() {
+    // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
+    return (inputs.isPivotLinebreak);
+  }
+  */
 
   public static Intake getInstance() {
     if (instance == null) {
@@ -64,7 +70,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    io.;
     Logger.processInputs("Intake", inputs);
     // Logger.recordOutput("Arm/mech2d", mech);
   }

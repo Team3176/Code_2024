@@ -19,7 +19,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command positiveIntake(double velocity) {
     return this.run(() -> intake.setRollerVelocity(50))
-        .until(() -> intake.getIsLinebreakOne())
+        .until(() -> intake.getIsRollerLinebreak())
         .andThen(() -> intake.stopRoller());
   }
 
