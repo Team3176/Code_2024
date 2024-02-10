@@ -164,7 +164,6 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     robotContainer.checkAutonomousSelection();
     robotContainer.checkAllaince();
-    Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
