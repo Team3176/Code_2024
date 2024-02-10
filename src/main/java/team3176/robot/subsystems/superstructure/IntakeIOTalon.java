@@ -18,12 +18,12 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class IntakeIOFalcon implements IntakeIO {
+public class IntakeIOTalon implements IntakeIO {
 
   private TalonFX rollerController;
   private CANSparkFlex pivotController;
@@ -36,7 +36,7 @@ public class IntakeIOFalcon implements IntakeIO {
   DigitalInput pivotLinebreak;
   NeutralOut brake;
 
-  public IntakeIOFalcon() {
+  public IntakeIOTalon() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     brake = new NeutralOut();

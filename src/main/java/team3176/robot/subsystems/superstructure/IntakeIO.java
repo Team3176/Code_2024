@@ -29,7 +29,6 @@ public interface IntakeIO {
     // constructor if needed for some inputs
     IntakeIOInputs() {}
   }
-  
 
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
