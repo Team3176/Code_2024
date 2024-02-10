@@ -65,14 +65,12 @@ public class Robot extends LoggedRobot {
     }
     switch (Constants.getMode()) {
       case REAL:
-        String folder = Constants.logFolders.get(Constants.getRobot());
-        if (folder != null) {
-          try {
-            Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
-          } catch (Error e) {
-            System.out.println("[Error] failed to start local log file");
-          }
+        try {
+          Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+        } catch (Error e) {
+          System.out.println("[Error] failed to start local log file");
         }
+
         Logger.addDataReceiver(new NT4Publisher());
         if (Constants.getRobot() == RobotType.ROBOT_2024C) {
           LoggedPowerDistribution.getInstance(50, ModuleType.kRev);
@@ -160,9 +158,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // robotContainer.checkAutonomousSelection();
-    // robotContainer.checkAllaince();
-    // Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
+    robotContainer.checkAutonomousSelection();
+    robotContainer.checkAllaince();
   }
 
   /*
