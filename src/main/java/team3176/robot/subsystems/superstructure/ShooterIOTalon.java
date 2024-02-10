@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
 
-public class ShooterIOFalcon implements ShooterIO {
+public class ShooterIOTalon implements ShooterIO {
 
   private TalonFX wheelUpperController =
       new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
@@ -30,7 +30,7 @@ public class ShooterIOFalcon implements ShooterIO {
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
-  public ShooterIOFalcon() {
+  public ShooterIOTalon() {
 
     configsWheelUpper.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
     configsWheelUpper.Slot0.kI =
