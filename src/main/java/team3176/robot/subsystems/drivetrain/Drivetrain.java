@@ -223,23 +223,23 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Drivetrain/speedsRaw", discreteSpeeds);
     Logger.recordOutput(
         "SwerveSetpoints/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
-    SwerveSetpoint output =
-        setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
-    SwerveModuleState[] podStates = output.moduleStates();
-    prevSetpoint = output;
-    // SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    // SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
+    // SwerveSetpoint output =
+    //     setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
+    // SwerveModuleState[] podStates = output.moduleStates();
+    // prevSetpoint = output;
+    SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
     for (int idx = 0; idx < (pods.size()); idx++) {
       optimizedStates[idx] = pods.get(idx).setModule(podStates[idx]);
     }
-    Logger.recordOutput(
-        "Drivetrain/speedsOptimized",
-        new double[] {
-          output.chassisSpeeds().vxMetersPerSecond,
-          output.chassisSpeeds().vyMetersPerSecond,
-          output.chassisSpeeds().omegaRadiansPerSecond
-        });
+    // Logger.recordOutput(
+    //     "Drivetrain/speedsOptimized",
+    //     new double[] {
+    //       output.chassisSpeeds().vxMetersPerSecond,
+    //       output.chassisSpeeds().vyMetersPerSecond,
+    //       output.chassisSpeeds().omegaRadiansPerSecond
+    //     });
     Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
