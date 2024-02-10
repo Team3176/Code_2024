@@ -26,7 +26,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 
-public class LoggedPhotonCam {
+public class LoggedAprilPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
   // to the floor Z
   // is an area for further standards with design to pick a body attached frame
@@ -57,7 +57,7 @@ public class LoggedPhotonCam {
   PhotonPoseEstimator estimator;
   EstimatedRobotPose currentEstimate;
 
-  public LoggedPhotonCam(String name, Transform3d robot2Camera) {
+  public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
     this.io = new PhotonCameraIO(name);
     this.inputs = new PhotonCameraInputsAutoLogged();
@@ -152,6 +152,7 @@ public class LoggedPhotonCam {
   public void periodic() {
     LogCameraPose();
     io.updateInputs(inputs);
+    Logger.processInputs("photonvision/" + this.name, inputs);
     var results = inputs.results;
     Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
