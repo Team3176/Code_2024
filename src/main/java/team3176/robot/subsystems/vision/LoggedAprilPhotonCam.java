@@ -24,6 +24,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 
 public class LoggedAprilPhotonCam {
@@ -87,8 +88,16 @@ public class LoggedAprilPhotonCam {
       Pose3d current3d = new Pose3d(Drivetrain.getInstance().getPose());
 
       estimates.clear();
+      ArrayList<Double> x = new ArrayList<Double>();
+      ArrayList<Double> y = new ArrayList<Double>();
+      Logger.recordOutput("photonvision/" + name + "/num targets", results.getTargets().size());
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
+        for (TargetCorner c : t.getDetectedCorners()) {
+          x.add(c.x);
+          y.add(c.y);
+        }
+
         if (field.getTagPose(t.getFiducialId()).isPresent()) {
           estimates.add(
               PhotonUtils.estimateFieldToRobotAprilTag(
@@ -97,14 +106,22 @@ public class LoggedAprilPhotonCam {
                   robot2Camera.inverse()));
         }
       }
+      double[] xarray = x.stream().mapToDouble(Double::doubleValue).toArray();
+      double[] yarray = y.stream().mapToDouble(Double::doubleValue).toArray();
+      Logger.recordOutput("photonvision/" + name + "/xarray", xarray);
+      Logger.recordOutput("photonvision/" + name + "/yarray", yarray);
       Logger.recordOutput(
           "photonvision/" + name + "/targetposes", targets.toArray(new Pose3d[targets.size()]));
       Logger.recordOutput(
           "photonvision/" + name + "/poseEstimates",
           estimates.toArray(new Pose3d[estimates.size()]));
     } else {
+      Logger.recordOutput("photonvision/" + name + "/num targets", results.getTargets().size());
       Logger.recordOutput("photonvision/" + name + "/targetposes", new Pose3d[] {});
       Logger.recordOutput("photonvision/" + name + "/poseEstimates", new Pose3d[] {});
+      double[] zeros = {0};
+      Logger.recordOutput("photonvision/" + name + "/xarray", zeros);
+      Logger.recordOutput("photonvision/" + name + "/yarray", zeros);
     }
   }
 
