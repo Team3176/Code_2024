@@ -5,7 +5,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -14,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 
@@ -67,33 +63,24 @@ public class PhotonVisionSystem extends SubsystemBase {
               Units.degreesToRadians(0),
               Units.degreesToRadians(-10),
               Units.degreesToRadians(-180 - 20)));
-  private ArrayList<LoggedPhotonCam> cameras = new ArrayList<LoggedPhotonCam>();
+  private ArrayList<LoggedAprilPhotonCam> aprilCameras = new ArrayList<LoggedAprilPhotonCam>();
 
-  public double noteYaw;
-  public double notePitch;
-  public boolean seeNote;
-
-  public Integer camera1tagSeen;
-  public double camera1yaw;
-  public double camera1pitch;
-  public boolean camera1seetag;
-  public Transform2d camer1tagposition2d;
-  public Transform3d camera1tagposition3d;
-
+  private LoggedNotePhotonCam notecam;
   List<Pose3d> visionTargets = new ArrayList<>();
 
   AprilTagFieldLayout field;
   private static PhotonVisionSystem instance;
   private SimPhotonVision simInstance;
   EstimatedRobotPose currentEstimate;
-  PhotonCamera notecamera;
-  PhotonCamera camera1;
+
+  public double noteYaw;
+  public double notePitch;
+  public boolean seeNote;
 
   private PhotonVisionSystem() {
-    // cameras.add(new LoggedPhotonCam("camera1", Robot2camera1));
-    notecamera = new PhotonCamera("notecam");
-    camera1 = new PhotonCamera("camera1");
-    // cameras.add(new LoggedPhotonCam("camera2", Robot2camera2));
+
+    notecam = new LoggedNotePhotonCam();
+    aprilCameras.add(new LoggedAprilPhotonCam("camera1", Robot2camera1));
     // cameras.add(new LoggedPhotonCam("camera3", Robot2camera3));
     // cameras.add(new LoggedPhotonCam("camera4", Robot2camera4));
     try {
@@ -103,7 +90,7 @@ public class PhotonVisionSystem extends SubsystemBase {
       System.out.println("woops can't load the field");
     }
     if (Constants.getMode() == Mode.SIM) {
-      simInstance = new SimPhotonVision(cameras, field);
+      simInstance = new SimPhotonVision(aprilCameras, field);
     }
   }
 
@@ -116,40 +103,18 @@ public class PhotonVisionSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    notecam.periodic();
+    noteYaw = notecam.noteYaw;
+    notePitch = notecam.notePitch;
+    seeNote = notecam.seeNote;
+
     visionTargets.clear();
     // Drivetrain.getInstance().visionPose3d = cameras.get(0).getPoseEstimates().get(0)
-    for (LoggedPhotonCam c : cameras) {
+    for (LoggedAprilPhotonCam c : aprilCameras) {
       c.periodic();
       visionTargets.addAll(c.getCamera2Target());
     }
     Logger.recordOutput(
         "photonvision/visionTargets", visionTargets.toArray(new Pose3d[visionTargets.size()]));
-
-    PhotonPipelineResult result = notecamera.getLatestResult();
-    Logger.recordOutput("photonvision/noteraw", result);
-    if (result.hasTargets()) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      Logger.recordOutput("photonvision/noteyaw", target.getYaw());
-      Logger.recordOutput("photonvision/notepitch", target.getPitch());
-      noteYaw = target.getYaw();
-      notePitch = target.getPitch();
-      double noteskew = target.getSkew();
-      double notearea = target.getArea();
-
-    } else {
-      seeNote = false;
-    }
-
-    PhotonPipelineResult result2 = camera1.getLatestResult();
-    if (result2.hasTargets()) {
-      PhotonTrackedTarget target2 = result2.getBestTarget();
-      camera1pitch = target2.getPitch();
-      camera1yaw = target2.getYaw();
-      camera1tagSeen = target2.getFiducialId();
-      camera1tagposition3d = target2.getBestCameraToTarget();
-      // camer1tagposition2d = target2.getCameraToTarget();
-    } else {
-      camera1seetag = false;
-    }
   }
 }
