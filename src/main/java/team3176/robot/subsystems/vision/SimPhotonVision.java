@@ -30,8 +30,8 @@ public class SimPhotonVision extends SubsystemBase {
   //   // simVision.addVisionTargets(new VisionTargetSim(t2pose,TargetModel.kTag16h5,2));
   //   simVision.addAprilTags(field);
   // }
-  public SimPhotonVision(List<LoggedAprilPhotonCam> l, AprilTagFieldLayout field) {
-    for (LoggedAprilPhotonCam c : l) {
+  public SimPhotonVision(List<LoggedPhotonCam> l, AprilTagFieldLayout field) {
+    for (LoggedPhotonCam c : l) {
       PhotonCameraSim simCam = new PhotonCameraSim(c.getCamera(), arducam_720(), 0.07, 6.0);
       simVision.addCamera(simCam, c.getRobot2Camera());
     }

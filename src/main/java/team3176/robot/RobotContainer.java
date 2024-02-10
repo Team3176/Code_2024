@@ -46,9 +46,11 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-
-    drivetrain = Drivetrain.getInstance();
-
+    /*
+    if (Constants.getMode() == Mode.SIM) {
+      drivetrain = Drivetrain.getInstance();
+    }
+    */
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
     // visualization = new Visualization();
@@ -153,6 +155,11 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
+    controller
+        .rotStick
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    */
     controller
         .operator
         .b()

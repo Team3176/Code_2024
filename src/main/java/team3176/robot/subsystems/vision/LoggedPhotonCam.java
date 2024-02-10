@@ -26,7 +26,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 
-public class LoggedAprilPhotonCam {
+public class LoggedPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
   // to the floor Z
   // is an area for further standards with design to pick a body attached frame
@@ -57,7 +57,7 @@ public class LoggedAprilPhotonCam {
   PhotonPoseEstimator estimator;
   EstimatedRobotPose currentEstimate;
 
-  public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
+  public LoggedPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
     this.io = new PhotonCameraIO(name);
     this.inputs = new PhotonCameraInputsAutoLogged();
@@ -89,13 +89,11 @@ public class LoggedAprilPhotonCam {
       estimates.clear();
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
-        if (field.getTagPose(t.getFiducialId()).isPresent()) {
-          estimates.add(
-              PhotonUtils.estimateFieldToRobotAprilTag(
-                  t.getBestCameraToTarget(),
-                  field.getTagPose(t.getFiducialId()).get(),
-                  robot2Camera.inverse()));
-        }
+        estimates.add(
+            PhotonUtils.estimateFieldToRobotAprilTag(
+                t.getBestCameraToTarget(),
+                field.getTagPose(t.getFiducialId()).get(),
+                robot2Camera.inverse()));
       }
       Logger.recordOutput(
           "photonvision/" + name + "/targetposes", targets.toArray(new Pose3d[targets.size()]));
@@ -154,7 +152,6 @@ public class LoggedAprilPhotonCam {
   public void periodic() {
     LogCameraPose();
     io.updateInputs(inputs);
-    Logger.processInputs("photonvision/" + this.name, inputs);
     var results = inputs.results;
     Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
