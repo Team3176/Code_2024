@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 
 public final class Constants {
-  private static final RobotType robot = RobotType.ROBOT_SIMBOT;
+  private static final RobotType robot = RobotType.CTRL_BOARD;
   public static final double LOOP_PERIODIC_SECS = 0.02;
   public static final boolean TUNING_MODE = true;
-  public static final boolean VISION_CONNECTED = true;
+  public static final boolean VISION_CONNECTED = false;
   public static boolean invalidRobotAlertSent = false;
 
   public static RobotType getRobot() {
