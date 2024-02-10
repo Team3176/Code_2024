@@ -81,7 +81,7 @@ public class IntakeIOTalon implements IntakeIO {
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.isRollerLinebreak = rollerLinebreak.get();
+    inputs.isRollerLinebreak = (!rollerLinebreak.get());
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
