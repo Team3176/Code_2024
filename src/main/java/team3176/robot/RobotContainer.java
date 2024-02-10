@@ -19,6 +19,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
@@ -39,8 +40,8 @@ public class RobotContainer {
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
   private Drivetrain drivetrain;
-  // private final RobotState robotState;
-  // private final Superstructure superstructure;
+  private final RobotState robotState;
+  private final Superstructure superstructure;
   private PhotonVisionSystem vision;
   private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
@@ -55,8 +56,8 @@ public class RobotContainer {
 
     drivetrain = Drivetrain.getInstance();
 
-    // superstructure = Superstructure.getInstance();
-    // robotState = RobotState.getInstance();
+    superstructure = Superstructure.getInstance();
+    robotState = RobotState.getInstance();
     visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
@@ -158,37 +159,37 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
-    // controller
-    //     .operator
-    //     .b()
-    //     .whileTrue(superstructure.movePivotDown(-.25))
-    //     .onFalse(superstructure.stopPivot());
+    controller
+        .operator
+        .b()
+        .whileTrue(superstructure.movePivotDown(-.25))
+        .onFalse(superstructure.stopPivot());
 
-    // controller
-    //     .operator
-    //     .a()
-    //     .whileTrue(superstructure.moveElevator(.5))
-    //     .onFalse(superstructure.stopElevator());
+    controller
+        .operator
+        .a()
+        .whileTrue(superstructure.moveElevator(.5))
+        .onFalse(superstructure.stopElevator());
 
-    // controller
-    //     .operator
-    //     .y()
-    //     .whileTrue(superstructure.positiveIntake(50))
-    //     .onFalse(superstructure.stopIntake());
+    controller
+        .operator
+        .y()
+        .whileTrue(superstructure.positiveIntake(50))
+        .onFalse(superstructure.stopIntake());
 
-    // controller
-    //     .operator
-    //     .x()
-    //     .whileTrue(superstructure.movePivotUp(.25))
-    //     .onFalse(superstructure.stopPivot());
+    controller
+        .operator
+        .x()
+        .whileTrue(superstructure.movePivotUp(.25))
+        .onFalse(superstructure.stopPivot());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    // controller
-    // .transStick
-    // .button(1)
-    // .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
-    // .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
+    controller
+        .transStick
+        .button(1)
+        .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
+        .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 
