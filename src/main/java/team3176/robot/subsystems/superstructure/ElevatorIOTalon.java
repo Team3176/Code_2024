@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
 /** Template hardware interface for the Elevator subsystem. */
-public class ElevatorIOFalcon implements ElevatorIO {
+public class ElevatorIOTalon implements ElevatorIO {
 
   TalonFX elevatorLeaderMotor, elevatorFollowerMotor;
   PositionVoltage voltPosition;
@@ -24,7 +24,7 @@ public class ElevatorIOFalcon implements ElevatorIO {
   DigitalInput limitswitch1;
   DigitalInput limitswitch2;
 
-  public ElevatorIOFalcon() {
+  public ElevatorIOTalon() {
     TalonFXConfiguration configs = new TalonFXConfiguration();
     brake = new NeutralOut();
     voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);

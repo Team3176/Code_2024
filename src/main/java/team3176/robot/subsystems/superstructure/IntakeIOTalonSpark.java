@@ -36,7 +36,7 @@ public class IntakeIOTalonSpark implements IntakeIO {
   DigitalInput pivotLinebreak;
   NeutralOut brake;
 
-  public IntakeIOFalcon() {
+  public IntakeIOTalonSpark() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     brake = new NeutralOut();

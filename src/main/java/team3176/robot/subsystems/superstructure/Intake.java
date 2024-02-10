@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setPivotPosition(double position) {
-    io.setPivot(position);
+    io.setPivotPIDPosition(position);
   }
 
   public void stopRoller() {
@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
   public static Intake getInstance() {
     if (instance == null) {
       if (RobotConstants.getMode() == Mode.REAL) {}
-      instance = new Intake(new IntakeIOFalcon() {});
+      instance = new Intake(new IntakeIOTalon() {});
     } else {
       instance = new Intake(new IntakeIOSim() {});
     }
