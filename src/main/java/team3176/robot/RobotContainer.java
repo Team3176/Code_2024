@@ -175,17 +175,23 @@ public class RobotContainer {
         .whileTrue(superstructure.moveElevator(.5))
         .onFalse(superstructure.stopElevator());
 
-    controller
+     /*controller
         .operator
         .y()
         .whileTrue(superstructure.positiveIntake(50))
-        .onFalse(superstructure.stopIntake());
+        .onFalse(superstructure.stopIntake()); */
 
     controller
         .operator
         .x()
         .whileTrue(superstructure.movePivotUp(.25))
         .onFalse(superstructure.stopPivot());
+      
+    controller
+        .operator
+        .y()
+        .whileTrue(superstructure.shooterPercent(.01))
+        .onFalse(superstructure.stopShooter());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));

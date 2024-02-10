@@ -90,6 +90,12 @@ public class ShooterIOTalon implements ShooterIO {
   }
 
   @Override
+  public void setPercentVoltage(double percent) {
+    wheelLowerController.set(percent);
+    wheelUpperController.set(percent);
+  }
+
+  @Override
   public void reset() {
     // to be implemented
   }

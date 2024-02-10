@@ -8,12 +8,12 @@ public class Superstructure extends SubsystemBase {
   private Elevator elevator;
   private Intake intake;
   // private Transfer transfer;
-  // private Shooter shooter;
+  private Shooter shooter;
 
   public Superstructure() {
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
-    // shooter = Shooter.getInstance();
+    shooter = Shooter.getInstance();
     // transfer = Transfer.getInstance();
   }
 
@@ -49,6 +49,13 @@ public class Superstructure extends SubsystemBase {
 
   public Command stopElevator() {
     return this.run(() -> elevator.stopElevator());
+  }
+
+  public Command shooterPercent(double percent) {
+    return this.run(() -> shooter.setShooterPercent(percent));
+  }
+  public Command stopShooter() {
+    return this.run(() -> shooter.setShooterStop());
   }
 
   public static Superstructure getInstance() {
