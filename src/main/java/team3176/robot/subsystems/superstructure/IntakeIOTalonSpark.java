@@ -18,11 +18,12 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class IntakeIOFalcon implements IntakeIO {
+public class IntakeIOTalonSpark implements IntakeIO {
 
   private TalonFX rollerController;
   private CANSparkFlex pivotController;
@@ -31,19 +32,19 @@ public class IntakeIOFalcon implements IntakeIO {
   private RelativeEncoder pivotEncoder;
   private SparkPIDController pivotPID;
 
-  // DigitalInput limitswitch1;
-  // DigitalInput linebreak2;
+  DigitalInput rollerLinebreak;
+  DigitalInput pivotLinebreak;
   NeutralOut brake;
 
-  public IntakeIOFalcon() {
+  public IntakeIOTalonSpark() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     brake = new NeutralOut();
     voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
-    // limitswitch1 = new DigitalInput(Hardwaremap.intakeLimitswitch1_DIO);
-    // linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
+    rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
+    pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
 
@@ -80,7 +81,7 @@ public class IntakeIOFalcon implements IntakeIO {
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    // inputs.isLimitswitchOne = limitswitch1.get();
+    inputs.isRollerLinebreak = rollerLinebreak.get();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -110,7 +111,7 @@ public class IntakeIOFalcon implements IntakeIO {
   }
 
   @Override
-  public void setPivot(double position) {
+  public void setPivotPIDPosition(double position) {
     pivotPID.setReference(position, CANSparkBase.ControlType.kPosition);
     // pivotController.setControl(voltPosition.withPosition(position));
 

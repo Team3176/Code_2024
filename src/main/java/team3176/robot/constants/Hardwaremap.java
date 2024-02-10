@@ -8,9 +8,9 @@ public class Hardwaremap {
   public static final int elevatorLeader_CID = 3;
   public static final int elevatorFollower_CID = 4;
   public static final int transfer_CID = 5;
-  public static final int shooterWheelPort_CID = 18;
-  public static final int shooterWheelStarbrd_CID = 19;
-  public static final int shooterPivot_CID = 20;
+  public static final int shooterWheelUpper_CID = 18;
+  public static final int shooterWheelLower_CID = 19;
+  public static final int shooterPivot_CID = 6;
   public static final int intakeRoller_CID = 7;
   public static final int intakePivot_CID = 8;
   public static final int armEncoder_CID = 2;
@@ -19,15 +19,17 @@ public class Hardwaremap {
   public static final String elevatorLeaderMotor_CBN = "rio";
   public static final String elevatorFollowerMotor_CBN = "rio";
   public static final String transfer_CBN = "rio";
-  public static final String shooter_CBN = "rio";
+  public static final String shooterWheelUpper_CBN = "rio";
+  public static final String shooterWheelLower_CBN = "rio";
+  public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "rio";
   public static final String intakePivot_CBN = "rio";
   public static String PDH_CBN = "rio";
 
   public static final int elevatorLeaderLimitSwitch_DIO = 9;
   public static final int elevatorFollowerLimitSwitch_DIO = 8;
-  public static final int intakeLinebreak1_DIO = 0;
-  public static final int intakeLinebreak2_DIO = 1;
+  public static final int intakeRollerLinebreak_DIO = 0;
+  public static final int intakePivotLinebreak_DIO = 1;
 
   /*
    * Drivetrain CIDs

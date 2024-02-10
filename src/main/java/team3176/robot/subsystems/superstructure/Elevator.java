@@ -59,7 +59,7 @@ public class Elevator extends SubsystemBase {
   public static Elevator getInstance() {
     if (instance == null) {
       if (RobotConstants.getMode() == Mode.REAL) {
-        instance = new Elevator(new ElevatorIOFalcon() {});
+        instance = new Elevator(new ElevatorIOTalon() {});
       } else {
         instance = new Elevator(new ElevatorIOSim() {});
       }

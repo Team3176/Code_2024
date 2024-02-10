@@ -10,27 +10,22 @@ package team3176.robot.subsystems.superstructure;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
 
-public class ShooterIOFalcon implements ShooterIO {
+public class ShooterIOTalon implements ShooterIO {
 
   private TalonFX wheelUpperController =
-      new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
   private TalonFX wheelLowerController =
-      new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
-  private CANSparkFlex pivotController =
-      new CANSparkFlex(
-          Hardwaremap.shooterPivot_CID,
-          MotorType
-              .kBrushless); // = new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
+  private TalonFX pivotController =
+      new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
-  public ShooterIOFalcon() {
+  public ShooterIOTalon() {
 
     configsWheelUpper.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
     configsWheelUpper.Slot0.kI =
@@ -69,7 +64,9 @@ public class ShooterIOFalcon implements ShooterIO {
         Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec =
         Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    /* TODO: below line needs to be updated to pheonix 6 calls for voltage measurement
     inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
+    */
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
   }
