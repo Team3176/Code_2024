@@ -4,25 +4,18 @@
 
 package team3176.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
-import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -39,7 +32,7 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private Drivetrain drivetrain;
+  // private Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
@@ -53,49 +46,51 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
+    /*
     if (Constants.getMode() == Mode.SIM) {
       drivetrain = Drivetrain.getInstance();
     }
+    */
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    visualization = new Visualization();
+    // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
+    /*
+        drivetrain.setDefaultCommand(
+            drivetrain
+                .swerveDriveJoysticks(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin())
+                .withName("default drive"));
+        if (Constants.getMode() == Mode.SIM) {
+          drivetrain.setDefaultCommand(
+              drivetrain
+                  .swerveDriveJoysticks(
+                      () -> controller.getForward(),
+                      () -> controller.getStrafe(),
+                      () -> controller.getSpin(),
+                      false)
+                  .withName("default drive"));
+        }
+        NamedCommands.registerCommand(
+            "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
+        // NamedCommands.registerCommand(
+        //     "intake",
+        //     intake
+        //         .runIntake(-1.0)
+        //         .withTimeout(0.5)
+        //         .alongWith(new PrintCommand("intake"))
+        //         .withName("intaking"));
 
-    drivetrain.setDefaultCommand(
-        drivetrain
-            .swerveDriveJoysticks(
-                () -> controller.getForward(),
-                () -> controller.getStrafe(),
-                () -> controller.getSpin())
-            .withName("default drive"));
-    if (Constants.getMode() == Mode.SIM) {
-      drivetrain.setDefaultCommand(
-          drivetrain
-              .swerveDriveJoysticks(
-                  () -> controller.getForward(),
-                  () -> controller.getStrafe(),
-                  () -> controller.getSpin(),
-                  false)
-              .withName("default drive"));
-    }
-    NamedCommands.registerCommand(
-        "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    // NamedCommands.registerCommand(
-    //     "intake",
-    //     intake
-    //         .runIntake(-1.0)
-    //         .withTimeout(0.5)
-    //         .alongWith(new PrintCommand("intake"))
-    //         .withName("intaking"));
+        autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
-    autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
-
-    SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
-
+        SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
+    */
     configureBindings();
   }
 
@@ -131,6 +126,7 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
+    /*
     controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
 
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
@@ -159,13 +155,42 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
+    controller
+        .rotStick
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    */
+    controller
+        .operator
+        .b()
+        .whileTrue(superstructure.movePivotDown(-.25))
+        .onFalse(superstructure.stopPivot());
+
+    controller
+        .operator
+        .a()
+        .whileTrue(superstructure.moveElevator(.5))
+        .onFalse(superstructure.stopElevator());
+
+    controller
+        .operator
+        .y()
+        .whileTrue(superstructure.positiveIntake(50))
+        .onFalse(superstructure.stopIntake());
+
+    controller
+        .operator
+        .x()
+        .whileTrue(superstructure.movePivotUp(.25))
+        .onFalse(superstructure.stopPivot());
+
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    controller
-        .transStick
-        .button(1)
-        .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
-        .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
+    // controller
+    //    .transStick
+    //    .button(1)
+    //    .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
+    //    .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 

@@ -10,7 +10,7 @@ public class Hardwaremap {
   public static final int transfer_CID = 5;
   public static final int shooterWheelPort_CID = 18;
   public static final int shooterWheelStarbrd_CID = 19;
-  public static final int shooterPivot_CID = 20;
+  public static final int shooterPivot_CID = 6;
   public static final int intakeRoller_CID = 7;
   public static final int intakePivot_CID = 8;
   public static final int armEncoder_CID = 2;
@@ -26,8 +26,8 @@ public class Hardwaremap {
 
   public static final int elevatorLeaderLimitSwitch_DIO = 9;
   public static final int elevatorFollowerLimitSwitch_DIO = 8;
-  public static final int intakeLinebreak1_DIO = 0;
-  public static final int intakeLinebreak2_DIO = 1;
+  public static final int intakeRollerLinebreak_DIO = 0;
+  public static final int intakePivotLinebreak_DIO = 1;
 
   /*
    * Drivetrain CIDs

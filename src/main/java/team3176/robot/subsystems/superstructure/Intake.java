@@ -45,10 +45,17 @@ public class Intake extends SubsystemBase {
     io.stopPivot();
   }
 
-  public boolean getIsLinebreakOne() {
+  public boolean getIsRollerLinebreak() {
     // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
-    return false; // (!linebreak1.get());
+    return (inputs.isRollerLinebreak);
   }
+
+  /*
+  public boolean getIsPivotLinebreak() {
+    // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
+    return (inputs.isPivotLinebreak);
+  }
+  */
 
   public static Intake getInstance() {
     if (instance == null) {

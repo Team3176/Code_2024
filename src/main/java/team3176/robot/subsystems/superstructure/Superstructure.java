@@ -7,19 +7,19 @@ public class Superstructure extends SubsystemBase {
   private static Superstructure instance;
   private Elevator elevator;
   private Intake intake;
-  private Transfer transfer;
-  private Shooter shooter;
+  // private Transfer transfer;
+  // private Shooter shooter;
 
   public Superstructure() {
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
-    shooter = Shooter.getInstance();
-    transfer = Transfer.getInstance();
+    // shooter = Shooter.getInstance();
+    // transfer = Transfer.getInstance();
   }
 
   public Command positiveIntake(double velocity) {
     return this.run(() -> intake.setRollerVelocity(50))
-        .until(() -> intake.getIsLinebreakOne())
+        .until(() -> intake.getIsRollerLinebreak())
         .andThen(() -> intake.stopRoller());
   }
 
@@ -31,12 +31,24 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
   }
 
+  public Command stopPivot() {
+    return this.run(() -> intake.stopPivot());
+  }
+
   public Command negativeIntake(double velocity) {
     return this.run(() -> intake.setRollerVelocity(-velocity));
   }
 
+  public Command stopIntake() {
+    return this.run(() -> intake.stopRoller());
+  }
+
   public Command moveElevator(double position) {
     return this.run(() -> elevator.setElevatorMotor(.5));
+  }
+
+  public Command stopElevator() {
+    return this.run(() -> elevator.stopElevator());
   }
 
   public static Superstructure getInstance() {

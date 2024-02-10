@@ -20,9 +20,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /** Template hardware interface for a closed loop subsystem. */
-public class IntakeIOFalcon implements IntakeIO {
+public class IntakeIOTalonSpark implements IntakeIO {
 
   private TalonFX rollerController;
   private CANSparkFlex pivotController;
@@ -31,8 +32,8 @@ public class IntakeIOFalcon implements IntakeIO {
   private RelativeEncoder pivotEncoder;
   private SparkPIDController pivotPID;
 
-  // DigitalInput limitswitch1;
-  // DigitalInput linebreak2;
+  DigitalInput rollerLinebreak;
+  DigitalInput pivotLinebreak;
   NeutralOut brake;
 
   public IntakeIOFalcon() {
@@ -42,18 +43,18 @@ public class IntakeIOFalcon implements IntakeIO {
     voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
-    // limitswitch1 = new DigitalInput(Hardwaremap.intakeLimitswitch1_DIO);
-    // linebreak2 = new DigitalInput(Hardwaremap.intakeLinebreak2_DIO);
+    rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
+    pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
 
     // config setting
-    rollerConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    rollerConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
     rollerConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     rollerConfigs.Voltage.PeakForwardVoltage = 8;
     rollerConfigs.Voltage.PeakReverseVoltage = -8;
 
-    rollerConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
+    rollerConfigs.Slot1.kP = 0.001; // An error of 1 rotations results in 40 amps output
     rollerConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     // pivot configs
 
@@ -75,11 +76,12 @@ public class IntakeIOFalcon implements IntakeIO {
     pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
 
     applyTalonFxConfigs(rollerController, rollerConfigs);
+    // applyTalonFxConfigs(pivotController, pivotConfigs);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    // inputs.isLimitswitchOne = limitswitch1.get();
+    inputs.isRollerLinebreak = rollerLinebreak.get();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -109,7 +111,7 @@ public class IntakeIOFalcon implements IntakeIO {
   }
 
   @Override
-  public void setPivot(double position) {
+  public void setPivotPIDPosition(double position) {
     pivotPID.setReference(position, CANSparkBase.ControlType.kPosition);
     // pivotController.setControl(voltPosition.withPosition(position));
 
