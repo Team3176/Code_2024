@@ -7,14 +7,14 @@ public class Superstructure extends SubsystemBase {
   private static Superstructure instance;
   private Elevator elevator;
   private Intake intake;
-  private Transfer transfer;
-  private Shooter shooter;
+  // private Transfer transfer;
+  // private Shooter shooter;
 
   public Superstructure() {
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
-    shooter = Shooter.getInstance();
-    transfer = Transfer.getInstance();
+    // shooter = Shooter.getInstance();
+    // transfer = Transfer.getInstance();
   }
 
   public Command positiveIntake(double velocity) {

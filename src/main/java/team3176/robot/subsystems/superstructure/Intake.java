@@ -47,7 +47,8 @@ public class Intake extends SubsystemBase {
 
   public boolean getIsLinebreakOne() {
     // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
-    return false; // (!linebreak1.get());
+    //eturn false; // 
+    return (inputs.isLinebreakOne);
   }
 
   public static Intake getInstance() {
@@ -63,6 +64,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    io.;
     Logger.processInputs("Intake", inputs);
     // Logger.recordOutput("Arm/mech2d", mech);
   }
