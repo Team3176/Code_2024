@@ -21,8 +21,7 @@ public class ShooterIOTalon implements ShooterIO {
   private TalonFX wheelLowerController =
       new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
   private TalonFX pivotController =
-      new TalonFX(
-          Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
+      new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
@@ -65,7 +64,7 @@ public class ShooterIOTalon implements ShooterIO {
         Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec =
         Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
-    /* TODO: below line needs to be updated to pheonix 6 calls for voltage measurement 
+    /* TODO: below line needs to be updated to pheonix 6 calls for voltage measurement
     inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
     */
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
