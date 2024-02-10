@@ -89,11 +89,13 @@ public class LoggedAprilPhotonCam {
       estimates.clear();
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
-        estimates.add(
-            PhotonUtils.estimateFieldToRobotAprilTag(
-                t.getBestCameraToTarget(),
-                field.getTagPose(t.getFiducialId()).get(),
-                robot2Camera.inverse()));
+        if (field.getTagPose(t.getFiducialId()).isPresent()) {
+          estimates.add(
+              PhotonUtils.estimateFieldToRobotAprilTag(
+                  t.getBestCameraToTarget(),
+                  field.getTagPose(t.getFiducialId()).get(),
+                  robot2Camera.inverse()));
+        }
       }
       Logger.recordOutput(
           "photonvision/" + name + "/targetposes", targets.toArray(new Pose3d[targets.size()]));
