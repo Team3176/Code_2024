@@ -14,8 +14,6 @@
         - Grab Controller =     TalonFX     PID Velocity or %    
     ### Pivot
         - Pivot Controller =    TalonFX     PID Position 
-    ### Damper 
-        - Damper Controller =   SparkFlex   OutputPercent       rio
     ### Elevator
         - Elevator Controller1= TalonFX     PID Position
         - Elevator Controller2= TalonFX     Follower

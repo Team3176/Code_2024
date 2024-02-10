@@ -16,12 +16,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
 
-public class ShooterIOFalcon implements ShooterIO {
+public class ShooterIOTalonSpark implements ShooterIO {
 
   private TalonFX wheelUpperController =
-      new TalonFX(Hardwaremap.shooterWheelPort_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
   private TalonFX wheelLowerController =
-      new TalonFX(Hardwaremap.shooterWheelStarbrd_CID, Hardwaremap.shooter_CBN);
+      new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
   private CANSparkFlex pivotController =
       new CANSparkFlex(
           Hardwaremap.shooterPivot_CID,
@@ -30,7 +30,7 @@ public class ShooterIOFalcon implements ShooterIO {
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
 
-  public ShooterIOFalcon() {
+  public ShooterIOTalonSpark() {
 
     configsWheelUpper.Slot0.kP = 0.11; // An error of 1 rotation per second results in 2V output
     configsWheelUpper.Slot0.kI =

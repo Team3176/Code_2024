@@ -26,10 +26,9 @@ public class IntakeIOSim implements IntakeIO {
 
   public IntakeIOSim() {
     pivotSim =
-      new SingleJointedArmSim(DCMotor.getFalcon500(1), 75, 0.5, 0.7, -1.0 * Math.PI, 3.14, true, 0.0);
-    rollerSim = 
-      new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
-
+        new SingleJointedArmSim(
+            DCMotor.getFalcon500(1), 75, 0.5, 0.7, -1.0 * Math.PI, 3.14, true, 0.0);
+    rollerSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
   }
   /** Updates the set of loggable inputs. */
   @Override
