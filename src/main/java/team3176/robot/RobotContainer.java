@@ -120,12 +120,6 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
-    controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
-    controller
-        .rotStick
-        .button(2)
-        .whileTrue(
-            drivetrain.driveAndAim(() -> controller.getForward(), () -> controller.getStrafe()));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick

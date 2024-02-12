@@ -40,12 +40,10 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
-import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
-import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
 import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
@@ -374,7 +372,7 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  //TODO
+  // TODO
   private Rotation2d getAimAngle() {
     return new Rotation2d();
   }
@@ -451,7 +449,7 @@ public class Drivetrain extends SubsystemBase {
                   linearVelocity.getY() * MAX_WHEEL_SPEED,
                   omega * 10.5);
           if (angle != null) {
-            //TODO: DRIVE AIM
+            // TODO: DRIVE AIM
             speeds.omegaRadiansPerSecond = 0.0;
             driveVelocityFieldCentric(speeds);
           } else {
@@ -475,12 +473,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
-    return swerveDriveJoysticks(
-        x,
-        y,
-        () -> 0.0,
-        true,
-        this::getAimAngle);
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
   }
 
   // TODO: Pathplanner pathfinding
