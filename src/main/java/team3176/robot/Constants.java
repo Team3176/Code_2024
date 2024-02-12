@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 
 public final class Constants {
-  private static final RobotType robot = RobotType.CTRL_BOARD;
+  private static final RobotType robot = RobotType.ROBOT_SIMBOT;
   public static final double LOOP_PERIODIC_SECS = 0.02;
   public static final boolean TUNING_MODE = true;
   public static final boolean VISION_CONNECTED = false;
@@ -59,6 +59,20 @@ public final class Constants {
     REAL,
     REPLAY,
     SIM
+  }
+
+  public static enum Status {
+    STABLE,
+    OK,
+    OPTIONALCHECK,
+    WARNING,
+    GOOD,
+    ERROR,
+    CONE,
+    CUBE,
+    CONEFLASH,
+    CUBEFLASH,
+    NONE
   }
 
   // Function to disable HAL interaction when running without native libs

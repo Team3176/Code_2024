@@ -3,8 +3,9 @@ package team3176.robot.subsystems.superstructure;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import team3176.robot.Constants;
+import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
-import team3176.robot.constants.RobotConstants.Mode;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
@@ -52,7 +53,7 @@ public class Intake extends SubsystemBase {
 
   public static Intake getInstance() {
     if (instance == null) {
-      if (RobotConstants.getMode() == Mode.REAL) {}
+      if (Constants.getMode() == Mode.REAL) {}
       instance = new Intake(new IntakeIOFalcon() {});
     } else {
       instance = new Intake(new IntakeIOSim() {});

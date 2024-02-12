@@ -35,15 +35,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
 import team3176.robot.util.swerve.SwerveSetpoint;
 import team3176.robot.util.swerve.SwerveSetpointGenerator;
@@ -105,6 +109,7 @@ public class Drivetrain extends SubsystemBase {
             new SwerveModuleState()
           });
   private ChassisSpeeds desiredSpeeds;
+  private TunablePID orientationPID;
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
@@ -204,6 +209,8 @@ public class Drivetrain extends SubsystemBase {
             .kinematics(kinematics)
             .moduleLocations(SwerveModuleTranslations)
             .build();
+    orientationPID = new TunablePID("Drivetrain/orientationPID", 1.0, 0.0, 0.0);
+    orientationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Prevents more than one instance of drivetrian
@@ -367,6 +374,11 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  //TODO
+  private Rotation2d getAimAngle() {
+    return new Rotation2d();
+  }
+
   public Command swerveDefenseCommand() {
     return this.runOnce(
         () -> {
@@ -405,7 +417,11 @@ public class Drivetrain extends SubsystemBase {
    * Does Deadbanding and such within drivetrain
    */
   public Command swerveDriveJoysticks(
-      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, Boolean isFieldCentric) {
+      DoubleSupplier forward,
+      DoubleSupplier strafe,
+      DoubleSupplier spin,
+      Boolean isFieldCentric,
+      Supplier<Rotation2d> angle) {
     return this.run(
         () -> {
           double DEADBAND = 0.05;
@@ -434,29 +450,39 @@ public class Drivetrain extends SubsystemBase {
                   linearVelocity.getX() * MAX_WHEEL_SPEED,
                   linearVelocity.getY() * MAX_WHEEL_SPEED,
                   omega * 10.5);
-          if (isFieldCentric) {
+          if (angle != null) {
+            //TODO: DRIVE AIM
+            speeds.omegaRadiansPerSecond = 0.0;
             driveVelocityFieldCentric(speeds);
           } else {
-            driveVelocity(speeds);
+            if (isFieldCentric) {
+              driveVelocityFieldCentric(speeds);
+            } else {
+              driveVelocity(speeds);
+            }
           }
         });
   }
 
   public Command swerveDriveJoysticks(
       DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
-    return swerveDriveJoysticks(forward, strafe, spin, true);
+    return swerveDriveJoysticks(forward, strafe, spin, true, null);
   }
 
-  public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {
-    return this.run(
-        () -> {
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  x.getAsDouble() * MAX_WHEEL_SPEED, y.getAsDouble() * MAX_WHEEL_SPEED, 0.0);
-          // TODO: figure out a PID loop inside this logic...
-          this.driveVelocityFieldCentric(speeds);
-        });
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean field) {
+    return swerveDriveJoysticks(forward, strafe, spin, field, null);
   }
+
+  public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(
+        x,
+        y,
+        () -> 0.0,
+        true,
+        this::getAimAngle);
+  }
+
   // TODO: Pathplanner pathfinding
   // complete the following method that returns a command from AutoBuilder that goes to the point
   // given
@@ -516,6 +542,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    orientationPID.checkParemeterUpdate();
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());

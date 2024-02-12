@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
@@ -72,16 +71,6 @@ public class RobotContainer {
                 () -> controller.getStrafe(),
                 () -> controller.getSpin())
             .withName("default drive"));
-    if (Constants.getMode() == Mode.SIM) {
-      drivetrain.setDefaultCommand(
-          drivetrain
-              .swerveDriveJoysticks(
-                  () -> controller.getForward(),
-                  () -> controller.getStrafe(),
-                  () -> controller.getSpin(),
-                  false)
-              .withName("default drive"));
-    }
     NamedCommands.registerCommand(
         "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
     // NamedCommands.registerCommand(
@@ -132,7 +121,11 @@ public class RobotContainer {
     //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
     controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
-
+    controller
+        .rotStick
+        .button(2)
+        .whileTrue(
+            drivetrain.driveAndAim(() -> controller.getForward(), () -> controller.getStrafe()));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
