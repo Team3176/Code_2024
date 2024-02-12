@@ -5,13 +5,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.ArrayList;
 import java.util.List;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -24,7 +19,6 @@ public class SimPhotonVision extends SubsystemBase {
   VisionSystemSim simVision = new VisionSystemSim("photonvision");
   PhotonPoseEstimator estimator;
 
-  
   // public SimPhotonVision(List<PhotonCamera> c, List<Transform3d> t, AprilTagFieldLayout field) {
   //   for (int i = 0; i < c.size(); i++) {
   //     Transform3d camera2Robot = t.get(i);
@@ -36,10 +30,9 @@ public class SimPhotonVision extends SubsystemBase {
   //   // simVision.addVisionTargets(new VisionTargetSim(t2pose,TargetModel.kTag16h5,2));
   //   simVision.addAprilTags(field);
   // }
-  public SimPhotonVision(List<LoggedPhotonCam> l, AprilTagFieldLayout field) {
-    for(LoggedPhotonCam c : l) {
-      PhotonCameraSim simCam =
-          new PhotonCameraSim(c.getCamera(), arducam_720(), 0.07,6.0);
+  public SimPhotonVision(List<LoggedAprilPhotonCam> l, AprilTagFieldLayout field) {
+    for (LoggedAprilPhotonCam c : l) {
+      PhotonCameraSim simCam = new PhotonCameraSim(c.getCamera(), arducam_720(), 0.07, 6.0);
       simVision.addCamera(simCam, c.getRobot2Camera());
     }
     simVision.addAprilTags(field);

@@ -65,16 +65,14 @@ public class Robot extends LoggedRobot {
     }
     switch (Constants.getMode()) {
       case REAL:
-        String folder = Constants.logFolders.get(Constants.getRobot());
-        if (folder != null) {
-          try {
-            Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
-          } catch (Error e) {
-            System.out.println("[Error] failed to start local log file");
-          }
+        try {
+          Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+        } catch (Error e) {
+          System.out.println("[Error] failed to start local log file");
         }
+
         Logger.addDataReceiver(new NT4Publisher());
-        if (Constants.getRobot() == RobotType.ROBOT_2023C) {
+        if (Constants.getRobot() == RobotType.ROBOT_2024C) {
           LoggedPowerDistribution.getInstance(50, ModuleType.kRev);
         }
         break;
@@ -168,7 +166,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();
-    robotContainer.setThrustBrake();
+    //    robotContainer.setThrustBrake();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -190,10 +188,10 @@ public class Robot extends LoggedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     robotContainer.clearCanFaults();
-    robotContainer.setThrustCoast();
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
+    //   robotContainer.setThrustCoast();
+    //  if (autonomousCommand != null) {
+    //     autonomousCommand.cancel();
+    //    }
   }
 
   /** This function is called periodically during operator control. */

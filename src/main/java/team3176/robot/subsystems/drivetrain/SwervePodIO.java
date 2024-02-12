@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface SwervePodIO {
@@ -30,6 +31,11 @@ public interface SwervePodIO {
   /** Run the turn motor at the specified voltage. */
   public default void setTurn(double volts) {}
 
+  public default void setOffset(Rotation2d offset) {}
+
+  public default Rotation2d getOffset() {
+    return new Rotation2d();
+  }
   /** Enable or disable brake mode on the drive motor. */
   public default void setDriveBrakeMode(boolean enable) {}
 

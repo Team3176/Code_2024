@@ -1,11 +1,13 @@
 package team3176.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import java.util.Random;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 
 public class SwervePodIOSim implements SwervePodIO {
@@ -16,10 +18,16 @@ public class SwervePodIOSim implements SwervePodIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
   private double currentDriveSpeed = 0.0;
+  Rotation2d offset = new Rotation2d();
   private Random simNoise = new Random();
   private static final double moduleErrorBound = 8.0;
   private double moduleOffsetError =
       Math.floor(simNoise.nextDouble() * moduleErrorBound) - moduleErrorBound / 2.0;
+  private int id;
+
+  public SwervePodIOSim(int id) {
+    this.id = id;
+  }
 
   @Override
   public void updateInputs(SwervePodIOInputs inputs) {
@@ -35,6 +43,7 @@ public class SwervePodIOSim implements SwervePodIO {
     while (turnAbsolutePositionRad > 180) {
       turnAbsolutePositionRad -= 360;
     }
+
     double delta = (driveSim.getAngularVelocityRadPerSec() * Constants.LOOP_PERIODIC_SECS);
     inputs.drivePositionSimNoNoise += delta;
     inputs.drivePositionRad += delta + simNoise.nextGaussian(0.0, 2.0) * Math.pow(delta, 2) * 0.1;
@@ -44,8 +53,15 @@ public class SwervePodIOSim implements SwervePodIO {
     inputs.driveTempCelcius = new double[] {};
     currentDriveSpeed = driveSim.getAngularVelocityRadPerSec();
 
-    inputs.turnAbsolutePositionDegreesSimNoNoise = turnAbsolutePositionRad;
-    inputs.turnAbsolutePositionDegrees = turnAbsolutePositionRad + moduleOffsetError;
+    inputs.turnAbsolutePositionDegreesSimNoNoise =
+        Rotation2d.fromDegrees(turnAbsolutePositionRad).minus(offset).getDegrees();
+    Logger.recordOutput(
+        "Drivetrain/IO/raw/rawNoOffset_enc" + id,
+        Rotation2d.fromDegrees(turnAbsolutePositionRad).getRotations());
+    Logger.recordOutput("Drivetrain/IO/degreesNoOffset_enc" + id, turnAbsolutePositionRad);
+    inputs.turnAbsolutePositionDegrees =
+        Rotation2d.fromDegrees(turnAbsolutePositionRad).minus(offset).getDegrees()
+            + moduleOffsetError;
     inputs.turnVelocityRPM = turnSim.getAngularVelocityRPM();
     inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
@@ -79,5 +95,15 @@ public class SwervePodIOSim implements SwervePodIO {
     } else {
       turnSim.setInput(0.0);
     }
+  }
+
+  @Override
+  public Rotation2d getOffset() {
+    return this.offset;
+  }
+
+  @Override
+  public void setOffset(Rotation2d offset) {
+    this.offset = offset;
   }
 }
