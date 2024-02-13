@@ -62,7 +62,7 @@ public class ClimbIOTalon implements ClimbIO {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
       status = controller.getConfigurator().apply(configs);
-      System.out.println("Applied configs to: " + Hardwaremap.elevatorLeader_CID);
+      System.out.println("Applied configs to: " + Hardwaremap.climbLeft_CID);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {

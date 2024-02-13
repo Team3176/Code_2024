@@ -54,13 +54,20 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> elevator.stopElevator());
   }
 
-  public Command moveLeftClimb(DoubleSupplier position) {
-    return this.run(() -> climb.leftGoToPosition(position.getAsDouble()));
+  public Command moveLeftClimb(double position) {
+    System.out.println("moveLeftClimb = " + position);
+    return this.run(() -> climb.leftGoToPosition(position));
+    // return this.run(() -> climb.leftGoToPosition(position.getAsDouble()));
+  }
+
+  public Command moveRightClimb(DoubleSupplier position) {
+    return this.run(() -> climb.rightGoToPosition(position.getAsDouble()));
   }
 
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();
+      System.out.println("Superstructure instance created.");
     }
     return instance;
   }

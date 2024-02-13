@@ -12,7 +12,7 @@ public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
-  private TunablePID pid;
+  private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -49,13 +49,21 @@ public class Climb extends SubsystemBase {
   public double getRightPosition() {
     return inputs.rightPosition;
   }
-
+  /*
   public Command leftGoToPosition(double position) {
     return this.runEnd(
         () -> {
           io.setLeft(pid.calculate(getLeftPosition(), position));
+          System.out.println(position);
         },
         io::stopLeft);
+  }
+  */
+  public void leftGoToPosition(double position) {
+    io.setLeft(position);
+    // io.setLeft(pid.calculate(getLeftPosition(), position));
+    System.out.println("climb.leftGoToPosition = " + position);
+    System.out.println("climb.getPosition = " + inputs.leftPosition);
   }
 
   public Command rightGoToPosition(double position) {
@@ -85,8 +93,10 @@ public class Climb extends SubsystemBase {
     if (instance == null) {
       if (RobotConstants.getMode() == Mode.REAL) {
         instance = new Climb(new ClimbIOTalon() {});
+        System.out.println("Climb instance created for Mode.REAL");
       } else {
         instance = new Climb(new ClimbIOSim() {});
+        System.out.println("Climb instance created for Mode.SIM");
       }
     }
     return instance;

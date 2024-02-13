@@ -35,6 +35,7 @@ public class RobotContainer {
   // private Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
+  private Climb climb;
   private PhotonVisionSystem vision;
   private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
@@ -53,6 +54,7 @@ public class RobotContainer {
     */
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
+    climb = Climb.getInstance();
     // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
@@ -184,10 +186,15 @@ public class RobotContainer {
         .whileTrue(superstructure.movePivotUp(.25))
         .onFalse(superstructure.stopPivot());
 
+    controller.operator.leftBumper().onTrue(superstructure.moveLeftClimb(.5));
+    // controller.operator.leftBumper().onTrue(climb.leftGoToPosition(.5));
+
+    // .whileTrue(superstructure.moveLeftClimb(() -> controller.getXboxJoyLeft()));
+
     controller
         .operator
-        .leftBumper()
-        .whileTrue(superstructure.moveLeftClimb(() -> controller.getXboxJoyLeft()));
+        .rightBumper()
+        .whileTrue(superstructure.moveRightClimb(() -> controller.getXboxJoyRight()));
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
