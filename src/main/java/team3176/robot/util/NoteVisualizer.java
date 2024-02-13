@@ -78,8 +78,6 @@ public class NoteVisualizer {
                                     .getDistance(
                                         AllianceFlipUtil.apply(
                                             FieldConstants.Speaker.centerSpeakerOpening));
-                            Logger.recordOutput("notedistance", distance);
-                            Logger.recordOutput("notepitch", startPose.getRotation().getY());
                             if (distance < 0.15) {
                               Logger.recordOutput("notescored", true);
                             } else {
