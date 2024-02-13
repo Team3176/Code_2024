@@ -34,13 +34,17 @@ public class ClimbIOTalon implements ClimbIO {
     climbRight = new TalonFX(Hardwaremap.climbRight_CID, Hardwaremap.climbRight_CBN);
     // config setting
     configsLeft.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
-    configsLeft.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    configsLeft.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsLeft.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsLeft.Slot0.kV = 0.12; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Voltage.PeakForwardVoltage = 8;
     configsLeft.Voltage.PeakReverseVoltage = -8;
     climbLeft.setInverted(false);
 
     configsRight.Slot0.kP = 0.001; // An error of 1 rotations results in 40 amps output
-    configsRight.Slot0.kD = 2; // A change of 1 rotation per second results in 2 amps output
+    configsRight.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Slot0.kV = 0.12; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Voltage.PeakForwardVoltage = 8;
     configsRight.Voltage.PeakReverseVoltage = -8;
     climbRight.setInverted(true);
