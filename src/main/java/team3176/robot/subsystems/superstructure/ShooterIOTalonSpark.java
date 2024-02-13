@@ -33,18 +33,24 @@ public class ShooterIOTalonSpark implements ShooterIO {
   public ShooterIOTalonSpark() {
 
     configsWheelUpper.Slot0.kP = 0.01; // An error of 1 rotation per second results in 2V output
-    configsWheelUpper.Slot0.kI = 0.0; // An error of 1 rotation per second increases output by 0.5V every second
-    configsWheelUpper.Slot0.kD = 0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
-    configsWheelUpper.Slot0.kV = 0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    configsWheelUpper.Slot0.kI =
+        0.0; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelUpper.Slot0.kD =
+        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelUpper.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
     // Rotation per second
     // Peak output of 8 volts
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;
     configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
     configsWheelLower.Slot0.kP = 0.01; // An error of 1 rotation per second results in 2V output
-    configsWheelLower.Slot0.kI = 0.0; // An error of 1 rotation per second increases output by 0.5V every second
-    configsWheelLower.Slot0.kD = 0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
-    configsWheelLower.Slot0.kV = 0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    configsWheelLower.Slot0.kI =
+        0.0; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelLower.Slot0.kD =
+        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelLower.Slot0.kV =
+        0.12; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
     // Rotation per second
     // Peak output of 8 volts
     configsWheelLower.Voltage.PeakForwardVoltage = 8;

@@ -11,8 +11,8 @@ public class Superstructure extends SubsystemBase {
   private Shooter shooter;
 
   public Superstructure() {
-    //elevator = Elevator.getInstance();
-    //intake = Intake.getInstance();
+    // elevator = Elevator.getInstance();
+    // intake = Intake.getInstance();
     shooter = Shooter.getInstance();
     // transfer = Transfer.getInstance();
   }
