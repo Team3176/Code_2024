@@ -28,6 +28,7 @@ public class Shooter extends SubsystemBase {
     this.io = io;
     this.pivotPIDController = new TunablePID("shooter/pid", 2.0, 0.0, 0.0);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
+
   }
 
   public static Shooter getInstance() {
@@ -64,6 +65,7 @@ public class Shooter extends SubsystemBase {
   public void setShooterPercent(double d) {
     io.setPercentVoltage(d);
   }
+
 
   public void setShooterStop() {
     io.setPercentVoltage(0);
