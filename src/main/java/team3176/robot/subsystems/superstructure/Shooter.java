@@ -4,12 +4,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import javax.swing.Action;
-
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -65,11 +61,11 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
 
-  public void setShooterPercent(double d){
+  public void setShooterPercent(double d) {
     io.setPercentVoltage(d);
   }
 
-  public void setShooterStop(){
+  public void setShooterStop() {
     io.setPercentVoltage(0);
   }
 

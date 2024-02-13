@@ -8,8 +8,8 @@ public class Hardwaremap {
   public static final int elevatorLeader_CID = 3;
   public static final int elevatorFollower_CID = 4;
   public static final int transfer_CID = 5;
-  public static final int shooterWheelUpper_CID = 18;
-  public static final int shooterWheelLower_CID = 19;
+  public static final int shooterWheelUpper_CID = 3;
+  public static final int shooterWheelLower_CID = 5;
   public static final int shooterPivot_CID = 6;
   public static final int intakeRoller_CID = 7;
   public static final int intakePivot_CID = 8;
