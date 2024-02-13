@@ -137,8 +137,10 @@ public class RobotContainer {
         .rotStick
         .button(2)
         .whileTrue(
-            drivetrain.driveAndAim(() -> controller.getForward(), () -> controller.getStrafe()));
-
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(Shooter.getInstance().aim()));
+    controller.rotStick.button(1).onTrue(superstructure.shoot());
     controller
         .rotStick
         .button(3)

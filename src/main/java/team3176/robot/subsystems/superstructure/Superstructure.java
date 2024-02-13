@@ -2,6 +2,8 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.NoteVisualizer;
 
 public class Superstructure extends SubsystemBase {
   private static Superstructure instance;
@@ -11,6 +13,7 @@ public class Superstructure extends SubsystemBase {
   private Shooter shooter;
 
   public Superstructure() {
+    NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
@@ -49,6 +52,10 @@ public class Superstructure extends SubsystemBase {
 
   public Command stopElevator() {
     return this.run(() -> elevator.stopElevator());
+  }
+
+  public Command shoot() {
+    return NoteVisualizer.shoot();
   }
 
   public static Superstructure getInstance() {

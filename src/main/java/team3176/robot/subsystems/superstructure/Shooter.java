@@ -2,13 +2,21 @@ package team3176.robot.subsystems.superstructure;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.FieldConstants;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.TunablePID;
 
 public class Shooter extends SubsystemBase {
@@ -20,7 +28,7 @@ public class Shooter extends SubsystemBase {
   // Taken from CAD check later;
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
-
+  public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   private final TunablePID pivotPIDController;
   private Rotation2d pivotSetpoint = new Rotation2d();
 
@@ -49,12 +57,33 @@ public class Shooter extends SubsystemBase {
     io.setPivotVoltage(pivotVoltage);
   }
 
+  @AutoLogOutput
+  private Rotation2d getAimAngle() {
+    Pose3d current =
+        new Pose3d(Drivetrain.getInstance().getPose())
+            .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
+    Translation3d goal = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening);
+    Logger.recordOutput("Shooter/goal", goal);
+    Translation3d diff = goal.minus(current.getTranslation());
+    Logger.recordOutput("Shooter/diff", diff);
+    Rotation2d angle =
+        Rotation2d.fromRadians(Math.atan2(diff.getZ(), diff.toTranslation2d().getNorm()));
+    return angle;
+  }
+
   public Command pivotSetPositionOnce(double angleInDegrees) {
     return this.runOnce(
             () -> {
               this.pivotSetpoint = Rotation2d.fromDegrees(angleInDegrees);
             })
         .withName("armSetPosition" + angleInDegrees);
+  }
+
+  public Command aim() {
+    return this.run(
+        () -> {
+          this.pivotSetpoint = getAimAngle();
+        });
   }
 
   public Rotation2d getAngle() {

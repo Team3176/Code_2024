@@ -45,6 +45,7 @@ import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
 import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
@@ -381,7 +382,9 @@ public class Drivetrain extends SubsystemBase {
     Translation2d difference =
         (this.getPose()
             .getTranslation()
-            .minus(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
+            .minus(
+                AllianceFlipUtil.apply(
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     return difference.getAngle();
   }
 
