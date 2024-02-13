@@ -40,6 +40,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
@@ -374,7 +375,14 @@ public class Drivetrain extends SubsystemBase {
 
   // TODO
   private Rotation2d getAimAngle() {
-    return new Rotation2d();
+    // get the position of the speaker
+    // FieldConstants.java
+    // AllianceFlipUtil.java
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d()));
+    return difference.getAngle();
   }
 
   public Command swerveDefenseCommand() {
@@ -449,8 +457,9 @@ public class Drivetrain extends SubsystemBase {
                   linearVelocity.getY() * MAX_WHEEL_SPEED,
                   omega * 10.5);
           if (angle != null) {
-            // TODO: DRIVE AIM
-            speeds.omegaRadiansPerSecond = 0.0;
+            speeds.omegaRadiansPerSecond =
+                orientationPID.calculate(
+                    this.getPose().getRotation().getRadians(), angle.get().getRadians());
             driveVelocityFieldCentric(speeds);
           } else {
             if (isFieldCentric) {

@@ -135,6 +135,12 @@ public class RobotContainer {
 
     controller
         .rotStick
+        .button(2)
+        .whileTrue(
+            drivetrain.driveAndAim(() -> controller.getForward(), () -> controller.getStrafe()));
+
+    controller
+        .rotStick
         .button(3)
         .whileTrue(
             new InstantCommand(drivetrain::setBrakeMode)
