@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunablePID;
 
@@ -61,9 +62,11 @@ public class Shooter extends SubsystemBase {
     Pose3d current =
         new Pose3d(Drivetrain.getInstance().getPose())
             .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
-    Translation3d goal = new Translation3d();
-    Translation3d diff = new Translation3d();
-    Rotation2d angle = new Rotation2d();
+    Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
+    Translation3d diff = current.getTranslation().minus(goal);
+    double z = diff.getZ();
+    double distance = diff.toTranslation2d().getNorm();
+    Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
     return angle;
   }
 
@@ -78,7 +81,7 @@ public class Shooter extends SubsystemBase {
   public Command aim() {
     return this.run(
         () -> {
-          // TODO
+          this.pivotSetpoint = getAimAngle();
         });
   }
 
