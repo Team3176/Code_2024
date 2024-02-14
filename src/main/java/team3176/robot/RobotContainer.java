@@ -190,6 +190,7 @@ public class RobotContainer {
     controller
         .operator
         .y()
+        .onTrue(superstructure.kms())
         .whileTrue(superstructure.shooterPercent(.05))
         .onFalse(superstructure.stopShooter());
 

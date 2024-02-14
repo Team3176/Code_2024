@@ -5,9 +5,9 @@ public class Hardwaremap {
   /*
    * Superstructer CIDs & CBNs
    */
-  public static final int elevatorLeader_CID = 3;
+  public static final int elevatorLeader_CID = 30;
   public static final int elevatorFollower_CID = 4;
-  public static final int transfer_CID = 5;
+  public static final int transfer_CID = 15;
   public static final int shooterWheelUpper_CID = 3;
   public static final int shooterWheelLower_CID = 5;
   public static final int shooterPivot_CID = 6;

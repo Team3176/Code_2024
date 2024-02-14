@@ -33,7 +33,7 @@ public class ShooterIOTalon implements ShooterIO {
     configsWheelUpper.Slot0.kD =
         0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
     configsWheelUpper.Slot0.kV =
-        0.11; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+        0.1; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
     // Rotation per second
     // Peak output of 8 volts
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;

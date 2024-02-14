@@ -66,6 +66,10 @@ public class Superstructure extends SubsystemBase {
     return instance;
   }
 
+  public Command kms() {
+    return this.run(() -> shooter.debugger());
+  }
+
   /*
     public boolean getlinebreak1(){
 

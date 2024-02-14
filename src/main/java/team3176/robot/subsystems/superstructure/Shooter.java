@@ -69,6 +69,10 @@ public class Shooter extends SubsystemBase {
     io.setPercentVoltage(0);
   }
 
+  public void debugger() {
+    System.out.print("HDufkufdgnjhc");
+  }
+
   // From Jonathan: I don't know if you still need this
 
   //   public void ShooterPIDVelocity(double velocity) {
