@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.constants.*;
@@ -66,13 +65,20 @@ public class Climb extends SubsystemBase {
     System.out.println("climb.getPosition = " + inputs.leftPosition);
   }
 
-  public Command rightGoToPosition(double position) {
+  public void rightGoToPosition(double position) {
+    io.setRight(position);
+    // io.setRight(pid.calculate(getRightPosition(), position));
+    System.out.println("climb.rightGoToPosition = " + position);
+    System.out.println("climb.getPosition = " + inputs.rightPosition);
+  }
+
+  /*   public Command rightGoToPosition(double position) {
     return this.runEnd(
         () -> {
           io.setRight(pid.calculate(getRightPosition(), position));
         },
         io::stopRight);
-  }
+  } */
 
   @Override
   public void periodic() {
@@ -81,10 +87,15 @@ public class Climb extends SubsystemBase {
     pid.checkParemeterUpdate();
     if (inputs.isLeftLimitswitch) {
       io.stopLeft();
+      io.setclimbLBLimitswitchZero();
+      System.out.println("climb left bottom.getPosition = " + inputs.leftPosition);
+
       // need to add reset to climbLeft encoder to 0;
     }
     if (inputs.isRightLimitswitch) {
       io.stopRight();
+      io.setclimbRBLimitswitchZero();
+      System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
       // need to add reset to climbRight encoder to 0;
     }
   }

@@ -22,10 +22,11 @@ public class ClimbIOTalon implements ClimbIO {
   PositionVoltage voltPosition;
   NeutralOut brake;
   DigitalInput climbLBLimitswitch, climbRBLimitswitch;
+  TalonFXConfiguration configsLeft, configsRight;
 
   public ClimbIOTalon() {
-    TalonFXConfiguration configsLeft = new TalonFXConfiguration();
-    TalonFXConfiguration configsRight = new TalonFXConfiguration();
+    configsLeft = new TalonFXConfiguration();
+    configsRight = new TalonFXConfiguration();
     brake = new NeutralOut();
     voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     climbLBLimitswitch = new DigitalInput(Hardwaremap.climbLBLimitSwitch_DIO);
@@ -92,6 +93,14 @@ public class ClimbIOTalon implements ClimbIO {
 
   public boolean getLeftRightswitch() {
     return (!climbRBLimitswitch.get());
+  }
+
+  public void setclimbLBLimitswitchZero() {
+    climbLeft.getConfigurator().setPosition(0);
+  }
+
+  public void setclimbRBLimitswitchZero() {
+    climbRight.getConfigurator().setPosition(0);
   }
 
   @Override

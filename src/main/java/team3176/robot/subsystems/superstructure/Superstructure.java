@@ -2,7 +2,6 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
 
 public class Superstructure extends SubsystemBase {
   private static Superstructure instance;
@@ -60,8 +59,8 @@ public class Superstructure extends SubsystemBase {
     // return this.run(() -> climb.leftGoToPosition(position.getAsDouble()));
   }
 
-  public Command moveRightClimb(DoubleSupplier position) {
-    return this.run(() -> climb.rightGoToPosition(position.getAsDouble()));
+  public Command moveRightClimb(double position) {
+    return this.run(() -> climb.rightGoToPosition(position));
   }
 
   public static Superstructure getInstance() {
