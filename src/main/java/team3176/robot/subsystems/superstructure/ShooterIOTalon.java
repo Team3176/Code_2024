@@ -39,7 +39,7 @@ public class ShooterIOTalon implements ShooterIO {
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;
     configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower.Slot0.kP = 0.01; // An error of 1 rotation per second results in 2V output
+    configsWheelLower.Slot0.kP = 0.01; // An error of 1 rotation per s econd results in 2V output
     configsWheelLower.Slot0.kI =
         0.0; // An error of 1 rotation per second increases output by 0.5V every second
     configsWheelLower.Slot0.kD =

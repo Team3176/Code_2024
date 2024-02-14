@@ -163,17 +163,17 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
     */
-    controller
-        .operator
-        .b()
-        .whileTrue(superstructure.movePivotDown(-.25))
-        .onFalse(superstructure.stopPivot());
+    /* controller
+    .operator
+    .b()
+    .whileTrue(superstructure.movePivotDown(-.25))
+    .onFalse(superstructure.stopPivot()); */
 
-    controller
-        .operator
-        .a()
-        .whileTrue(superstructure.moveElevator(.5))
-        .onFalse(superstructure.stopElevator());
+    /*     controller
+    .operator
+    .a()
+    .whileTrue(superstructure.moveElevator(.5))
+    .onFalse(superstructure.stopElevator()); */
 
     /*controller
     .operator
@@ -181,11 +181,11 @@ public class RobotContainer {
     .whileTrue(superstructure.positiveIntake(50))
     .onFalse(superstructure.stopIntake()); */
 
-    controller
-        .operator
-        .x()
-        .whileTrue(superstructure.movePivotUp(.25))
-        .onFalse(superstructure.stopPivot());
+    /*    controller
+    .operator
+    .x()
+    .whileTrue(superstructure.movePivotUp(.25))
+    .onFalse(superstructure.stopPivot()); */
 
     controller
         .operator
@@ -193,6 +193,14 @@ public class RobotContainer {
         .onTrue(superstructure.kms())
         .whileTrue(superstructure.shooterPercent(.05))
         .onFalse(superstructure.stopShooter());
+
+    controller
+        .operator
+        .a();
+
+    controller
+        .operator
+        .x();
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
