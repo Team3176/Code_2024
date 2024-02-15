@@ -53,7 +53,7 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> elevator.stopElevator());
   }
 
-  public Command moveLeftClimb(double position) {
+  public Command moveLeftClimb(int position) {
     System.out.println("moveLeftClimb = " + position);
     return this.run(() -> climb.leftGoToPosition(position));
     // return this.run(() -> climb.leftGoToPosition(position.getAsDouble()));

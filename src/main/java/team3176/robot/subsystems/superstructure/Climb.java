@@ -58,8 +58,8 @@ public class Climb extends SubsystemBase {
         io::stopLeft);
   }
   */
-  public void leftGoToPosition(double position) {
-    io.setLeft(position);
+  public void leftGoToPosition(int position) {
+    io.setLeftPIDPosition(position);
     // io.setLeft(pid.calculate(getLeftPosition(), position));
     System.out.println("climb.leftGoToPosition = " + position);
     System.out.println("climb.getPosition = " + inputs.leftPosition);

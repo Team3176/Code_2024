@@ -35,7 +35,7 @@ public interface ClimbIO {
 
   public default void setRight(double percentOutput) {}
 
-  public default void setPIDPosition(int encoderValue) {}
+  public default void setLeftPIDPosition(int encoderValue) {}
 
   public default void stopLeft() {}
 
