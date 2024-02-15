@@ -186,7 +186,10 @@ public class RobotContainer {
         .whileTrue(superstructure.movePivotUp(.25))
         .onFalse(superstructure.stopPivot());
 
-    controller.operator.leftBumper().onTrue(superstructure.moveLeftClimb(.5));
+    controller
+        .operator
+        .leftBumper()
+        .onTrue(superstructure.moveLeftClimb(.5).andThen(superstructure.moveLeftClimb(0)));
     // controller.operator.leftBumper().onTrue(climb.leftGoToPosition(.5));
 
     // .whileTrue(superstructure.moveLeftClimb(() -> controller.getXboxJoyLeft()));
@@ -194,7 +197,7 @@ public class RobotContainer {
     controller
         .operator
         .rightBumper()
-        .whileTrue(superstructure.moveRightClimb(() -> controller.getXboxJoyRight()));
+        .whileTrue(superstructure.moveRightClimb(.5).andThen(superstructure.moveRightClimb(0)));
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));

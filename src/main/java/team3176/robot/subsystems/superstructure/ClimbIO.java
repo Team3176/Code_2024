@@ -45,5 +45,9 @@ public interface ClimbIO {
 
   public default void setCoastMode(boolean isCoastMode) {}
 
+  public default void setclimbLBLimitswitchZero() {}
+
+  public default void setclimbRBLimitswitchZero() {}
+
   public default void reset() {}
 }
