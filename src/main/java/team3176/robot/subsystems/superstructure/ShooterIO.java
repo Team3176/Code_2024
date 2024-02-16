@@ -37,7 +37,7 @@ public interface ShooterIO {
 
   public default void setPivotVoltage(double voltage) {}
 
-  public default void setPercentVoltage(double percent) {}
+  public default void setVelocityVoltage(double velocity) {}
 
   public default void reset() {}
 }
