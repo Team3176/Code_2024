@@ -41,6 +41,10 @@ public class Intake extends SubsystemBase {
     io.stopRoller();
   }
 
+  public void pivotGoToPosition(int position) {
+    io.setPIDPivot(position);
+  }
+
   public void stopPivot() {
     io.stopPivot();
   }

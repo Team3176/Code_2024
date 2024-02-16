@@ -56,4 +56,6 @@ public interface IntakeIO {
   public default void stopRoller() {}
 
   public default void stopPivot() {}
+
+  public default void setPIDPivot(int encoderValue) {}
 }

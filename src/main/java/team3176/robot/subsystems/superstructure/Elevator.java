@@ -49,6 +49,10 @@ public class Elevator extends SubsystemBase {
         io::stop);
   }
 
+  public void elevatorGoToPosition(int position) {
+    io.setElevatorPIDPosition(position);
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);

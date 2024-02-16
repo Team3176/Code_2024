@@ -163,14 +163,14 @@ public class RobotContainer {
     controller
         .operator
         .b()
-        .whileTrue(superstructure.movePivotDown(-.25))
-        .onFalse(superstructure.stopPivot());
+        .onTrue(superstructure.movePivotPostion(1))
+        .onFalse(superstructure.movePivotPostion(0));
 
     controller
         .operator
         .a()
-        .whileTrue(superstructure.moveElevator(.5))
-        .onFalse(superstructure.stopElevator());
+        .onTrue(superstructure.moveElevatorPID(15))
+        .onFalse(superstructure.moveElevatorPID(0));
 
     controller
         .operator

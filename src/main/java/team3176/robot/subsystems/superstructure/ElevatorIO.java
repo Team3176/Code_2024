@@ -29,11 +29,13 @@ public interface ElevatorIO {
 
   public default void set(double percentOutput) {}
 
-  public default void setPIDPosition(int encoderValue) {}
+  // public default void setPIDPosition(int encoderValue) {}
 
   public default void stop() {}
 
   public default void setCoastMode(boolean isCoastMode) {}
+
+  public default void setElevatorPIDPosition(int encoderValue) {}
 
   public default void reset() {}
 }

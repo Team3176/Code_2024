@@ -31,6 +31,10 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
   }
 
+  public Command movePivotPostion(int position) {
+    return this.run(() -> intake.pivotGoToPosition(position));
+  }
+
   public Command stopPivot() {
     return this.run(() -> intake.stopPivot());
   }
@@ -45,6 +49,10 @@ public class Superstructure extends SubsystemBase {
 
   public Command moveElevator(double position) {
     return this.run(() -> elevator.setElevatorMotor(.5));
+  }
+
+  public Command moveElevatorPID(int position) {
+    return this.run(() -> elevator.elevatorGoToPosition(position));
   }
 
   public Command stopElevator() {
