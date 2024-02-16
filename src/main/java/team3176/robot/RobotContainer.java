@@ -189,7 +189,8 @@ public class RobotContainer {
     controller
         .operator
         .leftBumper()
-        .onTrue(superstructure.moveLeftClimb(5).andThen(superstructure.moveLeftClimb(0)));
+        .onTrue(superstructure.moveLeftClimb(45))
+        .onFalse(superstructure.moveLeftClimb(0));
     // controller.operator.leftBumper().onTrue(climb.leftGoToPosition(.5));
 
     // .whileTrue(superstructure.moveLeftClimb(() -> controller.getXboxJoyLeft()));

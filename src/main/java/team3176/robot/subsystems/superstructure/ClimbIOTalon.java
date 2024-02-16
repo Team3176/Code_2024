@@ -34,12 +34,12 @@ public class ClimbIOTalon implements ClimbIO {
     climbLeft = new TalonFX(Hardwaremap.climbLeft_CID, Hardwaremap.climbLeft_CBN);
     climbRight = new TalonFX(Hardwaremap.climbRight_CID, Hardwaremap.climbRight_CBN);
     // config setting
-    configsLeft.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
+    configsLeft.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     configsLeft.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsLeft.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsLeft.Slot0.kV = 0.12; // A change of 1 rotation per second results in 0.1 volts output
-    configsLeft.Voltage.PeakForwardVoltage = 8;
-    configsLeft.Voltage.PeakReverseVoltage = -8;
+    configsLeft.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsLeft.Voltage.PeakForwardVoltage = 4;
+    configsLeft.Voltage.PeakReverseVoltage = -4;
     climbLeft.setInverted(false);
 
     configsRight.Slot0.kP = 0.001; // An error of 1 rotations results in 40 amps output
@@ -110,6 +110,11 @@ public class ClimbIOTalon implements ClimbIO {
   @Override
   public void setLeft(double percent) {
     climbLeft.set(percent);
+  }
+
+  @Override
+  public void setLeftPIDPosition(int position) {
+    climbLeft.setControl(voltPosition.withPosition(position));
   }
 
   @Override
