@@ -163,7 +163,8 @@ public class RobotContainer {
     controller
         .operator
         .b()
-        .onTrue(superstructure.movePivotPostion(1))
+        .onTrue(superstructure.movePivotPostion(10))
+        // .whileTrue(superstructure.positiveIntake(50))
         .onFalse(superstructure.movePivotPostion(0));
 
     controller

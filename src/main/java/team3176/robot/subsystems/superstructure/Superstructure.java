@@ -59,6 +59,11 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> elevator.stopElevator());
   }
 
+  /*  public Command Intakedownroller(int position, double velocity) {
+    return this.run(() -> intake.pivotGoToPosition(position))
+        .andThen(() -> intake.setRollerVelocity(velocity));
+  } */
+
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();
