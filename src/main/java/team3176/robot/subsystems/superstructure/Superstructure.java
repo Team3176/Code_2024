@@ -51,8 +51,16 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> elevator.stopElevator());
   }
 
-  public Command shooterVelocity(double velocity) {
-    return this.run(() -> shooter.setShooterVelocity(velocity));
+  public Command upperShooterVelocity(double velocity) {
+    return this.run(() -> shooter.setUpperShooterVelocityVoltage(velocity));
+  }
+
+  public Command lowerShooterVelocity(double velocity) {
+    return this.run(() -> shooter.setLowerShooterVelocityVoltage(velocity));
+  }
+
+  public Command lowerShooterVelocity2(double velocity) {
+    return this.run(() -> shooter.setLowerShooterVelocityVoltage2(velocity));
   }
 
   public Command stopShooter() {

@@ -61,7 +61,15 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
 
-  public void setShooterVelocity(double d) {
+  public void setUpperShooterVelocityVoltage(double d) {
+    io.setVelocityVoltage(d);
+  }
+
+  public void setLowerShooterVelocityVoltage(double d) {
+    io.setVelocityVoltage(d);
+  }
+
+  public void setLowerShooterVelocityVoltage2(double d) {
     io.setVelocityVoltage(d);
   }
 

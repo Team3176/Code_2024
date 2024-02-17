@@ -191,12 +191,20 @@ public class RobotContainer {
         .operator
         .y()
         .onTrue(superstructure.kms())
-        .whileTrue(superstructure.shooterVelocity(.05))
+        .whileTrue(superstructure.upperShooterVelocity(.05))
         .onFalse(superstructure.stopShooter());
 
-    controller.operator.a();
+    controller
+        .operator
+        .a()        
+        .whileTrue(superstructure.lowerShooterVelocity(.05))
+        .onFalse(superstructure.stopShooter());;
 
-    controller.operator.x();
+    controller
+        .operator 
+        .x()        
+        .whileTrue(superstructure.lowerShooterVelocity2(.05))
+        .onFalse(superstructure.stopShooter());;
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));

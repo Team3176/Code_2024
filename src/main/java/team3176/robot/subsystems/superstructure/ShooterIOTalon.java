@@ -20,10 +20,13 @@ public class ShooterIOTalon implements ShooterIO {
       new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
   private TalonFX wheelLowerController =
       new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
+  private TalonFX wheelLowerController2 =
+      new TalonFX(Hardwaremap.shooterWheelLower_CID2, Hardwaremap.shooterWheelLower_CBN2);
   private TalonFX pivotController =
       new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
+  private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
 
   public ShooterIOTalon() {
 
@@ -51,8 +54,21 @@ public class ShooterIOTalon implements ShooterIO {
     configsWheelLower.Voltage.PeakForwardVoltage = 8;
     configsWheelLower.Voltage.PeakReverseVoltage = -8;
 
+    configsWheelLower2.Slot0.kP = 0.01; // An error of 1 rotation per s econd results in 2V output
+    configsWheelLower2.Slot0.kI =
+        0.0; // An error of 1 rotation per second increases output by 0.5V every second
+    configsWheelLower2.Slot0.kD =
+        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
+    configsWheelLower2.Slot0.kV =
+        0.11; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
+    // Rotation per second
+    // Peak output of 8 volts
+    configsWheelLower2.Voltage.PeakForwardVoltage = 8;
+    configsWheelLower2.Voltage.PeakReverseVoltage = -8;
+
     wheelUpperController.getConfigurator().apply(configsWheelUpper);
     wheelLowerController.getConfigurator().apply(configsWheelLower);
+    wheelLowerController2.getConfigurator().apply(configsWheelLower2);
   }
 
   @Override
@@ -64,11 +80,14 @@ public class ShooterIOTalon implements ShooterIO {
         Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec =
         Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec2 =
+        Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
     /* TODO: below line needs to be updated to pheonix 6 calls for voltage measurement
     inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
     */
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
+    inputs.wheelLowerAppliedVolts2 = wheelLowerController2.getMotorVoltage().getValue();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -93,6 +112,7 @@ public class ShooterIOTalon implements ShooterIO {
   public void setVelocityVoltage(double velocity) {
     wheelLowerController.set(velocity);
     wheelUpperController.set(velocity);
+    wheelLowerController2.set(velocity);
   }
 
   @Override

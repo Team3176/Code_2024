@@ -18,9 +18,11 @@ public interface ShooterIO {
     public Rotation2d pivotPosition = new Rotation2d();
     public double wheelUpperVelocityRadPerSec = 0.0;
     public double wheelLowerVelocityRadPerSec = 0.0;
+    public double wheelLowerVelocityRadPerSec2 = 0.0;
     public double pivotAppliedVolts = 0.0;
     public double wheelUpperAppliedVolts = 0.0;
     public double wheelLowerAppliedVolts = 0.0;
+    public double wheelLowerAppliedVolts2 = 0.0;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 
@@ -34,6 +36,8 @@ public interface ShooterIO {
   public default void setWheelUpperVoltage(double voltage) {}
 
   public default void setWheelLowerVoltage(double voltage) {}
+
+  public default void setWheelLowerVoltage2(double voltage) {}
 
   public default void setPivotVoltage(double voltage) {}
 
