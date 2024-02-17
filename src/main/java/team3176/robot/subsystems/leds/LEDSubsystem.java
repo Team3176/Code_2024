@@ -1,7 +1,7 @@
-package team3176.robot.subsystems.LED;
+package team3176.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team3176.robot.subsystems.LED.BlinkinLedDriver.BlinkinLedMode;
+import team3176.robot.subsystems.leds.BlinkinLedDriver.BlinkinLedMode;
 
 public class LEDSubsystem extends SubsystemBase {
   /** Creates a new LED. */
@@ -10,6 +10,11 @@ public class LEDSubsystem extends SubsystemBase {
   public LEDSubsystem() {
     blinkin = new BlinkinLedDriver(0);
   }
+
+  public void setBlinkinCode(double blinkinCode) {
+    blinkin.setCode(blinkinCode);
+  }
+
 
   @Override
   public void periodic() {}

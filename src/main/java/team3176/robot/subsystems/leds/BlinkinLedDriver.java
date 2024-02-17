@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package team3176.robot.subsystems.LED;
+package team3176.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.PWM;
 
@@ -12,8 +12,12 @@ public class BlinkinLedDriver {
 
   public BlinkinLedDriver(int channel) {
     pwm = new PWM(channel);
-    //pwm.setBounds(2.003, 1.50, 1.50, 1.50, 0.999);
+    //pwm.setBoundsMicroseconds(2.003, 1.50, 1.50, 1.50, 0.999);
     pwm.setPeriodMultiplier(PWM.PeriodMultiplier.k1X);
+  }
+
+  public void setCode(double code) {
+    pwm.setSpeed(code);
   }
 
   public void setMode(BlinkinLedMode mode) {
