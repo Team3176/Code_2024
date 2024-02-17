@@ -62,15 +62,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setUpperShooterVelocityVoltage(double d) {
-    io.setVelocityVoltage(d);
+    io.setWheelUpperVoltage(d);
   }
 
   public void setLowerShooterVelocityVoltage(double d) {
-    io.setVelocityVoltage(d);
+    io.setWheelLowerVoltage(d);
   }
 
   public void setLowerShooterVelocityVoltage2(double d) {
-    io.setVelocityVoltage(d);
+    io.setWheelLowerVoltage2(d);
   }
 
   public void setShooterStop() {

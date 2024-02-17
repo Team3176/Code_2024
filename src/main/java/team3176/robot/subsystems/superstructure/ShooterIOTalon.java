@@ -116,6 +116,21 @@ public class ShooterIOTalon implements ShooterIO {
   }
 
   @Override
+  public void setWheelUpperVoltage(double velocity) {
+    wheelUpperController.set(velocity);
+  }
+
+  @Override
+  public void setWheelLowerVoltage(double velocity) {
+    wheelLowerController.set(velocity);
+  }
+
+  @Override
+  public void setWheelLowerVoltage2(double velocity) {
+    wheelLowerController2.set(velocity);
+  }
+
+  @Override
   public void reset() {
     // to be implemented
   }
