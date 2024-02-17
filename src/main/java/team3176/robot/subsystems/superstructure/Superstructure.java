@@ -63,6 +63,22 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> shooter.setLowerShooterVelocityVoltage2(velocity));
   }
 
+  public Command shooterPivot(double percent) {
+    return this.run(() -> shooter.setShooterPivotPercent(percent));
+  }
+
+  public Command stopShooterPivot() {
+    return this.run(() -> shooter.setShooterPivotPercent(0));
+  }
+
+  public Command stopShooterPivotPID() {
+    return this.run(() -> shooter.setShooterPivotPosition(0));
+  }
+
+  public Command shooterPivotPID(int Position) {
+    return this.run(() -> shooter.setShooterPivotPosition(Position));
+  }
+
   public Command stopShooter() {
     return this.run(() -> shooter.setShooterStop());
   }

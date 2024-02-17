@@ -77,6 +77,14 @@ public class Shooter extends SubsystemBase {
     io.setVelocityVoltage(0);
   }
 
+  public void setShooterPivotPercent(double d) {
+    io.setPercentVoltage(d);
+  }
+
+  public void setShooterPivotPosition(int Position) {
+    io.setPercentVoltage(Position);
+  }
+
   public void debugger() {
     System.out.print("HDufkufdgnjhc");
   }

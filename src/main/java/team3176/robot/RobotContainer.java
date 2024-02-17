@@ -208,6 +208,18 @@ public class RobotContainer {
         .onFalse(superstructure.stopShooter());
     ;
 
+    controller
+        .operator
+        .rightBumper()
+        .whileTrue(superstructure.shooterPivot(0.1))
+        .onFalse(superstructure.stopShooterPivot());
+
+    controller
+        .operator
+        .b()
+        .onTrue(superstructure.shooterPivotPID(1))
+        .onFalse(superstructure.stopShooterPivotPID());
+
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
     // controller
