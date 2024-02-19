@@ -8,16 +8,17 @@ public class LEDSubsystem extends SubsystemBase {
   private final BlinkinLedDriver blinkin;
 
   public LEDSubsystem() {
-    blinkin = new BlinkinLedDriver(0);
+    blinkin = new BlinkinLedDriver(9);
   }
 
   public void setBlinkinCode(double blinkinCode) {
     blinkin.setCode(blinkinCode);
   }
 
-
   @Override
-  public void periodic() {}
+  public void periodic() {
+    setBlinkinCode(-0.09);
+  }
 
   public void noBallLight() {
     // off

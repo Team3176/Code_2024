@@ -4,24 +4,27 @@
 
 package team3176.robot.subsystems.leds;
 
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 /** REV Robotics Blinkin LED Driver. */
 public class BlinkinLedDriver {
-  private final PWM pwm;
+  // private final PWM pwm;
+  private Spark spark;
 
   public BlinkinLedDriver(int channel) {
-    pwm = new PWM(channel);
-    //pwm.setBoundsMicroseconds(2.003, 1.50, 1.50, 1.50, 0.999);
-    pwm.setPeriodMultiplier(PWM.PeriodMultiplier.k1X);
+    // pwm = new PWM(channel);
+    spark = new Spark(channel);
+    // pwm.setBoundsMicroseconds(2.003, 1.50, 1.50, 1.50, 0.999);
+    // pwm.setPeriodMultiplier(PWM.PeriodMultiplier.k1X);
   }
 
   public void setCode(double code) {
-    pwm.setSpeed(code);
+    spark.set(code);
+    System.out.println("leds set ##############################");
   }
 
   public void setMode(BlinkinLedMode mode) {
-    pwm.setSpeed(mode.value);
+    spark.set(mode.value);
   }
 
   public static enum BlinkinLedMode {
@@ -32,7 +35,7 @@ public class BlinkinLedDriver {
     FIXED_RAINBOW_PARTY(-0.97),
     FIXED_RAINBOW_OCEAN(-0.95),
     FIXED_RAINBOW_LAVA(-0.93),
-    FIXED_RAINBOW_FOREST(-0.91), 
+    FIXED_RAINBOW_FOREST(-0.91),
     FIXED_RAINBOW_GLITTER(-0.89),
     FIXED_CONFETTI(-0.87),
     FIXED_SHOT_RED(-0.85),

@@ -55,13 +55,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-
-    //drivetrain = Drivetrain.getInstance();
+    superstructure = Superstructure.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
     leds = new LEDSubsystem();
-    leds.setBlinkinCode(0.77);
 
-    //superstructure = Superstructure.getInstance();
+    // superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
     visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
