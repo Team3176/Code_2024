@@ -17,21 +17,30 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setBlinkinCode(-0.09);
   }
 
-  public void noBallLight() {
+  public void wantNote() {
     // off
-    blinkin.setMode(BlinkinLedMode.SOLID_BLACK);
+    blinkin.setMode(BlinkinLedMode.FIXED_STROBE_RED);
   }
 
-  public void oneBallLight() {
+  public void hasNote() {
     // Flashing Green
-    blinkin.setMode(BlinkinLedMode.SOLID_RED);
+    blinkin.setMode(BlinkinLedMode.SOLID_ORANGE);
   }
 
-  public void twoBallLight() {
+  public void isAimedAtSource() {
     // Solid Green
-    blinkin.setMode(BlinkinLedMode.SOLID_BLUE);
+    blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
   }
+
+  public void endGameStarted() {
+    blinkin.setMode(BlinkinLedMode.FIXED_SHOT_BLUE);
+  }
+
+  public void isAuton() {
+    blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_RAINBOW);
+  }
+
+
 }
