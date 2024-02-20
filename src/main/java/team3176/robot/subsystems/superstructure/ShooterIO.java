@@ -45,7 +45,7 @@ public interface ShooterIO {
 
   public default void setPercentVoltage(double percent) {}
 
-  public default void setShooterPivotPID(int encoderValue) {}
+  public default void setShooterPivotPID(int position) {}
 
   public default void reset() {}
 }

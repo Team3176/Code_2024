@@ -190,7 +190,7 @@ public class RobotContainer {
     controller
         .operator
         .y()
-        .onTrue(superstructure.kms())
+        // .onTrue(superstructure.kms())
         .whileTrue(superstructure.upperShooterVelocity(.05))
         .onFalse(superstructure.stopShooter());
 
@@ -217,7 +217,8 @@ public class RobotContainer {
     controller
         .operator
         .b()
-        .onTrue(superstructure.shooterPivotPID(1))
+        // .onTrue(superstructure.kms())
+        .whileTrue(superstructure.shooterPivotPID(1))
         .onFalse(superstructure.stopShooterPivotPID());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));

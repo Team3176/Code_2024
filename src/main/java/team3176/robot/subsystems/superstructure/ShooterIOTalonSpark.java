@@ -31,9 +31,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
       new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
   private TalonFX wheelLowerController2 =
       new TalonFX(Hardwaremap.shooterWheelLower_CID2, Hardwaremap.shooterWheelLower_CBN2);
-  private TalonFX pivotController =
-      new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
-
+  /* private TalonFX pivotController =
+       new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
+  */
   private CANSparkFlex pivotShooter =
       new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
   private SparkPIDController m_PidController = pivotShooter.getPIDController();
@@ -176,7 +176,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void setPivotVoltage(double voltage) {
-    pivotController.setVoltage(voltage);
+    pivotShooter.setVoltage(voltage);
   }
 
   @Override
@@ -208,6 +208,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void setShooterPivotPID(int Position) {
+
     m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
   }
 

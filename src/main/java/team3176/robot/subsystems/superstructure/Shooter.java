@@ -81,12 +81,18 @@ public class Shooter extends SubsystemBase {
     io.setPercentVoltage(d);
   }
 
-  public void setShooterPivotPosition(int Position) {
-    io.setPercentVoltage(Position);
+  public void setShooterPivotPosition(int position) {
+
+    io.setShooterPivotPID(position);
+  }
+
+  public void stopShooterPivotPosition() {
+    io.setShooterPivotPID(0);
   }
 
   public void debugger() {
-    System.out.print("HDufkufdgnjhc");
+    System.out.println(
+        "BIG FLAG TO MAKE SURE YOU CAN SEE THIS CORRECTLY!! THIS IS FOR DEBUGGING!!! I WANT TO MAKE SURE YOU CAN SEE THIS!!!!");
   }
 
   // From Jonathan: I don't know if you still need this

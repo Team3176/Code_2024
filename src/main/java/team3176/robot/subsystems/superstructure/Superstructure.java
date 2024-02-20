@@ -11,6 +11,7 @@ public class Superstructure extends SubsystemBase {
   private Shooter shooter;
 
   public Superstructure() {
+    System.out.println("Superstructure constructed #######################################");
     // elevator = Elevator.getInstance();
     // intake = Intake.getInstance();
     shooter = Shooter.getInstance();
@@ -72,7 +73,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command stopShooterPivotPID() {
-    return this.run(() -> shooter.setShooterPivotPosition(0));
+    return this.run(() -> shooter.stopShooterPivotPosition());
   }
 
   public Command shooterPivotPID(int Position) {
@@ -91,6 +92,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command kms() {
+    System.out.println("kms was calledf ##########################################");
     return this.run(() -> shooter.debugger());
   }
 
