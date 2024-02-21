@@ -64,21 +64,24 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> shooter.setLowerShooterVelocityVoltage2(velocity));
   }
 
-  public Command shooterPivot(double percent) {
-    return this.run(() -> shooter.setShooterPivotPercent(percent));
+  public Command runShooterPivot(double volts) {
+    return shooter.pivotVoltage(volts);
   }
+  // public Command shooterPivot(double percent) {
+  //   return this.run(() -> shooter.setShooterPivotPercent(percent));
+  // }
 
-  public Command stopShooterPivot() {
-    return this.run(() -> shooter.setShooterPivotPercent(0));
-  }
+  // public Command stopShooterPivot() {
+  //   return this.run(() -> shooter.setShooterPivotPercent(0));
+  // }
 
-  public Command stopShooterPivotPID() {
-    return this.run(() -> shooter.stopShooterPivotPosition());
-  }
+  // public Command stopShooterPivotPID() {
+  //   return this.run(() -> shooter.stopShooterPivotPosition());
+  // }
 
-  public Command shooterPivotPID(int Position) {
-    return this.run(() -> shooter.setShooterPivotPosition(Position));
-  }
+  // public Command shooterPivotPID(int Position) {
+  //   return this.run(() -> shooter.setShooterPivotPosition(Position));
+  // }
 
   public Command stopShooter() {
     return this.run(() -> shooter.setShooterStop());
@@ -94,10 +97,6 @@ public class Superstructure extends SubsystemBase {
   public Command kms() {
     System.out.println("kms was calledf ##########################################");
     return this.run(() -> shooter.debugger());
-  }
-
-  public Command shooterPivotVoltage() {
-    return this.run(() -> shooter.setShooterPivotVoltage());
   }
 
   /*

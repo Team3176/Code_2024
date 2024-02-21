@@ -210,22 +210,22 @@ public class RobotContainer {
 
     controller
         .operator
-        .rightBumper()
-        .whileTrue(superstructure.shooterPivot(0.1))
-        .onFalse(superstructure.stopShooterPivot());
-
-    controller
-        .operator
-        .leftBumper()
-        // .onTrue(superstructure.kms())
-        .whileTrue(superstructure.shooterPivotPID(1000))
-        .onFalse(superstructure.stopShooterPivotPID());
-
-    controller
-        .operator
         .b()
-        .whileTrue(superstructure.shooterPivotVoltage())
-        .onFalse(superstructure.stopShooterPivotPID());
+        .whileTrue(superstructure.runShooterPivot(3).alongWith(new PrintCommand("shooter")))
+        .onFalse(superstructure.runShooterPivot(0.0));
+
+    // controller
+    //     .operator
+    //     .leftBumper()
+    //     // .onTrue(superstructure.kms())
+    //     .whileTrue(superstructure.shooterPivotPID(1000))
+    //     .onFalse(superstructure.stopShooterPivotPID());
+
+    // controller
+    //     .operator
+    //     .b()
+    //     .whileTrue(superstructure.shooterPivotVoltage())
+    //     .onFalse(superstructure.stopShooterPivotPID());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));

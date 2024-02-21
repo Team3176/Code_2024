@@ -15,16 +15,10 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController; 
-
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import javax.swing.text.Position;
 import team3176.robot.constants.Hardwaremap;
 
@@ -57,24 +51,24 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
     /*-------------------------------- Private instance variables ---------------------------------*/
 
-    configsWheelUpper.Slot0.kP = 0.01; 
-    configsWheelUpper.Slot0.kI = 0.0; 
-    configsWheelUpper.Slot0.kD = 0.0000; 
-    configsWheelUpper.Slot0.kV = 0.1; 
+    configsWheelUpper.Slot0.kP = 0.01;
+    configsWheelUpper.Slot0.kI = 0.0;
+    configsWheelUpper.Slot0.kD = 0.0000;
+    configsWheelUpper.Slot0.kV = 0.1;
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;
     configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower.Slot0.kP = 0.01; 
-    configsWheelLower.Slot0.kI = 0.0; 
-    configsWheelLower.Slot0.kD = 0.0000; 
-    configsWheelLower.Slot0.kV = 0.11; 
+    configsWheelLower.Slot0.kP = 0.01;
+    configsWheelLower.Slot0.kI = 0.0;
+    configsWheelLower.Slot0.kD = 0.0000;
+    configsWheelLower.Slot0.kV = 0.11;
     configsWheelLower.Voltage.PeakForwardVoltage = 8;
     configsWheelLower.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower2.Slot0.kP = 0.01; 
-    configsWheelLower2.Slot0.kI = 0.0; 
-    configsWheelLower2.Slot0.kD = 0.0000; 
-    configsWheelLower2.Slot0.kV = 0.11; 
+    configsWheelLower2.Slot0.kP = 0.01;
+    configsWheelLower2.Slot0.kI = 0.0;
+    configsWheelLower2.Slot0.kD = 0.0000;
+    configsWheelLower2.Slot0.kV = 0.11;
     configsWheelLower2.Voltage.PeakForwardVoltage = 8;
     configsWheelLower2.Voltage.PeakReverseVoltage = -8;
 
@@ -94,53 +88,54 @@ public class ShooterIOTalonSpark implements ShooterIO {
     m_PidController.setFF(kFF);
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    double p = SmartDashboard.getNumber("P Gain", 0);
-    double i = SmartDashboard.getNumber("I Gain", 0);
-    double d = SmartDashboard.getNumber("D Gain", 0);
-    double iz = SmartDashboard.getNumber("I Zone", 0);
-    double ff = SmartDashboard.getNumber("Feed Forward", 0);
-    double max = SmartDashboard.getNumber("Max Output", 0);
-    double min = SmartDashboard.getNumber("Min Output", 0);
+    // double p = SmartDashboard.getNumber("P Gain", 0);
+    // double i = SmartDashboard.getNumber("I Gain", 0);
+    // double d = SmartDashboard.getNumber("D Gain", 0);
+    // double iz = SmartDashboard.getNumber("I Zone", 0);
+    // double ff = SmartDashboard.getNumber("Feed Forward", 0);
+    // double max = SmartDashboard.getNumber("Max Output", 0);
+    // double min = SmartDashboard.getNumber("Min Output", 0);
 
-    if ((p != kP)) {
-      m_PidController.setP(p);
-      kP = p;
-    }
-    if ((i != kI)) {
-      m_PidController.setI(i);
-      kI = i;
-    }
-    if ((d != kD)) {
-      m_PidController.setD(d);
-      kD = d;
-    }
-    if ((iz != kIz)) {
-      m_PidController.setIZone(iz);
-      kIz = iz;
-    }
-    if ((ff != kFF)) {
-      m_PidController.setFF(ff);
-      kFF = ff;
-    }
-    if ((max != kMaxOutput) || (min != kMinOutput)) {
-      m_PidController.setOutputRange(min, max);
-      kMinOutput = min;
-      kMaxOutput = max;
+    // if ((p != kP)) {
+    //   m_PidController.setP(p);
+    //   kP = p;
+    // }
+    // if ((i != kI)) {
+    //   m_PidController.setI(i);
+    //   kI = i;
+    // }
+    // if ((d != kD)) {
+    //   m_PidController.setD(d);
+    //   kD = d;
+    // }
+    // if ((iz != kIz)) {
+    //   m_PidController.setIZone(iz);
+    //   kIz = iz;
+    // }
+    // if ((ff != kFF)) {
+    //   m_PidController.setFF(ff);
+    //   kFF = ff;
+    // }
+    // if ((max != kMaxOutput) || (min != kMinOutput)) {
+    m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
-      wheelUpperController.getConfigurator().apply(configsWheelUpper);
-      wheelLowerController.getConfigurator().apply(configsWheelLower);
-      wheelLowerController2.getConfigurator().apply(configsWheelLower2);
-    }
+    wheelUpperController.getConfigurator().apply(configsWheelUpper);
+    wheelLowerController.getConfigurator().apply(configsWheelLower);
+    wheelLowerController2.getConfigurator().apply(configsWheelLower2);
+    // }
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.pivotPosition = new Rotation2d(); 
-    inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
-    inputs.wheelLowerVelocityRadPerSec = Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
-    inputs.wheelLowerVelocityRadPerSec2 = Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
+    inputs.pivotPosition = new Rotation2d();
+    inputs.wheelUpperVelocityRadPerSec =
+        Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec =
+        Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec2 =
+        Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts2 = wheelLowerController2.getMotorVoltage().getValue();
@@ -187,20 +182,14 @@ public class ShooterIOTalonSpark implements ShooterIO {
   }
 
   @Override
-  public void setPercentVoltage(double percent) {
-
-    // m_PidController.setReference(percent, CANSparkFlex.ControlType.kPosition);
-  }
-
-  @Override
   public void setShooterPivotPID(int Position) {
     m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
   }
 
-  @Override
-  public void setShooterPivotVoltage(int voltage) {
-    m_PidController.setReference(7, CANSparkMax.ControlType.kVoltage);
-  }
+  // @Override
+  // public void setShooterPivotVoltage(int voltage) {
+  //   m_PidController.setReference(7, CANSparkMax.ControlType.kVoltage);
+  // }
 
   @Override
   public void reset() {

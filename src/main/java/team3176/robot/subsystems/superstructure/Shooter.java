@@ -77,9 +77,9 @@ public class Shooter extends SubsystemBase {
     io.setVelocityVoltage(0);
   }
 
-  public void setShooterPivotPercent(double d) {
-    io.setPercentVoltage(d);
-  }
+  // public void setShooterPivotPercent(double d) {
+  //   io.setPercentVoltage(d);
+  // }
 
   public void setShooterPivotPosition(int position) {
 
@@ -90,9 +90,9 @@ public class Shooter extends SubsystemBase {
     io.setShooterPivotPID(0);
   }
 
-  public void setShooterPivotVoltage() {
-    io.setShooterPivotVoltage(0);
-  }
+  // public void setShooterPivotVoltage() {
+  //   io.setShooterPivotVoltage(0);
+  // }
 
   public void debugger() {
     System.out.println(
@@ -123,6 +123,10 @@ public class Shooter extends SubsystemBase {
   //     velocity = JoystickButtonbuttonimput * 50;
   //   }
 
+  public Command pivotVoltage(double volts) {
+    return this.run(() -> io.setPivotVoltage(volts));
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -137,7 +141,7 @@ public class Shooter extends SubsystemBase {
     // SuperStructureConstants.ARM_ZERO_POS);
 
     Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
-    PIDPositionPeriodic();
+    // PIDPositionPeriodic();
     // m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
   }
 }
