@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import team3176.robot.constants.*;
 
 /** Control REV Robotics Blinkin LED controller */
-public class BlinkinLEDDriverv2 {
+public class BlinkinLedDriverV2 {
   public enum BlinkinPattern {
     /*
      * Fixed Palette Pattern
@@ -136,7 +136,7 @@ public class BlinkinLEDDriverv2 {
     }
   };
 
-  private static BlinkinLEDDriverv2 m_controller = null;
+  private static BlinkinLedDriverV2 m_controller = null;
   private static Spark m_blinkin;
   private static BlinkinPattern m_currentPattern;
   private static HashMap<Alliance, BlinkinPattern[]> m_allianceColors = new HashMap<Alliance, BlinkinPattern[]>();
@@ -155,7 +155,7 @@ public class BlinkinLEDDriverv2 {
     BlinkinPattern.STROBE_BLUE
   };
 
-  private BlinkinLEDDriverv2() {
+  private BlinkinLedDriverV2() {
     m_blinkin = new Spark(Hardwaremap.blinkin_pwm_port);
 
     m_allianceColors.put(Alliance.Red, RED_ALLIANCE_PATTERNS);
@@ -166,8 +166,8 @@ public class BlinkinLEDDriverv2 {
    * Get instance of BlinkinLEDController
    * @return BlinkinLEDController object
    */
-  public static BlinkinLEDDriverv2 getInstance() {
-    if (m_controller == null) m_controller = new BlinkinLEDDriverv2();
+  public static BlinkinLedDriverV2 getInstance() {
+    if (m_controller == null) m_controller = new BlinkinLedDriverV2();
     return m_controller;
   }
 
