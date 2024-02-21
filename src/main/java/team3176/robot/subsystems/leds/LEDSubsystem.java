@@ -19,12 +19,12 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {}
 
   public void wantNote() {
-    // off
+    //Would prefer flashing orange
     blinkin.setMode(BlinkinLedMode.FIXED_STROBE_RED);
   }
 
   public void hasNote() {
-    // Flashing Green
+    // Solid Orange
     blinkin.setMode(BlinkinLedMode.SOLID_ORANGE);
   }
 
@@ -34,10 +34,12 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public void endGameStarted() {
+    // Flashing Blue
     blinkin.setMode(BlinkinLedMode.FIXED_SHOT_BLUE);
   }
 
   public void isAuton() {
+    // Rainbow
     blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_RAINBOW);
   }
 }
