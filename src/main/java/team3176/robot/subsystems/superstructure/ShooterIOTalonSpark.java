@@ -35,8 +35,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
   /* private TalonFX pivotController =
        new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   */
-  private CANSparkMax pivotShooter =
-      new CANSparkMax(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
+  private CANSparkFlex pivotShooter =
+      new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
   private SparkPIDController m_PidController = pivotShooter.getPIDController();
   private RelativeEncoder m_encoder = pivotShooter.getEncoder();
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
