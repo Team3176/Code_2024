@@ -15,8 +15,12 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController; 
+
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -51,43 +55,29 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   public ShooterIOTalonSpark() {
 
-    configsWheelUpper.Slot0.kP = 0.01; // An error of 1 rotation per second results in 2V output
-    configsWheelUpper.Slot0.kI =
-        0.0; // An error of 1 rotation per second increases output by 0.5V every second
-    configsWheelUpper.Slot0.kD =
-        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
-    configsWheelUpper.Slot0.kV =
-        0.1; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
-    // Rotation per second
-    // Peak output of 8 volts
+    /*-------------------------------- Private instance variables ---------------------------------*/
+
+    configsWheelUpper.Slot0.kP = 0.01; 
+    configsWheelUpper.Slot0.kI = 0.0; 
+    configsWheelUpper.Slot0.kD = 0.0000; 
+    configsWheelUpper.Slot0.kV = 0.1; 
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;
     configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower.Slot0.kP = 0.01; // An error of 1 rotation per s econd results in 2V output
-    configsWheelLower.Slot0.kI =
-        0.0; // An error of 1 rotation per second increases output by 0.5V every second
-    configsWheelLower.Slot0.kD =
-        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
-    configsWheelLower.Slot0.kV =
-        0.11; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
-    // Rotation per second
-    // Peak output of 8 volts
+    configsWheelLower.Slot0.kP = 0.01; 
+    configsWheelLower.Slot0.kI = 0.0; 
+    configsWheelLower.Slot0.kD = 0.0000; 
+    configsWheelLower.Slot0.kV = 0.11; 
     configsWheelLower.Voltage.PeakForwardVoltage = 8;
     configsWheelLower.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower2.Slot0.kP = 0.01; // An error of 1 rotation per s econd results in 2V output
-    configsWheelLower2.Slot0.kI =
-        0.0; // An error of 1 rotation per second increases output by 0.5V every second
-    configsWheelLower2.Slot0.kD =
-        0.0000; // A change of 1 rotation per second squared results in 0.01 volts output
-    configsWheelLower2.Slot0.kV =
-        0.11; // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts /
-    // Rotation per second
-    // Peak output of 8 volts
+    configsWheelLower2.Slot0.kP = 0.01; 
+    configsWheelLower2.Slot0.kI = 0.0; 
+    configsWheelLower2.Slot0.kD = 0.0000; 
+    configsWheelLower2.Slot0.kV = 0.11; 
     configsWheelLower2.Voltage.PeakForwardVoltage = 8;
     configsWheelLower2.Voltage.PeakReverseVoltage = -8;
 
-    // PID coefficients
     kP = 0.1;
     kI = 0;
     kD = 0.005;
@@ -143,27 +133,20 @@ public class ShooterIOTalonSpark implements ShooterIO {
     }
   }
 
+  /*-------------------------------- Generic Subsystem Functions --------------------------------*/
+
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    // TODO: position is some gear math I don't know the gear sizes so do this later
-    inputs.pivotPosition =
-        new Rotation2d(); // Rotation2d.fromRotations(armEncoder.getAbsolutePosition().getValueAsDouble());
-    inputs.wheelUpperVelocityRadPerSec =
-        Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
-    inputs.wheelLowerVelocityRadPerSec =
-        Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
-    inputs.wheelLowerVelocityRadPerSec2 =
-        Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
-    /* TODO: below line needs to be updated to pheonix 6 calls for voltage measurement
-    inputs.pivotAppliedVolts = pivotController.getAppliedOutput() * pivotController.getBusVoltage();
-    */
+    inputs.pivotPosition = new Rotation2d(); 
+    inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec = Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    inputs.wheelLowerVelocityRadPerSec2 = Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts2 = wheelLowerController2.getMotorVoltage().getValue();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
-    /* Retry config apply up to 5 times, report if failure */
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
       status = controller.getConfigurator().apply(configs);
@@ -175,6 +158,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     }
   }
 
+  /*-------------------------------- Custom Public Functions --------------------------------*/
   @Override
   public void setPivotVoltage(double voltage) {
     pivotShooter.setVoltage(voltage);
@@ -222,4 +206,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
   public void reset() {
     // to be implemented
   }
+
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
+
 }
