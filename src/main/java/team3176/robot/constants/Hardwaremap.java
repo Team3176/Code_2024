@@ -11,7 +11,7 @@ public class Hardwaremap {
   public static final int shooterWheelUpper_CID = 8;
   public static final int shooterWheelLower_CID = 5;
   public static final int shooterWheelLower_CID2 = 50;
-  public static final int shooterPivot_CID = 6;
+  public static final int shooterPivot_CID = 4;
   public static final int intakeRoller_CID = 7;
   public static final int intakePivot_CID = 8;
   public static final int armEncoder_CID = 2;

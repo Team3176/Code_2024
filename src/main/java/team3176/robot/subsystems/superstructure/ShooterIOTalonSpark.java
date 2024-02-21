@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,8 +35,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
   /* private TalonFX pivotController =
        new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   */
-  private CANSparkFlex pivotShooter =
-      new CANSparkFlex(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
+  private CANSparkMax pivotShooter =
+      new CANSparkMax(Hardwaremap.shooterPivot_CID, MotorType.kBrushless);
   private SparkPIDController m_PidController = pivotShooter.getPIDController();
   private RelativeEncoder m_encoder = pivotShooter.getEncoder();
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
@@ -203,13 +204,18 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void setPercentVoltage(double percent) {
-    m_PidController.setReference(percent, CANSparkFlex.ControlType.kPosition);
+
+    // m_PidController.setReference(percent, CANSparkFlex.ControlType.kPosition);
   }
 
   @Override
   public void setShooterPivotPID(int Position) {
-
     m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
+  }
+
+  @Override
+  public void setShooterPivotVoltage(int voltage) {
+    m_PidController.setReference(7, CANSparkMax.ControlType.kVoltage);
   }
 
   @Override

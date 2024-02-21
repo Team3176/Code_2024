@@ -216,9 +216,15 @@ public class RobotContainer {
 
     controller
         .operator
-        .b()
+        .leftBumper()
         // .onTrue(superstructure.kms())
-        .whileTrue(superstructure.shooterPivotPID(1))
+        .whileTrue(superstructure.shooterPivotPID(1000))
+        .onFalse(superstructure.stopShooterPivotPID());
+
+    controller
+        .operator
+        .b()
+        .whileTrue(superstructure.shooterPivotVoltage())
         .onFalse(superstructure.stopShooterPivotPID());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));

@@ -47,5 +47,7 @@ public interface ShooterIO {
 
   public default void setShooterPivotPID(int position) {}
 
+  public default void setShooterPivotVoltage(int voltage) {}
+
   public default void reset() {}
 }

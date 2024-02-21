@@ -90,6 +90,10 @@ public class Shooter extends SubsystemBase {
     io.setShooterPivotPID(0);
   }
 
+  public void setShooterPivotVoltage() {
+    io.setShooterPivotVoltage(0);
+  }
+
   public void debugger() {
     System.out.println(
         "BIG FLAG TO MAKE SURE YOU CAN SEE THIS CORRECTLY!! THIS IS FOR DEBUGGING!!! I WANT TO MAKE SURE YOU CAN SEE THIS!!!!");

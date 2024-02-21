@@ -96,6 +96,10 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> shooter.debugger());
   }
 
+  public Command shooterPivotVoltage() {
+    return this.run(() -> shooter.setShooterPivotVoltage());
+  }
+
   /*
     public boolean getlinebreak1(){
 
