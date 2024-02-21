@@ -16,8 +16,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-  }
+  public void periodic() {}
 
   public void wantNote() {
     // off
@@ -41,6 +40,4 @@ public class LEDSubsystem extends SubsystemBase {
   public void isAuton() {
     blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_RAINBOW);
   }
-
-
 }
