@@ -58,7 +58,6 @@ public class Shooter extends SubsystemBase {
     io.setPivotVoltage(pivotVoltage);
   }
 
-  // TODO
   @AutoLogOutput
   private Rotation2d getAimAngle() {
     Pose3d current =
