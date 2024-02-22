@@ -79,9 +79,9 @@ public class Superstructure extends SubsystemBase {
   //   return this.run(() -> shooter.stopShooterPivotPosition());
   // }
 
-  // public Command shooterPivotPID(int Position) {
-  //   return this.run(() -> shooter.setShooterPivotPosition(Position));
-  // }
+  public Command shooterPivotPID(int Position) {
+    return shooter.pivotSetPositionOnce(Position);
+  }
 
   public Command stopShooter() {
     return this.run(() -> shooter.setShooterStop());

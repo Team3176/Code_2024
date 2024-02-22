@@ -211,8 +211,12 @@ public class RobotContainer {
     controller
         .operator
         .b()
-        .whileTrue(superstructure.runShooterPivot(3).alongWith(new PrintCommand("shooter")))
-        .onFalse(superstructure.runShooterPivot(0.0));
+        .whileTrue(
+            superstructure
+                .shooterPivotPID(90)
+                .alongWith(new PrintCommand("shooter"))
+                .withName("shooter_pivot"))
+        .onFalse(superstructure.shooterPivotPID(0));
 
     // controller
     //     .operator

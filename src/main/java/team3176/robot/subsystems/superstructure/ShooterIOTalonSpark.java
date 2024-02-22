@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
@@ -48,7 +49,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
 
   public ShooterIOTalonSpark() {
-
+    pivotShooter.restoreFactoryDefaults();
+    pivotShooter.getEncoder().setPosition(0.0);
+    pivotShooter.setSmartCurrentLimit(10);
+    pivotShooter.setIdleMode(IdleMode.kBrake);
     /*-------------------------------- Private instance variables ---------------------------------*/
 
     configsWheelUpper.Slot0.kP = 0.01;
@@ -117,6 +121,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     //   kFF = ff;
     // }
     // if ((max != kMaxOutput) || (min != kMinOutput)) {
+
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
     wheelUpperController.getConfigurator().apply(configsWheelUpper);
@@ -129,7 +134,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.pivotPosition = new Rotation2d();
+    inputs.pivotPosition = Rotation2d.fromRotations(pivotShooter.getEncoder().getPosition());
+
     inputs.wheelUpperVelocityRadPerSec =
         Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec =

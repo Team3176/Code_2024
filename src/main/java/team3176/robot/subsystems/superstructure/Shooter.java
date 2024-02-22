@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 2.0, 0.0, 0.0);
+    this.pivotPIDController = new TunablePID("shooter/pid", 0.75, 0.0, 0.01);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
@@ -141,7 +141,7 @@ public class Shooter extends SubsystemBase {
     // SuperStructureConstants.ARM_ZERO_POS);
 
     Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
-    // PIDPositionPeriodic();
+    PIDPositionPeriodic();
     // m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
   }
 }
