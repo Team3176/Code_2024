@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
@@ -16,6 +17,7 @@ import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -32,7 +34,7 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  // private Drivetrain drivetrain;
+  private Drivetrain drivetrain;
   private final RobotState robotState;
   private final Superstructure superstructure;
   private PhotonVisionSystem vision;
@@ -94,22 +96,22 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    /*
-        // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-        // m_Drivetrain.setTurbo(false), m_Drivetrain));
-        // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-        // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
-        controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
-        controller
-            .transStick
-            .button(10)
-            .whileTrue(
-                new InstantCommand(drivetrain::setBrakeMode)
-                    .andThen(drivetrain.swerveDefenseCommand())
-                    .withName("swerveDefense"));
-        // m_Controller.getTransStick_Button10()
-        //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
-        // m_Drivetrain));
+
+    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
+    // m_Drivetrain.setTurbo(false), m_Drivetrain));
+    // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+    // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
+    controller
+        .transStick
+        .button(10)
+        .whileTrue(
+            new InstantCommand(drivetrain::setBrakeMode)
+                .andThen(drivetrain.swerveDefenseCommand())
+                .withName("swerveDefense"));
+    // m_Controller.getTransStick_Button10()
+    //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
+    // m_Drivetrain));
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));
@@ -124,7 +126,6 @@ public class RobotContainer {
     //     .button(3)
     //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
 
-    /*
     controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
 
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
