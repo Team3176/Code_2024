@@ -14,19 +14,16 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOTalon implements IntakeIO {
 
   private TalonFX rollerController;
-  private CANSparkFlex pivotController;
+  private TalonFX pivotController;
   VelocityVoltage voltVelocity;
   PositionVoltage voltPosition;
   private RelativeEncoder pivotEncoder;
@@ -39,6 +36,8 @@ public class IntakeIOTalon implements IntakeIO {
   public IntakeIOTalon() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
+    TalonFXConfiguration pivotConfigs = new TalonFXConfiguration();
+
     brake = new NeutralOut();
     voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
@@ -46,7 +45,9 @@ public class IntakeIOTalon implements IntakeIO {
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
-    pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
+    pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
+
+    // pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
 
     // config setting
     rollerConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
@@ -58,7 +59,6 @@ public class IntakeIOTalon implements IntakeIO {
     rollerConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     // pivot configs
 
-    /*
     pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     // Peak output of 8 volts
@@ -67,21 +67,21 @@ public class IntakeIOTalon implements IntakeIO {
 
     pivotConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
     pivotConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
+
+    // pivotEncoder = pivotController.getEncoder();
+
+    /* pivotPID = pivotController.getPIDController();
+       pivotPID.setP(SuperStructureConstants.INTAKE_PIVOT_kP);
+       pivotPID.setI(SuperStructureConstants.INTAKE_PIVOT_kI);
+       pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
     */
-    pivotEncoder = pivotController.getEncoder();
-
-    pivotPID = pivotController.getPIDController();
-    pivotPID.setP(SuperStructureConstants.INTAKE_PIVOT_kP);
-    pivotPID.setI(SuperStructureConstants.INTAKE_PIVOT_kI);
-    pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
-
     applyTalonFxConfigs(rollerController, rollerConfigs);
-    // applyTalonFxConfigs(pivotController, pivotConfigs);
+    applyTalonFxConfigs(pivotController, pivotConfigs);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.isRollerLinebreak = rollerLinebreak.get();
+    inputs.isRollerLinebreak = (!rollerLinebreak.get());
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -119,6 +119,10 @@ public class IntakeIOTalon implements IntakeIO {
     // System.out.println("ElevatorIOFalcon.set was called");
     // elevatorLeaderMotor.setControl(voltPosition.withPosition(.25));
     // elevatorLeaderMotor.set(1);
+  }
+
+  public void setPIDPivot(int position) {
+    pivotController.setControl(voltPosition.withPosition(position));
   }
 
   // public boolean getlinebreak1() {

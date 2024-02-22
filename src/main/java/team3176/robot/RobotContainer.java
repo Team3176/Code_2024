@@ -91,22 +91,22 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    /*
-        // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-        // m_Drivetrain.setTurbo(false), m_Drivetrain));
-        // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-        // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
-        controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
-        controller
-            .transStick
-            .button(10)
-            .whileTrue(
-                new InstantCommand(drivetrain::setBrakeMode)
-                    .andThen(drivetrain.swerveDefenseCommand())
-                    .withName("swerveDefense"));
-        // m_Controller.getTransStick_Button10()
-        //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
-        // m_Drivetrain));
+
+    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
+    // m_Drivetrain.setTurbo(false), m_Drivetrain));
+    // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
+    // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
+    controller
+        .transStick
+        .button(10)
+        .whileTrue(
+            new InstantCommand(drivetrain::setBrakeMode)
+                .andThen(drivetrain.swerveDefenseCommand())
+                .withName("swerveDefense"));
+    // m_Controller.getTransStick_Button10()
+    //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
+    // m_Drivetrain));
 
     // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
     // m_Drivetrain.setTurbo(false), m_Drivetrain));

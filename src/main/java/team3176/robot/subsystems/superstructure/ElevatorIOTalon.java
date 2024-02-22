@@ -66,6 +66,10 @@ public class ElevatorIOTalon implements ElevatorIO {
     elevatorLeaderMotor.setControl(brake);
   }
 
+  public void setElevatorPIDPosition(int position) {
+    elevatorLeaderMotor.setControl(voltPosition.withPosition(position));
+  }
+
   @Override
   public void set(double position) {
     // if(limitswitch1.get()  || limitswitch2.get()) {
