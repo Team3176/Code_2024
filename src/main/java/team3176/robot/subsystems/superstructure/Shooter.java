@@ -30,17 +30,18 @@ public class Shooter extends SubsystemBase {
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   private final TunablePID pivotPIDController;
   private Rotation2d pivotSetpoint = new Rotation2d();
+  private Rotation2d pivotOffSet = new Rotation2d();
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 2.0, 0.0, 0.0);
+    this.pivotPIDController = new TunablePID("shooter/pid", 0.75, 0.0, 0.01);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
   public static Shooter getInstance() {
     if (instance == null) {
       if (Constants.getMode() != Mode.SIM) {
-        instance = new Shooter(new ShooterIOFalcon() {});
+        instance = new Shooter(new ShooterIOTalonSpark() {});
 
       } else {
         instance = new Shooter(new ShooterIOSim() {});
@@ -50,8 +51,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private void PIDPositionPeriodic() {
+    Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
     double pivotVoltage =
-        pivotPIDController.calculate(inputs.pivotPosition.getRadians(), pivotSetpoint.getRadians());
+        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
     io.setPivotVoltage(pivotVoltage);
   }
@@ -89,6 +91,44 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
 
+  public void setUpperShooterVelocityVoltage(double d) {
+    io.setWheelUpperVoltage(d);
+  }
+
+  public void setLowerShooterVelocityVoltage(double d) {
+    io.setWheelLowerVoltage(d);
+  }
+
+  public void setLowerShooterVelocityVoltage2(double d) {
+    io.setWheelLowerVoltage2(d);
+  }
+
+  public void setShooterStop() {
+    io.setVelocityVoltage(0);
+  }
+
+  // public void setShooterPivotPercent(double d) {
+  //   io.setPercentVoltage(d);
+  // }
+
+  // public void setShooterPivotPosition(int position) {
+
+  //   io.setShooterPivotPID(position);
+  // }
+
+  // public void stopShooterPivotPosition() {
+  //   io.setShooterPivotPID(0);
+  // }
+
+  // public void setShooterPivotVoltage() {
+  //   io.setShooterPivotVoltage(0);
+  // }
+
+  public void debugger() {
+    System.out.println(
+        "BIG FLAG TO MAKE SURE YOU CAN SEE THIS CORRECTLY!! THIS IS FOR DEBUGGING!!! I WANT TO MAKE SURE YOU CAN SEE THIS!!!!");
+  }
+
   // From Jonathan: I don't know if you still need this
 
   //   public void ShooterPIDVelocity(double velocity) {
@@ -113,21 +153,21 @@ public class Shooter extends SubsystemBase {
   //     velocity = JoystickButtonbuttonimput * 50;
   //   }
 
+  public Command pivotVoltage(double volts) {
+    return this.run(() -> io.setPivotVoltage(volts));
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
+    if (inputs.lowerLimitSwitch) {
+      pivotOffSet = inputs.pivotPosition;
+    }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
-    // simSholder.setAngle(Rotation2d.fromDegrees(inputs.Position -90 -
-    // SuperStructureConstants.ARM_SIM_OFFSET))
-
-    // SmartDashboard.putNumber("Arm_Position", armEncoder.getAbsolutePosition());
-    // SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() -
-    // SuperStructureConstants.ARM_ZERO_POS);
 
     Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
     PIDPositionPeriodic();
-    // m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
   }
 }

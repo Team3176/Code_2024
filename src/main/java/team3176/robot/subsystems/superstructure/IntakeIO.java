@@ -14,13 +14,17 @@ public interface IntakeIO {
   /** Contains all of the input data received from hardware. */
   @AutoLog
   public static class IntakeIOInputs {
-    public double Position = 0.0;
-    public double VelocityRadPerSec = 0.0;
-    public double AppliedVolts = 0.0;
-    public double[] CurrentAmps = new double[] {};
-    public double[] TempCelcius = new double[] {};
-    public boolean isLimitswitchOne = true;
-    // public boolean isLinebreakTwo = true;
+    public double pivotPosition = 0.0;
+    public double pivotVelocityRadPerSec = 0.0;
+    public double pivotAppliedVolts = 0.0;
+    public double[] pivotCurrentAmps = new double[] {};
+    public double[] pivotTempCelcius = new double[] {};
+    public double rollerVelocityRadPerSec = 0.0;
+    public double rollerAppliedVolts = 0.0;
+    public double[] rollerCurrentAmps = new double[] {};
+    public double[] rollerTempCelcius = new double[] {};
+    public boolean isRollerLinebreak = true;
+    public boolean isLinebreakTwo = true;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
@@ -31,9 +35,11 @@ public interface IntakeIO {
 
   public default void setRollerPercent(double percentOutput) {}
 
-  public default void setRollerPID(double rpm) {}
+  public default void setRollerPIDVelocity(double rpm) {}
 
-  public default void setPivot(double percentOutput) {}
+  public default void setPivotPercent(double percentOutput) {}
+
+  public default void setPivotPIDPosition(double position) {}
 
   public default void setCoastMode(boolean isCoastMode) {}
 

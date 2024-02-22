@@ -55,9 +55,11 @@ public class RobotContainer {
 
     drivetrain = Drivetrain.getInstance();
 
+    drivetrain = Drivetrain.getInstance();
+
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    visualization = new Visualization();
+    // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
@@ -84,7 +86,6 @@ public class RobotContainer {
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
-
     configureBindings();
   }
 
@@ -140,7 +141,6 @@ public class RobotContainer {
             drivetrain
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                 .alongWith(Shooter.getInstance().aim()));
-    controller.rotStick.button(1).onTrue(superstructure.shoot());
     controller
         .rotStick
         .button(3)
@@ -153,38 +153,81 @@ public class RobotContainer {
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    /* controller
+    .operator
+    .b()
+    .whileTrue(superstructure.movePivotDown(-.25))
+    .onFalse(superstructure.stopPivot()); */
 
-    controller
-        .operator
-        .b()
-        .whileTrue(superstructure.movePivotDown(-.25))
-        .onFalse(superstructure.stopPivot());
+    /*     controller
+    .operator
+    .a()
+    .whileTrue(superstructure.moveElevator(.5))
+    .onFalse(superstructure.stopElevator()); */
 
-    controller
-        .operator
-        .a()
-        .whileTrue(superstructure.moveElevator(.5))
-        .onFalse(superstructure.stopElevator());
+    /*controller
+    .operator
+    .y()
+    .whileTrue(superstructure.positiveIntake(50))
+    .onFalse(superstructure.stopIntake()); */
+
+    /*    controller
+    .operator
+    .x()
+    .whileTrue(superstructure.movePivotUp(.25))
+    .onFalse(superstructure.stopPivot()); */
 
     controller
         .operator
         .y()
-        .whileTrue(superstructure.positiveIntake(50))
-        .onFalse(superstructure.stopIntake());
+        // .onTrue(superstructure.kms())
+        .whileTrue(superstructure.upperShooterVelocity(.05))
+        .onFalse(superstructure.stopShooter());
+
+    controller
+        .operator
+        .a()
+        .whileTrue(superstructure.lowerShooterVelocity(.05))
+        .onFalse(superstructure.stopShooter());
+    ;
 
     controller
         .operator
         .x()
-        .whileTrue(superstructure.movePivotUp(.25))
-        .onFalse(superstructure.stopPivot());
+        .whileTrue(superstructure.lowerShooterVelocity2(.05))
+        .onFalse(superstructure.stopShooter());
+    ;
+
+    controller
+        .operator
+        .b()
+        .whileTrue(
+            superstructure
+                .shooterPivotPID(90)
+                .alongWith(new PrintCommand("shooter"))
+                .withName("shooter_pivot"))
+        .onFalse(superstructure.shooterPivotPID(0));
+
+    // controller
+    //     .operator
+    //     .leftBumper()
+    //     // .onTrue(superstructure.kms())
+    //     .whileTrue(superstructure.shooterPivotPID(1000))
+    //     .onFalse(superstructure.stopShooterPivotPID());
+
+    // controller
+    //     .operator
+    //     .b()
+    //     .whileTrue(superstructure.shooterPivotVoltage())
+    //     .onFalse(superstructure.stopShooterPivotPID());
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    controller
-        .transStick
-        .button(1)
-        .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
-        .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
+    // controller
+    //    .transStick
+    //    .button(1)
+    //    .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
+    //    .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
     // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
     // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
 

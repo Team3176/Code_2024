@@ -9,7 +9,7 @@ public class Superstructure extends SubsystemBase {
   private static Superstructure instance;
   private Elevator elevator;
   private Intake intake;
-  private Transfer transfer;
+  // private Transfer transfer;
   private Shooter shooter;
 
   public Superstructure() {
@@ -17,12 +17,12 @@ public class Superstructure extends SubsystemBase {
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
-    transfer = Transfer.getInstance();
+    // transfer = Transfer.getInstance();
   }
 
   public Command positiveIntake(double velocity) {
     return this.run(() -> intake.setRollerVelocity(50))
-        .until(() -> intake.getIsLinebreakOne())
+        .until(() -> intake.getIsRollerLinebreak())
         .andThen(() -> intake.stopRoller());
   }
 
@@ -54,8 +54,39 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> elevator.stopElevator());
   }
 
-  public Command shoot() {
-    return NoteVisualizer.shoot();
+  public Command upperShooterVelocity(double velocity) {
+    return this.run(() -> shooter.setUpperShooterVelocityVoltage(velocity));
+  }
+
+  public Command lowerShooterVelocity(double velocity) {
+    return this.run(() -> shooter.setLowerShooterVelocityVoltage(velocity));
+  }
+
+  public Command lowerShooterVelocity2(double velocity) {
+    return this.run(() -> shooter.setLowerShooterVelocityVoltage2(velocity));
+  }
+
+  public Command runShooterPivot(double volts) {
+    return shooter.pivotVoltage(volts);
+  }
+  // public Command shooterPivot(double percent) {
+  //   return this.run(() -> shooter.setShooterPivotPercent(percent));
+  // }
+
+  // public Command stopShooterPivot() {
+  //   return this.run(() -> shooter.setShooterPivotPercent(0));
+  // }
+
+  // public Command stopShooterPivotPID() {
+  //   return this.run(() -> shooter.stopShooterPivotPosition());
+  // }
+
+  public Command shooterPivotPID(int Position) {
+    return shooter.pivotSetPositionOnce(Position);
+  }
+
+  public Command stopShooter() {
+    return this.run(() -> shooter.setShooterStop());
   }
 
   public static Superstructure getInstance() {
@@ -63,6 +94,11 @@ public class Superstructure extends SubsystemBase {
       instance = new Superstructure();
     }
     return instance;
+  }
+
+  public Command kms() {
+    System.out.println("kms was calledf ##########################################");
+    return this.run(() -> shooter.debugger());
   }
 
   /*
