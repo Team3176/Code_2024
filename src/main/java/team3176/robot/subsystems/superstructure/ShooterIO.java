@@ -23,6 +23,7 @@ public interface ShooterIO {
     public double wheelUpperAppliedVolts = 0.0;
     public double wheelLowerAppliedVolts = 0.0;
     public double wheelLowerAppliedVolts2 = 0.0;
+    public boolean lowerLimitSwitch = false;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 
@@ -43,7 +44,7 @@ public interface ShooterIO {
 
   public default void setVelocityVoltage(double velocity) {}
 
-  public default void setShooterPivotPID(int position) {}
+  // public default void setShooterPivotPID(int position) {}
 
   public default void reset() {}
 }

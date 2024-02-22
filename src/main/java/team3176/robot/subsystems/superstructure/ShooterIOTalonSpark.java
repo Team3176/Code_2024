@@ -20,7 +20,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import javax.swing.text.Position;
+import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
 public class ShooterIOTalonSpark implements ShooterIO {
@@ -48,11 +48,15 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
 
+  private DigitalInput lowerLimitSwitch;
+
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
     pivotShooter.getEncoder().setPosition(0.0);
     pivotShooter.setSmartCurrentLimit(10);
     pivotShooter.setIdleMode(IdleMode.kBrake);
+
+    lowerLimitSwitch = new DigitalInput(1);
     /*-------------------------------- Private instance variables ---------------------------------*/
 
     configsWheelUpper.Slot0.kP = 0.01;
@@ -145,6 +149,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts2 = wheelLowerController2.getMotorVoltage().getValue();
+    inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
   }
 
   public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
@@ -187,10 +192,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
     wheelLowerController2.set(velocity);
   }
 
-  @Override
-  public void setShooterPivotPID(int Position) {
-    m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
-  }
+  // @Override
+  // public void setShooterPivotPID(int Position) {
+  //   m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
+  // }
 
   // @Override
   // public void setShooterPivotVoltage(int voltage) {

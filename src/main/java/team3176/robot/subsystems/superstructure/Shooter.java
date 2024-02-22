@@ -23,6 +23,7 @@ public class Shooter extends SubsystemBase {
 
   private final TunablePID pivotPIDController;
   private Rotation2d pivotSetpoint = new Rotation2d();
+  private Rotation2d pivotOffSet = new Rotation2d();
 
   private Shooter(ShooterIO io) {
     this.io = io;
@@ -43,8 +44,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private void PIDPositionPeriodic() {
+    Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
     double pivotVoltage =
-        pivotPIDController.calculate(inputs.pivotPosition.getRadians(), pivotSetpoint.getRadians());
+        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
     io.setPivotVoltage(pivotVoltage);
   }
@@ -81,14 +83,14 @@ public class Shooter extends SubsystemBase {
   //   io.setPercentVoltage(d);
   // }
 
-  public void setShooterPivotPosition(int position) {
+  // public void setShooterPivotPosition(int position) {
 
-    io.setShooterPivotPID(position);
-  }
+  //   io.setShooterPivotPID(position);
+  // }
 
-  public void stopShooterPivotPosition() {
-    io.setShooterPivotPID(0);
-  }
+  // public void stopShooterPivotPosition() {
+  //   io.setShooterPivotPID(0);
+  // }
 
   // public void setShooterPivotVoltage() {
   //   io.setShooterPivotVoltage(0);
@@ -132,16 +134,12 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
+    if (inputs.lowerLimitSwitch) {
+      pivotOffSet = inputs.pivotPosition;
+    }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
-    // simSholder.setAngle(Rotation2d.fromDegrees(inputs.Position -90 -
-    // SuperStructureConstants.ARM_SIM_OFFSET))
-
-    // SmartDashboard.putNumber("Arm_Position", armEncoder.getAbsolutePosition());
-    // SmartDashboard.putNumber("Arm_Position_Relative", armEncoder.getAbsolutePosition() -
-    // SuperStructureConstants.ARM_ZERO_POS);
 
     Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
     PIDPositionPeriodic();
-    // m_mechanisms.update(m_fx.getPosition(), m_fx.getVelocity());
   }
 }
