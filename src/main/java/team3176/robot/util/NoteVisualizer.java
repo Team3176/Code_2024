@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.FieldConstants;
-import team3176.robot.subsystems.superstructure.Shooter;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 
 public class NoteVisualizer {
   private static final Translation3d blueSpeaker = new Translation3d(0.225, 5.55, 2.1);

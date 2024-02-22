@@ -18,12 +18,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -41,7 +41,6 @@ public class RobotContainer {
   // is this why we don't have a compressor? private final Compressor m_Compressor
   private Drivetrain drivetrain;
   private LEDSubsystem leds;
-  private final RobotState robotState;
   private Superstructure superstructure;
   private PhotonVisionSystem vision;
   private Visualization visualization;
@@ -59,7 +58,6 @@ public class RobotContainer {
     leds = new LEDSubsystem();
 
     // superstructure = Superstructure.getInstance();
-    robotState = RobotState.getInstance();
     visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();

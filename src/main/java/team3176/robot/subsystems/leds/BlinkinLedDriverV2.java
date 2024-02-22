@@ -4,11 +4,10 @@
 
 package team3176.robot.subsystems.leds;
 
-import java.util.HashMap;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import java.util.HashMap;
 import team3176.robot.constants.*;
 
 /** Control REV Robotics Blinkin LED controller */
@@ -131,6 +130,7 @@ public class BlinkinLedDriverV2 {
     BLACK(+0.99);
 
     public final double value;
+
     private BlinkinPattern(double value) {
       this.value = value;
     }
@@ -139,7 +139,8 @@ public class BlinkinLedDriverV2 {
   private static BlinkinLedDriverV2 m_controller = null;
   private static Spark m_blinkin;
   private static BlinkinPattern m_currentPattern;
-  private static HashMap<Alliance, BlinkinPattern[]> m_allianceColors = new HashMap<Alliance, BlinkinPattern[]>();
+  private static HashMap<Alliance, BlinkinPattern[]> m_allianceColors =
+      new HashMap<Alliance, BlinkinPattern[]>();
   private static final BlinkinPattern[] RED_ALLIANCE_PATTERNS = {
     BlinkinPattern.RED,
     BlinkinPattern.BREATH_RED,
@@ -164,6 +165,7 @@ public class BlinkinLedDriverV2 {
 
   /**
    * Get instance of BlinkinLEDController
+   *
    * @return BlinkinLEDController object
    */
   public static BlinkinLedDriverV2 getInstance() {
@@ -173,6 +175,7 @@ public class BlinkinLedDriverV2 {
 
   /**
    * Set LED pattern
+   *
    * @param pattern Desired LED light pattern
    */
   public void setPattern(BlinkinPattern pattern) {
@@ -180,59 +183,46 @@ public class BlinkinLedDriverV2 {
     m_blinkin.set(m_currentPattern.value);
   }
 
-  /**
-   * Set LEDs alliance color solid pattern
-   */
+  /** Set LEDs alliance color solid pattern */
   public void setAllianceColorSolid() {
     setPattern(m_allianceColors.get(DriverStation.getAlliance())[0]);
   }
 
-  /**
-   * Set LEDs to alliance color breath pattern
-   */
+  /** Set LEDs to alliance color breath pattern */
   public void setAllianceColorBreath() {
     setPattern(m_allianceColors.get(DriverStation.getAlliance())[1]);
   }
 
-  /**
-   * Set LEDs to alliance color chase pattern
-   */
+  /** Set LEDs to alliance color chase pattern */
   public void setAllianceColorChase() {
     setPattern(m_allianceColors.get(DriverStation.getAlliance())[2]);
   }
 
-  /**
-   * Set LEDs to alliance color shot pattern
-   */
+  /** Set LEDs to alliance color shot pattern */
   public void setAllianceColorShot() {
     setPattern(m_allianceColors.get(DriverStation.getAlliance())[3]);
   }
 
-  /**
-   * Set LEDs to alliance color strobe pattern
-   */
+  /** Set LEDs to alliance color strobe pattern */
   public void setAllianceColorStrobe() {
     setPattern(m_allianceColors.get(DriverStation.getAlliance())[4]);
   }
 
-  /**
-   * Set LEDs to team color
-   */
+  /** Set LEDs to team color */
   public void setTeamColor() {
     setPattern(BlinkinPattern.DARK_GREEN);
   }
 
   /**
    * Get current LED pattern
+   *
    * @return current LED pattern
    */
   public BlinkinPattern getCurrentPattern() {
     return m_currentPattern;
   }
 
-  /**
-   * Turn off LEDs
-   */
+  /** Turn off LEDs */
   public void off() {
     setPattern(BlinkinPattern.BLACK);
   }

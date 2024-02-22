@@ -19,7 +19,7 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {}
 
   public void wantNote() {
-    //Would prefer flashing orange
+    // Would prefer flashing orange
     blinkin.setMode(BlinkinLedMode.FIXED_STROBE_RED);
   }
 

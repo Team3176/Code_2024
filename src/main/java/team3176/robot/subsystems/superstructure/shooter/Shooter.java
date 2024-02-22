@@ -1,4 +1,4 @@
-package team3176.robot.subsystems.superstructure;
+package team3176.robot.subsystems.superstructure.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.MathUtil;

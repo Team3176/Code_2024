@@ -1,4 +1,4 @@
-package team3176.robot.subsystems.superstructure;
+package team3176.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -49,6 +49,19 @@ public class Elevator extends SubsystemBase {
         },
         io::stop);
   }
+  /*
+   * public Command moveElevator(double position) {
+    return this.run(() -> elevator.setElevatorMotor(.5));
+  }
+
+  public Command moveElevatorPID(int position) {
+    return this.run(() -> elevator.elevatorGoToPosition(position));
+  }
+
+  public Command stopElevator() {
+    return this.run(() -> elevator.stopElevator());
+  }
+   */
 
   public void elevatorGoToPosition(int position) {
     io.setElevatorPIDPosition(position);

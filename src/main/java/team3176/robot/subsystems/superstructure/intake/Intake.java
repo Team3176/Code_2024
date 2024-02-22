@@ -1,4 +1,4 @@
-package team3176.robot.subsystems.superstructure;
+package team3176.robot.subsystems.superstructure.intake;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -55,13 +55,6 @@ public class Intake extends SubsystemBase {
     return (inputs.isRollerLinebreak);
   }
 
-  /*
-  public boolean getIsPivotLinebreak() {
-    // System.out.println("IsLimitswitchOne = " + inputs.isLimitswitchOne);
-    return (inputs.isPivotLinebreak);
-  }
-  */
-
   public static Intake getInstance() {
     if (instance == null) {
       if (Constants.getMode() == Mode.REAL) {}
@@ -72,6 +65,37 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
+  /*
+   * public Command positiveIntake(double velocity) {
+    return this.run(() -> intake.setRollerVelocity(50))
+        .until(() -> intake.getIsRollerLinebreak())
+        .andThen(() -> intake.stopRoller());
+  }
+
+  public Command movePivotUp(double position) {
+    return this.run(() -> intake.setPivotPosition(.25)).andThen(() -> intake.stopPivot());
+  }
+
+  public Command movePivotDown(double position) {
+    return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
+  }
+
+  public Command movePivotPostion(int position) {
+    return this.run(() -> intake.pivotGoToPosition(position));
+  }
+
+  public Command stopPivot() {
+    return this.run(() -> intake.stopPivot());
+  }
+
+  public Command negativeIntake(double velocity) {
+    return this.run(() -> intake.setRollerVelocity(-velocity));
+  }
+
+  public Command stopIntake() {
+    return this.run(() -> intake.stopRoller());
+  }
+   */
   @Override
   public void periodic() {
     io.updateInputs(inputs);

@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-import team3176.robot.subsystems.superstructure.Elevator;
-import team3176.robot.subsystems.superstructure.Shooter;
+import team3176.robot.subsystems.superstructure.elevator.Elevator;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.util.LoggedTunableNumber;
 
 public class Visualization extends SubsystemBase {
