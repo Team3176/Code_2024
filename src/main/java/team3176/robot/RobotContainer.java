@@ -46,7 +46,6 @@ public class RobotContainer {
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
-  private Visualization vis;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,11 +54,9 @@ public class RobotContainer {
 
     drivetrain = Drivetrain.getInstance();
 
-    drivetrain = Drivetrain.getInstance();
-
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
-    // visualization = new Visualization();
+    visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
@@ -75,13 +72,6 @@ public class RobotContainer {
             .withName("default drive"));
     NamedCommands.registerCommand(
         "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    // NamedCommands.registerCommand(
-    //     "intake",
-    //     intake
-    //         .runIntake(-1.0)
-    //         .withTimeout(0.5)
-    //         .alongWith(new PrintCommand("intake"))
-    //         .withName("intaking"));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -90,12 +80,6 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
-    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-    // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-    // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -104,36 +88,6 @@ public class RobotContainer {
             new InstantCommand(drivetrain::setBrakeMode)
                 .andThen(drivetrain.swerveDefenseCommand())
                 .withName("swerveDefense"));
-    // m_Controller.getTransStick_Button10()
-    //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
-    // m_Drivetrain));
-
-    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-    // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
-      use the whileTrue so if the button is released the command is cancelled
-      pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
-    */
-    // controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
-
-    // controller
-    //     .transStick
-    //     .button(3)
-    //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
-
-    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
-    controller
-        .transStick
-        .button(10)
-        .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("swerveDefense"));
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
     controller
         .rotStick
         .button(2)
@@ -141,62 +95,11 @@ public class RobotContainer {
             drivetrain
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                 .alongWith(Shooter.getInstance().aim()));
-    controller
-        .rotStick
-        .button(3)
-        .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("setBrakeMode"));
 
     controller
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-    /* controller
-    .operator
-    .b()
-    .whileTrue(superstructure.movePivotDown(-.25))
-    .onFalse(superstructure.stopPivot()); */
-
-    /*     controller
-    .operator
-    .a()
-    .whileTrue(superstructure.moveElevator(.5))
-    .onFalse(superstructure.stopElevator()); */
-
-    /*controller
-    .operator
-    .y()
-    .whileTrue(superstructure.positiveIntake(50))
-    .onFalse(superstructure.stopIntake()); */
-
-    /*    controller
-    .operator
-    .x()
-    .whileTrue(superstructure.movePivotUp(.25))
-    .onFalse(superstructure.stopPivot()); */
-
-    controller
-        .operator
-        .y()
-        // .onTrue(superstructure.kms())
-        .whileTrue(superstructure.upperShooterVelocity(.05))
-        .onFalse(superstructure.stopShooter());
-
-    controller
-        .operator
-        .a()
-        .whileTrue(superstructure.lowerShooterVelocity(.05))
-        .onFalse(superstructure.stopShooter());
-    ;
-
-    controller
-        .operator
-        .x()
-        .whileTrue(superstructure.lowerShooterVelocity2(.05))
-        .onFalse(superstructure.stopShooter());
-    ;
 
     controller
         .operator
@@ -208,44 +111,7 @@ public class RobotContainer {
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));
 
-    // controller
-    //     .operator
-    //     .leftBumper()
-    //     // .onTrue(superstructure.kms())
-    //     .whileTrue(superstructure.shooterPivotPID(1000))
-    //     .onFalse(superstructure.stopShooterPivotPID());
-
-    // controller
-    //     .operator
-    //     .b()
-    //     .whileTrue(superstructure.shooterPivotVoltage())
-    //     .onFalse(superstructure.stopShooterPivotPID());
-
-    // controller.operator.a().onTrue(superstructure.moveElevator(.5));
-    // controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    // controller
-    //    .transStick
-    //    .button(1)
-    //    .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
-    //    .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
-    // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
-    // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
-
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).onTrue(robotState.setColorWantedState(3));
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).whileTrue(new IntakeGroundCube());
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).onFalse(intakeCube.retractSpinNot());
-    // m_Controller.operator.rightBumper().and(m_Controller.operator.leftBumper().negate()).onFalse(m_Superstructure.prepareCarry());
-
   }
-  /*
-    public void setThrustCoast() {
-      drivetrain.setCoastMode();
-    }
-
-    public void setThrustBrake() {
-      drivetrain.setBrakeMode();
-    }
-  */
 
   public void clearCanFaults() {
     pdh.clearStickyFaults();
@@ -261,7 +127,6 @@ public class RobotContainer {
       Long start = System.nanoTime();
       choosenAutonomousCommand = autonChooser.get();
       try {
-        // TODO: re implement this
         choosenAutonomousCommand = autonChooser.get();
       } catch (Exception e) {
         System.out.println("[ERROR] could not find" + autonChooser.get().getName());
@@ -298,17 +163,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
     return choosenAutonomousCommand;
-    // return drivetrain.swerveDriveAuto(1,0,0);
-    // if(choosenAutonomousCommand == null) {
-    //   //this is if for some reason checkAutonomousSelection is never called
-    //   String chosen = autonChooser.get();
-    //   chosen = "wall_3nSteal_3";
-    //   PathPlannerAuto ppSwerveAuto = new PathPlannerAuto(chosen);
-    //   return ppSwerveAuto.getauto();
-    // }
-    // choosenAutonomousCommand = new PathPlannerAuto("wall_3nSteal_3").getauto();
-    // return choosenAutonomousCommand;
   }
 }
