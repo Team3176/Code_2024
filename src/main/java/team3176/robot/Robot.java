@@ -65,8 +65,6 @@ public class Robot extends LoggedRobot {
     }
     switch (Constants.getMode()) {
       case REAL:
-        String folder = Constants.logFolders.get(Constants.getRobot());
-
         try {
           Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
         } catch (Error e) {
@@ -160,9 +158,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // robotContainer.checkAutonomousSelection();
-    // robotContainer.checkAllaince();
-    // Drivetrain.getInstance().driveVelocity(new ChassisSpeeds());
+    robotContainer.checkAutonomousSelection();
+    robotContainer.checkAllaince();
   }
 
   /*

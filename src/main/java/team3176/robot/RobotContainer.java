@@ -55,6 +55,8 @@ public class RobotContainer {
 
     drivetrain = Drivetrain.getInstance();
 
+    drivetrain = Drivetrain.getInstance();
+
     superstructure = Superstructure.getInstance();
     robotState = RobotState.getInstance();
     // visualization = new Visualization();
@@ -152,11 +154,6 @@ public class RobotContainer {
             new InstantCommand(drivetrain::setBrakeMode)
                 .andThen(drivetrain.swerveDefenseCommand())
                 .withName("setBrakeMode"));
-
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
     controller
         .rotStick
