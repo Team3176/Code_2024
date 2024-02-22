@@ -7,7 +7,6 @@
 
 package team3176.robot.subsystems.superstructure.shooter;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -80,52 +79,6 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelLower2.Voltage.PeakForwardVoltage = 8;
     configsWheelLower2.Voltage.PeakReverseVoltage = -8;
 
-    kP = 0.1;
-    kI = 0;
-    kD = 0.005;
-    kIz = 0;
-    kFF = 0.0000;
-    kMaxOutput = 0.1;
-    kMinOutput = -0.1;
-
-    // set PID coefficients
-    m_PidController.setP(kP);
-    m_PidController.setI(kI);
-    m_PidController.setD(kD);
-    m_PidController.setIZone(kIz);
-    m_PidController.setFF(kFF);
-    m_PidController.setOutputRange(kMinOutput, kMaxOutput);
-
-    // double p = SmartDashboard.getNumber("P Gain", 0);
-    // double i = SmartDashboard.getNumber("I Gain", 0);
-    // double d = SmartDashboard.getNumber("D Gain", 0);
-    // double iz = SmartDashboard.getNumber("I Zone", 0);
-    // double ff = SmartDashboard.getNumber("Feed Forward", 0);
-    // double max = SmartDashboard.getNumber("Max Output", 0);
-    // double min = SmartDashboard.getNumber("Min Output", 0);
-
-    // if ((p != kP)) {
-    //   m_PidController.setP(p);
-    //   kP = p;
-    // }
-    // if ((i != kI)) {
-    //   m_PidController.setI(i);
-    //   kI = i;
-    // }
-    // if ((d != kD)) {
-    //   m_PidController.setD(d);
-    //   kD = d;
-    // }
-    // if ((iz != kIz)) {
-    //   m_PidController.setIZone(iz);
-    //   kIz = iz;
-    // }
-    // if ((ff != kFF)) {
-    //   m_PidController.setFF(ff);
-    //   kFF = ff;
-    // }
-    // if ((max != kMaxOutput) || (min != kMinOutput)) {
-
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
     wheelUpperController.getConfigurator().apply(configsWheelUpper);
@@ -152,19 +105,6 @@ public class ShooterIOTalonSpark implements ShooterIO {
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
   }
 
-  public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = controller.getConfigurator().apply(configs);
-      System.out.println("Applied configs to: " + controller.getDeviceID());
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      System.out.println("Could not apply configs, error code: " + status.toString());
-    }
-  }
-
-  /*-------------------------------- Custom Public Functions --------------------------------*/
   @Override
   public void setPivotVoltage(double voltage) {
     pivotShooter.setVoltage(voltage);
@@ -192,21 +132,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     wheelLowerController2.set(velocity);
   }
 
-  // @Override
-  // public void setShooterPivotPID(int Position) {
-  //   m_PidController.setReference(Position, CANSparkFlex.ControlType.kPosition);
-  // }
-
-  // @Override
-  // public void setShooterPivotVoltage(int voltage) {
-  //   m_PidController.setReference(7, CANSparkMax.ControlType.kVoltage);
-  // }
-
   @Override
   public void reset() {
     // to be implemented
   }
-
-  /*---------------------------------- Custom Private Functions ---------------------------------*/
-
 }

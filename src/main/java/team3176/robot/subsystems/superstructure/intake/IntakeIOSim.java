@@ -51,9 +51,9 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void setRollerPercent(double percentOutput) {
+  public void setPivotVolts(double volts) {
     if (DriverStation.isEnabled()) {
-      appliedVolts = percentOutput * 12;
+      appliedVolts = volts;
     } else {
       appliedVolts = 0.0;
     }

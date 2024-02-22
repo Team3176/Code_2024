@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure.intake;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -16,10 +15,6 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    SmartDashboard.putNumber("Intake_kp", SuperStructureConstants.INTAKE_PIVOT_kP);
-    SmartDashboard.putNumber("Intake_Kg", SuperStructureConstants.INTAKE_PIVOT_kg);
-    SmartDashboard.putNumber("Intake_angle", 0.0);
-    SmartDashboard.putNumber("Intake_velocity", 0.0);
   }
 
   public void setCoastMode() {
@@ -31,7 +26,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setRollerVelocity(double velocity) {
-    io.setRollerPercent(velocity);
+    io.setRollerVolts(velocity * 12);
   }
 
   public void setPivotPosition(double position) {
@@ -39,15 +34,15 @@ public class Intake extends SubsystemBase {
   }
 
   public void stopRoller() {
-    io.stopRoller();
+    io.setRollerVolts(0.0);
   }
 
   public void pivotGoToPosition(int position) {
-    io.setPIDPivot(position);
+    io.setPivotPIDPosition(position);
   }
 
   public void stopPivot() {
-    io.stopPivot();
+    io.setPivotVolts(0.0);
   }
 
   public boolean getIsRollerLinebreak() {
@@ -65,37 +60,6 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
-  /*
-   * public Command positiveIntake(double velocity) {
-    return this.run(() -> intake.setRollerVelocity(50))
-        .until(() -> intake.getIsRollerLinebreak())
-        .andThen(() -> intake.stopRoller());
-  }
-
-  public Command movePivotUp(double position) {
-    return this.run(() -> intake.setPivotPosition(.25)).andThen(() -> intake.stopPivot());
-  }
-
-  public Command movePivotDown(double position) {
-    return this.run(() -> intake.setPivotPosition(-position)).andThen(() -> intake.stopPivot());
-  }
-
-  public Command movePivotPostion(int position) {
-    return this.run(() -> intake.pivotGoToPosition(position));
-  }
-
-  public Command stopPivot() {
-    return this.run(() -> intake.stopPivot());
-  }
-
-  public Command negativeIntake(double velocity) {
-    return this.run(() -> intake.setRollerVelocity(-velocity));
-  }
-
-  public Command stopIntake() {
-    return this.run(() -> intake.stopRoller());
-  }
-   */
   @Override
   public void periodic() {
     io.updateInputs(inputs);

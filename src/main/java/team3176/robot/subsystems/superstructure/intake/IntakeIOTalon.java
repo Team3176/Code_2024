@@ -7,17 +7,18 @@
 
 package team3176.robot.subsystems.superstructure.intake;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOTalon implements IntakeIO {
@@ -25,6 +26,7 @@ public class IntakeIOTalon implements IntakeIO {
   private TalonFX rollerController;
   private TalonFX pivotController;
   VelocityVoltage voltVelocity;
+  VoltageOut voltsOut = new VoltageOut(0.0);
   PositionVoltage voltPosition;
   private RelativeEncoder pivotEncoder;
   private SparkPIDController pivotPID;
@@ -75,25 +77,13 @@ public class IntakeIOTalon implements IntakeIO {
        pivotPID.setI(SuperStructureConstants.INTAKE_PIVOT_kI);
        pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
     */
-    applyTalonFxConfigs(rollerController, rollerConfigs);
-    applyTalonFxConfigs(pivotController, pivotConfigs);
+    TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
+    TalonUtils.applyTalonFxConfigs(pivotController, pivotConfigs);
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
-  }
-
-  public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
-    /* Retry config apply up to 5 times, report if failure */
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = controller.getConfigurator().apply(configs);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      System.out.println("Could not apply configs, error code: " + status.toString());
-    }
   }
 
   public void stopRoller() {
@@ -106,8 +96,8 @@ public class IntakeIOTalon implements IntakeIO {
   }
 
   @Override
-  public void setRollerPercent(double velocity) {
-    rollerController.set(velocity);
+  public void setRollerVolts(double volts) {
+    rollerController.setControl(voltsOut.withOutput(volts));
   }
 
   @Override

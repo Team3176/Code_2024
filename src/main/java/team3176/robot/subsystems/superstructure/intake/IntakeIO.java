@@ -33,29 +33,13 @@ public interface IntakeIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void setRollerPercent(double percentOutput) {}
+  public default void setRollerVolts(double volts) {}
 
   public default void setRollerPIDVelocity(double rpm) {}
 
-  public default void setPivotPercent(double percentOutput) {}
+  public default void setPivotVolts(double volts) {}
 
   public default void setPivotPIDPosition(double position) {}
 
   public default void setCoastMode(boolean isCoastMode) {}
-
-  // public default boolean getlinebreak1() {
-  // return true;
-  // }
-
-  // public default boolean getlinebreak2() {
-  // return true;
-  // }
-
-  public default void reset() {}
-
-  public default void stopRoller() {}
-
-  public default void stopPivot() {}
-
-  public default void setPIDPivot(int encoderValue) {}
 }
