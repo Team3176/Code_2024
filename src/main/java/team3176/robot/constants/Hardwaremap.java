@@ -33,6 +33,8 @@ public class Hardwaremap {
   public static final int intakeRollerLinebreak_DIO = 0;
   public static final int intakePivotLinebreak_DIO = 1;
 
+  public static final int blinkin_pwm_port = 9;
+
   /*
    * Drivetrain CIDs
    */
