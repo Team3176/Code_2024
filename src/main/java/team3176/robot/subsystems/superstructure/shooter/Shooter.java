@@ -88,10 +88,6 @@ public class Shooter extends SubsystemBase {
     io.setFlywheelVelocity(d);
   }
 
-  public void setLTransferVelocityVoltage(double d) {
-    io.setFlywheelVelocity(d);
-  }
-
   public void setShooterStop() {
     io.setFlywheelVelocity(0);
   }
@@ -116,10 +112,6 @@ public class Shooter extends SubsystemBase {
 
   public Command pivotVoltage(double volts) {
     return this.run(() -> io.setPivotVoltage(volts));
-  }
-
-  public Command shoot() {
-    return this.runEnd(() -> io.setFlywheelVelocity(5), () -> io.setFlywheelVelocity(0));
   }
 
   @Override
