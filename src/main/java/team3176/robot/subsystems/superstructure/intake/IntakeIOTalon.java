@@ -8,14 +8,14 @@
 package team3176.robot.subsystems.superstructure.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.util.TalonUtils;
@@ -26,57 +26,41 @@ public class IntakeIOTalon implements IntakeIO {
   private TalonFX rollerController;
   private TalonFX pivotController;
   VelocityVoltage voltVelocity;
-  VoltageOut voltsOut = new VoltageOut(0.0);
+  VoltageOut rollerVolts = new VoltageOut(0.0);
+  VoltageOut pivotVolts = new VoltageOut(0.0);
   PositionVoltage voltPosition;
-  private RelativeEncoder pivotEncoder;
   private SparkPIDController pivotPID;
 
   DigitalInput rollerLinebreak;
   DigitalInput pivotLinebreak;
-  NeutralOut brake;
 
   public IntakeIOTalon() {
 
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     TalonFXConfiguration pivotConfigs = new TalonFXConfiguration();
 
-    brake = new NeutralOut();
-    voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
-    voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+    // voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
+    // voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
 
-    // pivotController = new CANSparkFlex(Hardwaremap.intakePivot_CID, MotorType.kBrushless);
-
     // config setting
-    rollerConfigs.Slot0.kP = 0.001; // An error of 0.5 rotations results in 1.2 volts output
-    rollerConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
-    rollerConfigs.Voltage.PeakForwardVoltage = 8;
-    rollerConfigs.Voltage.PeakReverseVoltage = -8;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    rollerConfigs.Slot1.kP = 0.001; // An error of 1 rotations results in 40 amps output
-    rollerConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
     // pivot configs
 
-    pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
-    pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
-    // Peak output of 8 volts
-    pivotConfigs.Voltage.PeakForwardVoltage = 8;
-    pivotConfigs.Voltage.PeakReverseVoltage = -8;
+    // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    pivotConfigs.Voltage.PeakForwardVoltage = 4;
+    pivotConfigs.Voltage.PeakReverseVoltage = -4;
+    pivotConfigs.CurrentLimits.StatorCurrentLimit = 10;
+    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    pivotConfigs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
-    pivotConfigs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
-
-    // pivotEncoder = pivotController.getEncoder();
-
-    /* pivotPID = pivotController.getPIDController();
-       pivotPID.setP(SuperStructureConstants.INTAKE_PIVOT_kP);
-       pivotPID.setI(SuperStructureConstants.INTAKE_PIVOT_kI);
-       pivotPID.setD(SuperStructureConstants.INTAKE_PIVOT_kD);
-    */
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
     TalonUtils.applyTalonFxConfigs(pivotController, pivotConfigs);
   }
@@ -84,42 +68,34 @@ public class IntakeIOTalon implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
-  }
+    inputs.isPivotLinebreak = (!pivotLinebreak.get());
 
-  public void stopRoller() {
-    rollerController.setControl(brake);
-  }
+    inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
+    inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();
+    inputs.pivotTempCelcius = pivotController.getDeviceTemp().getValueAsDouble();
+    inputs.pivotPosition = pivotController.getPosition().getValueAsDouble();
+    inputs.pivotVelocityRadPerSec =
+        Units.rotationsToRadians(pivotController.getVelocity().getValueAsDouble());
 
-  public void stopPivot() {
-    pivotController.set(0.0);
-    // pivotController.setControl(brake);
+    inputs.rollerAppliedVolts = rollerController.getMotorVoltage().getValueAsDouble();
+    inputs.rollerCurrentAmps = rollerController.getStatorCurrent().getValueAsDouble();
+    inputs.rollerTempCelcius = rollerController.getDeviceTemp().getValueAsDouble();
+    inputs.rollerVelocityRadPerSec =
+        Units.rotationsToRadians(rollerController.getVelocity().getValueAsDouble());
   }
 
   @Override
   public void setRollerVolts(double volts) {
-    rollerController.setControl(voltsOut.withOutput(volts));
+    rollerController.setControl(rollerVolts.withOutput(volts));
   }
 
   @Override
   public void setPivotPIDPosition(double position) {
     pivotPID.setReference(position, CANSparkBase.ControlType.kPosition);
-    // pivotController.setControl(voltPosition.withPosition(position));
-
-    // if(liitswitch1.get()  || limitswitch2.get()) {
-    // System.out.println("ElevatorIOFalcon.set was called");
-    // elevatorLeaderMotor.setControl(voltPosition.withPosition(.25));
-    // elevatorLeaderMotor.set(1);
   }
 
-  public void setPIDPivot(int position) {
-    pivotController.setControl(voltPosition.withPosition(position));
+  @Override
+  public void setPivotVolts(double volts) {
+    pivotController.setControl(pivotVolts.withOutput(volts));
   }
-
-  // public boolean getlinebreak1() {
-  // return linebreak1.get();
-  // }
-
-  // public boolean getlinebreak2() {
-  // return linebreak1.get();
-  // }
 }

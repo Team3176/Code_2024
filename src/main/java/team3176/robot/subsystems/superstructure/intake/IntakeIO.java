@@ -17,14 +17,16 @@ public interface IntakeIO {
     public double pivotPosition = 0.0;
     public double pivotVelocityRadPerSec = 0.0;
     public double pivotAppliedVolts = 0.0;
-    public double[] pivotCurrentAmps = new double[] {};
-    public double[] pivotTempCelcius = new double[] {};
+    public double pivotCurrentAmps = 0.0;
+    public double pivotTempCelcius = 0.0;
+
     public double rollerVelocityRadPerSec = 0.0;
     public double rollerAppliedVolts = 0.0;
-    public double[] rollerCurrentAmps = new double[] {};
-    public double[] rollerTempCelcius = new double[] {};
-    public boolean isRollerLinebreak = true;
-    public boolean isLinebreakTwo = true;
+    public double rollerCurrentAmps = 0.0;
+    public double rollerTempCelcius = 0.0;
+
+    public boolean isRollerLinebreak = false;
+    public boolean isPivotLinebreak = false;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
