@@ -6,13 +6,14 @@ import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.elevator.Elevator;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
+import team3176.robot.subsystems.superstructure.transfer.Transfer;
 import team3176.robot.util.NoteVisualizer;
 
-public class Superstructure extends SubsystemBase {
+public class Superstructure {
   private static Superstructure instance;
   private Elevator elevator;
   private Intake intake;
-  // private Transfer transfer;
+  private Transfer transfer;
   private Shooter shooter;
 
   public Superstructure() {
@@ -20,7 +21,10 @@ public class Superstructure extends SubsystemBase {
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
-    // transfer = Transfer.getInstance();
+    transfer = new Transfer();
+  }
+  public Command aimShooter() {
+    return shooter.aim();
   }
 
   public Command runShooterPivot(double volts) {
