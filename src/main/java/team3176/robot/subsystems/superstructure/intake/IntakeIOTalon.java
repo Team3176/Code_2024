@@ -86,7 +86,8 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
     inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();
     inputs.pivotTempCelcius = pivotController.getDeviceTemp().getValueAsDouble();
-    inputs.pivotPosition = Units.rotationsToRadians(pivotController.getPosition().getValueAsDouble());
+    inputs.pivotPosition =
+        Units.rotationsToRadians(pivotController.getPosition().getValueAsDouble());
     inputs.pivotVelocityRadPerSec =
         Units.rotationsToRadians(pivotController.getVelocity().getValueAsDouble());
 
