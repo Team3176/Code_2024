@@ -66,18 +66,21 @@ public class Intake extends SubsystemBase {
     // TODO Implement
     return new WaitCommand(0);
   }
+
   public Command spinIntakeUntilPivot() {
-    //TODO
+    // TODO
     // spin the intake until the first pivotlinebreak is triggered
     // do not set the intake to zero at the end that will be a seperate command
     // use the this.run() and a .until()
     return new WaitCommand(0.0);
   }
+
   public Command stopRollers() {
-    //TODO
+    // TODO
     // stop the rollers
     return new WaitCommand(0.0);
   }
+
   public Command intakeNote() {
     // the full deal.
     // deployPivot then spin the intake rollers until linebreak 1 then retract intake then stop

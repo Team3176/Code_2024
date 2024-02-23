@@ -1,7 +1,6 @@
 package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.elevator.Elevator;
 import team3176.robot.subsystems.superstructure.intake.Intake;
@@ -23,6 +22,7 @@ public class Superstructure {
     shooter = Shooter.getInstance();
     transfer = new Transfer();
   }
+
   public Command aimShooter() {
     return shooter.aim();
   }
