@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.SparkPIDController;
@@ -63,6 +64,9 @@ public class IntakeIOTalon implements IntakeIO {
     // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     pivotConfigs.Voltage.PeakForwardVoltage = 4;
     pivotConfigs.Voltage.PeakReverseVoltage = -4;
+    pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
+
     pivotConfigs.CurrentLimits.StatorCurrentLimit = 10;
     pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -82,7 +86,7 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
     inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();
     inputs.pivotTempCelcius = pivotController.getDeviceTemp().getValueAsDouble();
-    inputs.pivotPosition = pivotController.getPosition().getValueAsDouble();
+    inputs.pivotPosition = Units.rotationsToRadians(pivotController.getPosition().getValueAsDouble());
     inputs.pivotVelocityRadPerSec =
         Units.rotationsToRadians(pivotController.getVelocity().getValueAsDouble());
 
