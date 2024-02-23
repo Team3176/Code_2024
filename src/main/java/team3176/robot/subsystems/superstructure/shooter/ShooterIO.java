@@ -38,11 +38,11 @@ public interface ShooterIO {
 
   public default void setWheelLowerVoltage(double voltage) {}
 
-  public default void setWheelLowerVoltage2(double voltage) {}
+  public default void setTransferController(double voltage) {}
 
   public default void setPivotVoltage(double voltage) {}
 
-  public default void setVelocityVoltage(double velocity) {}
+  public default void setFlywheelVelocity(double velocity) {}
 
   // public default void setShooterPivotPID(int position) {}
 

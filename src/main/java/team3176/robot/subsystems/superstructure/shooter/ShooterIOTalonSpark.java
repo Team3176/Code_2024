@@ -10,6 +10,7 @@ package team3176.robot.subsystems.superstructure.shooter;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -28,8 +29,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
       new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
   private TalonFX wheelLowerController =
       new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
-  private TalonFX wheelLowerController2 =
-      new TalonFX(Hardwaremap.shooterWheelLower_CID2, Hardwaremap.shooterWheelLower_CBN2);
+  private TalonFX transferController =
+      new TalonFX(Hardwaremap.shooterTransfer_CID, Hardwaremap.shooterWheelLower_CBN2);
   /* private TalonFX pivotController =
        new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
   */
@@ -42,6 +43,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private CANcoder cancoder = new CANcoder(0);
   private CANcoderConfiguration toApply = new CANcoderConfiguration();
   private StatusSignal CANcoderPosition = cancoder.getPosition();
+  final VelocityVoltage flywheelVelocity = new VelocityVoltage(0);
 
   private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
   private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
@@ -55,17 +57,17 @@ public class ShooterIOTalonSpark implements ShooterIO {
     pivotShooter.setSmartCurrentLimit(10);
     pivotShooter.setIdleMode(IdleMode.kBrake);
 
-    lowerLimitSwitch = new DigitalInput(1);
+    lowerLimitSwitch = new DigitalInput(Hardwaremap.shooterPivotLower_DIO);
     /*-------------------------------- Private instance variables ---------------------------------*/
 
-    configsWheelUpper.Slot0.kP = 0.01;
+    configsWheelUpper.Slot0.kP = 0.1;
     configsWheelUpper.Slot0.kI = 0.0;
     configsWheelUpper.Slot0.kD = 0.0000;
     configsWheelUpper.Slot0.kV = 0.1;
     configsWheelUpper.Voltage.PeakForwardVoltage = 8;
     configsWheelUpper.Voltage.PeakReverseVoltage = -8;
 
-    configsWheelLower.Slot0.kP = 0.01;
+    configsWheelLower.Slot0.kP = 0.1;
     configsWheelLower.Slot0.kI = 0.0;
     configsWheelLower.Slot0.kD = 0.0000;
     configsWheelLower.Slot0.kV = 0.11;
@@ -83,7 +85,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
     wheelUpperController.getConfigurator().apply(configsWheelUpper);
     wheelLowerController.getConfigurator().apply(configsWheelLower);
-    wheelLowerController2.getConfigurator().apply(configsWheelLower2);
+    transferController.getConfigurator().apply(configsWheelLower2);
     // }
   }
 
@@ -91,17 +93,18 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.pivotPosition = Rotation2d.fromRotations(pivotShooter.getEncoder().getPosition());
+    inputs.pivotPosition =
+        Rotation2d.fromRotations(pivotShooter.getEncoder().getPosition() * 18 / 255);
 
     inputs.wheelUpperVelocityRadPerSec =
         Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec =
         Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
     inputs.wheelLowerVelocityRadPerSec2 =
-        Units.rotationsToRadians(wheelLowerController2.getVelocity().getValue());
+        Units.rotationsToRadians(transferController.getVelocity().getValue());
     inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
     inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
-    inputs.wheelLowerAppliedVolts2 = wheelLowerController2.getMotorVoltage().getValue();
+    inputs.wheelLowerAppliedVolts2 = transferController.getMotorVoltage().getValue();
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
   }
 
@@ -111,10 +114,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
   }
 
   @Override
-  public void setVelocityVoltage(double velocity) {
-    wheelLowerController.set(velocity);
-    wheelUpperController.set(velocity);
-    wheelLowerController2.set(velocity);
+  public void setFlywheelVelocity(double velocity) {
+    wheelLowerController.setControl(flywheelVelocity.withVelocity(velocity));
+    wheelUpperController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
@@ -128,8 +130,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
   }
 
   @Override
-  public void setWheelLowerVoltage2(double velocity) {
-    wheelLowerController2.set(velocity);
+  public void setTransferController(double velocity) {
+    transferController.set(velocity);
   }
 
   @Override

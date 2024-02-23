@@ -16,6 +16,7 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
 public class Shooter extends SubsystemBase {
@@ -29,12 +30,16 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   private final TunablePID pivotPIDController;
+  private final LoggedTunableNumber aimAngle;
+  private final LoggedTunableNumber flywheelVelocity;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
 
   private Shooter(ShooterIO io) {
     this.io = io;
     this.pivotPIDController = new TunablePID("shooter/pid", 0.75, 0.0, 0.01);
+    this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
+    this.flywheelVelocity = new LoggedTunableNumber("shooter/velocity", 10.0);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
@@ -68,22 +73,7 @@ public class Shooter extends SubsystemBase {
     double z = diff.getZ();
     double distance = diff.toTranslation2d().getNorm();
     Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
-    return angle;
-  }
-
-  public Command pivotSetPositionOnce(double angleInDegrees) {
-    return this.runOnce(
-            () -> {
-              this.pivotSetpoint = Rotation2d.fromDegrees(angleInDegrees);
-            })
-        .withName("armSetPosition" + angleInDegrees);
-  }
-
-  public Command aim() {
-    return this.run(
-        () -> {
-          this.pivotSetpoint = getAimAngle();
-        });
+    return Rotation2d.fromDegrees(aimAngle.get());
   }
 
   public Rotation2d getAngle() {
@@ -95,65 +85,41 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setLowerShooterVelocityVoltage(double d) {
-    io.setWheelLowerVoltage(d);
+    io.setFlywheelVelocity(d);
   }
 
-  public void setLowerShooterVelocityVoltage2(double d) {
-    io.setWheelLowerVoltage2(d);
+  public void setLTransferVelocityVoltage(double d) {
+    io.setFlywheelVelocity(d);
   }
 
   public void setShooterStop() {
-    io.setVelocityVoltage(0);
+    io.setFlywheelVelocity(0);
   }
 
-  // public void setShooterPivotPercent(double d) {
-  //   io.setPercentVoltage(d);
-  // }
-
-  // public void setShooterPivotPosition(int position) {
-
-  //   io.setShooterPivotPID(position);
-  // }
-
-  // public void stopShooterPivotPosition() {
-  //   io.setShooterPivotPID(0);
-  // }
-
-  // public void setShooterPivotVoltage() {
-  //   io.setShooterPivotVoltage(0);
-  // }
-
-  public void debugger() {
-    System.out.println(
-        "BIG FLAG TO MAKE SURE YOU CAN SEE THIS CORRECTLY!! THIS IS FOR DEBUGGING!!! I WANT TO MAKE SURE YOU CAN SEE THIS!!!!");
+  public Command pivotSetPositionOnce(double angleInDegrees) {
+    return this.runOnce(
+            () -> {
+              this.pivotSetpoint = Rotation2d.fromDegrees(angleInDegrees);
+            })
+        .withName("armSetPosition" + angleInDegrees);
   }
 
-  // From Jonathan: I don't know if you still need this
+  public Command aim() {
 
-  //   public void ShooterPIDVelocity(double velocity) {
-
-  //     double desiredRotationsPerSecond = velocity * 50; // Go for plus/minus 10 rotations per
-  // second
-
-  //     // /* Use voltage velocity */
-  //     // m_fx.setControl(m_voltageVelocity.withVelocity(desiredRotationsPerSecond));
-  //     // return m_fx.getaver
-  //     // }
-  //     // else {
-  //     // /* Disable the motor instead */
-  //     // m_fx.setControl(m_brake);
-
-  //   }
-
-  //   public void ControllerTovVelocity(double JoystickButtonbuttonimput) {
-  //     if (JoystickButtonbuttonimput < 0.1 && JoystickButtonbuttonimput > -0.1)
-  //       JoystickButtonbuttonimput = 0;
-  //     double velocity;
-  //     velocity = JoystickButtonbuttonimput * 50;
-  //   }
+    return this.runEnd(
+        () -> {
+          io.setFlywheelVelocity(flywheelVelocity.get());
+          this.pivotSetpoint = getAimAngle();
+        },
+        () -> io.setFlywheelVelocity(0));
+  }
 
   public Command pivotVoltage(double volts) {
     return this.run(() -> io.setPivotVoltage(volts));
+  }
+
+  public Command shoot() {
+    return this.runEnd(() -> io.setFlywheelVelocity(5), () -> io.setFlywheelVelocity(0));
   }
 
   @Override
@@ -167,6 +133,8 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
     Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
+
+    Logger.recordOutput("Shooter/position_offset", inputs.pivotPosition.minus(pivotOffSet));
     PIDPositionPeriodic();
   }
 }

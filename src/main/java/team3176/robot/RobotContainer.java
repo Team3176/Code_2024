@@ -112,6 +112,7 @@ public class RobotContainer {
                 .alongWith(new PrintCommand("shooter"))
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));
+    controller.rotStick.button(1).whileTrue(Shooter.getInstance().aim());
   }
 
   public void clearCanFaults() {
