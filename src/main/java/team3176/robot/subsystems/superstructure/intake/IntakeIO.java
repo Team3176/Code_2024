@@ -27,6 +27,8 @@ public interface IntakeIO {
 
     public boolean isRollerLinebreak = false;
     public boolean isPivotLinebreak = false;
+    public boolean upperLimitSwitch = false;
+    public boolean lowerLimitSwitch = false;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}

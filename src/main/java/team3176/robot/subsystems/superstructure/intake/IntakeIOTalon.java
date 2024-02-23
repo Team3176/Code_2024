@@ -33,6 +33,8 @@ public class IntakeIOTalon implements IntakeIO {
 
   DigitalInput rollerLinebreak;
   DigitalInput pivotLinebreak;
+  DigitalInput upperLimitSwitch;
+  DigitalInput lowerLimitSwitch;
 
   public IntakeIOTalon() {
 
@@ -44,6 +46,10 @@ public class IntakeIOTalon implements IntakeIO {
 
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
+
+    upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
+    lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
+
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
 
@@ -69,6 +75,9 @@ public class IntakeIOTalon implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());
+
+    inputs.upperLimitSwitch = upperLimitSwitch.get();
+    inputs.lowerLimitSwitch = lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
     inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();

@@ -30,7 +30,9 @@ public class Hardwaremap {
   public static final int elevatorFollowerLimitSwitch_DIO = 8;
   public static final int intakeRollerLinebreak_DIO = 0;
   public static final int intakePivotLinebreak_DIO = 1;
-  public static final int shooterPivotLower_DIO = 3;
+  public static final int intakeUpperLimitSwitch_DIO = 2;
+  public static final int intakeLowerLimitSwitch_DIO = 3;
+  public static final int shooterPivotLower_DIO = 4;
 
   public static final int blinkin_pwm_port = 9;
 
