@@ -33,7 +33,7 @@ public class LEDSubsystem extends SubsystemBase {
     blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
   }
 
-  public void endGameStarted() {
+  public void isEndGame() {
     // Flashing Blue
     blinkin.setMode(BlinkinLedMode.FIXED_SHOT_BLUE);
   }
