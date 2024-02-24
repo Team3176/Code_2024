@@ -34,6 +34,8 @@ public interface IntakeIO {
     IntakeIOInputs() {}
   }
 
+/*   public default Boolean getRollerLinebreak() {} */
+
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
 
