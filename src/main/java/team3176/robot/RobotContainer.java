@@ -185,20 +185,33 @@ public class RobotContainer {
         .x()
         .whileTrue(superstructure.movePivotUp(.25))
         .onFalse(superstructure.stopPivot());
+    // TODO: uncomment when done with voltage
+    /*     controller
+    .operator
+    .leftBumper()
+    .onTrue(superstructure.moveLeftClimb(45))
+    .onFalse(superstructure.moveLeftClimb(0)); */
 
     controller
         .operator
         .leftBumper()
-        .onTrue(superstructure.moveLeftClimb(45))
-        .onFalse(superstructure.moveLeftClimb(0));
+        .whileTrue(superstructure.setLeftVoltage(3))
+        .onFalse(superstructure.setLeftVoltage(0));
+
     // controller.operator.leftBumper().onTrue(climb.leftGoToPosition(.5));
 
     // .whileTrue(superstructure.moveLeftClimb(() -> controller.getXboxJoyLeft()));
+    // TODO: uncomment when done with voltage
+    /* controller
+    .operator
+    .rightBumper()
+    .whileTrue(superstructure.moveRightClimb(.5).andThen(superstructure.moveRightClimb(0))); */
 
     controller
         .operator
         .rightBumper()
-        .whileTrue(superstructure.moveRightClimb(.5).andThen(superstructure.moveRightClimb(0)));
+        .whileTrue(superstructure.setRightVoltage(3))
+        .onFalse(superstructure.setRightVoltage(0));
 
     // controller.operator.a().onTrue(superstructure.moveElevator(.5));
     // controller.operator.y().onTrue(superstructure.positiveIntake(50));

@@ -48,6 +48,14 @@ public class Climb extends SubsystemBase {
   public double getRightPosition() {
     return inputs.rightPosition;
   }
+
+  public void setRightVoltage(int voltage) {
+    io.setRightVoltage(voltage);
+  }
+
+  public void setLeftVoltage(int voltage) {
+    io.setLeftVoltage(voltage);
+  }
   /*
   public Command leftGoToPosition(double position) {
     return this.runEnd(

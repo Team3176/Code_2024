@@ -71,6 +71,14 @@ public class Superstructure extends SubsystemBase {
     return instance;
   }
 
+  public Command setRightVoltage(int voltage) {
+    return this.run(() -> climb.setRightVoltage(voltage));
+  }
+
+  public Command setLeftVoltage(int voltage) {
+    return this.run(() -> climb.setLeftVoltage(voltage));
+  }
+
   /*
     public boolean getlinebreak1(){
 

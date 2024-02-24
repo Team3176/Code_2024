@@ -49,5 +49,9 @@ public interface ClimbIO {
 
   public default void setclimbRBLimitswitchZero() {}
 
+  public default void setLeftVoltage(int voltage) {}
+
+  public default void setRightVoltage(int voltage) {}
+
   public default void reset() {}
 }

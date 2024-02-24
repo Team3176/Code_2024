@@ -121,6 +121,16 @@ public class ClimbIOTalon implements ClimbIO {
   public void setRight(double percent) {
     climbRight.set(percent);
   }
+
+  @Override
+  public void setRightVoltage(int voltage) {
+    climbRight.setVoltage(voltage);
+  }
+
+  @Override
+  public void setLeftVoltage(int voltage) {
+    climbLeft.setVoltage(voltage);
+  }
   // System.out.println("ElevatorIOFalcon.set was called");
   // elevatorLeaderMotor.setControl(voltPosition.withPosition(.25));
   // elevatorLeaderMotor.set(1);
