@@ -80,8 +80,8 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());
 
-    inputs.upperLimitSwitch = upperLimitSwitch.get();
-    inputs.lowerLimitSwitch = lowerLimitSwitch.get();
+    inputs.upperLimitSwitch = (!upperLimitSwitch.get());
+    inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
     inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();

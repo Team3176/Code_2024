@@ -59,10 +59,11 @@ public class Intake extends SubsystemBase {
 
   public static Intake getInstance() {
     if (instance == null) {
-      if (Constants.getMode() == Mode.REAL) {}
-      instance = new Intake(new IntakeIOTalon() {});
-    } else {
-      instance = new Intake(new IntakeIOSim() {});
+      if (Constants.getMode() == Mode.REAL) {
+        instance = new Intake(new IntakeIOTalon() {});
+      } else {
+        instance = new Intake(new IntakeIOSim() {});
+      }
     }
     return instance;
   }
