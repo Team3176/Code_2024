@@ -88,7 +88,7 @@ public class Intake extends SubsystemBase {
   public Command stopRollers() {
     // TODO
     // stop the rollers
-    return this.run(() -> io.setRollerVolts(0));
+    return this.runOnce(() -> io.setRollerVolts(0));
   }
 
   public Command intakeNote() {
