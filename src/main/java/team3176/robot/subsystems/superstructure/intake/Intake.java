@@ -7,11 +7,17 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.superstructure.intake.IntakeIO.IntakeIOInputs;
+import team3176.robot.util.LoggedTunableNumber;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private final LoggedTunableNumber deployPivotVolts;
+  private final LoggedTunableNumber rollerVolts;
+  private final LoggedTunableNumber retractPivotVolts;
+  private final LoggedTunableNumber waitTime;
 
   private enum pivotStates {
     DEPLOY,
@@ -20,10 +26,14 @@ public class Intake extends SubsystemBase {
   };
 
   private pivotStates pivotState = pivotStates.IDLE;
-  // DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeLinebreak1_DIO);
+  // DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
 
   private Intake(IntakeIO io) {
     this.io = io;
+    this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
+    this.rollerVolts = new LoggedTunableNumber("intake/pivotvVlts", 10.0);
+    this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
+    this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
   }
 
   private void stopRoller() {
@@ -64,7 +74,7 @@ public class Intake extends SubsystemBase {
 
   public Command retractPivot() {
     // TODO Implement
-    return new WaitCommand(0);
+    return this.runOnce(() -> this.pivotState = pivotStates.RETRACT);
   }
 
   public Command spinIntakeUntilPivot() {
@@ -72,13 +82,13 @@ public class Intake extends SubsystemBase {
     // spin the intake until the first pivotlinebreak is triggered
     // do not set the intake to zero at the end that will be a seperate command
     // use the this.run() and a .until()
-    return new WaitCommand(0.0);
+    return this.run(() -> io.setRollerVolts(0.1)).until(() -> inputs.isPivotLinebreak);
   }
 
   public Command stopRollers() {
     // TODO
     // stop the rollers
-    return new WaitCommand(0.0);
+    return this.run(() -> io.setRollerVolts(0));
   }
 
   public Command intakeNote() {
