@@ -7,7 +7,6 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
-import team3176.robot.subsystems.superstructure.intake.IntakeIO.IntakeIOInputs;
 import team3176.robot.util.LoggedTunableNumber;
 
 public class Intake extends SubsystemBase {
@@ -83,7 +82,7 @@ public class Intake extends SubsystemBase {
     // spin the intake until the first pivotlinebreak is triggered
     // do not set the intake to zero at the end that will be a seperate command
     // use the this.run() and a .until()
-    return this.run(() -> io.setRollerVolts(0.1)).until(() -> inputs.isPivotLinebreak);
+    return this.run(() -> io.setRollerVolts(3)).until(() -> inputs.isPivotLinebreak);
   }
 
   public Command stopRollers() {
