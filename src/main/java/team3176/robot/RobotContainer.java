@@ -23,6 +23,7 @@ import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -113,6 +114,8 @@ public class RobotContainer {
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));
     controller.rotStick.button(1).whileTrue(Shooter.getInstance().aim());
+    controller.rotStick.button(2).onTrue(Intake.getInstance().deployPivot());
+    controller.rotStick.button(3).onTrue(Intake.getInstance().retractPivot());
   }
 
   public void clearCanFaults() {
