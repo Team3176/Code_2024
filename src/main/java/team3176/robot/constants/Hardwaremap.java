@@ -5,15 +5,16 @@ public class Hardwaremap {
   /*
    * Superstructer CIDs & CBNs
    */
-  public static final int elevatorLeader_CID = 30;
-  public static final int elevatorFollower_CID = 5;
+  public static final int elevatorLeader_CID = 2;
+  public static final int elevatorFollower_CID = 3;
   public static final int shooterWheelUpper_CID = 7;
   public static final int shooterWheelLower_CID = 6;
-  public static final int shooterTransfer_CID = 50;
-  public static final int shooterPivot_CID = 4;
+  public static final int shooterTransfer_CID = 5;
+  public static final int shooterPivot_CID = 8;
   public static final int intakeRoller_CID = 9;
-  public static final int intakePivot_CID = 8;
-  public static final int armEncoder_CID = 2;
+  public static final int intakePivot_CID = 4;
+  public static final int climbRight_CID = 46;
+  public static final int climbLeft_CID = 45;
   public static int PDH_CID = 1;
 
   public static final String elevatorLeaderMotor_CBN = "rio";
