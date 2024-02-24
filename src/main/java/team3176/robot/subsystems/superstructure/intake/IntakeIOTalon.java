@@ -98,6 +98,11 @@ public class IntakeIOTalon implements IntakeIO {
         Units.rotationsToRadians(rollerController.getVelocity().getValueAsDouble());
   }
 
+/*   @Override
+  public Boolean getRollerLinebreak() {
+    return 
+  } */
+
   @Override
   public void setRollerVolts(double volts) {
     rollerController.setControl(rollerVolts.withOutput(volts));

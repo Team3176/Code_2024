@@ -91,14 +91,14 @@ public class RobotContainer {
             new InstantCommand(drivetrain::setBrakeMode)
                 .andThen(drivetrain.swerveDefenseCommand())
                 .withName("swerveDefense"));
-    controller
-        .rotStick
-        .button(2)
-        .whileTrue(
-            drivetrain
-                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(Shooter.getInstance().aim()));
-
+    /* controller
+           .rotStick
+           .button(2)
+           .whileTrue(
+               drivetrain
+                   .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                   .alongWith(Shooter.getInstance().aim()));
+    */
     controller
         .rotStick
         .button(8)
@@ -113,9 +113,20 @@ public class RobotContainer {
                 .alongWith(new PrintCommand("shooter"))
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));
-    controller.rotStick.button(1).whileTrue(Shooter.getInstance().aim());
-    controller.rotStick.button(2).onTrue(Intake.getInstance().deployPivot());
-    controller.rotStick.button(3).onTrue(Intake.getInstance().retractPivot());
+
+
+    /*     controller
+    .rotStick
+    .button(1)
+    .whileTrue(Shooter.getInstance().aim()); */
+
+    controller.rotStick.button(1).whileTrue(Intake.getInstance().deployPivot());
+    controller.rotStick.button(2).whileTrue(Intake.getInstance().retractPivot());
+    controller
+        .rotStick
+        .button(3)
+        .whileTrue(Intake.getInstance().spinIntakeUntilPivot())
+        .onFalse(Intake.getInstance().stopRollers());
   }
 
   public void clearCanFaults() {
