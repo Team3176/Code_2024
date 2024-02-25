@@ -10,6 +10,7 @@ import team3176.robot.util.NoteVisualizer;
 
 public class Superstructure {
   private static Superstructure instance;
+  private Climb climb;
   private Elevator elevator;
   private Intake intake;
   private Transfer transfer;
@@ -38,6 +39,7 @@ public class Superstructure {
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();
+      System.out.println("Superstructure instance created.");
     }
     return instance;
   }

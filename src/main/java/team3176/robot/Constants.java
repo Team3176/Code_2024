@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 
 public final class Constants {
-  private static final RobotType robot = RobotType.ROBOT_SIMBOT;
+  private static final RobotType robot = RobotType.ROBOT_2024C;
   public static final double LOOP_PERIODIC_SECS = 0.02;
   public static final boolean TUNING_MODE = true;
   public static final boolean VISION_CONNECTED = false;

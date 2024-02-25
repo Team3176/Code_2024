@@ -14,6 +14,8 @@ public class Hardwaremap {
   public static final int intakeRoller_CID = 6;
   public static final int intakePivot_CID = 8;
   public static final int armEncoder_CID = 2;
+  public static final int climbLeft_CID = 45;
+  public static final int climbRight_CID = 46;
   public static int PDH_CID = 1;
 
   public static final String elevatorLeaderMotor_CBN = "rio";
@@ -23,11 +25,15 @@ public class Hardwaremap {
   public static final String shooterWheelLower_CBN2 = "rio";
   public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "rio";
-  public static final String intakePivot_CBN = "rio";
+  public static final String climbLeft_CBN = "rio";
+  public static final String climbRight_CBN = "rio";
+
   public static String PDH_CBN = "rio";
 
   public static final int elevatorLeaderLimitSwitch_DIO = 9;
   public static final int elevatorFollowerLimitSwitch_DIO = 8;
+  public static final int climbLBLimitSwitch_DIO = 5;
+  public static final int climbRBLimitSwitch_DIO = 6;
   public static final int intakeRollerLinebreak_DIO = 0;
   public static final int intakePivotLinebreak_DIO = 1;
   public static final int intakeUpperLimitSwitch_DIO = 2;
