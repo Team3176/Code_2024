@@ -2,8 +2,9 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import team3176.robot.Constants;
+import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
-import team3176.robot.constants.RobotConstants.Mode;
 import team3176.robot.util.TunablePID;
 
 /** Elevator handles the height of the intake from the ground. */
@@ -110,7 +111,7 @@ public class Climb extends SubsystemBase {
 
   public static Climb getInstance() {
     if (instance == null) {
-      if (RobotConstants.getMode() == Mode.REAL) {
+      if (Constants.getMode() == Mode.REAL) {
         instance = new Climb(new ClimbIOTalon() {});
         System.out.println("Climb instance created for Mode.REAL");
       } else {

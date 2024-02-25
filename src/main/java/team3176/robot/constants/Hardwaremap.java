@@ -24,6 +24,7 @@ public class Hardwaremap {
   public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "canivore";
+  public static final String intakePivot_CBN = "canivore";
   public static final String climbLeft_CBN = "rio";
   public static final String climbRight_CBN = "rio";
 
@@ -66,10 +67,8 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
-
-
   public static final String SWERVEPOD_REV_CBN = "rio";
-  
+
   public static final SwervePodHardwareID FR = POD009;
   public static final SwervePodHardwareID FL = POD008;
   public static final SwervePodHardwareID BL = POD002;
