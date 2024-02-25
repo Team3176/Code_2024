@@ -5,15 +5,14 @@ public class Hardwaremap {
   /*
    * Superstructer CIDs & CBNs
    */
-  public static final int elevatorLeader_CID = 30;
-  public static final int elevatorFollower_CID = 5;
-  public static final int shooterWheelUpper_CID = 7;
-  public static final int shooterWheelLower_CID = 9;
-  public static final int shooterTransfer_CID = 50;
-  public static final int shooterPivot_CID = 4;
-  public static final int intakeRoller_CID = 6;
-  public static final int intakePivot_CID = 8;
-  public static final int armEncoder_CID = 2;
+  public static final int elevatorLeader_CID = 2;
+  public static final int elevatorFollower_CID = 3;
+  public static final int shooterWheelUpper_CID = 50;
+  public static final int shooterWheelLower_CID = 6;
+  public static final int shooterTransfer_CID = 5;
+  public static final int shooterPivot_CID = 8;
+  public static final int intakeRoller_CID = 9;
+  public static final int intakePivot_CID = 4;
   public static final int climbLeft_CID = 45;
   public static final int climbRight_CID = 46;
   public static int PDH_CID = 1;
@@ -24,7 +23,7 @@ public class Hardwaremap {
   public static final String shooterWheelLower_CBN = "rio";
   public static final String shooterWheelLower_CBN2 = "rio";
   public static final String shooterPivot_CBN = "rio";
-  public static final String intakeRoller_CBN = "rio";
+  public static final String intakeRoller_CBN = "canivore";
   public static final String climbLeft_CBN = "rio";
   public static final String climbRight_CBN = "rio";
 
@@ -46,7 +45,8 @@ public class Hardwaremap {
    * Drivetrain CIDs
    */
   // statics constants for swerve pods
-  public static final String SWERVEPOD_CBN = "rio";
+  public static final String SWERVEPOD_CTRE_CBN = "canivore";
+  public static final String SWERVEPOD_CBN = SWERVEPOD_CTRE_CBN;
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -172.135);
   public static final SwervePodHardwareID POD002 =
@@ -66,6 +66,10 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
+
+
+  public static final String SWERVEPOD_REV_CBN = "rio";
+  
   public static final SwervePodHardwareID FR = POD009;
   public static final SwervePodHardwareID FL = POD008;
   public static final SwervePodHardwareID BL = POD006;
@@ -75,8 +79,8 @@ public class Hardwaremap {
   public static final int STEER_FL_CID = 21;
   public static final int STEER_BL_CID = 31;
   public static final int STEER_BR_CID = 41;
-  public static final String STEER_FR_CBN = "rio";
-  public static final String STEER_FL_CBN = "rio";
-  public static final String STEER_BL_CBN = "rio";
-  public static final String STEER_BR_CBN = "rio";
+  public static final String STEER_FR_CBN = SWERVEPOD_REV_CBN;
+  public static final String STEER_FL_CBN = SWERVEPOD_REV_CBN;
+  public static final String STEER_BL_CBN = SWERVEPOD_REV_CBN;
+  public static final String STEER_BR_CBN = SWERVEPOD_REV_CBN;
 }
