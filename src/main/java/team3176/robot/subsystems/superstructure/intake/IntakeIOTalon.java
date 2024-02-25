@@ -51,8 +51,8 @@ public class IntakeIOTalon implements IntakeIO {
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
 
-    rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
-    pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
+    rollerController = new TalonFX(Hardwaremap.intakeRoller_CID, Hardwaremap.intakeRoller_CBN);
+    pivotController = new TalonFX(Hardwaremap.intakePivot_CID, Hardwaremap.intakePivot_CBN);
 
     // config setting
     rollerConfigs.CurrentLimits.StatorCurrentLimit = 30;
@@ -80,8 +80,8 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());
 
-    inputs.upperLimitSwitch = upperLimitSwitch.get();
-    inputs.lowerLimitSwitch = lowerLimitSwitch.get();
+    inputs.upperLimitSwitch = (!upperLimitSwitch.get());
+    inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
     inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();
@@ -98,9 +98,9 @@ public class IntakeIOTalon implements IntakeIO {
         Units.rotationsToRadians(rollerController.getVelocity().getValueAsDouble());
   }
 
-/*   @Override
+  /*   @Override
   public Boolean getRollerLinebreak() {
-    return 
+    return
   } */
 
   @Override

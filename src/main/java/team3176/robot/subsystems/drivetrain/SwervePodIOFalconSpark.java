@@ -49,8 +49,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
     this.id = id.SERIAL;
     turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
-    thrustFalcon = new TalonFX(id.THRUST_CID);
-    azimuthEncoder = new CANcoder(id.CANCODER_CID);
+    thrustFalcon = new TalonFX(id.THRUST_CID, id.THRUST_CBN);
+    azimuthEncoder = new CANcoder(id.CANCODER_CID, id.CANCODER_CBN);
 
     offset = Rotation2d.fromDegrees(id.OFFSET);
     // reset the motor controllers

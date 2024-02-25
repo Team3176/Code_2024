@@ -21,7 +21,7 @@ public class Hardwaremap {
   public static final String elevatorFollowerMotor_CBN = "rio";
   public static final String shooterWheelUpper_CBN = "rio";
   public static final String shooterWheelLower_CBN = "rio";
-  public static final String shooterWheelLower_CBN2 = "rio";
+  public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "canivore";
   public static final String climbLeft_CBN = "rio";
@@ -72,8 +72,8 @@ public class Hardwaremap {
   
   public static final SwervePodHardwareID FR = POD009;
   public static final SwervePodHardwareID FL = POD008;
-  public static final SwervePodHardwareID BL = POD006;
-  public static final SwervePodHardwareID BR = POD003;
+  public static final SwervePodHardwareID BL = POD002;
+  public static final SwervePodHardwareID BR = POD004;
 
   public static final int STEER_FR_CID = 11;
   public static final int STEER_FL_CID = 21;
