@@ -15,7 +15,7 @@ import team3176.robot.constants.Hardwaremap;
 public class TransferIOTalon implements TransferIO {
 
   private TalonFX transferController =
-      new TalonFX(Hardwaremap.shooterTransfer_CID, Hardwaremap.shooterWheelLower_CBN2);
+      new TalonFX(Hardwaremap.shooterTransfer_CID, Hardwaremap.shooterTransfer_CBN);
 
   private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
 

@@ -7,7 +7,7 @@ public class Hardwaremap {
    */
   public static final int elevatorLeader_CID = 2;
   public static final int elevatorFollower_CID = 3;
-  public static final int shooterWheelUpper_CID = 7;
+  public static final int shooterWheelUpper_CID = 50;
   public static final int shooterWheelLower_CID = 6;
   public static final int shooterTransfer_CID = 5;
   public static final int shooterPivot_CID = 8;
@@ -21,9 +21,9 @@ public class Hardwaremap {
   public static final String elevatorFollowerMotor_CBN = "rio";
   public static final String shooterWheelUpper_CBN = "rio";
   public static final String shooterWheelLower_CBN = "rio";
-  public static final String shooterWheelLower_CBN2 = "rio";
+  public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
-  public static final String intakeRoller_CBN = "rio";
+  public static final String intakeRoller_CBN = "canivore";
   public static final String intakePivot_CBN = "rio";
   public static String PDH_CBN = "rio";
 
@@ -41,7 +41,7 @@ public class Hardwaremap {
    * Drivetrain CIDs
    */
   // statics constants for swerve pods
-  public static final String SWERVEPOD_CBN = "rio";
+  public static final String SWERVEPOD_CBN = "canivore";
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -172.135);
   public static final SwervePodHardwareID POD002 =
@@ -61,10 +61,10 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
-  public static final SwervePodHardwareID FR = POD009;
+  public static final SwervePodHardwareID FR = POD007;
   public static final SwervePodHardwareID FL = POD008;
-  public static final SwervePodHardwareID BL = POD006;
-  public static final SwervePodHardwareID BR = POD003;
+  public static final SwervePodHardwareID BL = POD002;
+  public static final SwervePodHardwareID BR = POD004;
 
   public static final int STEER_FR_CID = 11;
   public static final int STEER_FL_CID = 21;

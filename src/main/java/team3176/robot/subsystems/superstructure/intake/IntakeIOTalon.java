@@ -51,8 +51,8 @@ public class IntakeIOTalon implements IntakeIO {
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
 
-    rollerController = new TalonFX(Hardwaremap.intakeRoller_CID);
-    pivotController = new TalonFX(Hardwaremap.intakePivot_CID);
+    rollerController = new TalonFX(Hardwaremap.intakeRoller_CID, Hardwaremap.intakeRoller_CBN);
+    pivotController = new TalonFX(Hardwaremap.intakePivot_CID, Hardwaremap.intakePivot_CBN);
 
     // config setting
     rollerConfigs.CurrentLimits.StatorCurrentLimit = 30;
