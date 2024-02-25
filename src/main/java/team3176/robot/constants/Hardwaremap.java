@@ -24,21 +24,22 @@ public class Hardwaremap {
   public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "canivore";
-  public static final String intakePivot_CBN = "canivore";
+  public static final String intakePivot_CBN = "rio";
   public static final String climbLeft_CBN = "rio";
   public static final String climbRight_CBN = "rio";
 
   public static String PDH_CBN = "rio";
 
-  public static final int elevatorLeaderLimitSwitch_DIO = 9;
-  public static final int elevatorFollowerLimitSwitch_DIO = 8;
-  public static final int climbLBLimitSwitch_DIO = 5;
-  public static final int climbRBLimitSwitch_DIO = 6;
+  public static final int elevatorLeaderLimitSwitch_DIO = 6;
+  public static final int elevatorFollowerLimitSwitch_DIO = 7;
+  public static final int climbLBLimitSwitch_DIO = 4;
+  public static final int climbRBLimitSwitch_DIO = 5;
   public static final int intakeRollerLinebreak_DIO = 0;
   public static final int intakePivotLinebreak_DIO = 1;
   public static final int intakeUpperLimitSwitch_DIO = 2;
   public static final int intakeLowerLimitSwitch_DIO = 3;
-  public static final int shooterPivotLower_DIO = 4;
+  public static final int shooterPivotLower_DIO = 8;
+  public static final int shooterPivotUpper_DIO = 9;
 
   public static final int blinkin_pwm_port = 9;
 
@@ -51,25 +52,25 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -172.135);
   public static final SwervePodHardwareID POD002 =
-      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, -225.186);
+      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, -43.066);
   public static final SwervePodHardwareID POD003 =
       new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, -130);
   public static final SwervePodHardwareID POD004 =
-      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, 140.463); // 120.5
+      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -14.029); // 120.5
   public static final SwervePodHardwareID POD005 =
       new SwervePodHardwareID(5, 13, SWERVEPOD_CBN, 14, SWERVEPOD_CBN, -30.525);
   public static final SwervePodHardwareID POD006 =
       new SwervePodHardwareID(6, 23, SWERVEPOD_CBN, 24, SWERVEPOD_CBN, 107);
   public static final SwervePodHardwareID POD007 =
-      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, 125.508);
+      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, -21.066);
   public static final SwervePodHardwareID POD008 =
-      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -79);
+      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, 157.500);
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
   public static final String SWERVEPOD_REV_CBN = "rio";
 
-  public static final SwervePodHardwareID FR = POD009;
+  public static final SwervePodHardwareID FR = POD007;
   public static final SwervePodHardwareID FL = POD008;
   public static final SwervePodHardwareID BL = POD002;
   public static final SwervePodHardwareID BR = POD004;
