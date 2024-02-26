@@ -34,7 +34,7 @@ public class SuperStructureConstants {
   public static final double CLIMBLEFT_kg = 0.2;
   public static final double CLIMBLEFT_TOLERANCE = 3;
   public static final double CLIMBLEFT_ZERO_POS = 0.39;
-  public static final double CLIMBLEFT_TOP_POS= CLIMBLEFT_ZERO_POS;
+  public static final double CLIMBLEFT_TOP_POS = CLIMBLEFT_ZERO_POS;
   public static final double CLIMBLEFT_SIM_OFFSET = 70 + CLIMBLEFT_ZERO_POS;
 
   public static final double CLIMBRIGHT_kP = 0.006;
@@ -55,7 +55,7 @@ public class SuperStructureConstants {
   public static final double INTAKE_PIVOT_PICKUP_POS = 70 + INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_CARRY_POS = INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_SIM_OFFSET = 70 + INTAKE_PIVOT_ZERO_POS;
-  
+
   public static final double INTAKE_ROLLER_kP = 0.006;
   public static final double INTAKE_ROLLER_kI = 0; // .0025
   public static final double INTAKE_ROLLER_kD = 0; // .001
@@ -100,17 +100,15 @@ public class SuperStructureConstants {
   public static final double SHOOTER_PIVOT_TOP_POS = 30 + SHOOTER_ZERO_POS;
   public static final double SHOOTER_PIVOT_SIM_OFFSET = 70 + SHOOTER_ZERO_POS;
 
-
   public static final double SHOOTER_UPPERWHEEL_kP = 0.006;
   public static final double SHOOTER_UPPERWHEEL_kI = 0; // .0025
   public static final double SHOOTER_UPPERWHEEL_kD = 0; // .001
   public static final double SHOOTER_UPPERWHEEL_kg = 0.2;
   public static final double SHOOTER_UPPERWHEEL_TOLERANCE = 3;
-  
+
   public static final double SHOOTER_LOWERWHEEL_kP = 0.006;
   public static final double SHOOTER_LOWERWHEEL_kI = 0; // .0025
   public static final double SHOOTER_LOWERWHEEL_kD = 0; // .001
   public static final double SHOOTER_LOWERWHEEL_kg = 0.2;
   public static final double SHOOTER_LOWERWHEEL_TOLERANCE = 3;
-
 }
