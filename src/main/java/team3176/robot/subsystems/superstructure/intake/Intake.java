@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
     this.io = io;
     this.pivotPID = new TunablePID("intakePivot", 10.0, 0.5, 0.2);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
-    this.rollerVolts = new LoggedTunableNumber("intake/pivotvVlts", 10.0);
+    this.rollerVolts = new LoggedTunableNumber("intake/pivotVolts", 10.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
   }
@@ -89,13 +89,13 @@ public class Intake extends SubsystemBase {
     // spin the intake until the first pivotlinebreak is triggered
     // do not set the intake to zero at the end that will be a seperate command
     // use the this.run() and a .until()
-    return this.run(() -> io.setRollerVolts(7))
+    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
         .until(() -> inputs.isRollerLinebreak)
         .andThen(() -> io.setRollerVolts(0.0));
   }
 
   public Command spinIntake() {
-    return this.runEnd(() -> io.setRollerVolts(5.5), () -> io.setRollerVolts(0));
+    return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()), () -> io.setRollerVolts(0));
   }
 
   public Command stopRollers() {

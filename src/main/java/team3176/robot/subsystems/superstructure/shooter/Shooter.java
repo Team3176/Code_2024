@@ -33,6 +33,7 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber aimAngle;
   private final LoggedTunableNumber flywheelUpperVelocity;
   private final LoggedTunableNumber flywheelLowerVelocity;
+  private final LoggedTunableNumber forwardPivotVoltageOffset;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
 
@@ -42,6 +43,7 @@ public class Shooter extends SubsystemBase {
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 10.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 10.0);
+    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset",0);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
