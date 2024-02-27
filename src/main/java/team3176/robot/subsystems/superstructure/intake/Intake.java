@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure.intake;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -8,6 +9,7 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
 import team3176.robot.util.LoggedTunableNumber;
+import team3176.robot.util.TunablePID;
 
 public class Intake extends SubsystemBase {
   private static Intake instance;
@@ -17,6 +19,10 @@ public class Intake extends SubsystemBase {
   private final LoggedTunableNumber rollerVolts;
   private final LoggedTunableNumber retractPivotVolts;
   private final LoggedTunableNumber waitTime;
+  private final TunablePID pivotPID;
+  private double pivotSetpoint;
+  private final double DEPLOY_POS = 1.7;
+  private double pivot_offset = 0;
 
   private enum pivotStates {
     DEPLOY,
@@ -29,6 +35,7 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
+    this.pivotPID = new TunablePID("intakePivot", 10.0, 0.5, 0.2);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
     this.rollerVolts = new LoggedTunableNumber("intake/pivotvVlts", 10.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
@@ -69,12 +76,12 @@ public class Intake extends SubsystemBase {
 
   // Example command to show how to set the pivot state
   public Command deployPivot() {
-    return this.runOnce(() -> this.pivotState = pivotStates.DEPLOY);
+    return this.runOnce(() -> this.pivotSetpoint = DEPLOY_POS);
   }
 
   public Command retractPivot() {
     // TODO Implement
-    return this.runOnce(() -> this.pivotState = pivotStates.RETRACT);
+    return this.runOnce(() -> this.pivotSetpoint = 0.0);
   }
 
   public Command spinIntakeUntilPivot() {
@@ -82,7 +89,13 @@ public class Intake extends SubsystemBase {
     // spin the intake until the first pivotlinebreak is triggered
     // do not set the intake to zero at the end that will be a seperate command
     // use the this.run() and a .until()
-    return this.run(() -> io.setRollerVolts(3)).until(() -> inputs.isPivotLinebreak);
+    return this.run(() -> io.setRollerVolts(7))
+        .until(() -> inputs.isRollerLinebreak)
+        .andThen(() -> io.setRollerVolts(0.0));
+  }
+
+  public Command spinIntake() {
+    return this.runEnd(() -> io.setRollerVolts(5.5), () -> io.setRollerVolts(0));
   }
 
   public Command stopRollers() {
@@ -106,24 +119,34 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-
-    // pivot state machine
-    switch (pivotState) {
-      case DEPLOY:
-        runPivot(3);
-        if (inputs.lowerLimitSwitch) {
-          pivotState = pivotStates.IDLE;
-        }
-        break;
-      case RETRACT:
-        runPivot(-3);
-        if (inputs.upperLimitSwitch) {
-          pivotState = pivotStates.IDLE;
-        }
-        break;
-      case IDLE:
-        runPivot(0.0);
-        break;
+    Logger.recordOutput("Intake/state", pivotState);
+    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
+    commandVolts = MathUtil.clamp(commandVolts, -8, 7.0);
+    Logger.recordOutput("Intake/PID_out", commandVolts);
+    Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
+    Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
+    runPivot(commandVolts);
+    pivotPID.checkParemeterUpdate();
+    if (inputs.upperLimitSwitch) {
+      pivot_offset = inputs.pivotPosition;
     }
+    // pivot state machine
+    // switch (pivotState) {
+    //   case DEPLOY:
+    //     runPivot(3);
+    //     if (inputs.lowerLimitSwitch) {
+    //       pivotState = pivotStates.IDLE;
+    //     }
+    //     break;
+    //   case RETRACT:
+    //     runPivot(-3);
+    //     if (inputs.upperLimitSwitch) {
+    //       pivotState = pivotStates.IDLE;
+    //     }
+    //     break;
+    //   case IDLE:
+    //     runPivot(0.0);
+    //     break;
+    // }
   }
 }

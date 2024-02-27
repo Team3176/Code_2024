@@ -62,17 +62,18 @@ public class IntakeIOTalon implements IntakeIO {
 
     // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
-    pivotConfigs.Voltage.PeakForwardVoltage = 4;
-    pivotConfigs.Voltage.PeakReverseVoltage = -4;
+    pivotConfigs.Voltage.PeakForwardVoltage = 8;
+    pivotConfigs.Voltage.PeakReverseVoltage = -10;
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    pivotConfigs.CurrentLimits.StatorCurrentLimit = 10;
+    pivotConfigs.CurrentLimits.StatorCurrentLimit = 30;
     pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
     TalonUtils.applyTalonFxConfigs(pivotController, pivotConfigs);
+    pivotController.setPosition(0, 0);
   }
   /** Updates the set of loggable inputs. */
   @Override

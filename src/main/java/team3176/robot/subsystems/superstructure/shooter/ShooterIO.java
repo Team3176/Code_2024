@@ -24,6 +24,7 @@ public interface ShooterIO {
     public double wheelLowerAppliedVolts = 0.0;
     public double wheelLowerAppliedVolts2 = 0.0;
     public boolean lowerLimitSwitch = false;
+    public boolean upperLimitSwitch = false;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 
@@ -41,6 +42,10 @@ public interface ShooterIO {
   public default void setPivotVoltage(double voltage) {}
 
   public default void setFlywheelVelocity(double velocity) {}
+
+  public default void setFlywheelLowerVelocity(double velocity) {}
+
+  public default void setFlywheelUpperVelocity(double velocity) {}
 
   // public default void setShooterPivotPID(int position) {}
 

@@ -24,6 +24,7 @@ import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.intake.Intake;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -118,8 +119,8 @@ public class RobotContainer {
     .button(1)
     .whileTrue(Shooter.getInstance().aim()); */
 
-    controller.rotStick.button(1).whileTrue(Intake.getInstance().deployPivot());
-    controller.rotStick.button(2).whileTrue(Intake.getInstance().retractPivot());
+    controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    controller.rotStick.button(2).whileTrue(Shooter.getInstance().aim());
     controller
         .rotStick
         .button(3)

@@ -15,7 +15,7 @@ public class Transfer extends SubsystemBase {
   }
 
   public Command shoot() {
-    return this.runEnd(() -> io.setTransferController(0.8), () -> io.setTransferController(0));
+    return this.runEnd(() -> io.setTransferController(0.6), () -> io.setTransferController(0));
   }
 
   @Override

@@ -31,7 +31,8 @@ public class Shooter extends SubsystemBase {
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
-  private final LoggedTunableNumber flywheelVelocity;
+  private final LoggedTunableNumber flywheelUpperVelocity;
+  private final LoggedTunableNumber flywheelLowerVelocity;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
 
@@ -39,7 +40,8 @@ public class Shooter extends SubsystemBase {
     this.io = io;
     this.pivotPIDController = new TunablePID("shooter/pid", 0.75, 0.0, 0.01);
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
-    this.flywheelVelocity = new LoggedTunableNumber("shooter/velocity", 10.0);
+    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 10.0);
+    this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 10.0);
     pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
@@ -59,6 +61,9 @@ public class Shooter extends SubsystemBase {
     Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
     double pivotVoltage =
         pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
+    if (pivotSetpoint.getDegrees() > 1.0) {
+      pivotVoltage += 1;
+    }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
     io.setPivotVoltage(pivotVoltage);
   }
@@ -104,10 +109,14 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          io.setFlywheelVelocity(flywheelVelocity.get());
+          io.setFlywheelLowerVelocity(flywheelLowerVelocity.get());
+          io.setFlywheelUpperVelocity(flywheelUpperVelocity.get());
           this.pivotSetpoint = getAimAngle();
         },
-        () -> io.setFlywheelVelocity(0));
+        () -> {
+          io.setFlywheelVelocity(0);
+          pivotSetpoint = new Rotation2d();
+        });
   }
 
   public Command pivotVoltage(double volts) {
