@@ -44,7 +44,6 @@ public class Shooter extends SubsystemBase {
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 10.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 10.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset",0);
-    pivotPIDController.setTolerance(Units.degreesToRadians(3.0));
   }
 
   public static Shooter getInstance() {

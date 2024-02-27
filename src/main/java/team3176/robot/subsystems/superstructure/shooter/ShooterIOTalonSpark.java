@@ -106,6 +106,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
+
+    inputs.wheelLowerCurrentAmps = wheelLowerController.getStatorCurrent().getValueAsDouble();
+    inputs.wheeUpperCurrentAmps = wheelUpperController.getStatorCurrent().getValueAsDouble();
+    inputs.pivotCurrentAmps = pivotShooter.getOutputCurrent();
   }
 
   @Override

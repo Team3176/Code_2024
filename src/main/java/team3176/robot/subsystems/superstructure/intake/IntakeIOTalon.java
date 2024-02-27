@@ -55,7 +55,7 @@ public class IntakeIOTalon implements IntakeIO {
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID, Hardwaremap.intakePivot_CBN);
 
     // config setting
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    rollerConfigs.CurrentLimits.StatorCurrentLimit = 50;
     rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // pivot configs
@@ -67,7 +67,7 @@ public class IntakeIOTalon implements IntakeIO {
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    pivotConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
     pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
