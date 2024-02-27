@@ -61,8 +61,9 @@ public class Shooter extends SubsystemBase {
 
   private void PIDPositionPeriodic() {
     Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
-    double pivotVoltage =
-        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
+    /* double pivotVoltage =
+        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians()); */
+      double pivotVoltage =  forwardPivotVoltageOffset.get();
     if (pivotSetpoint.getDegrees() > 1.0) {
       pivotVoltage += 1;
     }
