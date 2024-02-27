@@ -127,6 +127,17 @@ public class RobotContainer {
         .whileTrue(Intake.getInstance().spinIntakeUntilPivot())
         .onFalse(Intake.getInstance().stopRollers());
     controller.rotStick.button(4).onTrue(Intake.getInstance().intakeNote());
+
+    controller
+        .operator
+        .leftBumper()
+        .whileTrue(superstructure.setClimbLeftPosition(() -> controller.operator.getLeftY()))
+        .onFalse(superstructure.stopClimbLeft());
+    controller
+        .operator
+        .rightBumper()
+        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getLeftY()))
+        .onFalse(superstructure.stopClimbRight());
   }
 
   public void clearCanFaults() {

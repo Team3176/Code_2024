@@ -2,7 +2,7 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.DoubleSupplier;
-//import java.util.function.IntSupplier;
+// import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.elevator.Elevator;
@@ -44,12 +44,11 @@ public class Superstructure {
   }
 
   public Command setClimbLeftPosition(DoubleSupplier position) {
-    return climb.setLeftPosition((int)position.getAsDouble());
+    return climb.setLeftPosition((int) position.getAsDouble());
   }
 
-
   public Command setClimbRightPosition(DoubleSupplier position) {
-    return climb.setRightPosition((int)position.getAsDouble());
+    return climb.setRightPosition((int) position.getAsDouble());
   }
 
   public Command stopClimbLeft() {

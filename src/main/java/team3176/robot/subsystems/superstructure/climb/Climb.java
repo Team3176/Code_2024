@@ -35,7 +35,7 @@ public class Climb extends SubsystemBase {
     io.setRight(percent);
   }
 
-  /* 
+  /*
   public void stopLeft() {
     io.stopLeft();
   }
@@ -45,7 +45,7 @@ public class Climb extends SubsystemBase {
     return this.runOnce(io::stopLeft);
   }
 
-  /* 
+  /*
   public void stopRight() {
     io.stopRight();
   }
