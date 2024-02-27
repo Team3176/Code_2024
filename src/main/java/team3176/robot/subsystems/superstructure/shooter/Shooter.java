@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -43,7 +42,7 @@ public class Shooter extends SubsystemBase {
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 10.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 10.0);
-    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset",0);
+    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0);
   }
 
   public static Shooter getInstance() {
@@ -60,11 +59,10 @@ public class Shooter extends SubsystemBase {
 
   private void PIDPositionPeriodic() {
     Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
-    /* double pivotVoltage =
-        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians()); */
-      double pivotVoltage =  forwardPivotVoltageOffset.get();
+    double pivotVoltage =
+        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
     if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage += 1;
+      pivotVoltage += forwardPivotVoltageOffset.get();
     }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
     io.setPivotVoltage(pivotVoltage);
