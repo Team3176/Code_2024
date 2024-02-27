@@ -24,7 +24,6 @@ import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.intake.Intake;
-import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -120,7 +119,7 @@ public class RobotContainer {
     .whileTrue(Shooter.getInstance().aim()); */
 
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
-    controller.rotStick.button(2).whileTrue(Shooter.getInstance().aim());
+    controller.rotStick.button(2).whileTrue(superstructure.aimShooter());
     controller
         .rotStick
         .button(3)

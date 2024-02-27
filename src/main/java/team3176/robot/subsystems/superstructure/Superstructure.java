@@ -26,11 +26,11 @@ public class Superstructure {
   }
 
   public Command aimShooter() {
-    return shooter.aim();
+    return shooter.aim().alongWith(transfer.shoot());
   }
 
   public Command shoot() {
-    return transfer.shoot().alongWith(intake.spinIntake());
+    return intake.spinIntake();
   }
 
   public Command runShooterPivot(double volts) {
