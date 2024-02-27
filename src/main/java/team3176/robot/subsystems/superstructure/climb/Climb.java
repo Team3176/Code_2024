@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure.climb;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -34,12 +35,24 @@ public class Climb extends SubsystemBase {
     io.setRight(percent);
   }
 
+  /* 
   public void stopLeft() {
     io.stopLeft();
   }
+  */
 
+  public Command stopLeft() {
+    return this.runOnce(io::stopLeft);
+  }
+
+  /* 
   public void stopRight() {
     io.stopRight();
+  }
+  */
+
+  public Command stopRight() {
+    return this.runOnce(io::stopRight);
   }
 
   public double getLeftPosition() {
@@ -74,11 +87,27 @@ public class Climb extends SubsystemBase {
     System.out.println("climb.getPosition = " + inputs.leftPosition);
   }
 
-  public void rightGoToPosition(double position) {
-    io.setRight(position);
+  public void rightGoToPosition(int position) {
+    io.setRightPIDPosition(position);
     // io.setRight(pid.calculate(getRightPosition(), position));
     System.out.println("climb.rightGoToPosition = " + position);
     System.out.println("climb.getPosition = " + inputs.rightPosition);
+  }
+
+  public Command setLeftPosition(int position) {
+    return this.runEnd(
+        () -> {
+          io.setLeftPIDPosition(position);
+        },
+        io::stopRight);
+  }
+
+  public Command setRightPosition(int position) {
+    return this.runEnd(
+        () -> {
+          io.setRightPIDPosition(position);
+        },
+        io::stopRight);
   }
 
   /*   public Command rightGoToPosition(double position) {
@@ -106,6 +135,14 @@ public class Climb extends SubsystemBase {
       io.setclimbRBLimitswitchZero();
       System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
       // need to add reset to climbRight encoder to 0;
+    }
+
+    if (inputs.leftPosition >= SuperStructureConstants.CLIMBLEFT_TOP_POS) {
+      io.stopLeft();
+    }
+
+    if (inputs.leftPosition >= SuperStructureConstants.CLIMBRIGHT_TOP_POS) {
+      io.stopRight();
     }
   }
 
