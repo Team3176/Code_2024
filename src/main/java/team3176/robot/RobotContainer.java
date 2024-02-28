@@ -125,7 +125,11 @@ public class RobotContainer {
         .button(3)
         .whileTrue(Intake.getInstance().spinIntakeUntilPivot())
         .onFalse(Intake.getInstance().stopRollers());
-    controller.rotStick.button(4).onTrue(Intake.getInstance().intakeNote());
+    controller
+        .transStick
+        .button(2)
+        .onTrue(Intake.getInstance().intakeNote())
+        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
   }
 
   public void clearCanFaults() {

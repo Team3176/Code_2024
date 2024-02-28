@@ -52,19 +52,19 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -172.135);
   public static final SwervePodHardwareID POD002 =
-      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, -43.066);
+      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, 153.9);
   public static final SwervePodHardwareID POD003 =
-      new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, -130);
+      new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, -171.8);
   public static final SwervePodHardwareID POD004 =
-      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -14.029); // 120.5
+      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -171.8); // 120.5
   public static final SwervePodHardwareID POD005 =
       new SwervePodHardwareID(5, 13, SWERVEPOD_CBN, 14, SWERVEPOD_CBN, -30.525);
   public static final SwervePodHardwareID POD006 =
       new SwervePodHardwareID(6, 23, SWERVEPOD_CBN, 24, SWERVEPOD_CBN, 107);
   public static final SwervePodHardwareID POD007 =
-      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, -21.066);
+      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, 1.4);
   public static final SwervePodHardwareID POD008 =
-      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, 157.500);
+      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -145.81);
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
