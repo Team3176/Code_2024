@@ -29,6 +29,8 @@ public interface IntakeIO {
     public boolean isPivotLinebreak = false;
     public boolean upperLimitSwitch = false;
     public boolean lowerLimitSwitch = false;
+    public int laserCanMeasurement = 0;
+    public boolean isNotePresent = false;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
@@ -48,4 +50,6 @@ public interface IntakeIO {
   public default void setPivotPIDPosition(double position) {}
 
   public default void setCoastMode(boolean isCoastMode) {}
+
+  public default void getLaserCanMeasurment(int measurement) {}
 }

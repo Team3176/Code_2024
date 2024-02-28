@@ -1,6 +1,8 @@
 package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import java.util.function.DoubleSupplier;
+// import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.elevator.Elevator;
@@ -19,6 +21,7 @@ public class Superstructure {
 
   public Superstructure() {
     NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
+    climb = Climb.getInstance();
     elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
@@ -39,6 +42,22 @@ public class Superstructure {
 
   public Command shooterPivotPID(int Position) {
     return shooter.pivotSetPositionOnce(Position);
+  }
+
+  public Command setClimbLeftPosition(DoubleSupplier position) {
+    return climb.setLeftPosition((int) position.getAsDouble());
+  }
+
+  public Command setClimbRightPosition(DoubleSupplier position) {
+    return climb.setRightPosition((int) position.getAsDouble());
+  }
+
+  public Command stopClimbLeft() {
+    return climb.stopLeft();
+  }
+
+  public Command stopClimbRight() {
+    return climb.stopRight();
   }
 
   public static Superstructure getInstance() {

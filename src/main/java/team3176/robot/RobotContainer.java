@@ -130,6 +130,17 @@ public class RobotContainer {
         .button(2)
         .onTrue(Intake.getInstance().intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+
+    controller
+        .operator
+        .leftBumper()
+        .whileTrue(superstructure.setClimbLeftPosition(() -> controller.operator.getLeftY()))
+        .onFalse(superstructure.stopClimbLeft());
+    controller
+        .operator
+        .rightBumper()
+        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getLeftY()))
+        .onFalse(superstructure.stopClimbRight());
   }
 
   public void clearCanFaults() {

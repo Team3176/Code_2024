@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
@@ -40,15 +41,17 @@ public class ClimbIOTalon implements ClimbIO {
     configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Voltage.PeakForwardVoltage = 4;
     configsLeft.Voltage.PeakReverseVoltage = -4;
+    configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     climbLeft.setInverted(false);
 
-    configsRight.Slot0.kP = 0.001; // An error of 1 rotations results in 40 amps output
+    configsRight.Slot0.kP = 2.4; // An error of 1 rotations results in 40 amps output
     configsRight.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Slot0.kV = 0.12; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Voltage.PeakForwardVoltage = 8;
-    configsRight.Voltage.PeakReverseVoltage = -8;
+    configsRight.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Voltage.PeakForwardVoltage = 4;
+    configsRight.Voltage.PeakReverseVoltage = -4;
     climbRight.setInverted(true);
+    configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     applyTalonFxConfigs(climbLeft, configsLeft);
     applyTalonFxConfigs(climbRight, configsRight);
@@ -115,6 +118,11 @@ public class ClimbIOTalon implements ClimbIO {
   @Override
   public void setLeftPIDPosition(int position) {
     climbLeft.setControl(voltPosition.withPosition(position));
+  }
+
+  @Override
+  public void setRightPIDPosition(int position) {
+    climbRight.setControl(voltPosition.withPosition(position));
   }
 
   @Override
