@@ -26,6 +26,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.TunableTransform3d;
 
 public class LoggedAprilPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
@@ -48,6 +49,7 @@ public class LoggedAprilPhotonCam {
               Units.inchesToMeters(10)),
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
+  private TunableTransform3d robot2CameraTune;
   // private PhotonCamera realCam;
   private PhotonCameraIO io;
   private PhotonCameraInputsAutoLogged inputs;
@@ -60,9 +62,19 @@ public class LoggedAprilPhotonCam {
 
   public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
+
     this.io = new PhotonCameraIO(name);
     this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
+    this.robot2CameraTune =
+        new TunableTransform3d(
+            name,
+            robot2Camera.getX(),
+            robot2Camera.getY(),
+            robot2Camera.getZ(),
+            robot2Camera.getRotation().getX(),
+            robot2Camera.getRotation().getX(),
+            robot2Camera.getRotation().getX());
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -84,6 +96,8 @@ public class LoggedAprilPhotonCam {
 
   public void generateLoggingData(PhotonPipelineResult results) {
     targets.clear();
+    robot2CameraTune.checkParemeterUpdate();
+
     if (results.hasTargets()) {
       Pose3d current3d = new Pose3d(Drivetrain.getInstance().getPose());
 
@@ -175,7 +189,7 @@ public class LoggedAprilPhotonCam {
     var results = inputs.results;
     // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
-
+    // estimator.setRobotToCameraTransform(robot2Camera);
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());
