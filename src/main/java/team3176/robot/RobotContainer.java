@@ -116,14 +116,8 @@ public class RobotContainer {
                 .alongWith(new PrintCommand("shooter"))
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));
-    controller
-        .operator
-        .x()
-        .whileTrue(superstructure.spit());
-    controller
-        .operator
-        .b()
-        .whileTrue(Intake.getInstance().spinIntakeRollersSlow());
+    controller.operator.x().whileTrue(superstructure.spit());
+    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
 
     /*     controller
     .rotStick

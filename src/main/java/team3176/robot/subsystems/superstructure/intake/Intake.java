@@ -5,9 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.signals.InvertedValue;
-
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
@@ -109,8 +106,8 @@ public class Intake extends SubsystemBase {
     return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()), () -> io.setRollerVolts(0));
   }
 
-    public Command spinIntakeRollersSlow() {
-    return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()/2), () -> io.setRollerVolts(0));
+  public Command spinIntakeRollersSlow() {
+    return this.runEnd(() -> io.setRollerVolts(rollerVolts.get() / 2), () -> io.setRollerVolts(0));
   }
 
   public Command stopRollers() {
@@ -157,9 +154,9 @@ public class Intake extends SubsystemBase {
     // pivot state machine
     switch (pivotState) {
       case DEPLOY:
-/*         if (deployTime.get() < 0.5) { */
-          runPivot(2.0);
-/*         } else {
+        /*         if (deployTime.get() < 0.5) { */
+        runPivot(2.0);
+        /*         } else {
           runPivot(0);
         } */
         if (inputs.lowerLimitSwitch) {

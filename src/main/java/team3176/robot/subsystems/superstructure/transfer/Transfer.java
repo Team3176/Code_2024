@@ -3,9 +3,6 @@ package team3176.robot.subsystems.superstructure.transfer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.signals.InvertedValue;
-
 import team3176.robot.util.LoggedTunableNumber;
 
 public class Transfer extends SubsystemBase {
@@ -27,7 +24,8 @@ public class Transfer extends SubsystemBase {
 
   public Command spit() {
     return this.runEnd(
-        () -> io.setTransferController(-(transferVelocity.get())), () -> io.setTransferController(0));
+        () -> io.setTransferController(-(transferVelocity.get())),
+        () -> io.setTransferController(0));
   }
 
   @Override
