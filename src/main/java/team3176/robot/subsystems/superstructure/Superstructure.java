@@ -22,7 +22,7 @@ public class Superstructure {
   public Superstructure() {
     NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
     climb = Climb.getInstance();
-    elevator = Elevator.getInstance();
+    // elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
     transfer = new Transfer();

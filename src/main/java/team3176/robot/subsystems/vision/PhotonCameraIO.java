@@ -17,7 +17,11 @@ public class PhotonCameraIO {
   }
 
   public void updateInputs(PhotonCameraInputs inputs) {
-    inputs.results = this.cam.getLatestResult();
+    if (this.cam.isConnected()) {
+      inputs.results = this.cam.getLatestResult();
+    } else {
+      inputs.results = new PhotonPipelineResult();
+    }
   }
 
   public PhotonCamera getCamera() {
