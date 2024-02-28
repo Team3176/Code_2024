@@ -7,6 +7,8 @@
 
 package team3176.robot.subsystems.superstructure.shooter;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -52,6 +54,13 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private DigitalInput lowerLimitSwitch;
   private DigitalInput upperLimitSwitch;
 
+  private final StatusSignal<Double> upperAppliedVolts;
+  private final StatusSignal<Double> lowerAppliedVolts;
+  private final StatusSignal<Double> upperCurrentAmps;
+  private final StatusSignal<Double> lowerCurrentAmps;
+  private final StatusSignal<Double> upperVelocity;
+  private final StatusSignal<Double> lowerVelocity;
+
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
     pivotEncoder.setPosition(0.0);
@@ -87,6 +96,25 @@ public class ShooterIOTalonSpark implements ShooterIO {
     wheelUpperController.getConfigurator().apply(configsWheelUpper);
     wheelLowerController.getConfigurator().apply(configsWheelLower);
 
+    upperAppliedVolts = wheelUpperController.getMotorVoltage();
+    lowerAppliedVolts = wheelLowerController.getMotorVoltage();
+    upperCurrentAmps = wheelUpperController.getStatorCurrent();
+    lowerCurrentAmps = wheelLowerController.getStatorCurrent();
+    upperVelocity = wheelUpperController.getVelocity();
+    lowerVelocity = wheelLowerController.getVelocity();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        upperAppliedVolts,
+        lowerAppliedVolts,
+        upperCurrentAmps,
+        lowerCurrentAmps,
+        upperVelocity,
+        lowerVelocity);
+
+    wheelUpperController.optimizeBusUtilization();
+    wheelLowerController.optimizeBusUtilization();
+
     // }
   }
 
@@ -94,21 +122,26 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        upperAppliedVolts,
+        lowerAppliedVolts,
+        upperCurrentAmps,
+        lowerCurrentAmps,
+        upperVelocity,
+        lowerVelocity);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
-    inputs.wheelUpperVelocityRadPerSec =
-        Units.rotationsToRadians(wheelUpperController.getVelocity().getValue());
-    inputs.wheelLowerVelocityRadPerSec =
-        Units.rotationsToRadians(wheelLowerController.getVelocity().getValue());
+    inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(upperVelocity.getValue());
+    inputs.wheelLowerVelocityRadPerSec = Units.rotationsToRadians(lowerVelocity.getValue());
 
-    inputs.wheelUpperAppliedVolts = wheelUpperController.getMotorVoltage().getValue();
-    inputs.wheelLowerAppliedVolts = wheelLowerController.getMotorVoltage().getValue();
+    inputs.wheelUpperAppliedVolts = upperAppliedVolts.getValue();
+    inputs.wheelLowerAppliedVolts = lowerAppliedVolts.getValue();
 
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
 
-    inputs.wheelLowerCurrentAmps = wheelLowerController.getStatorCurrent().getValueAsDouble();
-    inputs.wheeUpperCurrentAmps = wheelUpperController.getStatorCurrent().getValueAsDouble();
+    inputs.wheelLowerCurrentAmps = lowerCurrentAmps.getValueAsDouble();
+    inputs.wheeUpperCurrentAmps = upperCurrentAmps.getValueAsDouble();
     inputs.pivotCurrentAmps = pivotShooter.getOutputCurrent();
   }
 
