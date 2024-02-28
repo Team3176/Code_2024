@@ -90,10 +90,7 @@ public class RobotContainer {
     controller
         .transStick
         .button(10)
-        .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("swerveDefense"));
+        .whileTrue(drivetrain.swerveDefenseCommand().withName("swerveDefense"));
     /* controller
            .rotStick
            .button(2)
@@ -112,7 +109,7 @@ public class RobotContainer {
         .b()
         .whileTrue(
             superstructure
-                .shooterPivotPID(90)
+                .shooterPivotPID(27)
                 .alongWith(new PrintCommand("shooter"))
                 .withName("shooter_pivot"))
         .onFalse(superstructure.shooterPivotPID(0));

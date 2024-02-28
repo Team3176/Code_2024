@@ -173,7 +173,7 @@ public class LoggedAprilPhotonCam {
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
     var results = inputs.results;
-    Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
 
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
