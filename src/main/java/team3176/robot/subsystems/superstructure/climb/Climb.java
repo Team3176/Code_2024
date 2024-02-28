@@ -126,14 +126,14 @@ public class Climb extends SubsystemBase {
     if (inputs.isLeftLimitswitch) {
       io.stopLeft();
       io.setclimbLBLimitswitchZero();
-      System.out.println("climb left bottom.getPosition = " + inputs.leftPosition);
+      // System.out.println("climb left bottom.getPosition = " + inputs.leftPosition);
 
       // need to add reset to climbLeft encoder to 0;
     }
     if (inputs.isRightLimitswitch) {
       io.stopRight();
       io.setclimbRBLimitswitchZero();
-      System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
+      // System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
       // need to add reset to climbRight encoder to 0;
     }
 

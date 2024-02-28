@@ -7,6 +7,8 @@
 
 package team3176.robot.subsystems.superstructure.intake;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -19,6 +21,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
@@ -31,6 +34,7 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   VoltageOut pivotVolts = new VoltageOut(0.0);
   PositionVoltage voltPosition;
   private SparkPIDController pivotPID;
+  private LaserCan lasercan;
 
   DigitalInput rollerLinebreak;
   DigitalInput pivotLinebreak;
@@ -47,6 +51,15 @@ public class IntakeIOTalonGrapple implements IntakeIO {
 
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
+
+    lasercan = new LaserCan(Hardwaremap.intakeLaserCan_CID);
+    try {
+      lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
+      lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      lasercan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("LaserCan configuration failed");
+    }
 
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
@@ -97,6 +110,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     inputs.rollerTempCelcius = rollerController.getDeviceTemp().getValueAsDouble();
     inputs.rollerVelocityRadPerSec =
         Units.rotationsToRadians(rollerController.getVelocity().getValueAsDouble());
+    inputs.laserCanMeasurement = lasercan.getMeasurement().distance_mm;
+    inputs.isNotePresent = isNotePresent();
   }
 
   /*   @Override
@@ -117,5 +132,18 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   @Override
   public void setPivotVolts(double volts) {
     pivotController.setControl(pivotVolts.withOutput(volts));
+  }
+
+  public int getLaserCanDist() {
+    return lasercan.getMeasurement().distance_mm;
+  }
+
+  public boolean isNotePresent() {
+    if (lasercan.getMeasurement().distance_mm
+        < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
