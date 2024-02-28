@@ -89,9 +89,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     driveTemps = thrustFalcon.getDeviceTemp();
 
     turnAbsolutePosition = azimuthEncoder.getAbsolutePosition();
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, drivePosition);
+    // BaseStatusSignal.setUpdateFrequencyForAll(50.0, drivePosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
+        drivePosition,
         driveVelocity,
         driveAppliedVolts,
         driveCurrentStator,
@@ -99,7 +100,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         driveTemps,
         turnAbsolutePosition);
     thrustFalcon.optimizeBusUtilization();
-    azimuthEncoder.optimizeBusUtilization();
+    // azimuthEncoder.optimizeBusUtilization();
   }
 
   @Override
@@ -118,7 +119,6 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         Units.rotationsToRadians(driveVelocity.getValueAsDouble()) * (THRUST_GEAR_RATIO);
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmpsStator = driveCurrentStator.getValueAsDouble();
-    inputs.driveCurrentAmpsSupply = driveCurrentSupply.getValueAsDouble();
     inputs.driveTempCelcius = driveTemps.getValueAsDouble();
 
     inputs.turnAbsolutePositionDegrees =
@@ -134,7 +134,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         "Drivetrain/IO/degreesNoOffset_enc" + id,
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
 
-    inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
+    // inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
