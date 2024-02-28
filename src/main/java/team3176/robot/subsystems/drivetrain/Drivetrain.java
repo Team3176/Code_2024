@@ -422,6 +422,42 @@ public class Drivetrain extends SubsystemBase {
     return swerveDrivePercent(forward, strafe, spin, true);
   }
 
+  public Supplier<ChassisSpeeds> convertJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean isFieldCentric) {
+    return new Supplier<ChassisSpeeds>() {
+      @Override
+      public ChassisSpeeds get() {
+        double DEADBAND = 0.05;
+        double linearMagnitude =
+            MathUtil.applyDeadband(
+                Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
+        Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
+        double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+
+        // Square values
+        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+        omega = Math.copySign(omega * omega, omega);
+        // Calcaulate new linear velocity
+        Translation2d linearVelocity =
+            new Pose2d(new Translation2d(), linearDirection)
+                .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+                .getTranslation();
+        if (DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+            && isFieldCentric) {
+          linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+        }
+
+        ChassisSpeeds speeds =
+            new ChassisSpeeds(
+                linearVelocity.getX() * MAX_WHEEL_SPEED,
+                linearVelocity.getY() * MAX_WHEEL_SPEED,
+                omega * 10.5);
+        return speeds;
+      }
+    };
+  }
+
   /*
    * Does Deadbanding and such within drivetrain
    */
@@ -431,34 +467,12 @@ public class Drivetrain extends SubsystemBase {
       DoubleSupplier spin,
       Boolean isFieldCentric,
       Supplier<Rotation2d> angle) {
+    Supplier<ChassisSpeeds> baseJoystickSpeeds =
+        this.convertJoysticks(forward, strafe, spin, isFieldCentric);
     return this.run(
         () -> {
-          double DEADBAND = 0.05;
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
-          Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
-          double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+          ChassisSpeeds speeds = baseJoystickSpeeds.get();
 
-          // Square values
-          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
-          omega = Math.copySign(omega * omega, omega);
-          // Calcaulate new linear velocity
-          Translation2d linearVelocity =
-              new Pose2d(new Translation2d(), linearDirection)
-                  .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-                  .getTranslation();
-          if (DriverStation.getAlliance().isPresent()
-              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-              && isFieldCentric) {
-            linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
-          }
-
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * MAX_WHEEL_SPEED,
-                  linearVelocity.getY() * MAX_WHEEL_SPEED,
-                  omega * 10.5);
           if (angle != null) {
             speeds.omegaRadiansPerSecond =
                 orientationPID.calculate(
@@ -500,6 +514,24 @@ public class Drivetrain extends SubsystemBase {
     // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
     // Replace with your command
 
+  }
+
+  public Command chaseNoteTeleo(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
+    Supplier<ChassisSpeeds> baseJoy = convertJoysticks(forward, strafe, spin, true);
+    return this.run(
+        () -> {
+          if (PhotonVisionSystem.getInstance().seeNote) {
+            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
+            Logger.recordOutput("Drivetrain/yawError", yawError);
+            ChassisSpeeds speed = baseJoy.get();
+            speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
+            driveVelocity(speed);
+          } else {
+            driveVelocity(baseJoy.get());
+          }
+        });
   }
 
   public Command chaseNote() {
