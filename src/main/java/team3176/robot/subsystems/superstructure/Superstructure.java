@@ -60,6 +60,10 @@ public class Superstructure {
     return climb.stopRight();
   }
 
+  public Command spit() {
+    return intake.spit().alongWith(transfer.spit());
+  }
+
   public static Superstructure getInstance() {
     if (instance == null) {
       instance = new Superstructure();
