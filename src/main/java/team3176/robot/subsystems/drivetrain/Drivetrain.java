@@ -506,15 +506,18 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = -8 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -20 - PhotonVisionSystem.getInstance().notePitch;
+            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
+            Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(
-                    MathUtil.clamp(pitchError * (1 / 10.0), -1.0, 1.0), 0, yawError * (1 / 20.0));
+                    MathUtil.clamp(-1.0 * pitchError * (1 / 10.0), -1.0, 1.0),
+                    0,
+                    yawError * (1 / 20.0));
             driveVelocity(speed);
           } else {
             if (PhotonVisionSystem.getInstance().notePitch < -12) {
-              driveVelocity(new ChassisSpeeds(-0.7, 0.0, 0.0));
+              driveVelocity(new ChassisSpeeds(0.7, 0.0, 0.0));
             }
             driveVelocity(new ChassisSpeeds());
           }

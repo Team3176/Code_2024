@@ -29,6 +29,7 @@ public class LoggedNotePhotonCam {
       notePitch = target.getPitch();
       double noteskew = target.getSkew();
       double notearea = target.getArea();
+      seeNote = true;
     } else {
       seeNote = false;
     }

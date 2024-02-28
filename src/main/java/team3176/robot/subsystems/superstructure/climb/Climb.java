@@ -2,6 +2,7 @@ package team3176.robot.subsystems.superstructure.climb;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -94,18 +95,18 @@ public class Climb extends SubsystemBase {
     System.out.println("climb.getPosition = " + inputs.rightPosition);
   }
 
-  public Command setLeftPosition(int position) {
+  public Command setLeftPosition(DoubleSupplier position) {
     return this.runEnd(
         () -> {
-          io.setLeftPIDPosition(position);
+          io.setLeftPIDPosition((int) (position.getAsDouble() * 30));
         },
         io::stopRight);
   }
 
-  public Command setRightPosition(int position) {
+  public Command setRightPosition(DoubleSupplier position) {
     return this.runEnd(
         () -> {
-          io.setRightPIDPosition(position);
+          io.setRightPIDPosition((int) (position.getAsDouble() * 30));
         },
         io::stopRight);
   }

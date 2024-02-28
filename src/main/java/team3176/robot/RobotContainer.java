@@ -85,6 +85,10 @@ public class RobotContainer {
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
+        .button(3)
+        .whileTrue(drivetrain.chaseNote().alongWith(Intake.getInstance().intakeNote()));
+    controller
+        .transStick
         .button(10)
         .whileTrue(
             new InstantCommand(drivetrain::setBrakeMode)
@@ -130,7 +134,6 @@ public class RobotContainer {
         .button(2)
         .onTrue(Intake.getInstance().intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
-
     controller
         .operator
         .leftBumper()
@@ -139,7 +142,7 @@ public class RobotContainer {
     controller
         .operator
         .rightBumper()
-        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getLeftY()))
+        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
   }
 

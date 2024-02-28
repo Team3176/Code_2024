@@ -45,11 +45,11 @@ public class Superstructure {
   }
 
   public Command setClimbLeftPosition(DoubleSupplier position) {
-    return climb.setLeftPosition((int) position.getAsDouble());
+    return climb.setLeftPosition(position);
   }
 
   public Command setClimbRightPosition(DoubleSupplier position) {
-    return climb.setRightPosition((int) position.getAsDouble());
+    return climb.setRightPosition(position);
   }
 
   public Command stopClimbLeft() {

@@ -57,9 +57,9 @@ public class IntakeIOTalon implements IntakeIO {
     // config setting
     // rollerConfigs.CurrentLimits.StatorCurrentLimit = 50;
     // rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-                         
+
     // pivot configs
-                                                                                                                 
+
     // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     pivotConfigs.Voltage.PeakForwardVoltage = 12;
