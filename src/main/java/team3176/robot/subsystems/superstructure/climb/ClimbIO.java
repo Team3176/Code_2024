@@ -43,13 +43,11 @@ public interface ClimbIO {
 
   public default void stopRight() {}
 
-  public default void getRightLimitswitch() {}
-
   public default void setCoastMode(boolean isCoastMode) {}
 
-  public default void setclimbLBLimitswitchZero() {}
+  // public default void setclimbLBLimitswitchZero() {}
 
-  public default void setclimbRBLimitswitchZero() {}
+  // public default void setclimbRBLimitswitchZero() {}
 
   public default void setLeftVoltage(int voltage) {}
 

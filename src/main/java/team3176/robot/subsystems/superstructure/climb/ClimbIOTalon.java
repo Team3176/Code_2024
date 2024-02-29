@@ -7,7 +7,9 @@
 
 package team3176.robot.subsystems.superstructure.climb;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -15,6 +17,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for the Elevator subsystem. */
 public class ClimbIOTalon implements ClimbIO {
@@ -24,6 +27,8 @@ public class ClimbIOTalon implements ClimbIO {
   NeutralOut brake;
   DigitalInput climbLBLimitswitch, climbRBLimitswitch;
   TalonFXConfiguration configsLeft, configsRight;
+  private final StatusSignal<Double> rightPosition;
+  private final StatusSignal<Double> leftPosition;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
@@ -52,62 +57,27 @@ public class ClimbIOTalon implements ClimbIO {
     configsRight.Voltage.PeakReverseVoltage = -4;
     climbRight.setInverted(true);
     configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    TalonUtils.applyTalonFxConfigs(climbLeft, configsLeft);
+    TalonUtils.applyTalonFxConfigs(climbRight, configsRight);
 
-    applyTalonFxConfigs(climbLeft, configsLeft);
-    applyTalonFxConfigs(climbRight, configsRight);
+    leftPosition = climbLeft.getPosition();
+    rightPosition = climbRight.getPosition();
+
+    climbRight.setPosition(0);
+    climbLeft.setPosition(0.0);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition,rightPosition);
+    climbLeft.optimizeBusUtilization();
+    climbRight.optimizeBusUtilization();
+
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
+    BaseStatusSignal.refreshAll(leftPosition,rightPosition);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
-    inputs.leftPosition = climbLeft.getPosition().getValueAsDouble();
-    inputs.rightPosition = climbRight.getPosition().getValueAsDouble();
-  }
-
-  public void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
-    /* Retry config apply up to 5 times, report if failure */
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = controller.getConfigurator().apply(configs);
-      System.out.println("Applied configs to: " + Hardwaremap.climbLeft_CID);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      System.out.println("Could not apply configs, error code: " + status.toString());
-    }
-  }
-
-  public void stopLeft() {
-    climbLeft.setControl(brake);
-  }
-
-  public void stopRight() {
-    climbRight.setControl(brake);
-  }
-
-  public double getLeftPosition() {
-    return climbLeft.getPosition().getValueAsDouble();
-  }
-
-  public double getRightPosition() {
-    return climbRight.getPosition().getValueAsDouble();
-  }
-
-  public boolean getLeftLimitswitch() {
-    return (!climbLBLimitswitch.get());
-  }
-
-  public boolean getLeftRightswitch() {
-    return (!climbRBLimitswitch.get());
-  }
-
-  public void setclimbLBLimitswitchZero() {
-    climbLeft.getConfigurator().setPosition(0);
-  }
-
-  public void setclimbRBLimitswitchZero() {
-    climbRight.getConfigurator().setPosition(0);
+    inputs.leftPosition = leftPosition.getValueAsDouble();
+    inputs.rightPosition = rightPosition.getValueAsDouble();
   }
 
   @Override
