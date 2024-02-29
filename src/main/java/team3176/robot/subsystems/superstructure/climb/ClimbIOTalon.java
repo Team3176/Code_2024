@@ -47,6 +47,10 @@ public class ClimbIOTalon implements ClimbIO {
     configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Voltage.PeakForwardVoltage = 4;
     configsLeft.Voltage.PeakReverseVoltage = -4;
+    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 30;
+    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     climbLeft.setInverted(false);
 
@@ -56,10 +60,14 @@ public class ClimbIOTalon implements ClimbIO {
     configsRight.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Voltage.PeakForwardVoltage = 4;
     configsRight.Voltage.PeakReverseVoltage = -4;
-    climbRight.setInverted(true);
+    configsRight.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    configsRight.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 30;
+    configsRight.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configsRight.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     TalonUtils.applyTalonFxConfigs(climbLeft, configsLeft);
     TalonUtils.applyTalonFxConfigs(climbRight, configsRight);
+    climbRight.setInverted(true);
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
