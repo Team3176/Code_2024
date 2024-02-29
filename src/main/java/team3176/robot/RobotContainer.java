@@ -152,12 +152,12 @@ public class RobotContainer {
     controller
         .operator
         .leftBumper()
-        .whileTrue(superstructure.setClimbLeftPosition(() -> controller.operator.getLeftY()))
+        .whileTrue(superstructure.moveClimbLeftPosition(() -> controller.operator.getLeftY()))
         .onFalse(superstructure.stopClimbLeft());
     controller
         .operator
         .rightBumper()
-        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getRightY()))
+        .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
     controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
     controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());

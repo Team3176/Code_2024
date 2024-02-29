@@ -8,7 +8,6 @@
 package team3176.robot.subsystems.superstructure.climb;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -29,6 +28,8 @@ public class ClimbIOTalon implements ClimbIO {
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
   private final StatusSignal<Double> leftPosition;
+  private final StatusSignal<Double> rightError;
+  private final StatusSignal<Double> leftError;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
@@ -62,36 +63,35 @@ public class ClimbIOTalon implements ClimbIO {
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
+    rightError = climbRight.getClosedLoopError();
+    leftError = climbLeft.getClosedLoopError();
 
     climbRight.setPosition(0);
     climbLeft.setPosition(0.0);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition,rightPosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, leftPosition, rightPosition, rightError, leftError);
     climbLeft.optimizeBusUtilization();
     climbRight.optimizeBusUtilization();
-
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftPosition,rightPosition);
+    BaseStatusSignal.refreshAll(leftPosition, rightPosition, leftError, rightError);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
     inputs.leftPosition = leftPosition.getValueAsDouble();
     inputs.rightPosition = rightPosition.getValueAsDouble();
+    inputs.leftError = leftError.getValue();
+    inputs.rightError = rightError.getValue();
   }
 
   @Override
-  public void setLeft(double percent) {
-    climbLeft.set(percent);
-  }
-
-  @Override
-  public void setLeftPIDPosition(int position) {
+  public void setLeftPIDPosition(double position) {
     climbLeft.setControl(voltPosition.withPosition(position));
   }
 
   @Override
-  public void setRightPIDPosition(int position) {
+  public void setRightPIDPosition(double position) {
     climbRight.setControl(voltPosition.withPosition(position));
   }
 
@@ -101,12 +101,17 @@ public class ClimbIOTalon implements ClimbIO {
   }
 
   @Override
-  public void setRightVoltage(int voltage) {
+  public void setLeft(double percent) {
+    climbLeft.set(percent);
+  }
+
+  @Override
+  public void setRightVoltage(double voltage) {
     climbRight.setVoltage(voltage);
   }
 
   @Override
-  public void setLeftVoltage(int voltage) {
+  public void setLeftVoltage(double voltage) {
     climbLeft.setVoltage(voltage);
   }
   // System.out.println("ElevatorIOFalcon.set was called");

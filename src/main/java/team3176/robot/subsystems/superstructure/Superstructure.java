@@ -52,6 +52,14 @@ public class Superstructure {
     return climb.setRightPosition(position);
   }
 
+  public Command moveClimbLeftPosition(DoubleSupplier position) {
+    return climb.moveLeftPosition(position);
+  }
+
+  public Command moveClimbRightPosition(DoubleSupplier position) {
+    return climb.moveRightPosition(position);
+  }
+
   public Command stopClimbLeft() {
     return climb.stopLeft();
   }
