@@ -117,7 +117,7 @@ public class RobotContainer {
     /*
      *  Rotation Stick
      */
-    
+
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
     controller
         .rotStick
