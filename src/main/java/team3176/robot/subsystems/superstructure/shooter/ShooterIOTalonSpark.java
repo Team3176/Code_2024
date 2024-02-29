@@ -64,7 +64,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
     pivotEncoder.setPosition(0.0);
-    // pivotShooter.setSmartCurrentLimit(40);
+    pivotShooter.setSmartCurrentLimit(80);
     pivotShooter.setIdleMode(IdleMode.kBrake);
     pivotShooter.setInverted(true);
     pivotShooter.burnFlash();

@@ -169,14 +169,16 @@ public class LoggedAprilPhotonCam {
       cov = VecBuilder.fill(distance2, distance2, distance2);
     }
     if (!DriverStation.isDisabled()) {
-      if (Math.abs(p.estimatedPose.getZ()) > 1.0
-          || p.estimatedPose
-                  .minus(new Pose3d(Drivetrain.getInstance().getPose()))
-                  .getTranslation()
-                  .getNorm()
-              > 1.0
-          || distance > 7.0) {
-        return;
+      if (p.targetsUsed.size() == 1) {
+        if (Math.abs(p.estimatedPose.getZ()) > 1.0
+            || p.estimatedPose
+                    .minus(new Pose3d(Drivetrain.getInstance().getPose()))
+                    .getTranslation()
+                    .getNorm()
+                > 1.0
+            || distance > 7.0) {
+          return;
+        }
       }
     }
     Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);

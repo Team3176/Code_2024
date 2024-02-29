@@ -133,7 +133,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command spit() {
-    return this.runEnd(() -> io.setRollerVolts(-(rollerVolts.get())), () -> io.setRollerVolts(0));
+    return this.runEnd(() -> io.setRollerVolts(-2), () -> io.setRollerVolts(0));
   }
 
   @Override

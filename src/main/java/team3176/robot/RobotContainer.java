@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
@@ -73,7 +72,12 @@ public class RobotContainer {
                 () -> controller.getSpin())
             .withName("default drive"));
     NamedCommands.registerCommand(
-        "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
+        "shoot",
+        superstructure
+            .aimShooter()
+            .alongWith(new WaitCommand(2.0).andThen(superstructure.shoot()))
+            .withTimeout(4.0)
+            .withName("shooting"));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -87,6 +91,16 @@ public class RobotContainer {
         .transStick
         .button(3)
         .whileTrue(drivetrain.chaseNote().alongWith(Intake.getInstance().intakeNote()));
+    controller
+        .transStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .chaseNoteTeleo(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin())
+                .alongWith(Intake.getInstance().intakeNote()));
     controller
         .transStick
         .button(10)
@@ -104,15 +118,15 @@ public class RobotContainer {
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
-    controller
-        .operator
-        .b()
-        .whileTrue(
-            superstructure
-                .shooterPivotPID(27)
-                .alongWith(new PrintCommand("shooter"))
-                .withName("shooter_pivot"))
-        .onFalse(superstructure.shooterPivotPID(0));
+    // controller
+    //     .operator
+    //     .b()
+    //     .whileTrue(
+    //         superstructure
+    //             .shooterPivotPID(27)
+    //             .alongWith(new PrintCommand("shooter"))
+    //             .withName("shooter_pivot"))
+    //     .onFalse(superstructure.shooterPivotPID(0));
     controller.operator.x().whileTrue(superstructure.spit());
     controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
 
@@ -122,12 +136,14 @@ public class RobotContainer {
     .whileTrue(Shooter.getInstance().aim()); */
 
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
-    controller.rotStick.button(2).whileTrue(superstructure.aimShooter());
     controller
         .rotStick
-        .button(3)
-        .whileTrue(Intake.getInstance().spinIntakeUntilPivot())
-        .onFalse(Intake.getInstance().stopRollers());
+        .button(2)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimShooter()));
+    controller.rotStick.button(3).whileTrue(superstructure.aimShooter());
     controller
         .transStick
         .button(2)
@@ -143,6 +159,8 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
+    controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
+    controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());
   }
 
   public void clearCanFaults() {
@@ -195,6 +213,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return choosenAutonomousCommand;
+    return autonChooser.get();
   }
 }

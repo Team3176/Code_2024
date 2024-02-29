@@ -209,7 +209,7 @@ public class Drivetrain extends SubsystemBase {
             .kinematics(kinematics)
             .moduleLocations(SwerveModuleTranslations)
             .build();
-    orientationPID = new TunablePID("Drivetrain/orientationPID", 1.0, 0.0, 0.0);
+    orientationPID = new TunablePID("Drivetrain/orientationPID", 10.0, 0.0, 0.15);
     orientationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
@@ -452,7 +452,7 @@ public class Drivetrain extends SubsystemBase {
             new ChassisSpeeds(
                 linearVelocity.getX() * MAX_WHEEL_SPEED,
                 linearVelocity.getY() * MAX_WHEEL_SPEED,
-                omega * 10.5);
+                omega * 6.0);
         return speeds;
       }
     };
@@ -527,9 +527,9 @@ public class Drivetrain extends SubsystemBase {
             Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed = baseJoy.get();
             speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
-            driveVelocity(speed);
+            driveVelocityFieldCentric(speed);
           } else {
-            driveVelocity(baseJoy.get());
+            driveVelocityFieldCentric(baseJoy.get());
           }
         });
   }
@@ -539,7 +539,7 @@ public class Drivetrain extends SubsystemBase {
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
             double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
+            double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
             Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(

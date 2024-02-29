@@ -14,7 +14,7 @@ public class Transfer extends SubsystemBase {
   public Transfer() {
     io = new TransferIOTalon();
     inputs = new TransferIOInputsAutoLogged();
-    this.transferVelocity = new LoggedTunableNumber("transfer/velocity", 0.0);
+    this.transferVelocity = new LoggedTunableNumber("transfer/velocity", 0.35);
   }
 
   public Command shoot() {

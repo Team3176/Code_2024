@@ -38,10 +38,10 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 0.75, 0.0, 0.01);
+    this.pivotPIDController = new TunablePID("shooter/pid", 0.0, 0.0, 0.00);
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
-    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 10.0);
-    this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 10.0);
+    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 40.0);
+    this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0);
   }
 
@@ -59,13 +59,13 @@ public class Shooter extends SubsystemBase {
 
   private void PIDPositionPeriodic() {
     Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
-    double pivotVoltage =
-        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
+    double pivotVoltage = 0.0;
+    // pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
     if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage += forwardPivotVoltageOffset.get();
+      pivotVoltage += 2.0;
     }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
-    // io.setPivotVoltage(pivotVoltage);
+    io.setPivotVoltage(pivotVoltage);
   }
 
   @AutoLogOutput
@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
-          io.setFlywheelVelocity(0);
+          io.setFlywheelVelocity(20);
           pivotSetpoint = new Rotation2d();
         });
   }
