@@ -22,6 +22,10 @@ public class Transfer extends SubsystemBase {
         () -> io.setTransferController(transferVelocity.get()), () -> io.setTransferController(0));
   }
 
+  public Command shoot(double velocity) {
+    return this.runEnd(() -> io.setTransferController(velocity), () -> io.setTransferController(0));
+  }
+
   public Command spit() {
     return this.runEnd(
         () -> io.setTransferController(-(transferVelocity.get())),

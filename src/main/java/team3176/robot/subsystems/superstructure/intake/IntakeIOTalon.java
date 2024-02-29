@@ -7,6 +7,8 @@
 
 package team3176.robot.subsystems.superstructure.intake;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -36,6 +38,17 @@ public class IntakeIOTalon implements IntakeIO {
   DigitalInput pivotLinebreak;
   DigitalInput upperLimitSwitch;
   DigitalInput lowerLimitSwitch;
+
+  private final StatusSignal<Double> pivotAppliedVolts;
+  private final StatusSignal<Double> pivotCurrentAmps;
+  private final StatusSignal<Double> pivotVelocity;
+  private final StatusSignal<Double> pivotPosition;
+  private final StatusSignal<Double> pivotTemp;
+
+  private final StatusSignal<Double> rollerAppliedVolts;
+  private final StatusSignal<Double> rollerCurrentAmps;
+  private final StatusSignal<Double> rollerVelocity;
+  private final StatusSignal<Double> rollerTemp;
 
   public IntakeIOTalon() {
 
@@ -74,29 +87,63 @@ public class IntakeIOTalon implements IntakeIO {
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
     TalonUtils.applyTalonFxConfigs(pivotController, pivotConfigs);
     pivotController.setPosition(0, 0);
+
+    pivotAppliedVolts = pivotController.getMotorVoltage();
+    pivotCurrentAmps = pivotController.getStatorCurrent();
+    pivotVelocity = pivotController.getVelocity();
+    pivotPosition = pivotController.getPosition();
+    pivotTemp = pivotController.getDeviceTemp();
+
+    rollerAppliedVolts = rollerController.getMotorVoltage();
+    rollerCurrentAmps = rollerController.getStatorCurrent();
+    rollerVelocity = rollerController.getVelocity();
+    rollerTemp = rollerController.getDeviceTemp();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        pivotAppliedVolts,
+        pivotCurrentAmps,
+        pivotVelocity,
+        pivotPosition,
+        pivotTemp,
+        rollerAppliedVolts,
+        rollerVelocity,
+        rollerCurrentAmps,
+        rollerTemp);
+
+    rollerController.optimizeBusUtilization();
+    pivotController.optimizeBusUtilization();
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        pivotAppliedVolts,
+        pivotCurrentAmps,
+        pivotVelocity,
+        pivotPosition,
+        pivotTemp,
+        rollerAppliedVolts,
+        rollerVelocity,
+        rollerCurrentAmps,
+        rollerTemp);
+
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());
 
     inputs.upperLimitSwitch = (!upperLimitSwitch.get());
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
-    inputs.pivotAppliedVolts = pivotController.getMotorVoltage().getValueAsDouble();
-    inputs.pivotCurrentAmps = pivotController.getStatorCurrent().getValueAsDouble();
-    inputs.pivotTempCelcius = pivotController.getDeviceTemp().getValueAsDouble();
-    inputs.pivotPosition =
-        Units.rotationsToRadians(pivotController.getPosition().getValueAsDouble());
-    inputs.pivotVelocityRadPerSec =
-        Units.rotationsToRadians(pivotController.getVelocity().getValueAsDouble());
+    inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
+    inputs.pivotCurrentAmps = pivotCurrentAmps.getValueAsDouble();
+    inputs.pivotTempCelcius = pivotTemp.getValueAsDouble();
+    inputs.pivotPosition = Units.rotationsToRadians(pivotPosition.getValueAsDouble());
+    inputs.pivotVelocityRadPerSec = Units.rotationsToRadians(pivotVelocity.getValueAsDouble());
 
-    inputs.rollerAppliedVolts = rollerController.getMotorVoltage().getValueAsDouble();
-    inputs.rollerCurrentAmps = rollerController.getStatorCurrent().getValueAsDouble();
-    inputs.rollerTempCelcius = rollerController.getDeviceTemp().getValueAsDouble();
-    inputs.rollerVelocityRadPerSec =
-        Units.rotationsToRadians(rollerController.getVelocity().getValueAsDouble());
+    inputs.rollerAppliedVolts = rollerAppliedVolts.getValueAsDouble();
+    inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
+    inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
+    inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
   }
 
   /*   @Override

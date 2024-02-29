@@ -74,7 +74,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "shoot",
         superstructure
-            .aimShooter()
+            .aimClose()
             .alongWith(new WaitCommand(2.0).andThen(superstructure.shoot()))
             .withTimeout(4.0)
             .withName("shooting"));
@@ -86,6 +86,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    /*
+     * Translation Stick
+     */
+    controller
+        .transStick
+        .button(2)
+        .onTrue(Intake.getInstance().intakeNote())
+        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -105,35 +113,10 @@ public class RobotContainer {
         .transStick
         .button(10)
         .whileTrue(drivetrain.swerveDefenseCommand().withName("swerveDefense"));
-    /* controller
-           .rotStick
-           .button(2)
-           .whileTrue(
-               drivetrain
-                   .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                   .alongWith(Shooter.getInstance().aim()));
-    */
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
-    // controller
-    //     .operator
-    //     .b()
-    //     .whileTrue(
-    //         superstructure
-    //             .shooterPivotPID(27)
-    //             .alongWith(new PrintCommand("shooter"))
-    //             .withName("shooter_pivot"))
-    //     .onFalse(superstructure.shooterPivotPID(0));
-    controller.operator.x().whileTrue(superstructure.spit());
-    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
-
-    /*     controller
-    .rotStick
-    .button(1)
-    .whileTrue(Shooter.getInstance().aim()); */
+    /*
+     *  Rotation Stick
+     */
 
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
     controller
@@ -142,13 +125,18 @@ public class RobotContainer {
         .whileTrue(
             drivetrain
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimShooter()));
-    controller.rotStick.button(3).whileTrue(superstructure.aimShooter());
+                .alongWith(superstructure.aimShooterTune()));
+    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
     controller
-        .transStick
-        .button(2)
-        .onTrue(Intake.getInstance().intakeNote())
-        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+        .rotStick
+        .button(8)
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+
+    /*
+     * Operator
+     */
+    controller.operator.x().whileTrue(superstructure.spit());
+    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
     controller
         .operator
         .leftBumper()
