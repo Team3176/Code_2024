@@ -84,15 +84,15 @@ public class Climb extends SubsystemBase {
   public void leftGoToPosition(int position) {
     io.setLeftPIDPosition(position);
     // io.setLeft(pid.calculate(getLeftPosition(), position));
-    //System.out.println("climb.leftGoToPosition = " + position);
-    //System.out.println("climb.getPosition = " + inputs.leftPosition);
+    // System.out.println("climb.leftGoToPosition = " + position);
+    // System.out.println("climb.getPosition = " + inputs.leftPosition);
   }
 
   public void rightGoToPosition(int position) {
     io.setRightPIDPosition(position);
     // io.setRight(pid.calculate(getRightPosition(), position));
-    //System.out.println("climb.rightGoToPosition = " + position);
-    //System.out.println("climb.getPosition = " + inputs.rightPosition);
+    // System.out.println("climb.rightGoToPosition = " + position);
+    // System.out.println("climb.getPosition = " + inputs.rightPosition);
   }
 
   public Command setLeftPosition(DoubleSupplier position) {
@@ -126,19 +126,19 @@ public class Climb extends SubsystemBase {
     pid.checkParemeterUpdate();
     if (inputs.isLeftLimitswitch) {
       io.stopLeft();
-      /* 
-          io.setClimbLBLLimitswitchZerio() is a blocking call.. It should not be called perodically 
+      /*
+          io.setClimbLBLLimitswitchZerio() is a blocking call.. It should not be called perodically
           Keep a local reference as offset.
           I have zeroed the climb for init which should be find for most operations
       */
-      //io.setclimbLBLimitswitchZero();
+      // io.setclimbLBLimitswitchZero();
       // System.out.println("climb left bottom.getPosition = " + inputs.leftPosition);
 
       // need to add reset to climbLeft encoder to 0;
     }
     if (inputs.isRightLimitswitch) {
       io.stopRight();
-      //io.setclimbRBLimitswitchZero();
+      // io.setclimbRBLimitswitchZero();
       // System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
       // need to add reset to climbRight encoder to 0;
     }

@@ -8,7 +8,6 @@
 package team3176.robot.subsystems.superstructure.climb;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -65,15 +64,14 @@ public class ClimbIOTalon implements ClimbIO {
 
     climbRight.setPosition(0);
     climbLeft.setPosition(0.0);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition,rightPosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition, rightPosition);
     climbLeft.optimizeBusUtilization();
     climbRight.optimizeBusUtilization();
-
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftPosition,rightPosition);
+    BaseStatusSignal.refreshAll(leftPosition, rightPosition);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
     inputs.leftPosition = leftPosition.getValueAsDouble();

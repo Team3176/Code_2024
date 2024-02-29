@@ -209,7 +209,7 @@ public class Drivetrain extends SubsystemBase {
             .kinematics(kinematics)
             .moduleLocations(SwerveModuleTranslations)
             .build();
-    orientationPID = new TunablePID("Drivetrain/orientationPID", 10.0, 0.0, 0.15);
+    orientationPID = new TunablePID("Drivetrain/orientationPID", 7.0, 0.0, 0.15);
     orientationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
@@ -475,8 +475,11 @@ public class Drivetrain extends SubsystemBase {
 
           if (angle != null) {
             speeds.omegaRadiansPerSecond =
-                orientationPID.calculate(
-                    this.getPose().getRotation().getRadians(), angle.get().getRadians());
+                MathUtil.clamp(
+                    orientationPID.calculate(
+                        this.getPose().getRotation().getRadians(), angle.get().getRadians()),
+                    -2.5,
+                    2.5);
             driveVelocityFieldCentric(speeds);
           } else {
             if (isFieldCentric) {
