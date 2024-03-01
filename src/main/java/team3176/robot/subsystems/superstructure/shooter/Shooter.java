@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -25,6 +27,8 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
+  public static final double FLYWHEEL_IDLE = 20;
+  
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
   private final LoggedTunableNumber flywheelUpperVelocity;
@@ -36,6 +40,8 @@ public class Shooter extends SubsystemBase {
   private Shooter(ShooterIO io) {
     this.io = io;
     this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.25, 0.00);
+    pivotPIDController.setIntegratorRange(-0.5, 0.5);
+    pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 0);
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 40.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
@@ -55,14 +61,20 @@ public class Shooter extends SubsystemBase {
   }
 
   private void PIDPositionPeriodic() {
-    Rotation2d positionAfterOffset = inputs.pivotPosition.minus(pivotOffSet);
     double pivotVoltage =
-        pivotPIDController.calculate(positionAfterOffset.getRadians(), pivotSetpoint.getRadians());
+        pivotPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
     if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage += forwardPivotVoltageOffset.get();
+      pivotVoltage +=
+          forwardPivotVoltageOffset.get()
+              * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
     }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
     io.setPivotVoltage(pivotVoltage);
+  }
+
+  @AutoLogOutput
+  public Rotation2d getPosition() {
+    return inputs.pivotPosition.minus(pivotOffSet);
   }
 
   @AutoLogOutput
@@ -81,17 +93,15 @@ public class Shooter extends SubsystemBase {
   public Rotation2d getAngle() {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
-
-  private void setUpperShooterVelocityVoltage(double d) {
-    io.setWheelUpperVoltage(d);
+  public boolean isAtSpeed() {
+    double closeValue = 0.1;
+    return (Math.abs(inputs.lowerWheelError) < closeValue && Math.abs(inputs.upperWheelError) < closeValue);
   }
-
-  private void setLowerShooterVelocityVoltage(double d) {
-    io.setFlywheelVelocity(d);
+  public boolean isAtAngle() {
+    return pivotPIDController.atSetpoint();
   }
-
-  public void setShooterStop() {
-    io.setFlywheelVelocity(0);
+  public boolean readyToShoot() {
+    return isAtSpeed() && isAtAngle();
   }
 
   public Command pivotSetPositionOnce(double angleInDegrees) {
@@ -111,7 +121,7 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
-          io.setFlywheelVelocity(20);
+          io.setFlywheelVelocity(FLYWHEEL_IDLE);
           pivotSetpoint = new Rotation2d();
         });
   }
@@ -125,9 +135,13 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = Rotation2d.fromDegrees(angleDegrees);
         },
         () -> {
-          io.setFlywheelVelocity(20);
+          io.setFlywheelVelocity(FLYWHEEL_IDLE);
           pivotSetpoint = new Rotation2d();
         });
+  }
+
+  public Command stopFlywheel() {
+    return this.runOnce(() -> io.setFlywheelVelocity(0.0));
   }
 
   public Command pivotVoltage(double volts) {
@@ -144,9 +158,7 @@ public class Shooter extends SubsystemBase {
     }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
-    Logger.recordOutput("Shooter/position_error", this.pivotPIDController.getPositionError());
-
-    Logger.recordOutput("Shooter/position_offset", inputs.pivotPosition.minus(pivotOffSet));
+    Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());
     PIDPositionPeriodic();
   }
 }

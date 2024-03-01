@@ -60,6 +60,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private final StatusSignal<Double> lowerCurrentAmps;
   private final StatusSignal<Double> upperVelocity;
   private final StatusSignal<Double> lowerVelocity;
+  private final StatusSignal<Double> upperError;
+  private final StatusSignal<Double> lowerError;
 
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
@@ -102,6 +104,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     lowerCurrentAmps = wheelLowerController.getStatorCurrent();
     upperVelocity = wheelUpperController.getVelocity();
     lowerVelocity = wheelLowerController.getVelocity();
+    upperError = wheelUpperController.getClosedLoopError();
+    lowerError = wheelLowerController.getClosedLoopError();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
@@ -110,7 +114,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
         upperCurrentAmps,
         lowerCurrentAmps,
         upperVelocity,
-        lowerVelocity);
+        lowerVelocity,
+        upperError,
+        lowerError);
 
     wheelUpperController.optimizeBusUtilization();
     wheelLowerController.optimizeBusUtilization();
@@ -128,11 +134,16 @@ public class ShooterIOTalonSpark implements ShooterIO {
         upperCurrentAmps,
         lowerCurrentAmps,
         upperVelocity,
-        lowerVelocity);
+        lowerVelocity,
+        upperError,
+        lowerError);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
     inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(upperVelocity.getValue());
     inputs.wheelLowerVelocityRadPerSec = Units.rotationsToRadians(lowerVelocity.getValue());
+
+    inputs.upperWheelError = upperError.getValue();
+    inputs.lowerWheelError = lowerError.getValue();
 
     inputs.wheelUpperAppliedVolts = upperAppliedVolts.getValue();
     inputs.wheelLowerAppliedVolts = lowerAppliedVolts.getValue();
