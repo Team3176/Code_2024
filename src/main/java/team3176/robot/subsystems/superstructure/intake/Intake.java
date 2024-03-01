@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -60,6 +61,10 @@ public class Intake extends SubsystemBase {
     io.setPivotVolts(0.0);
   }
 
+  public boolean hasNote() {
+    return inputs.isRollerLinebreak;
+  }
+
   public Command EmergencyHold() {
     return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
   }
@@ -96,17 +101,12 @@ public class Intake extends SubsystemBase {
   }
 
   public Command retractPivot() {
-    // TODO Implement
     return this.runOnce(() -> this.pivotState = pivotStates.RETRACT);
   }
 
   public Command spinIntakeUntilPivot() {
-    // TODO
-    // spin the intake until the first pivotlinebreak is triggered
-    // do not set the intake to zero at the end that will be a seperate command
-    // use the this.run() and a .until()
     return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> inputs.isRollerLinebreak)
+        .until(() -> hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
 
@@ -119,17 +119,13 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stopRollers() {
-    // TODO
-    // stop the rollers
     return this.runOnce(() -> io.setRollerVolts(0));
   }
 
   public Command intakeNote() {
-    // the full deal.
-    // deployPivot then spin the intake rollers until linebreak 1 then retract intake then stop
-    // rollers.
     return (deployPivot()
             .andThen(spinIntakeUntilPivot())
+            .andThen(LEDSubsystem.getInstance().setHasNote())
             .andThen(retractPivot())
             .andThen(new WaitCommand(0.1))
             .andThen(stopRollers()))

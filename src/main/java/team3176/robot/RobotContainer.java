@@ -54,7 +54,7 @@ public class RobotContainer {
     superstructure = Superstructure.getInstance();
     drivetrain = Drivetrain.getInstance();
 
-    leds = new LEDSubsystem();
+    leds = LEDSubsystem.getInstance();
 
     // superstructure = Superstructure.getInstance();
     visualization = new Visualization();

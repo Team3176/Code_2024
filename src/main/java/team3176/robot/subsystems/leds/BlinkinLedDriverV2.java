@@ -185,27 +185,27 @@ public class BlinkinLedDriverV2 {
 
   /** Set LEDs alliance color solid pattern */
   public void setAllianceColorSolid() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[0]);
+    setPattern(m_allianceColors.get(DriverStation.getAlliance().orElse(Alliance.Blue))[0]);
   }
 
   /** Set LEDs to alliance color breath pattern */
   public void setAllianceColorBreath() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[1]);
+    setPattern(m_allianceColors.get(DriverStation.getAlliance().orElse(Alliance.Blue))[1]);
   }
 
   /** Set LEDs to alliance color chase pattern */
   public void setAllianceColorChase() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[2]);
+    setPattern(m_allianceColors.get(DriverStation.getAlliance().orElse(Alliance.Blue))[2]);
   }
 
   /** Set LEDs to alliance color shot pattern */
   public void setAllianceColorShot() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[3]);
+    setPattern(m_allianceColors.get(DriverStation.getAlliance().orElse(Alliance.Blue))[3]);
   }
 
   /** Set LEDs to alliance color strobe pattern */
   public void setAllianceColorStrobe() {
-    setPattern(m_allianceColors.get(DriverStation.getAlliance())[4]);
+    setPattern(m_allianceColors.get(DriverStation.getAlliance().orElse(Alliance.Blue))[4]);
   }
 
   /** Set LEDs to team color */

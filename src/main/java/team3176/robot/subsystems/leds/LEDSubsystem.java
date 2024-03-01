@@ -1,5 +1,8 @@
 package team3176.robot.subsystems.leds;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team3176.robot.subsystems.leds.BlinkinLedDriver.BlinkinLedMode;
 
@@ -7,8 +10,17 @@ public class LEDSubsystem extends SubsystemBase {
   /** Creates a new LED. */
   private final BlinkinLedDriver blinkin;
 
-  public LEDSubsystem() {
+  private static LEDSubsystem instance;
+
+  private LEDSubsystem() {
     blinkin = new BlinkinLedDriver(9);
+  }
+
+  public static LEDSubsystem getInstance() {
+    if (instance == null) {
+      instance = new LEDSubsystem();
+    }
+    return instance;
   }
 
   public void setBlinkinCode(double blinkinCode) {
@@ -16,30 +28,43 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() < 18) {
+      isEndGame();
+    }
+  }
 
-  public void wantNote() {
+  private void wantNote() {
     // Would prefer flashing orange
     blinkin.setMode(BlinkinLedMode.FIXED_STROBE_RED);
   }
 
-  public void hasNote() {
+  private void hasNote() {
     // Solid Orange
     blinkin.setMode(BlinkinLedMode.SOLID_ORANGE);
   }
 
-  public void isAimedAtSource() {
+  private void isAimedAtSpeaker() {
     // Solid Green
     blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
   }
 
-  public void isEndGame() {
+  private void isEndGame() {
     // Flashing Blue
     blinkin.setMode(BlinkinLedMode.FIXED_SHOT_BLUE);
   }
 
-  public void isAuton() {
+  private void isAuton() {
     // Rainbow
     blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_RAINBOW);
+  }
+
+  private void off() {
+    blinkin.setMode(BlinkinLedMode.SOLID_BLACK);
+  }
+
+  // use SceduleCommand to not take on LED as a requirment and to not wait on it
+  public Command setHasNote() {
+    return new ScheduleCommand(this.runEnd(() -> hasNote(), () -> off()).withTimeout(1.0));
   }
 }
