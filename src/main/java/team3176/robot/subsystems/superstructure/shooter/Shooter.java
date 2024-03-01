@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -28,7 +27,7 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   public static final double FLYWHEEL_IDLE = 20;
-  
+
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
   private final LoggedTunableNumber flywheelUpperVelocity;
@@ -93,13 +92,19 @@ public class Shooter extends SubsystemBase {
   public Rotation2d getAngle() {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
+
+  @AutoLogOutput
   public boolean isAtSpeed() {
     double closeValue = 0.1;
-    return (Math.abs(inputs.lowerWheelError) < closeValue && Math.abs(inputs.upperWheelError) < closeValue);
+    return (Math.abs(inputs.lowerWheelError) < closeValue
+        && Math.abs(inputs.upperWheelError) < closeValue);
   }
+
+  @AutoLogOutput
   public boolean isAtAngle() {
     return pivotPIDController.atSetpoint();
   }
+
   public boolean readyToShoot() {
     return isAtSpeed() && isAtAngle();
   }
