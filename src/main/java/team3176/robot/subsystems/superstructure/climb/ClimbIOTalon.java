@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for the Elevator subsystem. */
@@ -45,29 +46,33 @@ public class ClimbIOTalon implements ClimbIO {
     configsLeft.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsLeft.Voltage.PeakForwardVoltage = 4;
-    configsLeft.Voltage.PeakReverseVoltage = -4;
+    // configsLeft.Voltage.PeakForwardVoltage = 8;
+    // configsLeft.Voltage.PeakReverseVoltage = -8;
     configsLeft.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 30;
+    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        SuperStructureConstants.CLIMBLEFT_TOP_POS;
     configsLeft.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        SuperStructureConstants.CLIMBLEFT_ZERO_POS;
     configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    climbLeft.setInverted(false);
 
-    configsRight.Slot0.kP = 2.4; // An error of 1 rotations results in 40 amps output
+    configsRight.Slot0.kP = 12.4; // An error of 1 rotations results in 40 amps output
     configsRight.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Voltage.PeakForwardVoltage = 4;
-    configsRight.Voltage.PeakReverseVoltage = -4;
+    // configsRight.Voltage.PeakForwardVoltage = 8;
+    // configsRight.Voltage.PeakReverseVoltage = -8;
     configsRight.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    configsRight.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 30;
+    configsRight.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        SuperStructureConstants.CLIMBRIGHT_TOP_POS;
     configsRight.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    configsRight.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+    configsRight.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        SuperStructureConstants.CLIMBRIGHT_ZERO_POS;
     configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     TalonUtils.applyTalonFxConfigs(climbLeft, configsLeft);
     TalonUtils.applyTalonFxConfigs(climbRight, configsRight);
-    climbRight.setInverted(true);
+    climbLeft.setInverted(true);
+    climbRight.setInverted(false);
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
