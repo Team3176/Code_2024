@@ -60,10 +60,10 @@ public class Controller {
 
   public double getXboxJoyLeft() {
     // System.out.println("getLeftY = " + operator.getLeftY());
-    return operator.getLeftY();
+    return (-1 * operator.getLeftY());
   }
 
   public double getXboxJoyRight() {
-    return operator.getRightY();
+    return (-1 * operator.getRightY());
   }
 }

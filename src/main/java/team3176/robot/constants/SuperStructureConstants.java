@@ -34,7 +34,7 @@ public class SuperStructureConstants {
   public static final double CLIMBLEFT_kg = 0.2;
   public static final double CLIMBLEFT_TOLERANCE = 3;
   public static final double CLIMBLEFT_ZERO_POS = 0.39;
-  public static final double CLIMBLEFT_TOP_POS = 20 + CLIMBLEFT_ZERO_POS;
+  public static final double CLIMBLEFT_TOP_POS = 80 + CLIMBLEFT_ZERO_POS;
   public static final double CLIMBLEFT_SIM_OFFSET = 70 + CLIMBLEFT_ZERO_POS;
 
   public static final double CLIMBRIGHT_kP = 0.006;
@@ -43,7 +43,7 @@ public class SuperStructureConstants {
   public static final double CLIMBRIGHT_kg = 0.2;
   public static final double CLIMBRIGHT_TOLERANCE = 3;
   public static final double CLIMBRIGHT_ZERO_POS = 0.39;
-  public static final double CLIMBRIGHT_TOP_POS = 20 + CLIMBRIGHT_ZERO_POS;
+  public static final double CLIMBRIGHT_TOP_POS = 80 + CLIMBRIGHT_ZERO_POS;
   public static final double CLIMBRIGHT_SIM_OFFSET = 70 + CLIMBRIGHT_ZERO_POS;
 
   public static final double INTAKE_PIVOT_kP = 0.006;

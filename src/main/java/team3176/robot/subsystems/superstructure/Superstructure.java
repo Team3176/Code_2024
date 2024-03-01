@@ -28,8 +28,20 @@ public class Superstructure {
     transfer = new Transfer();
   }
 
-  public Command aimShooter() {
+  public Command aimShooterTune() {
     return shooter.aim().alongWith(transfer.shoot());
+  }
+
+  public Command aimShooter(double upper, double lower, double angle, double transferVel) {
+    return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
+  }
+
+  public Command aimClose() {
+    return aimShooter(30, 50, 27, 0.35);
+  }
+
+  public Command aimPodium() {
+    return aimShooter(70, 100, 15, 0.8);
   }
 
   public Command shoot() {
@@ -60,12 +72,20 @@ public class Superstructure {
     return climb.moveRightPosition(position);
   }
 
+  public Command moveClimbLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
+    return climb.moveLeftRightPosition(deltaLeft, deltaRight);
+  }
+
   public Command stopClimbLeft() {
     return climb.stopLeft();
   }
 
   public Command stopClimbRight() {
     return climb.stopRight();
+  }
+
+  public Command stopClimbLeftRight() {
+    return climb.stopLeftRight();
   }
 
   public Command spit() {

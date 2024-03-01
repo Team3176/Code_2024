@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.superstructure.shooter;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,8 +21,6 @@ public class Shooter extends SubsystemBase {
   private static Shooter instance;
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private TalonFXConfiguration configsWheelPort = new TalonFXConfiguration();
-  private TalonFXConfiguration configsWheelStarbrd = new TalonFXConfiguration();
   // Taken from CAD check later;
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
@@ -85,11 +82,11 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromRadians(inputs.pivotPosition.getRadians());
   }
 
-  public void setUpperShooterVelocityVoltage(double d) {
+  private void setUpperShooterVelocityVoltage(double d) {
     io.setWheelUpperVoltage(d);
   }
 
-  public void setLowerShooterVelocityVoltage(double d) {
+  private void setLowerShooterVelocityVoltage(double d) {
     io.setFlywheelVelocity(d);
   }
 
@@ -112,6 +109,20 @@ public class Shooter extends SubsystemBase {
           io.setFlywheelLowerVelocity(flywheelLowerVelocity.get());
           io.setFlywheelUpperVelocity(flywheelUpperVelocity.get());
           this.pivotSetpoint = getAimAngle();
+        },
+        () -> {
+          io.setFlywheelVelocity(20);
+          pivotSetpoint = new Rotation2d();
+        });
+  }
+
+  public Command aim(double upper, double lower, double angleDegrees) {
+
+    return this.runEnd(
+        () -> {
+          io.setFlywheelLowerVelocity(upper);
+          io.setFlywheelUpperVelocity(lower);
+          this.pivotSetpoint = Rotation2d.fromDegrees(angleDegrees);
         },
         () -> {
           io.setFlywheelVelocity(20);
