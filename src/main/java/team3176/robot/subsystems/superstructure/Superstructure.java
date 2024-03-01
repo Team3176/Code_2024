@@ -37,7 +37,7 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(30, 50, 27, 0.35);
+    return aimShooter(60, 40, 27, 0.35);
   }
 
   public Command aimPodium() {
