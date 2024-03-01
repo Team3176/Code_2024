@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
@@ -47,6 +48,7 @@ public class ClimbIOTalon implements ClimbIO {
     configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Voltage.PeakForwardVoltage = 4;
     configsLeft.Voltage.PeakReverseVoltage = -4;
+    configsLeft.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     climbLeft.setInverted(false);
 

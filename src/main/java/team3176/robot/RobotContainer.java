@@ -161,6 +161,12 @@ public class RobotContainer {
         .onFalse(superstructure.stopClimbRight());
     controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
     controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());
+
+    controller
+        .operator
+        .start()
+        .and(controller.operator.povLeft())
+        .onTrue(Intake.getInstance().EmergencyHold());
   }
 
   public void clearCanFaults() {

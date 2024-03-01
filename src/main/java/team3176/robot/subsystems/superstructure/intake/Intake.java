@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure.intake;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +25,7 @@ public class Intake extends SubsystemBase {
   private double pivotSetpoint;
   private final double DEPLOY_POS = 1.7;
   private double pivot_offset = 0;
+  private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
 
   private enum pivotStates {
     DEPLOY,
@@ -42,6 +44,8 @@ public class Intake extends SubsystemBase {
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 4.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
+    // kG.put(27.0, 0.6);
+    // kG.put(,)
   }
 
   private void stopRoller() {
@@ -54,6 +58,10 @@ public class Intake extends SubsystemBase {
 
   private void stopPivot() {
     io.setPivotVolts(0.0);
+  }
+
+  public Command EmergencyHold() {
+    return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
   }
 
   private void runPivot(double volts) {
