@@ -64,12 +64,28 @@ public class Superstructure {
     return climb.setRightPosition(position);
   }
 
+  public Command moveClimbLeftPosition(DoubleSupplier position) {
+    return climb.moveLeftPosition(position);
+  }
+
+  public Command moveClimbRightPosition(DoubleSupplier position) {
+    return climb.moveRightPosition(position);
+  }
+
+  public Command moveClimbLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
+    return climb.moveLeftRightPosition(deltaLeft, deltaRight);
+  }
+
   public Command stopClimbLeft() {
     return climb.stopLeft();
   }
 
   public Command stopClimbRight() {
     return climb.stopRight();
+  }
+
+  public Command stopClimbLeftRight() {
+    return climb.stopLeftRight();
   }
 
   public Command spit() {

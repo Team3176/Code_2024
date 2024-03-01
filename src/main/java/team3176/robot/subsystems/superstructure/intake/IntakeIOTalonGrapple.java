@@ -9,7 +9,6 @@ package team3176.robot.subsystems.superstructure.intake;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -102,7 +101,7 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     TalonUtils.applyTalonFxConfigs(pivotController, pivotConfigs);
     pivotController.setPosition(0, 0);
 
-        pivotAppliedVolts = pivotController.getMotorVoltage();
+    pivotAppliedVolts = pivotController.getMotorVoltage();
     pivotCurrentAmps = pivotController.getStatorCurrent();
     pivotVelocity = pivotController.getVelocity();
     pivotPosition = pivotController.getPosition();
@@ -132,15 +131,15 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-      pivotAppliedVolts,
-      pivotCurrentAmps,
-      pivotVelocity,
-      pivotPosition,
-      pivotTemp,
-      rollerAppliedVolts,
-      rollerVelocity,
-      rollerCurrentAmps,
-      rollerTemp);
+        pivotAppliedVolts,
+        pivotCurrentAmps,
+        pivotVelocity,
+        pivotPosition,
+        pivotTemp,
+        rollerAppliedVolts,
+        rollerVelocity,
+        rollerCurrentAmps,
+        rollerTemp);
 
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());

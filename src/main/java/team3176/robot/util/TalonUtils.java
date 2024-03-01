@@ -8,7 +8,7 @@ public class TalonUtils {
   public static void applyTalonFxConfigs(TalonFX controller, TalonFXConfiguration configs) {
     /* Retry config apply up to 5 times, report if failure */
     StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 5; ++i) {
       status = controller.getConfigurator().apply(configs);
       if (status.isOK()) break;
     }

@@ -16,11 +16,12 @@ public interface ClimbIO {
   public static class ClimbIOInputs {
     public double leftPosition = 0.0;
     public double rightPosition = 0.0;
-
-    public double VelocityRadPerSec = 0.0;
-    public double AppliedVolts = 0.0;
-    public double[] CurrentAmps = new double[] {};
-    public double[] TempCelcius = new double[] {};
+    public double leftError = 0.0;
+    public double rightError = 0.0;
+    // public double VelocityRadPerSec = 0.0;
+    // public double AppliedVolts = 0.0;
+    // public double[] CurrentAmps = new double[] {};
+    // public double[] TempCelcius = new double[] {};
     public boolean isLeftLimitswitch = true;
     public boolean isRightLimitswitch = true;
 
@@ -35,23 +36,23 @@ public interface ClimbIO {
 
   public default void setRight(double percentOutput) {}
 
-  public default void setLeftPIDPosition(int encoderValue) {}
+  public default void setLeftPIDPosition(double rotations) {}
 
-  public default void setRightPIDPosition(int encoderValue) {}
+  public default void setRightPIDPosition(double rotations) {}
 
-  public default void stopLeft() {}
+  // public default void stopLeft() {}
 
-  public default void stopRight() {}
+  // public default void stopRight() {}
 
-  public default void setCoastMode(boolean isCoastMode) {}
+  // public default void setCoastMode(boolean isCoastMode) {}
 
   // public default void setclimbLBLimitswitchZero() {}
 
   // public default void setclimbRBLimitswitchZero() {}
 
-  public default void setLeftVoltage(int voltage) {}
+  public default void setLeftVoltage(double voltage) {}
 
-  public default void setRightVoltage(int voltage) {}
+  public default void setRightVoltage(double voltage) {}
 
   public default void reset() {}
 }

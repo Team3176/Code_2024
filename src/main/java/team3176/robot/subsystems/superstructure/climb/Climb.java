@@ -20,40 +20,20 @@ public class Climb extends SubsystemBase {
     this.io = io;
   }
 
-  public void setCoastMode() {
-    io.setCoastMode(true);
-  }
-
-  public void setBrakeMode() {
-    io.setCoastMode(false);
-  }
-
-  public void setLeftPercent(double percent) {
-    io.setLeft(percent);
-  }
-
-  public void setRightPercent(double percent) {
-    io.setRight(percent);
-  }
-
-  /*
-  public void stopLeft() {
-    io.stopLeft();
-  }
-  */
-
   public Command stopLeft() {
-    return this.runOnce(io::stopLeft);
+    return this.runOnce(() -> io.setLeftVoltage(0.0));
   }
-
-  /*
-  public void stopRight() {
-    io.stopRight();
-  }
-  */
 
   public Command stopRight() {
-    return this.runOnce(io::stopRight);
+    return this.runOnce(() -> io.setRightVoltage(0.0));
+  }
+
+  public Command stopLeftRight() {
+    return this.runOnce(
+        () -> {
+          io.setLeftVoltage(0.0);
+          io.setRightVoltage(0.0);
+        });
   }
 
   public double getLeftPosition() {
@@ -62,14 +42,6 @@ public class Climb extends SubsystemBase {
 
   public double getRightPosition() {
     return inputs.rightPosition;
-  }
-
-  public void setRightVoltage(int voltage) {
-    io.setRightVoltage(voltage);
-  }
-
-  public void setLeftVoltage(int voltage) {
-    io.setLeftVoltage(voltage);
   }
   /*
   public Command leftGoToPosition(double position) {
@@ -81,34 +53,67 @@ public class Climb extends SubsystemBase {
         io::stopLeft);
   }
   */
-  public void leftGoToPosition(int position) {
+  private void leftGoToPosition(double position) {
+    if (position > SuperStructureConstants.CLIMBLEFT_TOP_POS) {
+      position = SuperStructureConstants.CLIMBLEFT_TOP_POS;
+    }
+    if (position < 0.0) {
+      position = 0.0;
+    }
     io.setLeftPIDPosition(position);
-    // io.setLeft(pid.calculate(getLeftPosition(), position));
-    // System.out.println("climb.leftGoToPosition = " + position);
-    // System.out.println("climb.getPosition = " + inputs.leftPosition);
   }
 
-  public void rightGoToPosition(int position) {
+  private void rightGoToPosition(double position) {
+    if (position > SuperStructureConstants.CLIMBRIGHT_TOP_POS) {
+      position = SuperStructureConstants.CLIMBRIGHT_TOP_POS;
+    } else if (position < 0.0) {
+      position = 0.0;
+    }
     io.setRightPIDPosition(position);
-    // io.setRight(pid.calculate(getRightPosition(), position));
-    // System.out.println("climb.rightGoToPosition = " + position);
-    // System.out.println("climb.getPosition = " + inputs.rightPosition);
   }
 
   public Command setLeftPosition(DoubleSupplier position) {
     return this.runEnd(
         () -> {
-          io.setLeftPIDPosition((int) (position.getAsDouble() * 30));
+          leftGoToPosition((position.getAsDouble()));
         },
-        io::stopRight);
+        () -> io.setLeftVoltage(0.0));
   }
 
   public Command setRightPosition(DoubleSupplier position) {
     return this.runEnd(
         () -> {
-          io.setRightPIDPosition((int) (position.getAsDouble() * 30));
+          rightGoToPosition((position.getAsDouble()));
         },
-        io::stopRight);
+        () -> io.setRightVoltage(0.0));
+  }
+
+  public Command moveRightPosition(DoubleSupplier delta) {
+    return this.runEnd(
+        () -> {
+          rightGoToPosition(inputs.rightPosition + (1 * delta.getAsDouble()));
+        },
+        () -> io.setRightVoltage(0.0));
+  }
+
+  public Command moveLeftPosition(DoubleSupplier delta) {
+    return this.runEnd(
+        () -> {
+          leftGoToPosition(inputs.leftPosition + (1 * delta.getAsDouble()));
+        },
+        () -> io.setLeftVoltage(0.0));
+  }
+
+  public Command moveLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
+    return this.runEnd(
+        () -> {
+          rightGoToPosition(inputs.rightPosition + deltaRight.getAsDouble());
+          leftGoToPosition(inputs.leftPosition + deltaLeft.getAsDouble());
+        },
+        () -> {
+          io.setRightVoltage(0.0);
+          io.setLeftVoltage(0.0);
+        });
   }
 
   /*   public Command rightGoToPosition(double position) {
@@ -124,32 +129,6 @@ public class Climb extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
     pid.checkParemeterUpdate();
-    if (inputs.isLeftLimitswitch) {
-      io.stopLeft();
-      /*
-          io.setClimbLBLLimitswitchZerio() is a blocking call.. It should not be called perodically
-          Keep a local reference as offset.
-          I have zeroed the climb for init which should be find for most operations
-      */
-      // io.setclimbLBLimitswitchZero();
-      // System.out.println("climb left bottom.getPosition = " + inputs.leftPosition);
-
-      // need to add reset to climbLeft encoder to 0;
-    }
-    if (inputs.isRightLimitswitch) {
-      io.stopRight();
-      // io.setclimbRBLimitswitchZero();
-      // System.out.println("climb right bottom.getPosition = " + inputs.rightPosition);
-      // need to add reset to climbRight encoder to 0;
-    }
-
-    if (inputs.leftPosition >= SuperStructureConstants.CLIMBLEFT_TOP_POS) {
-      io.stopLeft();
-    }
-
-    if (inputs.leftPosition >= SuperStructureConstants.CLIMBRIGHT_TOP_POS) {
-      io.stopRight();
-    }
   }
 
   public static Climb getInstance() {

@@ -28,10 +28,10 @@ public class ClimbIOSim implements ClimbIO {
   public void updateInputs(ClimbIOInputs inputs) {
     elevatorSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.leftPosition = elevatorSim.getPositionMeters();
-    inputs.VelocityRadPerSec = elevatorSim.getVelocityMetersPerSecond();
-    inputs.AppliedVolts = appliedVolts;
-    inputs.CurrentAmps = new double[] {elevatorSim.getCurrentDrawAmps()};
-    inputs.TempCelcius = new double[] {0.0};
+    // inputs.VelocityRadPerSec = elevatorSim.getVelocityMetersPerSecond();
+    // inputs.AppliedVolts = appliedVolts;
+    // inputs.CurrentAmps = new double[] {elevatorSim.getCurrentDrawAmps()};
+    // inputs.TempCelcius = new double[] {0.0};
     Logger.recordOutput("Elevator/SimPos", elevatorSim.getPositionMeters());
   }
 

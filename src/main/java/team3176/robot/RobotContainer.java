@@ -140,15 +140,26 @@ public class RobotContainer {
     controller
         .operator
         .leftBumper()
-        .whileTrue(superstructure.setClimbLeftPosition(() -> controller.operator.getLeftY()))
-        .onFalse(superstructure.stopClimbLeft());
+        .whileTrue(
+            superstructure.moveClimbLeftRightPosition(
+                () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
+        .onFalse(superstructure.stopClimbLeftRight());
+
+    /*
     controller
         .operator
         .rightBumper()
-        .whileTrue(superstructure.setClimbRightPosition(() -> controller.operator.getRightY()))
+        .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
+        */
     controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
     controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());
+
+    controller
+        .operator
+        .start()
+        .and(controller.operator.povLeft())
+        .onTrue(Intake.getInstance().EmergencyHold());
   }
 
   public void clearCanFaults() {

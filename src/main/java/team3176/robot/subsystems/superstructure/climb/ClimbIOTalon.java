@@ -13,9 +13,11 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for the Elevator subsystem. */
@@ -28,6 +30,8 @@ public class ClimbIOTalon implements ClimbIO {
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
   private final StatusSignal<Double> leftPosition;
+  private final StatusSignal<Double> rightError;
+  private final StatusSignal<Double> leftError;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
@@ -43,53 +47,65 @@ public class ClimbIOTalon implements ClimbIO {
     configsLeft.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     configsLeft.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsLeft.Voltage.PeakForwardVoltage = 4;
-    configsLeft.Voltage.PeakReverseVoltage = -4;
+    // configsLeft.Voltage.PeakForwardVoltage = 8;
+    // configsLeft.Voltage.PeakReverseVoltage = -8;
+    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    configsLeft.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        SuperStructureConstants.CLIMBLEFT_TOP_POS;
+    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configsLeft.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        SuperStructureConstants.CLIMBLEFT_ZERO_POS;
     configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    climbLeft.setInverted(false);
 
-    configsRight.Slot0.kP = 2.4; // An error of 1 rotations results in 40 amps output
+    configsRight.Slot0.kP = 12.4; // An error of 1 rotations results in 40 amps output
     configsRight.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
+    configsRight.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
-    configsRight.Voltage.PeakForwardVoltage = 4;
-    configsRight.Voltage.PeakReverseVoltage = -4;
-    climbRight.setInverted(true);
+    // configsRight.Voltage.PeakForwardVoltage = 8;
+    // configsRight.Voltage.PeakReverseVoltage = -8;
+    configsRight.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    configsRight.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        SuperStructureConstants.CLIMBRIGHT_TOP_POS;
+    configsRight.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    configsRight.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        SuperStructureConstants.CLIMBRIGHT_ZERO_POS;
     configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     TalonUtils.applyTalonFxConfigs(climbLeft, configsLeft);
     TalonUtils.applyTalonFxConfigs(climbRight, configsRight);
+    climbLeft.setInverted(true);
+    climbRight.setInverted(false);
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
+    rightError = climbRight.getClosedLoopError();
+    leftError = climbLeft.getClosedLoopError();
 
     climbRight.setPosition(0);
     climbLeft.setPosition(0.0);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition, rightPosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, leftPosition, rightPosition, rightError, leftError);
     climbLeft.optimizeBusUtilization();
     climbRight.optimizeBusUtilization();
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftPosition, rightPosition);
+    BaseStatusSignal.refreshAll(leftPosition, rightPosition, leftError, rightError);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
     inputs.leftPosition = leftPosition.getValueAsDouble();
     inputs.rightPosition = rightPosition.getValueAsDouble();
+    inputs.leftError = leftError.getValue();
+    inputs.rightError = rightError.getValue();
   }
 
   @Override
-  public void setLeft(double percent) {
-    climbLeft.set(percent);
-  }
-
-  @Override
-  public void setLeftPIDPosition(int position) {
+  public void setLeftPIDPosition(double position) {
     climbLeft.setControl(voltPosition.withPosition(position));
   }
 
   @Override
-  public void setRightPIDPosition(int position) {
+  public void setRightPIDPosition(double position) {
     climbRight.setControl(voltPosition.withPosition(position));
   }
 
@@ -99,12 +115,17 @@ public class ClimbIOTalon implements ClimbIO {
   }
 
   @Override
-  public void setRightVoltage(int voltage) {
+  public void setLeft(double percent) {
+    climbLeft.set(percent);
+  }
+
+  @Override
+  public void setRightVoltage(double voltage) {
     climbRight.setVoltage(voltage);
   }
 
   @Override
-  public void setLeftVoltage(int voltage) {
+  public void setLeftVoltage(double voltage) {
     climbLeft.setVoltage(voltage);
   }
   // System.out.println("ElevatorIOFalcon.set was called");
