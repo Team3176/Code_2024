@@ -5,6 +5,7 @@
 package team3176.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import org.littletonrobotics.junction.Logger;
 
 /** REV Robotics Blinkin LED Driver. */
 public class BlinkinLedDriver {
@@ -24,6 +25,7 @@ public class BlinkinLedDriver {
   }
 
   public void setMode(BlinkinLedMode mode) {
+    Logger.recordOutput("LEDS/mode", mode);
     spark.set(mode.value);
   }
 

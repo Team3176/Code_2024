@@ -71,6 +71,7 @@ public class RobotContainer {
                 () -> controller.getStrafe(),
                 () -> controller.getSpin())
             .withName("default drive"));
+    leds.setDefaultCommand(leds.DefaultLED());
     NamedCommands.registerCommand(
         "shoot",
         superstructure
@@ -98,7 +99,11 @@ public class RobotContainer {
     controller
         .transStick
         .button(3)
-        .whileTrue(drivetrain.chaseNote().alongWith(Intake.getInstance().intakeNote()));
+        .whileTrue(
+            drivetrain
+                .chaseNote()
+                .alongWith(Intake.getInstance().intakeNote())
+                .alongWith(leds.AutoDriveStart().asProxy()));
     controller
         .transStick
         .button(4)

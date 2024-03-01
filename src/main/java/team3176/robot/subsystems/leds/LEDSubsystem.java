@@ -1,6 +1,5 @@
 package team3176.robot.subsystems.leds;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,9 +28,9 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() < 18) {
-      isEndGame();
-    }
+    // if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() > 18) {
+    //   isEndGame();
+    // }
   }
 
   private void wantNote() {
@@ -66,5 +65,15 @@ public class LEDSubsystem extends SubsystemBase {
   // use SceduleCommand to not take on LED as a requirment and to not wait on it
   public Command setHasNote() {
     return new ScheduleCommand(this.runEnd(() -> hasNote(), () -> off()).withTimeout(1.0));
+  }
+  /*
+   * run with Proxy
+   */
+  public Command AutoDriveStart() {
+    return this.run(() -> isAuton());
+  }
+
+  public Command DefaultLED() {
+    return this.run(() -> blinkin.setMode(BlinkinLedMode.SOLID_VIOLET));
   }
 }
