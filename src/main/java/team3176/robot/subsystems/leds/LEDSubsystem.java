@@ -44,7 +44,7 @@ public class LEDSubsystem extends SubsystemBase {
     blinkin.setMode(BlinkinLedMode.SOLID_ORANGE);
   }
 
-  /* 
+  /*
   private void isAimedAtSpeaker() {
     // Solid Green
     blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
