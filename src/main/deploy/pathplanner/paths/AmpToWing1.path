@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.39337881492758836,
-        "y": 7.0530574863956055
+        "x": 0.7568917481584964,
+        "y": 6.6322409988569975
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5496177471228185,
-        "y": 7.038604499744211
+        "x": 1.048461510985522,
+        "y": 7.009922887033274
       },
       "isLocked": false,
-      "linkedName": "BlueAmpStart"
+      "linkedName": "AmpStart"
     },
     {
       "anchor": {
-        "x": 7.706590061067446,
-        "y": 5.76674167432842
+        "x": 1.9553673482346965,
+        "y": 6.970577613030226
       },
       "prevControl": {
-        "x": 6.376915289041846,
-        "y": 6.821809699957429
+        "x": 1.4192129556134114,
+        "y": 7.021218964312928
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CNote2"
+      "linkedName": "Wing1"
     }
   ],
   "rotationTargets": [],
@@ -33,9 +33,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -43,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlueAmp",
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "Speaker",
+  "previewStartingState": {
+    "rotation": 59.62383818064382,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

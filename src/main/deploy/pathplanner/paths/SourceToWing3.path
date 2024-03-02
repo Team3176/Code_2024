@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.677684087762542,
-        "y": 7.371023192750611
+        "x": 0.7422668751587503,
+        "y": 4.462411893573787
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.824957875267863,
-        "y": 6.995245539786855
+        "x": 1.1494167910210822,
+        "y": 3.9856301196977397
       },
       "isLocked": false,
-      "linkedName": "CNote1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.888257663839272,
-        "y": 6.229237247206889
+        "x": 1.9528571088392177,
+        "y": 4.085384850457201
       },
       "prevControl": {
-        "x": 6.969487741792385,
-        "y": 7.038604499744212
+        "x": 1.4038786671323344,
+        "y": 4.076708153416307
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AmpShoot"
+      "linkedName": "Wing3"
     }
   ],
   "rotationTargets": [],
@@ -33,9 +33,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -43,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "Speaker",
+  "previewStartingState": {
+    "rotation": -57.84160820692605,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

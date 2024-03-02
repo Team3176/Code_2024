@@ -3,47 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.668143565267453,
-        "y": 0.7636554807993345
+        "x": 1.9528571088392177,
+        "y": 4.085384850457201
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.654831484976029,
-        "y": 0.8664552570607831
+        "x": 1.3638239776479553,
+        "y": 4.13056915957582
       },
       "isLocked": false,
-      "linkedName": "note5"
+      "linkedName": "Wing3"
     },
     {
       "anchor": {
-        "x": 5.612148040038478,
-        "y": 1.2629686797835142
+        "x": 1.2951743872237744,
+        "y": 5.51611216503683
       },
       "prevControl": {
-        "x": 6.140832603668786,
-        "y": 1.1454832211990011
+        "x": 2.2778785401320802,
+        "y": 5.496739665354331
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "shootfar"
+      "linkedName": "CenterStart"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -14.036243467926548,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

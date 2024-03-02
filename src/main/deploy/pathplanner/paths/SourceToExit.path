@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2605580140737749,
-        "y": 5.463228954626923
+        "x": 0.7356638541402083,
+        "y": 4.482712090424181
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0410192933061926,
-        "y": 4.596049755479793
+        "x": 1.003604624396749,
+        "y": 3.006909607569215
       },
       "isLocked": false,
-      "linkedName": "BlueSpeaker"
+      "linkedName": "SourceStart"
     },
     {
       "anchor": {
-        "x": 2.48906187953221,
-        "y": 4.133554182601324
+        "x": 2.8026277146304293,
+        "y": 1.588788060388622
       },
       "prevControl": {
-        "x": 1.49180580051301,
-        "y": 5.217528181535237
+        "x": 1.8026277146304293,
+        "y": 1.588788060388622
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BlueWing3"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,9 +33,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -43,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "BlueSpeaker",
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "folder": "Speaker",
+  "previewStartingState": {
+    "rotation": -62.05112100535446,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }
