@@ -44,10 +44,12 @@ public class LEDSubsystem extends SubsystemBase {
     blinkin.setMode(BlinkinLedMode.SOLID_ORANGE);
   }
 
+  /* 
   private void isAimedAtSpeaker() {
     // Solid Green
     blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
   }
+  */
 
   private void isEndGame() {
     // Flashing Blue
@@ -63,6 +65,9 @@ public class LEDSubsystem extends SubsystemBase {
     blinkin.setMode(BlinkinLedMode.SOLID_BLACK);
   }
 
+  public Command setOff() {
+    return this.run(() -> off());
+  }
   // use SceduleCommand to not take on LED as a requirment and to not wait on it
   public Command setHasNote() {
     return new ScheduleCommand(GreenDoubleFlash());
@@ -72,6 +77,10 @@ public class LEDSubsystem extends SubsystemBase {
    */
   public Command AutoDriveStart() {
     return this.run(() -> isAuton());
+  }
+
+  public Command EndgameStart() {
+    return this.run(() -> isEndGame());
   }
 
   public Command DefaultLED() {
