@@ -76,9 +76,20 @@ public class RobotContainer {
         "shoot",
         superstructure
             .aimClose()
-            .alongWith(new WaitCommand(2.0).andThen(superstructure.shoot()))
-            .withTimeout(4.0)
+            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
+            .withTimeout(1.5)
             .withName("shooting"));
+    NamedCommands.registerCommand(
+        "shootAim",
+        superstructure
+            .aimClose()
+            .alongWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
+            .withTimeout(1.5)
+            .withName("shooting"));
+    NamedCommands.registerCommand(
+        "chaseNote",
+        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -132,6 +143,7 @@ public class RobotContainer {
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                 .alongWith(superstructure.aimShooterTune()));
     controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+    controller.rotStick.button(4).whileTrue(superstructure.aimAmp());
     controller
         .rotStick
         .button(8)

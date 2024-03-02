@@ -2,37 +2,43 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.6910708597779958,
-      "y": 1.982567113609883
+      "x": 0.8099299203965142,
+      "y": 4.288219238334721
     },
-    "rotation": 0
+    "rotation": -59.30027744918559
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "edge2note5"
+            "name": "shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "note5toShoot"
+            "pathName": "SpeakerSourceSideWing3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ShootFar2Note4"
+            "pathName": "Wing3Shoot"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Note4toShootFar"
+            "name": "shootAim"
           }
         }
       ]

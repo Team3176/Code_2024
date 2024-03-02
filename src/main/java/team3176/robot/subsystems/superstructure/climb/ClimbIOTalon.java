@@ -29,8 +29,8 @@ public class ClimbIOTalon implements ClimbIO {
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
   private final StatusSignal<Double> leftPosition;
-  private final StatusSignal<Double> rightError;
-  private final StatusSignal<Double> leftError;
+  // private final StatusSignal<Double> rightError;
+  // private final StatusSignal<Double> leftError;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
@@ -56,7 +56,7 @@ public class ClimbIOTalon implements ClimbIO {
         SuperStructureConstants.CLIMBLEFT_ZERO_POS;
     configsLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    configsRight.Slot0.kP = 12.4; // An error of 1 rotations results in 40 amps output
+    configsRight.Slot0.kP = 2.4; // An error of 1 rotations results in 40 amps output
     configsRight.Slot0.kI = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Slot0.kD = 0.0; // A change of 1 rotation per second results in 0.1 volts output
     configsRight.Slot0.kV = 0.0; // A change of 1 rotation per second results in 0.1 volts output
@@ -76,26 +76,25 @@ public class ClimbIOTalon implements ClimbIO {
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
-    rightError = climbRight.getClosedLoopError();
-    leftError = climbLeft.getClosedLoopError();
+    // rightError = climbRight.getClosedLoopError();
+    // leftError = climbLeft.getClosedLoopError();
 
     climbRight.setPosition(0);
     climbLeft.setPosition(0.0);
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50, leftPosition, rightPosition, rightError, leftError);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition, rightPosition);
     climbLeft.optimizeBusUtilization();
     climbRight.optimizeBusUtilization();
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftPosition, rightPosition, leftError, rightError);
+    BaseStatusSignal.refreshAll(leftPosition, rightPosition);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
     inputs.leftPosition = leftPosition.getValueAsDouble();
     inputs.rightPosition = rightPosition.getValueAsDouble();
-    inputs.leftError = leftError.getValue();
-    inputs.rightError = rightError.getValue();
+    // inputs.leftError = leftError.getValue();
+    // inputs.rightError = rightError.getValue();
   }
 
   @Override

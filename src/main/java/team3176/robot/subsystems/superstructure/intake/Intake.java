@@ -4,7 +4,6 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -62,7 +61,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return inputs.isRollerLinebreak;
+    return inputs.laserCanMeasurement < 130;
   }
 
   public Command EmergencyHold() {
@@ -83,7 +82,7 @@ public class Intake extends SubsystemBase {
   public static Intake getInstance() {
     if (instance == null) {
       if (Constants.getMode() == Mode.REAL) {
-        instance = new Intake(new IntakeIOTalon() {});
+        instance = new Intake(new IntakeIOTalonGrapple() {});
       } else {
         instance = new Intake(new IntakeIOSim() {});
       }
@@ -126,8 +125,7 @@ public class Intake extends SubsystemBase {
     return (deployPivot()
             .andThen(spinIntakeUntilPivot())
             .andThen(LEDSubsystem.getInstance().setHasNote())
-            .andThen(retractPivot())
-            .andThen(new WaitCommand(0.1))
+            .andThen(retractPivot()) //
             .andThen(stopRollers()))
         .finallyDo(
             () -> {
