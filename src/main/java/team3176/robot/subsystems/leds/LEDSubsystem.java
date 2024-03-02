@@ -1,10 +1,9 @@
 package team3176.robot.subsystems.leds;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.BooleanSupplier;
 import team3176.robot.subsystems.leds.BlinkinLedDriver.BlinkinLedMode;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -78,13 +77,15 @@ public class LEDSubsystem extends SubsystemBase {
   public Command DefaultLED() {
     return this.run(() -> blinkin.setMode(BlinkinLedMode.SOLID_VIOLET));
   }
+
   public Command aiming(BooleanSupplier isOnTarget) {
-    return this.run(() -> {
-      if(isOnTarget.getAsBoolean()){
-        blinkin.setMode(BlinkinLedMode.SOLID_YELLOW);
-      } else {
-        blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
-      }
-    });
+    return this.run(
+        () -> {
+          if (isOnTarget.getAsBoolean()) {
+            blinkin.setMode(BlinkinLedMode.SOLID_YELLOW);
+          } else {
+            blinkin.setMode(BlinkinLedMode.SOLID_GREEN);
+          }
+        });
   }
 }
