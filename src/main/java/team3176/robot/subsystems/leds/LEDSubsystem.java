@@ -77,8 +77,7 @@ public class LEDSubsystem extends SubsystemBase {
   public Command DefaultLED() {
     return this.run(() -> blinkin.setMode(BlinkinLedMode.SOLID_VIOLET));
   }
-
-<<<<<<< HEAD
+  
   public Command GreenFlash(double secs) {
     return this.run(() -> blinkin.setMode(BlinkinLedMode.SOLID_GREEN))
         .withTimeout(secs)
@@ -89,8 +88,6 @@ public class LEDSubsystem extends SubsystemBase {
     return GreenFlash(0.1).andThen(GreenFlash(0.1));
   }
 
-=======
->>>>>>> 7f64396c721171064872665335f23fd503d39610
   public Command aiming(BooleanSupplier isOnTarget) {
     return this.run(
         () -> {
