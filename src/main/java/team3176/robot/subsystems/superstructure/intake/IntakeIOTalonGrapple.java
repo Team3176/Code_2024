@@ -81,8 +81,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID, Hardwaremap.intakePivot_CBN);
 
     // config setting
-    rollerConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    // rollerConfigs.CurrentLimits.StatorCurrentLimit = 50;
+    // rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // pivot configs
 
@@ -113,16 +113,9 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     rollerTemp = rollerController.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        pivotAppliedVolts,
-        pivotCurrentAmps,
-        pivotVelocity,
-        pivotPosition,
-        pivotTemp,
-        rollerAppliedVolts,
-        rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        50, pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
 
     rollerController.optimizeBusUtilization();
     pivotController.optimizeBusUtilization();
@@ -131,15 +124,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        pivotAppliedVolts,
-        pivotCurrentAmps,
-        pivotVelocity,
-        pivotPosition,
-        pivotTemp,
-        rollerAppliedVolts,
-        rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
+    BaseStatusSignal.refreshAll(rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
 
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());

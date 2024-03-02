@@ -91,7 +91,7 @@ public class Climb extends SubsystemBase {
   public Command moveRightPosition(DoubleSupplier delta) {
     return this.runEnd(
         () -> {
-          rightGoToPosition(inputs.rightPosition + (1 * delta.getAsDouble()));
+          io.setRightVoltage((5 * delta.getAsDouble()));
         },
         () -> io.setRightVoltage(0.0));
   }
@@ -99,7 +99,7 @@ public class Climb extends SubsystemBase {
   public Command moveLeftPosition(DoubleSupplier delta) {
     return this.runEnd(
         () -> {
-          leftGoToPosition(inputs.leftPosition + (1 * delta.getAsDouble()));
+          io.setLeftVoltage((5 * delta.getAsDouble()));
         },
         () -> io.setLeftVoltage(0.0));
   }
@@ -107,8 +107,8 @@ public class Climb extends SubsystemBase {
   public Command moveLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
     return this.runEnd(
         () -> {
-          rightGoToPosition(inputs.rightPosition + deltaRight.getAsDouble());
-          leftGoToPosition(inputs.leftPosition + deltaLeft.getAsDouble());
+          io.setRightVoltage(5 * deltaRight.getAsDouble());
+          io.setLeftVoltage(5 * deltaLeft.getAsDouble());
         },
         () -> {
           io.setRightVoltage(0.0);
