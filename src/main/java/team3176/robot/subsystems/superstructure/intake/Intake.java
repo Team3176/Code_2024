@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
-import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -29,6 +28,7 @@ public class Intake extends SubsystemBase {
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
+  private double lastRollerSpeed = 0.0;
 
   private enum pivotStates {
     DEPLOY,
@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   public boolean hasNote() {
-    return inputs.laserCanMeasurement < 180;
+    return inputs.laserCanMeasurement < 120;
   }
 
   public Command EmergencyHold() {
@@ -81,6 +81,9 @@ public class Intake extends SubsystemBase {
       volts = -.2;
     }
     io.setPivotVolts(volts);
+  }
+  private boolean rollerSwitch() {
+    return lastRollerSpeed - inputs.rollerVelocityRadPerSec > 15.0;
   }
 
   public static Intake getInstance() {
@@ -113,6 +116,11 @@ public class Intake extends SubsystemBase {
         .until(() -> hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
+   public Command spinIntakeUntilRoller() {
+    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
+        .until(() -> rollerSwitch())
+        .andThen(() -> io.setRollerVolts(0.0));
+  }
 
   public Command spinIntake() {
     return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()), () -> io.setRollerVolts(0));
@@ -129,7 +137,6 @@ public class Intake extends SubsystemBase {
   public Command intakeNote() {
     return (deployPivot()
             .andThen(spinIntakeUntilPivot())
-            .andThen(LEDSubsystem.getInstance().setHasNote())
             .andThen(retractPivot()) //
             .andThen(stopRollers()))
         .finallyDo(
@@ -138,6 +145,18 @@ public class Intake extends SubsystemBase {
               io.setRollerVolts(0.0);
             });
   }
+  public Command intakeNoteroller() {
+    return (deployPivot()
+            .andThen(spinIntakeUntilPivot())
+            .andThen(retractPivot()) //
+            .andThen(stopRollers()))
+        .finallyDo(
+            () -> {
+              pivotState = pivotStates.RETRACT;
+              io.setRollerVolts(0.0);
+            });
+  }
+
 
   public Command spit() {
     return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
@@ -148,6 +167,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
+    
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
     commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
     if (pivotSetpoint < 0.1) {
@@ -162,6 +182,7 @@ public class Intake extends SubsystemBase {
       ishomed = true;
       pivot_offset = inputs.pivotPosition;
     }
+    lastRollerSpeed = inputs.rollerVelocityRadPerSec;
     // pivot state machine
     // switch (pivotState) {
     //   case DEPLOY:

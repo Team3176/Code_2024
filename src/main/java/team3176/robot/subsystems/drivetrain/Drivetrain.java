@@ -555,7 +555,7 @@ public class Drivetrain extends SubsystemBase {
             Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.5, 1.5),
+                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
                     0,
                     yawError * (yawkP.get()));
             driveVelocity(speed);

@@ -40,7 +40,7 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(60, 40, 30, 0.35);
+    return aimShooter(60, 60, 30, 0.6);
   }
 
   public Command aimAmp() {

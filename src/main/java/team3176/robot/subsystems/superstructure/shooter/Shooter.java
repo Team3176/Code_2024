@@ -36,7 +36,7 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber forwardPivotVoltageOffset;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
-  private InterpolatingDoubleTreeMap shooterFlywheelLookup;
+  //private InterpolatingDoubleTreeMap shooterFlywheelLookup;
 
   private Shooter(ShooterIO io) {
     this.io = io;
@@ -47,8 +47,8 @@ public class Shooter extends SubsystemBase {
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 60.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.55);
-    shooterFlywheelLookup.put(1.0, 60.0);
-    shooterFlywheelLookup.put(3.2, 100.0);
+    //shooterFlywheelLookup.put(1.0, 60.0);
+    //shooterFlywheelLookup.put(3.2, 100.0);
   }
 
   public static Shooter getInstance() {
@@ -151,8 +151,8 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          io.setFlywheelLowerVelocity(shooterFlywheelLookup.get(getDistance()));
-          io.setFlywheelUpperVelocity(shooterFlywheelLookup.get(getDistance()));
+          //io.setFlywheelLowerVelocity(shooterFlywheelLookup.get(getDistance()));
+          //io.setFlywheelUpperVelocity(shooterFlywheelLookup.get(getDistance()));
           this.pivotSetpoint = getAimAngle();
         },
         () -> {

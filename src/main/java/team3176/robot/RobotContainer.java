@@ -48,6 +48,7 @@ public class RobotContainer {
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
   private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -58,6 +59,7 @@ public class RobotContainer {
 
     leds = LEDSubsystem.getInstance();
     endMatchAlert.onTrue(leds.EndgameStart());
+    hasNote.whileTrue(leds.setHasNote());
 
     // superstructure = Superstructure.getInstance();
     visualization = new Visualization();

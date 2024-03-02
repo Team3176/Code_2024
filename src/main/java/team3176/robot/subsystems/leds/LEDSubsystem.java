@@ -1,7 +1,6 @@
 package team3176.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.BooleanSupplier;
 import team3176.robot.subsystems.leds.BlinkinLedDriver.BlinkinLedMode;
@@ -70,7 +69,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
   // use SceduleCommand to not take on LED as a requirment and to not wait on it
   public Command setHasNote() {
-    return new ScheduleCommand(GreenDoubleFlash());
+    return this.run(() -> blinkin.setMode(BlinkinLedMode.SOLID_GREEN));
   }
   /*
    * run with Proxy
