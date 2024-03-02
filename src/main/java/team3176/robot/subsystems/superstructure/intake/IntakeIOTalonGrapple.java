@@ -24,7 +24,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
-import team3176.robot.subsystems.superstructure.Superstructure;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
@@ -172,10 +171,10 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     int measurement;
     try {
       measurement = lasercan.getMeasurement().distance_mm;
-        } catch (Error e) {
-          System.out.println("[Error] getLaserCanDist failed.");
-          measurement = 200;
-        }
+    } catch (Error e) {
+      System.out.println("[Error] getLaserCanDist failed.");
+      measurement = 200;
+    }
     return measurement;
   }
 

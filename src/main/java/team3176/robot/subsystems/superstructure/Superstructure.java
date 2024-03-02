@@ -40,15 +40,15 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(60, 40, 27, 0.35);
+    return aimShooter(60, 40, 30, 0.35);
   }
 
   public Command aimAmp() {
-    return aimShooter(17, 17, 27, 0.35);
+    return aimShooter(17, 17, 30, 0.35);
   }
 
   public Command aimPodium() {
-    return aimShooter(70, 100, 15, 0.8);
+    return aimShooter(80, 80, 5, 0.9);
   }
 
   public Command shoot() {
@@ -112,7 +112,7 @@ public class Superstructure {
             Drivetrain.getInstance()
                 .driveAndAim(() -> 0, () -> 0)
                 .raceWith(
-                    aimClose().raceWith(new WaitCommand(0.3).andThen(shoot().withTimeout(0.3)))));
+                    aimClose().raceWith(new WaitCommand(0.3).andThen(shoot().withTimeout(0.5)))));
   }
 
   public Command doItAll() {

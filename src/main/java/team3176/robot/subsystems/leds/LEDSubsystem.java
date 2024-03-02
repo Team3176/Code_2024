@@ -58,7 +58,7 @@ public class LEDSubsystem extends SubsystemBase {
 
   private void isAuton() {
     // Rainbow
-    blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_RAINBOW);
+    blinkin.setMode(BlinkinLedMode.FIXED_RAINBOW_PARTY);
   }
 
   private void off() {
@@ -80,7 +80,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public Command EndgameStart() {
-    return this.run(() -> isEndGame());
+    return this.run(() -> isEndGame()).withTimeout(1);
   }
 
   public Command DefaultLED() {
@@ -94,7 +94,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public Command GreenDoubleFlash() {
-    return GreenFlash(0.1).andThen(GreenFlash(0.1));
+    return GreenFlash(0.35).andThen(GreenFlash(0.35)).andThen(GreenFlash(0.35));
   }
 
   public Command aiming(BooleanSupplier isOnTarget) {

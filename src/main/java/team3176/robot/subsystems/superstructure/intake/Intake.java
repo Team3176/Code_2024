@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure.intake;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +28,7 @@ public class Intake extends SubsystemBase {
   private final double DEPLOY_POS = 1.7;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
+  private boolean ishomed = false;
 
   private enum pivotStates {
     DEPLOY,
@@ -40,9 +42,9 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    this.pivotPID = new TunablePID("intakePivot", 10.0, 0.5, 0.2);
+    this.pivotPID = new TunablePID("intakePivot", 4.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
-    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 4.0);
+    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
     // kG.put(27.0, 0.6);
@@ -63,7 +65,7 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   public boolean hasNote() {
-    return inputs.laserCanMeasurement < 130;
+    return inputs.laserCanMeasurement < 180;
   }
 
   public Command EmergencyHold() {
@@ -97,12 +99,13 @@ public class Intake extends SubsystemBase {
     return this.runOnce(
         () -> {
           this.pivotState = pivotStates.DEPLOY;
+          this.pivotSetpoint = 1.7;
           deployTime.restart();
         });
   }
 
   public Command retractPivot() {
-    return this.runOnce(() -> this.pivotState = pivotStates.RETRACT);
+    return this.runOnce(() -> this.pivotSetpoint = 0.0);
   }
 
   public Command spinIntakeUntilPivot() {
@@ -137,7 +140,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command spit() {
-    return this.runEnd(() -> io.setRollerVolts(-2), () -> io.setRollerVolts(0));
+    return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
   }
 
   @Override
@@ -145,40 +148,44 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
-    // double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    // commandVolts = MathUtil.clamp(commandVolts, -8, 7.0);
-    // Logger.recordOutput("Intake/PID_out", commandVolts);
+    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
+    commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
+    if (pivotSetpoint < 0.1) {
+      commandVolts -= 0.5;
+    }
+    Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
     Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
-    // runPivot(commandVolts);
+    runPivot(commandVolts);
     pivotPID.checkParemeterUpdate();
-    if (inputs.upperLimitSwitch) {
+    if (inputs.upperLimitSwitch && !ishomed) {
+      ishomed = true;
       pivot_offset = inputs.pivotPosition;
     }
     // pivot state machine
-    switch (pivotState) {
-      case DEPLOY:
-        /*         if (deployTime.get() < 0.5) { */
-        runPivot(2.0);
-        /*         } else {
-          runPivot(0);
-        } */
-        if (inputs.lowerLimitSwitch) {
-          pivotState = pivotStates.IDLE;
-        }
-        break;
-      case RETRACT:
-        runPivot(-2);
-        if (inputs.upperLimitSwitch) {
-          pivotState = pivotStates.HOLD;
-        }
-        break;
-      case IDLE:
-        runPivot(0.0);
-        break;
-      case HOLD:
-        runPivot(-0.2);
-        break;
-    }
+    // switch (pivotState) {
+    //   case DEPLOY:
+    //     /*         if (deployTime.get() < 0.5) { */
+    //     runPivot(2.0);
+    //     /*         } else {
+    //       runPivot(0);
+    //     } */
+    //     if (inputs.lowerLimitSwitch) {
+    //       pivotState = pivotStates.IDLE;
+    //     }
+    //     break;
+    //   case RETRACT:
+    //     runPivot(-2);
+    //     if (inputs.upperLimitSwitch) {
+    //       pivotState = pivotStates.HOLD;
+    //     }
+    //     break;
+    //   case IDLE:
+    //     runPivot(0.0);
+    //     break;
+    //   case HOLD:
+    //     runPivot(-0.2);
+    //     break;
+    // }
   }
 }
