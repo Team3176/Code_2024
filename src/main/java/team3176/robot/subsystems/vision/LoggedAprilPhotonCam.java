@@ -166,7 +166,7 @@ public class LoggedAprilPhotonCam {
       cov = VecBuilder.fill(distance2, distance2, 0.9);
     } else {
       double distance2 = Math.pow(distance * 1.2, 2);
-      cov = VecBuilder.fill(distance2, distance2, distance2);
+      cov = VecBuilder.fill(distance2, distance2, 100);
     }
     if (!DriverStation.isDisabled()) {
       if (p.targetsUsed.size() == 1) {

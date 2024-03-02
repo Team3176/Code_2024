@@ -101,6 +101,7 @@ public class RobotContainer {
     /*
      * Translation Stick
      */
+    controller.transStick.button(1).whileTrue(superstructure.doItAll());
     controller
         .transStick
         .button(2)

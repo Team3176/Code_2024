@@ -93,8 +93,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    //pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    //pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    // pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
+    // pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);

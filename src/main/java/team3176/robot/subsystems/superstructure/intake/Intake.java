@@ -4,6 +4,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -60,6 +61,7 @@ public class Intake extends SubsystemBase {
     io.setPivotVolts(0.0);
   }
 
+  @AutoLogOutput
   public boolean hasNote() {
     return inputs.laserCanMeasurement < 130;
   }

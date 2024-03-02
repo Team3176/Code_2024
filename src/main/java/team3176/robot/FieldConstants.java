@@ -13,6 +13,9 @@ public class FieldConstants {
   public static final double podiumX = Units.inchesToMeters(126.75);
   public static final double startingLineX = Units.inchesToMeters(74.111);
 
+  public static final Pose2d sourePickup = new Pose2d(14.29, 1.13, Rotation2d.fromDegrees(-27.2));
+  public static final Pose2d CenterScore = new Pose2d(1.3, 5.52, Rotation2d.fromDegrees(0.0));
+
   public static final Translation2d ampCenter =
       new Translation2d(Units.inchesToMeters(72.455), fieldWidth);
 

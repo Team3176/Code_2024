@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
@@ -503,18 +504,22 @@ public class Drivetrain extends SubsystemBase {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
   }
 
-  // TODO: Pathplanner pathfinding
-  // complete the following method that returns a command from AutoBuilder that goes to the point
-  // given
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
     PathConstraints constraints =
         new PathConstraints(3.0, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     return AutoBuilder.pathfindToPose(targetPose, constraints);
-    // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
-    // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
-    // Replace with your command
-
+  }
+  /*
+   * flips if needed
+   */
+  public Command goToPoint(Pose2d pose) {
+    PathConstraints constraints =
+        new PathConstraints(3.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    return new ConditionalCommand(
+        AutoBuilder.pathfindToPoseFlipped(pose, constraints),
+        AutoBuilder.pathfindToPose(pose, constraints),
+        AllianceFlipUtil::shouldFlip);
   }
 
   public Command chaseNoteTeleo(
