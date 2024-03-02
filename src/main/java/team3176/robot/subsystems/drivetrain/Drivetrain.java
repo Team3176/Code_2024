@@ -55,10 +55,8 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
-  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
-  public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
-  public static final double WIDTH = EBOT_WIDTH_IN_METERS_2023;
+  public static final double LENGTH = 20;
+  public static final double WIDTH = 20;
 
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
