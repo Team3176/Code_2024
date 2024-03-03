@@ -19,6 +19,8 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final LoggedTunableNumber deployPivotVolts;
   private final LoggedTunableNumber rollerVolts;
+  private final LoggedTunableNumber rollerVoltsIntaking;
+  private final LoggedTunableNumber rollerVoltsShooting;
   private final LoggedTunableNumber retractPivotVolts;
   private final LoggedTunableNumber waitTime;
   private final TunablePID pivotPID;
@@ -47,6 +49,8 @@ public class Intake extends SubsystemBase {
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
+    this.rollerVoltsIntaking = new LoggedTunableNumber("intake/intakeVolts", 0);
+    this.rollerVoltsShooting = new LoggedTunableNumber("intake/intakeShootingVolts", 0);
     // kG.put(27.0, 0.6);
     // kG.put(,)
   }
@@ -113,7 +117,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command spinIntakeUntilPivot() {
-    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
+    return this.run(() -> io.setRollerVolts(rollerVoltsIntaking.get()))
         .until(() -> hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
@@ -125,7 +129,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command spinIntake() {
-    return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()), () -> io.setRollerVolts(0));
+    return this.runEnd(() -> io.setRollerVolts(rollerVoltsShooting.get()), () -> io.setRollerVolts(0));
   }
 
   public Command spinIntakeRollersSlow() {
