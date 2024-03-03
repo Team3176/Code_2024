@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
     this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.25, 0.00);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
-    this.aimAngle = new LoggedTunableNumber("shooter/angle", 27);
+    this.aimAngle = new LoggedTunableNumber("shooter/angle", 30);
     this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 60.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.55);
@@ -94,6 +94,7 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromDegrees(aimAngle.get());
   }
 
+  @AutoLogOutput
   public double getDistance() {
     Pose3d current =
         new Pose3d(Drivetrain.getInstance().getPose())
