@@ -82,6 +82,7 @@ public class Intake extends SubsystemBase {
     }
     io.setPivotVolts(volts);
   }
+
   private boolean rollerSwitch() {
     return lastRollerSpeed - inputs.rollerVelocityRadPerSec > 15.0;
   }
@@ -116,7 +117,8 @@ public class Intake extends SubsystemBase {
         .until(() -> hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
-   public Command spinIntakeUntilRoller() {
+
+  public Command spinIntakeUntilRoller() {
     return this.run(() -> io.setRollerVolts(rollerVolts.get()))
         .until(() -> rollerSwitch())
         .andThen(() -> io.setRollerVolts(0.0));
@@ -145,6 +147,7 @@ public class Intake extends SubsystemBase {
               io.setRollerVolts(0.0);
             });
   }
+
   public Command intakeNoteroller() {
     return (deployPivot()
             .andThen(spinIntakeUntilPivot())
@@ -157,7 +160,6 @@ public class Intake extends SubsystemBase {
             });
   }
 
-
   public Command spit() {
     return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
   }
@@ -167,7 +169,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
-    
+
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
     commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
     if (pivotSetpoint < 0.1) {
