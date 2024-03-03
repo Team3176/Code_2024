@@ -15,6 +15,7 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -99,7 +100,7 @@ public class Shooter extends SubsystemBase {
     Pose3d current =
         new Pose3d(Drivetrain.getInstance().getPose())
             .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
-    Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
+    Translation3d goal = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening);
     Translation3d diff = current.getTranslation().minus(goal);
     double distance = diff.toTranslation2d().getNorm();
     return distance;
