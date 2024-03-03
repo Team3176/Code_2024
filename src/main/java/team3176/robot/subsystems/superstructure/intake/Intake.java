@@ -129,7 +129,8 @@ public class Intake extends SubsystemBase {
   }
 
   public Command spinIntake() {
-    return this.runEnd(() -> io.setRollerVolts(rollerVoltsShooting.get()), () -> io.setRollerVolts(0));
+    return this.runEnd(
+        () -> io.setRollerVolts(rollerVoltsShooting.get()), () -> io.setRollerVolts(0));
   }
 
   public Command spinIntakeRollersSlow() {

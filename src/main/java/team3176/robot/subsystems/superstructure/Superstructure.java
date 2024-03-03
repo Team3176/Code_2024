@@ -35,6 +35,10 @@ public class Superstructure {
     return shooter.aim().alongWith(transfer.shoot());
   }
 
+  public Command aimShooterLookup() {
+    return shooter.aimLookup().alongWith(transfer.shoot());
+  }
+
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
     return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
   }
