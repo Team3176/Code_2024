@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   public boolean hasNote() {
-    return inputs.laserCanMeasurement < 120;
+    return (inputs.laserCanLeftMeasurement < 120 && inputs.laserCanRightMeasurement < 120);
   }
 
   public Command EmergencyHold() {

@@ -36,7 +36,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   VoltageOut pivotVolts = new VoltageOut(0.0);
   PositionVoltage voltPosition;
   private SparkPIDController pivotPID;
-  private LaserCan lasercan;
+  private LaserCan lasercanLeft;
+  private LaserCan lasercanRight;
 
   DigitalInput rollerLinebreak;
   DigitalInput pivotLinebreak;
@@ -65,11 +66,12 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
 
-    lasercan = new LaserCan(Hardwaremap.intakeLaserCan_CID);
+    lasercanLeft = new LaserCan(Hardwaremap.intakeLaserCanLeft_CID);
+    lasercanRight = new LaserCan(Hardwaremap.intakeLaserCanRight_CID);
     try {
-      lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
-      lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      lasercan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      lasercanLeft.setRangingMode(LaserCan.RangingMode.SHORT);
+      lasercanLeft.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      lasercanLeft.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("LaserCan configuration failed");
     }
@@ -143,7 +145,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
-    inputs.laserCanMeasurement = lasercan.getMeasurement().distance_mm;
+    inputs.laserCanLeftMeasurement = lasercanLeft.getMeasurement().distance_mm;
+    inputs.laserCanRightMeasurement = lasercanRight.getMeasurement().distance_mm;
     inputs.isNotePresent = isNotePresent();
   }
 
@@ -167,7 +170,7 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     pivotController.setControl(pivotVolts.withOutput(volts));
   }
 
-  private int getLaserCanDist() {
+  private int getLaserCanDist(LaserCan lasercan) {
     int measurement;
     try {
       measurement = lasercan.getMeasurement().distance_mm;
@@ -179,7 +182,7 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   }
 
   private boolean isNotePresent() {
-    if (getLaserCanDist() < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
+    if (getLaserCanDist(lasercanLeft) < SuperStructureConstants.INTAKE_LASERCANLEFT_DIST_TO_NOTE) {
       return true;
     } else {
       return false;

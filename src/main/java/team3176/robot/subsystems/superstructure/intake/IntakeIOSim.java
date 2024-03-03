@@ -47,7 +47,8 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollerAppliedVolts = appliedVolts;
     inputs.rollerCurrentAmps = rollerSim.getCurrentDrawAmps();
     inputs.rollerTempCelcius = 0.0;
-    inputs.laserCanMeasurement = 100;
+    inputs.laserCanLeftMeasurement = 100;
+    inputs.laserCanRightMeasurement = 100;
     Logger.recordOutput("Intake/SimPivotPos", pivotSim.getAngleRads());
   }
 

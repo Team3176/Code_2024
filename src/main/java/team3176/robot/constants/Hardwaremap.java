@@ -12,7 +12,8 @@ public class Hardwaremap {
   public static final int shooterTransfer_CID = 5;
   public static final int shooterPivot_CID = 8;
   public static final int intakeRoller_CID = 9;
-  public static final int intakeLaserCan_CID = 49;
+  public static final int intakeLaserCanLeft_CID = 49;
+  public static final int intakeLaserCanRight_CID = 48;
   public static final int intakePivot_CID = 4;
   public static final int climbLeft_CID = 45;
   public static final int climbRight_CID = 46;
@@ -26,7 +27,8 @@ public class Hardwaremap {
   public static final String shooterPivot_CBN = "rio";
   public static final String intakeRoller_CBN = "canivore";
   public static final String intakePivot_CBN = "rio";
-  public static final String intakeLaserCan_CBN = "rio";
+  public static final String intakeLaserCanLeft_CBN = "rio";
+  public static final String intakeLaserCanRight_CBN = "rio";
   public static final String climbLeft_CBN = "rio";
   public static final String climbRight_CBN = "rio";
 

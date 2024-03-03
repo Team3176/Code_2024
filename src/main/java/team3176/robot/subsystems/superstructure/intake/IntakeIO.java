@@ -29,7 +29,8 @@ public interface IntakeIO {
     public boolean isPivotLinebreak = false;
     public boolean upperLimitSwitch = false;
     public boolean lowerLimitSwitch = false;
-    public double laserCanMeasurement = 0;
+    public double laserCanLeftMeasurement = 0;
+    public double laserCanRightMeasurement = 0;
     public boolean isNotePresent = false;
 
     // constructor if needed for some inputs
@@ -51,5 +52,7 @@ public interface IntakeIO {
 
   public default void setCoastMode(boolean isCoastMode) {}
 
-  public default void getLaserCanMeasurment(int measurement) {}
+  public default void getLaserCanLeftMeasurment(int measurement) {}
+
+  public default void getLaserCanRightMeasurment(int measurement) {}
 }
