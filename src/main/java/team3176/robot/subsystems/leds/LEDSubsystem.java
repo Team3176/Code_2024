@@ -3,6 +3,7 @@ package team3176.robot.subsystems.leds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.BooleanSupplier;
+import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.leds.BlinkinLedDriver.BlinkinLedMode;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -12,7 +13,7 @@ public class LEDSubsystem extends SubsystemBase {
   private static LEDSubsystem instance;
 
   private LEDSubsystem() {
-    blinkin = new BlinkinLedDriver(9);
+    blinkin = new BlinkinLedDriver(Hardwaremap.blinkin_pwm_port);
   }
 
   public static LEDSubsystem getInstance() {
