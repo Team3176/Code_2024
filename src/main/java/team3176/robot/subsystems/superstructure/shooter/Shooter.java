@@ -103,6 +103,7 @@ public class Shooter extends SubsystemBase {
     Translation3d goal = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening);
     Translation3d diff = current.getTranslation().minus(goal);
     double distance = diff.toTranslation2d().getNorm();
+    Logger.recordOutput("Shooter/podium", distance < 2.6 && distance > 2.37);
     return distance;
   }
 
