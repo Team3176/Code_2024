@@ -1,20 +1,23 @@
 package team3176.robot.util.vision;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.RawSubscriber;
+import edu.wpi.first.networktables.PubSubOption;
 import org.photonvision.PhotonCamera;
-import org.photonvision.common.networktables.PacketSubscriber;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class LoggedPhotonCamera extends PhotonCamera {
-  PacketSubscriber<PhotonPipelineResult> resultSubscriber;
+  LoggedPacketSubscriber<PhotonPipelineResult> resultSubscriber;
 
   public LoggedPhotonCamera(String cameraName) {
     super(cameraName);
     NetworkTable cameraTable = this.getCameraTable();
-    RawSubscriber rawBytesEntry = new LoggedRawSubscriber(cameraTable);
+    var rawBytesEntry =
+        cameraTable
+            .getRawTopic("rawBytes")
+            .subscribe(
+                "rawBytes", new byte[] {}, PubSubOption.periodic(0.01), PubSubOption.sendAll(true));
     resultSubscriber =
-        new PacketSubscriber<>(
+        new LoggedPacketSubscriber<>(
             rawBytesEntry, PhotonPipelineResult.serde, new PhotonPipelineResult());
   }
 
