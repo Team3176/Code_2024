@@ -19,7 +19,7 @@ public class LoggedNotePhotonCam {
 
   public void periodic() {
     PhotonPipelineResult results;
-    if (cam.isConnected()) {
+    if (cam.isConnected() || Logger.hasReplaySource()) {
       results = cam.getLatestResult();
     } else {
       results = new PhotonPipelineResult();

@@ -31,6 +31,9 @@ public class LoggedPacketSubscriber<T> implements AutoCloseable {
       inputs.rawBytes = subscriber.get(new byte[] {});
     }
     Logger.processInputs(subscriber.getTopic().getName(), inputs);
+    if (inputs.rawBytes.length == 1) {
+      return defaultValue;
+    }
     packet.setData(inputs.rawBytes);
     if (packet.getSize() < 1) return defaultValue;
 

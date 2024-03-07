@@ -188,7 +188,7 @@ public class LoggedAprilPhotonCam {
     // io.updateInputs(inputs);
     // Logger.processInputs("photonvision/" + this.name, inputs);
     PhotonPipelineResult results;
-    if (cam.isConnected()) {
+    if (cam.isConnected() || Logger.hasReplaySource()) {
       results = cam.getLatestResult();
     } else {
       results = new PhotonPipelineResult();
