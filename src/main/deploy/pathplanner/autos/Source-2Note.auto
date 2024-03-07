@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7422668751587503,
+      "y": 4.462411893573787
+    },
+    "rotation": -59.30027744918559
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SourceToWing3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wing3ToSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootAim"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

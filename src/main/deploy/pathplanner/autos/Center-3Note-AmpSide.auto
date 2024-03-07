@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2951743872237744,
+      "y": 5.51611216503683
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wing2ToCenter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootAim"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wing1ToCenter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootAim"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

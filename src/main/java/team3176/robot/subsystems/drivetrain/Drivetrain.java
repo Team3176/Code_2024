@@ -30,20 +30,26 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
 import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.LoggedTunableNumber;
+import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
 import team3176.robot.util.swerve.SwerveSetpoint;
 import team3176.robot.util.swerve.SwerveSetpointGenerator;
@@ -51,14 +57,15 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double EBOT_LENGTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
-  public static final double EBOT_WIDTH_IN_METERS_2023 = Units.inchesToMeters(30 - 6);
-  public static final double LENGTH = EBOT_LENGTH_IN_METERS_2023;
-  public static final double WIDTH = EBOT_WIDTH_IN_METERS_2023;
+  public static final double LENGTH = Units.inchesToMeters(20);
+  public static final double WIDTH = Units.inchesToMeters(20);
 
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+
+  private final LoggedTunableNumber pitchkP;
+  private final LoggedTunableNumber yawkP;
 
   // private Controller controller = Controller.getInstance();
   // private Vision m_Vision = Vision.getInstance();
@@ -105,10 +112,13 @@ public class Drivetrain extends SubsystemBase {
             new SwerveModuleState()
           });
   private ChassisSpeeds desiredSpeeds;
+  private TunablePID orientationPID;
   // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
     this.io = io;
+    this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
+    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
     inputs = new GyroIOInputs();
 
     // check for duplicates
@@ -204,6 +214,8 @@ public class Drivetrain extends SubsystemBase {
             .kinematics(kinematics)
             .moduleLocations(SwerveModuleTranslations)
             .build();
+    orientationPID = new TunablePID("Drivetrain/orientationPID", 7.0, 0.0, 0.15);
+    orientationPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Prevents more than one instance of drivetrian
@@ -367,6 +379,20 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  // TODO
+  private Rotation2d getAimAngle() {
+    // get the position of the speaker
+    // FieldConstants.java
+    // AllianceFlipUtil.java
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(
+                AllianceFlipUtil.apply(
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
+
   public Command swerveDefenseCommand() {
     return this.runOnce(
         () -> {
@@ -401,89 +427,141 @@ public class Drivetrain extends SubsystemBase {
     return swerveDrivePercent(forward, strafe, spin, true);
   }
 
+  public Supplier<ChassisSpeeds> convertJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean isFieldCentric) {
+    return new Supplier<ChassisSpeeds>() {
+      @Override
+      public ChassisSpeeds get() {
+        double DEADBAND = 0.05;
+        double linearMagnitude =
+            MathUtil.applyDeadband(
+                Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
+        Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
+        double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+
+        // Square values
+        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+        omega = Math.copySign(omega * omega, omega);
+        // Calcaulate new linear velocity
+        Translation2d linearVelocity =
+            new Pose2d(new Translation2d(), linearDirection)
+                .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+                .getTranslation();
+        if (DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+            && isFieldCentric) {
+          linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
+        }
+
+        ChassisSpeeds speeds =
+            new ChassisSpeeds(
+                linearVelocity.getX() * MAX_WHEEL_SPEED,
+                linearVelocity.getY() * MAX_WHEEL_SPEED,
+                omega * 6.0);
+        return speeds;
+      }
+    };
+  }
+
   /*
    * Does Deadbanding and such within drivetrain
    */
   public Command swerveDriveJoysticks(
-      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, Boolean isFieldCentric) {
+      DoubleSupplier forward,
+      DoubleSupplier strafe,
+      DoubleSupplier spin,
+      Boolean isFieldCentric,
+      Supplier<Rotation2d> angle) {
+    Supplier<ChassisSpeeds> baseJoystickSpeeds =
+        this.convertJoysticks(forward, strafe, spin, isFieldCentric);
     return this.run(
         () -> {
-          double DEADBAND = 0.05;
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(forward.getAsDouble(), strafe.getAsDouble()), DEADBAND);
-          Rotation2d linearDirection = new Rotation2d(forward.getAsDouble(), strafe.getAsDouble());
-          double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
+          ChassisSpeeds speeds = baseJoystickSpeeds.get();
 
-          // Square values
-          linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
-          omega = Math.copySign(omega * omega, omega);
-          // Calcaulate new linear velocity
-          Translation2d linearVelocity =
-              new Pose2d(new Translation2d(), linearDirection)
-                  .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-                  .getTranslation();
-          if (DriverStation.getAlliance().isPresent()
-              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-              && isFieldCentric) {
-            linearVelocity = linearVelocity.rotateBy(Rotation2d.fromRadians(Math.PI));
-          }
-
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * MAX_WHEEL_SPEED,
-                  linearVelocity.getY() * MAX_WHEEL_SPEED,
-                  omega * 10.5);
-          if (isFieldCentric) {
+          if (angle != null) {
+            speeds.omegaRadiansPerSecond =
+                MathUtil.clamp(
+                    orientationPID.calculate(
+                        this.getPose().getRotation().getRadians(), angle.get().getRadians()),
+                    -2.5,
+                    2.5);
             driveVelocityFieldCentric(speeds);
           } else {
-            driveVelocity(speeds);
+            if (isFieldCentric) {
+              driveVelocityFieldCentric(speeds);
+            } else {
+              driveVelocity(speeds);
+            }
           }
         });
   }
 
   public Command swerveDriveJoysticks(
       DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
-    return swerveDriveJoysticks(forward, strafe, spin, true);
+    return swerveDriveJoysticks(forward, strafe, spin, true, null);
   }
 
-  public Command SpinLockDrive(DoubleSupplier x, DoubleSupplier y) {
-    return this.run(
-        () -> {
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  x.getAsDouble() * MAX_WHEEL_SPEED, y.getAsDouble() * MAX_WHEEL_SPEED, 0.0);
-          // TODO: figure out a PID loop inside this logic...
-          this.driveVelocityFieldCentric(speeds);
-        });
+  public Command swerveDriveJoysticks(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin, boolean field) {
+    return swerveDriveJoysticks(forward, strafe, spin, field, null);
   }
-  // TODO: Pathplanner pathfinding
-  // complete the following method that returns a command from AutoBuilder that goes to the point
-  // given
+
+  public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
+  }
+
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
     PathConstraints constraints =
         new PathConstraints(3.0, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     return AutoBuilder.pathfindToPose(targetPose, constraints);
-    // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
-    // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
-    // Replace with your command
+  }
+  /*
+   * flips if needed
+   */
+  public Command goToPoint(Pose2d pose) {
+    PathConstraints constraints =
+        new PathConstraints(3.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    return new ConditionalCommand(
+        AutoBuilder.pathfindToPoseFlipped(pose, constraints),
+        AutoBuilder.pathfindToPose(pose, constraints),
+        AllianceFlipUtil::shouldFlip);
+  }
 
+  public Command chaseNoteTeleo(
+      DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier spin) {
+    Supplier<ChassisSpeeds> baseJoy = convertJoysticks(forward, strafe, spin, true);
+    return this.run(
+        () -> {
+          if (PhotonVisionSystem.getInstance().seeNote) {
+            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
+            Logger.recordOutput("Drivetrain/yawError", yawError);
+            ChassisSpeeds speed = baseJoy.get();
+            speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
+            driveVelocityFieldCentric(speed);
+          } else {
+            driveVelocityFieldCentric(baseJoy.get());
+          }
+        });
   }
 
   public Command chaseNote() {
     return this.run(
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = -8 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -20 - PhotonVisionSystem.getInstance().notePitch;
+            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+            double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
+            Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(
-                    MathUtil.clamp(pitchError * (1 / 10.0), -1.0, 1.0), 0, yawError * (1 / 20.0));
+                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
+                    0,
+                    yawError * (yawkP.get()));
             driveVelocity(speed);
           } else {
             if (PhotonVisionSystem.getInstance().notePitch < -12) {
-              driveVelocity(new ChassisSpeeds(-0.7, 0.0, 0.0));
+              driveVelocity(new ChassisSpeeds(0.7, 0.0, 0.0));
             }
             driveVelocity(new ChassisSpeeds());
           }
@@ -516,6 +594,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    orientationPID.checkParemeterUpdate();
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());

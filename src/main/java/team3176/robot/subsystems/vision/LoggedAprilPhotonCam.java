@@ -24,7 +24,9 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.TunableTransform3d;
 
 public class LoggedAprilPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
@@ -47,6 +49,7 @@ public class LoggedAprilPhotonCam {
               Units.inchesToMeters(10)),
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
+  private TunableTransform3d robot2CameraTune;
   // private PhotonCamera realCam;
   private PhotonCameraIO io;
   private PhotonCameraInputsAutoLogged inputs;
@@ -59,9 +62,19 @@ public class LoggedAprilPhotonCam {
 
   public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
+
     this.io = new PhotonCameraIO(name);
     this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
+    this.robot2CameraTune =
+        new TunableTransform3d(
+            name,
+            robot2Camera.getX(),
+            robot2Camera.getY(),
+            robot2Camera.getZ(),
+            robot2Camera.getRotation().getX(),
+            robot2Camera.getRotation().getX(),
+            robot2Camera.getRotation().getX());
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -83,12 +96,22 @@ public class LoggedAprilPhotonCam {
 
   public void generateLoggingData(PhotonPipelineResult results) {
     targets.clear();
+    robot2CameraTune.checkParemeterUpdate();
+
     if (results.hasTargets()) {
       Pose3d current3d = new Pose3d(Drivetrain.getInstance().getPose());
 
       estimates.clear();
+      ArrayList<Double> x = new ArrayList<Double>();
+      ArrayList<Double> y = new ArrayList<Double>();
+      Logger.recordOutput("photonvision/" + name + "/num targets", results.getTargets().size());
       for (PhotonTrackedTarget t : results.getTargets()) {
         targets.add(current3d.transformBy(robot2Camera).transformBy(t.getBestCameraToTarget()));
+        for (TargetCorner c : t.getDetectedCorners()) {
+          x.add(c.x);
+          y.add(c.y);
+        }
+
         if (field.getTagPose(t.getFiducialId()).isPresent()) {
           estimates.add(
               PhotonUtils.estimateFieldToRobotAprilTag(
@@ -97,14 +120,22 @@ public class LoggedAprilPhotonCam {
                   robot2Camera.inverse()));
         }
       }
+      double[] xarray = x.stream().mapToDouble(Double::doubleValue).toArray();
+      double[] yarray = y.stream().mapToDouble(Double::doubleValue).toArray();
+      Logger.recordOutput("photonvision/" + name + "/xarray", xarray);
+      Logger.recordOutput("photonvision/" + name + "/yarray", yarray);
       Logger.recordOutput(
           "photonvision/" + name + "/targetposes", targets.toArray(new Pose3d[targets.size()]));
       Logger.recordOutput(
           "photonvision/" + name + "/poseEstimates",
           estimates.toArray(new Pose3d[estimates.size()]));
     } else {
+      Logger.recordOutput("photonvision/" + name + "/num targets", results.getTargets().size());
       Logger.recordOutput("photonvision/" + name + "/targetposes", new Pose3d[] {});
       Logger.recordOutput("photonvision/" + name + "/poseEstimates", new Pose3d[] {});
+      double[] zeros = {0};
+      Logger.recordOutput("photonvision/" + name + "/xarray", zeros);
+      Logger.recordOutput("photonvision/" + name + "/yarray", zeros);
     }
   }
 
@@ -135,17 +166,19 @@ public class LoggedAprilPhotonCam {
       cov = VecBuilder.fill(distance2, distance2, 0.9);
     } else {
       double distance2 = Math.pow(distance * 1.2, 2);
-      cov = VecBuilder.fill(distance2, distance2, distance2);
+      cov = VecBuilder.fill(distance2, distance2, 100);
     }
     if (!DriverStation.isDisabled()) {
-      if (Math.abs(p.estimatedPose.getZ()) > 1.0
-          || p.estimatedPose
-                  .minus(new Pose3d(Drivetrain.getInstance().getPose()))
-                  .getTranslation()
-                  .getNorm()
-              > 1.0
-          || distance > 7.0) {
-        return;
+      if (p.targetsUsed.size() == 1) {
+        if (Math.abs(p.estimatedPose.getZ()) > 1.0
+            || p.estimatedPose
+                    .minus(new Pose3d(Drivetrain.getInstance().getPose()))
+                    .getTranslation()
+                    .getNorm()
+                > 1.0
+            || distance > 7.0) {
+          return;
+        }
       }
     }
     Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
@@ -156,9 +189,9 @@ public class LoggedAprilPhotonCam {
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
     var results = inputs.results;
-    Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
-
+    // estimator.setRobotToCameraTransform(robot2Camera);
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());

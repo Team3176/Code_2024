@@ -13,17 +13,17 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import team3176.robot.Constants.Mode;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.subsystems.RobotState;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -40,24 +40,28 @@ public class RobotContainer {
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
   private Drivetrain drivetrain;
-  private final RobotState robotState;
-  private final Superstructure superstructure;
+  private LEDSubsystem leds;
+  private Superstructure superstructure;
   private PhotonVisionSystem vision;
   private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
-  private Visualization vis;
+  private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-
+    superstructure = Superstructure.getInstance();
     drivetrain = Drivetrain.getInstance();
 
-    superstructure = Superstructure.getInstance();
-    robotState = RobotState.getInstance();
+    leds = LEDSubsystem.getInstance();
+    endMatchAlert.onTrue(leds.EndgameStart());
+    hasNote.whileTrue(leds.setHasNote());
+
+    // superstructure = Superstructure.getInstance();
     visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
@@ -72,142 +76,120 @@ public class RobotContainer {
                 () -> controller.getStrafe(),
                 () -> controller.getSpin())
             .withName("default drive"));
-    if (Constants.getMode() == Mode.SIM) {
-      drivetrain.setDefaultCommand(
-          drivetrain
-              .swerveDriveJoysticks(
-                  () -> controller.getForward(),
-                  () -> controller.getStrafe(),
-                  () -> controller.getSpin(),
-                  false)
-              .withName("default drive"));
-    }
+    leds.setDefaultCommand(leds.DefaultLED());
     NamedCommands.registerCommand(
-        "shoot", new WaitCommand(0.5).alongWith(new PrintCommand("shoot")).withName("shooting"));
-    // NamedCommands.registerCommand(
-    //     "intake",
-    //     intake
-    //         .runIntake(-1.0)
-    //         .withTimeout(0.5)
-    //         .alongWith(new PrintCommand("intake"))
-    //         .withName("intaking"));
+        "shoot",
+        superstructure
+            .aimClose()
+            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
+            .withTimeout(1.5)
+            .withName("shooting"));
+    NamedCommands.registerCommand(
+        "shootAim",
+        superstructure
+            .aimClose()
+            .alongWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
+            .withTimeout(1.5)
+            .withName("shooting"));
+    NamedCommands.registerCommand(
+        "chaseNote",
+        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
-
     configureBindings();
   }
 
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     /*
-        // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-        // m_Drivetrain.setTurbo(false), m_Drivetrain));
-        // controller.transStick.button(2).whileTrue(drivetrain.pathfind("shoot"));
-        // controller.transStick.button(3).whileTrue(drivetrain.pathfind("pickup"));
-        controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
-        controller
-            .transStick
-            .button(10)
-            .whileTrue(
-                new InstantCommand(drivetrain::setBrakeMode)
-                    .andThen(drivetrain.swerveDefenseCommand())
-                    .withName("swerveDefense"));
-        // m_Controller.getTransStick_Button10()
-        //    .onFalse(new InstantCommand(() -> m_Drivetrain.setDriveMode(driveMode.DRIVE),
-        // m_Drivetrain));
-
-    // m_Controller.getTransStick_Button1().onFalse(new InstantCommand(() ->
-    // m_Drivetrain.setTurbo(false), m_Drivetrain));
-    /* TODO pathplanner-finding link button 2 on the transStick to the goToPoint.
-      use the whileTrue so if the button is released the command is cancelled
-      pass in a new Pose2d object for the point (2.0,2.0) you can pass a blank new Rotation2d() as the orientation
-    */
-    // controller.transStick.button(1).whileTrue(intake.runIntake(-0.6));
-
-    // controller
-    //     .transStick
-    //     .button(3)
-    //     .whileTrue(drivetrain.chaseNote().alongWith(intake.runIntake(-0.6)));
-
-    controller.transStick.button(2).whileTrue(drivetrain.goToPoint(2, 2));
-
+     * Translation Stick
+     */
+    controller.transStick.button(1).whileTrue(superstructure.doItAll());
+    controller
+        .transStick
+        .button(2)
+        .onTrue(Intake.getInstance().intakeNote())
+        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
-        .button(10)
-        .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("swerveDefense"));
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
-    controller
-        .rotStick
         .button(3)
         .whileTrue(
-            new InstantCommand(drivetrain::setBrakeMode)
-                .andThen(drivetrain.swerveDefenseCommand())
-                .withName("setBrakeMode"));
+            drivetrain
+                .chaseNote()
+                .alongWith(Intake.getInstance().intakeNote())
+                .alongWith(leds.AutoDriveStart().asProxy()));
+    controller
+        .transStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .chaseNoteTeleo(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin())
+                .alongWith(Intake.getInstance().intakeNote()));
+    controller
+        .transStick
+        .button(10)
+        .whileTrue(drivetrain.swerveDefenseCommand().withName("swerveDefense"));
 
+    /*
+     *  Rotation Stick
+     */
+
+    controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    controller
+        .rotStick
+        .button(2)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimShooterTune()));
+    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+    controller
+        .rotStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimPodium()));
     controller
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
 
+    /*
+     * Operator
+     */
+    controller.operator.x().whileTrue(superstructure.spit());
+    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
     controller
         .operator
-        .b()
-        .whileTrue(superstructure.movePivotDown(-.25))
-        .onFalse(superstructure.stopPivot());
+        .leftBumper()
+        .whileTrue(
+            superstructure.moveClimbLeftRightPosition(
+                () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
+        .onFalse(superstructure.stopClimbLeftRight());
+
+    /*
+    controller
+        .operator
+        .rightBumper()
+        .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
+        .onFalse(superstructure.stopClimbRight());
+        */
+    controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
+    controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());
 
     controller
         .operator
-        .a()
-        .whileTrue(superstructure.moveElevator(.5))
-        .onFalse(superstructure.stopElevator());
-
-    controller
-        .operator
-        .y()
-        .whileTrue(superstructure.positiveIntake(50))
-        .onFalse(superstructure.stopIntake());
-
-    controller
-        .operator
-        .x()
-        .whileTrue(superstructure.movePivotUp(.25))
-        .onFalse(superstructure.stopPivot());
-
-    // controller.operator.a().onTrue(superstructure.moveElevator(.5));
-    // controller.operator.y().onTrue(superstructure.positiveIntake(50));
-    controller
-        .transStick
-        .button(1)
-        .onTrue(Shooter.getInstance().pivotSetPositionOnce(50))
-        .onFalse(Shooter.getInstance().pivotSetPositionOnce(15));
-    // m_Controller.operator.start().onTrue(new ToggleVisionLEDs());
-    // m_Controller.operator.back().onTrue(new SwitchToNextVisionPipeline());
-
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).onTrue(robotState.setColorWantedState(3));
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).whileTrue(new IntakeGroundCube());
-    // controller.operator.rightBumper().and(controller.operator.leftBumper().negate()).onFalse(intakeCube.retractSpinNot());
-    // m_Controller.operator.rightBumper().and(m_Controller.operator.leftBumper().negate()).onFalse(m_Superstructure.prepareCarry());
-
+        .start()
+        .and(controller.operator.povLeft())
+        .onTrue(Intake.getInstance().EmergencyHold());
   }
-  /*
-    public void setThrustCoast() {
-      drivetrain.setCoastMode();
-    }
-
-    public void setThrustBrake() {
-      drivetrain.setBrakeMode();
-    }
-  */
 
   public void clearCanFaults() {
     pdh.clearStickyFaults();
@@ -223,7 +205,6 @@ public class RobotContainer {
       Long start = System.nanoTime();
       choosenAutonomousCommand = autonChooser.get();
       try {
-        // TODO: re implement this
         choosenAutonomousCommand = autonChooser.get();
       } catch (Exception e) {
         System.out.println("[ERROR] could not find" + autonChooser.get().getName());
@@ -260,17 +241,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return choosenAutonomousCommand;
-    // return drivetrain.swerveDriveAuto(1,0,0);
-    // if(choosenAutonomousCommand == null) {
-    //   //this is if for some reason checkAutonomousSelection is never called
-    //   String chosen = autonChooser.get();
-    //   chosen = "wall_3nSteal_3";
-    //   PathPlannerAuto ppSwerveAuto = new PathPlannerAuto(chosen);
-    //   return ppSwerveAuto.getauto();
-    // }
-    // choosenAutonomousCommand = new PathPlannerAuto("wall_3nSteal_3").getauto();
-    // return choosenAutonomousCommand;
+    return autonChooser.get();
   }
 }

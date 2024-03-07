@@ -7,6 +7,7 @@ package team3176.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,7 +31,7 @@ import team3176.robot.Constants.RobotType;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-
+  private Spark spark;
   private RobotContainer robotContainer;
   Thread fisheyeThread;
   private static final boolean FISHEYE_CAMERA = false;
@@ -43,6 +44,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     // TODO: Char restore this fxnality  -- mod build.gradle: see prepForState 723516
+    // spark = new Spark(0);
+    // spark.set(-0.88);
     System.out.println("[Init] Starting AdvantageKit");
     Logger.recordMetadata("Robot", Constants.getRobot().toString());
     Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
@@ -67,8 +70,10 @@ public class Robot extends LoggedRobot {
       case REAL:
         try {
           Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+          // Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
         } catch (Error e) {
-          System.out.println("[Error] failed to start local log file");
+          Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+          System.out.println("[Error] failed to start USB log file. Logging to /home/lvuser/logs");
         }
 
         Logger.addDataReceiver(new NT4Publisher());
@@ -162,7 +167,6 @@ public class Robot extends LoggedRobot {
     robotContainer.checkAllaince();
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();

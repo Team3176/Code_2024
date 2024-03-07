@@ -10,6 +10,7 @@ public class PhotonCameraIO {
   @AutoLog
   public static class PhotonCameraInputs {
     PhotonPipelineResult results = new PhotonPipelineResult();
+    boolean isConnected = false;
   }
 
   public PhotonCameraIO(String name) {
@@ -17,7 +18,12 @@ public class PhotonCameraIO {
   }
 
   public void updateInputs(PhotonCameraInputs inputs) {
-    inputs.results = this.cam.getLatestResult();
+    if (this.cam.isConnected()) {
+      inputs.results = this.cam.getLatestResult();
+    } else {
+      inputs.results = new PhotonPipelineResult();
+    }
+    inputs.isConnected = this.cam.isConnected();
   }
 
   public PhotonCamera getCamera() {
