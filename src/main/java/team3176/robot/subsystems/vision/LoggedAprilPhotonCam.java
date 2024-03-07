@@ -27,6 +27,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunableTransform3d;
+import team3176.robot.util.vision.LoggedPhotonCamera;
 
 public class LoggedAprilPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
@@ -51,8 +52,9 @@ public class LoggedAprilPhotonCam {
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
   private TunableTransform3d robot2CameraTune;
   // private PhotonCamera realCam;
-  private PhotonCameraIO io;
-  private PhotonCameraInputsAutoLogged inputs;
+  // private PhotonCameraIO io;
+  // private PhotonCameraInputsAutoLogged inputs;
+  private LoggedPhotonCamera cam;
   private List<Pose3d> targets = new ArrayList<Pose3d>();
   private List<Pose3d> estimates = new ArrayList<Pose3d>();
   String name = "";
@@ -62,9 +64,9 @@ public class LoggedAprilPhotonCam {
 
   public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
-
-    this.io = new PhotonCameraIO(name);
-    this.inputs = new PhotonCameraInputsAutoLogged();
+    this.cam = new LoggedPhotonCamera(name);
+    // this.io = new PhotonCameraIO(name);
+    // this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
     this.robot2CameraTune =
         new TunableTransform3d(
@@ -91,7 +93,7 @@ public class LoggedAprilPhotonCam {
   }
 
   public PhotonCamera getCamera() {
-    return io.getCamera();
+    return cam;
   }
 
   public void generateLoggingData(PhotonPipelineResult results) {
@@ -186,9 +188,9 @@ public class LoggedAprilPhotonCam {
 
   public void periodic() {
     LogCameraPose();
-    io.updateInputs(inputs);
-    Logger.processInputs("photonvision/" + this.name, inputs);
-    var results = inputs.results;
+    // io.updateInputs(inputs);
+    // Logger.processInputs("photonvision/" + this.name, inputs);
+    var results = cam.getLatestResult();
     // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
     // estimator.setRobotToCameraTransform(robot2Camera);
