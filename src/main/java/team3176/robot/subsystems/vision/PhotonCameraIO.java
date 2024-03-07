@@ -1,6 +1,7 @@
 package team3176.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.LogTable;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -14,6 +15,7 @@ public class PhotonCameraIO {
   }
 
   public PhotonCameraIO(String name) {
+    LogTable.disableProtobufWarning();
     this.cam = new PhotonCamera(name);
   }
 
