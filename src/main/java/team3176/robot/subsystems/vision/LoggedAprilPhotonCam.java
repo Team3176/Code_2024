@@ -27,7 +27,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunableTransform3d;
-import team3176.robot.util.vision.LoggedPhotonCamera;
 
 public class LoggedAprilPhotonCam {
   // currently using an body frame that is at the center of the XY of the robot and projected down
@@ -51,7 +50,9 @@ public class LoggedAprilPhotonCam {
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
   private TunableTransform3d robot2CameraTune;
-  private LoggedPhotonCamera cam;
+  private PhotonCameraIO io;
+  private PhotonCameraInputsAutoLogged inputs;
+  // private LoggedPhotonCamera cam;
   private List<Pose3d> targets = new ArrayList<Pose3d>();
   private List<Pose3d> estimates = new ArrayList<Pose3d>();
   String name = "";
@@ -61,9 +62,9 @@ public class LoggedAprilPhotonCam {
 
   public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
-    this.cam = new LoggedPhotonCamera(name);
-    // this.io = new PhotonCameraIO(name);
-    // this.inputs = new PhotonCameraInputsAutoLogged();
+    // this.cam = new LoggedPhotonCamera(name);
+    this.io = new PhotonCameraIO(name);
+    this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
     this.robot2CameraTune =
         new TunableTransform3d(
@@ -90,7 +91,7 @@ public class LoggedAprilPhotonCam {
   }
 
   public PhotonCamera getCamera() {
-    return cam;
+    return io.getCamera();
   }
 
   public void generateLoggingData(PhotonPipelineResult results) {
@@ -185,14 +186,9 @@ public class LoggedAprilPhotonCam {
 
   public void periodic() {
     LogCameraPose();
-    // io.updateInputs(inputs);
-    // Logger.processInputs("photonvision/" + this.name, inputs);
-    PhotonPipelineResult results;
-    if (cam.isConnected() || Logger.hasReplaySource()) {
-      results = cam.getLatestResult();
-    } else {
-      results = new PhotonPipelineResult();
-    }
+    io.updateInputs(inputs);
+    Logger.processInputs("photonvision/" + this.name, inputs);
+    PhotonPipelineResult results = io.getResult(inputs.rawBytes);
 
     // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
