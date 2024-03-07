@@ -30,3 +30,11 @@
         - Right Controller =    TalonFX     PID Position
     ### Climb Left 
         - Left Controller =     TalonFX     PID Position
+
+
+
+
+amp shot transfer = 30
+        upper flywheel = 20
+        lower flywheel = 20
+        angle = 27
