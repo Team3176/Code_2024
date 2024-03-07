@@ -168,12 +168,18 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   }
 
   private int getLaserCanDist() {
-    return lasercan.getMeasurement().distance_mm;
+    int measurement;
+    try {
+      measurement = lasercan.getMeasurement().distance_mm;
+    } catch (Error e) {
+      System.out.println("[Error] getLaserCanDist failed.");
+      measurement = 200;
+    }
+    return measurement;
   }
 
   private boolean isNotePresent() {
-    if (lasercan.getMeasurement().distance_mm
-        < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
+    if (getLaserCanDist() < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
       return true;
     } else {
       return false;

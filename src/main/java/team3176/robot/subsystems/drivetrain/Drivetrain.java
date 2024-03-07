@@ -48,6 +48,7 @@ import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
 import team3176.robot.util.swerve.SwerveSetpoint;
@@ -62,6 +63,9 @@ public class Drivetrain extends SubsystemBase {
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+
+  private final LoggedTunableNumber pitchkP;
+  private final LoggedTunableNumber yawkP;
 
   // private Controller controller = Controller.getInstance();
   // private Vision m_Vision = Vision.getInstance();
@@ -113,6 +117,8 @@ public class Drivetrain extends SubsystemBase {
 
   private Drivetrain(GyroIO io) {
     this.io = io;
+    this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
+    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
     inputs = new GyroIOInputs();
 
     // check for duplicates
@@ -549,9 +555,9 @@ public class Drivetrain extends SubsystemBase {
             Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (1 / 10.0), -1.0, 1.0),
+                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
                     0,
-                    yawError * (1 / 20.0));
+                    yawError * (yawkP.get()));
             driveVelocity(speed);
           } else {
             if (PhotonVisionSystem.getInstance().notePitch < -12) {

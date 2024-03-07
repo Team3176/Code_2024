@@ -69,10 +69,11 @@ public class Robot extends LoggedRobot {
     switch (Constants.getMode()) {
       case REAL:
         try {
-          // Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
-          Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
+          Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+          // Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
         } catch (Error e) {
-          System.out.println("[Error] failed to start local log file");
+          Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs/"));
+          System.out.println("[Error] failed to start USB log file. Logging to /home/lvuser/logs");
         }
 
         Logger.addDataReceiver(new NT4Publisher());

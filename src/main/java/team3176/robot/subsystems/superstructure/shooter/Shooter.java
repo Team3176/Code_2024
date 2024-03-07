@@ -15,6 +15,7 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -35,16 +36,19 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber forwardPivotVoltageOffset;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
+  // private InterpolatingDoubleTreeMap shooterFlywheelLookup;
 
   private Shooter(ShooterIO io) {
     this.io = io;
     this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.25, 0.00);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
-    this.aimAngle = new LoggedTunableNumber("shooter/angle", 27);
-    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 40.0);
+    this.aimAngle = new LoggedTunableNumber("shooter/angle", 30);
+    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 60.0);
     this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.55);
+    // shooterFlywheelLookup.put(1.0, 60.0);
+    // shooterFlywheelLookup.put(3.2, 100.0);
   }
 
   public static Shooter getInstance() {
@@ -67,7 +71,7 @@ public class Shooter extends SubsystemBase {
           forwardPivotVoltageOffset.get()
               * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
     }
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
+    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 12);
     io.setPivotVoltage(pivotVoltage);
   }
 
@@ -78,15 +82,29 @@ public class Shooter extends SubsystemBase {
 
   @AutoLogOutput
   private Rotation2d getAimAngle() {
+    // Pose3d current =
+    //     new Pose3d(Drivetrain.getInstance().getPose())
+    //         .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
+    // Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
+    // Translation3d diff = current.getTranslation().minus(goal);
+    // double z = diff.getZ();
+    // double distance = diff.toTranslation2d().getNorm();
+    // Logger.recordOutput("shooter/distance", diff.toTranslation2d().getNorm());
+    // Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
+
+    return Rotation2d.fromDegrees(aimAngle.get());
+  }
+
+  @AutoLogOutput
+  public double getDistance() {
     Pose3d current =
         new Pose3d(Drivetrain.getInstance().getPose())
             .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
-    Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
+    Translation3d goal = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening);
     Translation3d diff = current.getTranslation().minus(goal);
-    double z = diff.getZ();
     double distance = diff.toTranslation2d().getNorm();
-    Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
-    return Rotation2d.fromDegrees(aimAngle.get());
+    Logger.recordOutput("Shooter/podium", distance < 2.6 && distance > 2.37);
+    return distance;
   }
 
   public Rotation2d getAngle() {
@@ -123,6 +141,20 @@ public class Shooter extends SubsystemBase {
         () -> {
           io.setFlywheelLowerVelocity(flywheelLowerVelocity.get());
           io.setFlywheelUpperVelocity(flywheelUpperVelocity.get());
+          this.pivotSetpoint = getAimAngle();
+        },
+        () -> {
+          io.setFlywheelVelocity(FLYWHEEL_IDLE);
+          pivotSetpoint = new Rotation2d();
+        });
+  }
+
+  public Command aimLookup() {
+
+    return this.runEnd(
+        () -> {
+          // io.setFlywheelLowerVelocity(shooterFlywheelLookup.get(getDistance()));
+          // io.setFlywheelUpperVelocity(shooterFlywheelLookup.get(getDistance()));
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
