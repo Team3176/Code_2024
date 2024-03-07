@@ -51,9 +51,6 @@ public class LoggedAprilPhotonCam {
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
   private TunableTransform3d robot2CameraTune;
-  // private PhotonCamera realCam;
-  // private PhotonCameraIO io;
-  // private PhotonCameraInputsAutoLogged inputs;
   private LoggedPhotonCamera cam;
   private List<Pose3d> targets = new ArrayList<Pose3d>();
   private List<Pose3d> estimates = new ArrayList<Pose3d>();
@@ -190,7 +187,13 @@ public class LoggedAprilPhotonCam {
     LogCameraPose();
     // io.updateInputs(inputs);
     // Logger.processInputs("photonvision/" + this.name, inputs);
-    var results = cam.getLatestResult();
+    PhotonPipelineResult results;
+    if (cam.isConnected()) {
+      results = cam.getLatestResult();
+    } else {
+      results = new PhotonPipelineResult();
+    }
+
     // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
     // estimator.setRobotToCameraTransform(robot2Camera);
