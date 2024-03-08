@@ -58,7 +58,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnSparkMax.restoreFactoryDefaults();
     var thrustFalconConfig = new TalonFXConfiguration();
 
-    thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
+    thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 60;
     thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
