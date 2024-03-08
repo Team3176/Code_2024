@@ -3,6 +3,8 @@ package team3176.robot.subsystems.drivetrain;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 public interface SwervePodIO {
   @AutoLog
   public static class SwervePodIOInputs {
@@ -36,6 +38,7 @@ public interface SwervePodIO {
   public default Rotation2d getOffset() {
     return new Rotation2d();
   }
+  public default void setThrustPID(double kP, double kI, double kD) {}
   /** Enable or disable brake mode on the drive motor. */
   public default void setDriveBrakeMode(boolean enable) {}
 

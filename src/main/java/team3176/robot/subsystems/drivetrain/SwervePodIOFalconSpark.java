@@ -42,6 +42,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private final StatusSignal<Double> driveTemps;
 
   private final StatusSignal<Double> turnAbsolutePosition;
+  private TalonFXConfiguration thrustFalconConfig = new TalonFXConfiguration();
 
   // public static final double FEET2TICS = 12.0 * (1.0/ (DrivetrainConstants.WHEEL_DIAMETER_INCHES
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
@@ -56,7 +57,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     // reset the motor controllers
     // thrustFalcon.configFactoryDefault();
     turnSparkMax.restoreFactoryDefaults();
-    var thrustFalconConfig = new TalonFXConfiguration();
+    
 
     thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
     thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -138,6 +139,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
+  }
+
+  public void setThrustPID(double kP, double kI, double kD) {
+    thrustFalconConfig.Slot0.kP = kP;
+    thrustFalconConfig.Slot0.kI = kI;
+    thrustFalconConfig.Slot0.kD = kD;
+    thrustFalcon.getConfigurator().apply(thrustFalconConfig, 0.01);
   }
 
   @Override

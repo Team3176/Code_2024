@@ -43,6 +43,9 @@ public class SwervePod implements Subsystem {
   private LoggedTunableNumber kIAzimuth = new LoggedTunableNumber("kI_azimuth", 0.0);
   private LoggedTunableNumber kDAzimuth = new LoggedTunableNumber("kD_azimuth", 0.0003);
   private LoggedTunableNumber turnMaxpercent = new LoggedTunableNumber("turn_max", 0.75);
+
+  private LoggedTunableNumber kPThrust = new LoggedTunableNumber("kP-thrust", 0.1);
+  private LoggedTunableNumber kDThrust = new LoggedTunableNumber("kD-thrust", 0.0);
   private String[] podNames = {"FR", "FL", "BL", "BR"};
 
   private LoggedTunableNumber offset;
@@ -179,6 +182,7 @@ public class SwervePod implements Subsystem {
     if (offset.hasChanged(hashCode())) {
       io.setOffset(Rotation2d.fromDegrees(offset.get()));
     }
+    LoggedTunableNumber.ifChanged(hashCode(), () -> io.setThrustPID(kPThrust.get(), 0.0, kDThrust.get()), kPThrust,kDThrust);
     if (kPAzimuth.hasChanged(hashCode())
         || kIAzimuth.hasChanged(hashCode())
         || kDAzimuth.hasChanged(hashCode())) {
