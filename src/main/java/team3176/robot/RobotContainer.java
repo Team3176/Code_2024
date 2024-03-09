@@ -5,7 +5,6 @@
 package team3176.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -77,7 +76,7 @@ public class RobotContainer {
                 () -> controller.getSpin())
             .withName("default drive"));
     leds.setDefaultCommand(leds.DefaultLED());
-    NamedCommands.registerCommand(
+    /*  NamedCommands.registerCommand(
         "shoot",
         superstructure
             .aimClose()
@@ -92,9 +91,9 @@ public class RobotContainer {
             .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
             .withTimeout(1.5)
             .withName("shooting"));
-    NamedCommands.registerCommand(
-        "chaseNote",
-        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
+    NamedCommands.registerCommand( */
+    // "chaseNote",
+    // drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -164,7 +163,7 @@ public class RobotContainer {
     /*
      * Operator
      */
-    controller.operator.x().whileTrue(superstructure.spit());
+    // controller.operator.x().whileTrue(superstructure.spit());
     controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
     controller
         .operator
@@ -189,6 +188,9 @@ public class RobotContainer {
         .start()
         .and(controller.operator.povLeft())
         .onTrue(Intake.getInstance().EmergencyHold());
+
+    // PID Roll for left arm
+    controller.operator.x().whileTrue(superstructure.moveClimbLeftRightPIDPosition());
   }
 
   public void clearCanFaults() {

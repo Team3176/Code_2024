@@ -1,30 +1,30 @@
 package team3176.robot.subsystems.superstructure.climb;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
-
-import com.kauailabs.navx.frc.AHRS;
-
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
-import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
+// import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
 import team3176.robot.util.TunablePID;
 
 /** Elevator handles the height of the intake from the ground. */
 public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
-  private AHRS gyro =  new AHRS(SPI.Port.kMXP);
+  private AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private double leftSetPoint = 0;
+  private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
   private TunablePID leftPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
 
-
+  int counter = 0;
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -46,6 +46,13 @@ public class Climb extends SubsystemBase {
         });
   }
 
+  public double leftPIDPosition() {
+    double leftVoltage = leftPIDController.calculate(gyro.getRoll(), leftSetPoint);
+    /* System.out.println(
+    gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
+    return leftVoltage;
+  }
+
   public double getLeftPosition() {
     return inputs.leftPosition;
   }
@@ -54,10 +61,6 @@ public class Climb extends SubsystemBase {
     return inputs.rightPosition;
   }
 
-  public void leftPIDPoision(){
-    double pivotVoltage =
-    leftPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
-  }
   /*
   public Command leftGoToPosition(double position) {
     return this.runEnd(
@@ -131,6 +134,17 @@ public class Climb extends SubsystemBase {
         });
   }
 
+  public Command moveLeftRightPIDPosition() {
+    System.out.println("MOVELEFTRUGHTPIDPOSITION IS RUNNING!!!!!!!!!!!!!!!!!!");
+    return this.runEnd(
+        () -> {
+          io.setLeftVoltage(5 * leftPIDPosition());
+        },
+        () -> {
+          io.setLeftVoltage(0.0);
+        });
+  }
+
   /*   public Command rightGoToPosition(double position) {
     return this.runEnd(
         () -> {
@@ -144,6 +158,18 @@ public class Climb extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
     pid.checkParemeterUpdate();
+    // int counter = 0;
+    if (counter == 20) {
+      System.out.println(
+          gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      counter = 0;
+    }
+    counter++;
+    if (Math.abs(gyro.getRoll()) > 1) {
+      io.setLeftVoltage(.5);
+    } else {
+      io.setLeftVoltage(0);
+    }
   }
 
   public static Climb getInstance() {

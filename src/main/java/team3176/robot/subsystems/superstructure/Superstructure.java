@@ -1,7 +1,6 @@
 package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.function.DoubleSupplier;
 import team3176.robot.FieldConstants;
@@ -9,16 +8,17 @@ import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.elevator.Elevator;
-import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
 import team3176.robot.util.NoteVisualizer;
+
+// TODO: uncomment all intake commands
 
 public class Superstructure {
   private static Superstructure instance;
   private Climb climb;
   private Elevator elevator;
-  private Intake intake;
+  // private Intake intake;
   private Transfer transfer;
   private Shooter shooter;
 
@@ -26,7 +26,7 @@ public class Superstructure {
     NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
     climb = Climb.getInstance();
     // elevator = Elevator.getInstance();
-    intake = Intake.getInstance();
+    // intake = Intake.getInstance();
     shooter = Shooter.getInstance();
     transfer = new Transfer();
   }
@@ -52,7 +52,8 @@ public class Superstructure {
   }
 
   public Command shoot() {
-    return intake.spinIntake();
+    return shooter.aim();
+    // return intake.spinIntake();
   }
 
   public Command runShooterPivot(double volts) {
@@ -83,6 +84,10 @@ public class Superstructure {
     return climb.moveLeftRightPosition(deltaLeft, deltaRight);
   }
 
+  public Command moveClimbLeftRightPIDPosition() {
+    return climb.moveLeftRightPIDPosition();
+  }
+
   public Command stopClimbLeft() {
     return climb.stopLeft();
   }
@@ -96,13 +101,17 @@ public class Superstructure {
   }
 
   public Command spit() {
-    return intake.spit().alongWith(transfer.spit());
+    return shooter.aim();
+
+    // return intake.spit().alongWith(transfer.spit());
+
   }
 
   public Command getSourceNoteAuto() {
-    return Drivetrain.getInstance()
-        .goToPoint(FieldConstants.sourePickup)
-        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intake.intakeNote()));
+    /* return Drivetrain.getInstance()
+    .goToPoint(FieldConstants.sourePickup)
+    .andThen(Drivetrain.getInstance().chaseNote().raceWith(intake.intakeNote())); */
+    return shooter.aim();
   }
 
   public Command scoreNoteCenterAuto() {
@@ -116,10 +125,11 @@ public class Superstructure {
   }
 
   public Command doItAll() {
-    return new ConditionalCommand(
-        scoreNoteCenterAuto().andThen(getSourceNoteAuto()).repeatedly(),
-        getSourceNoteAuto().andThen(scoreNoteCenterAuto()).repeatedly(),
-        intake::hasNote);
+    /*     return new ConditionalCommand(
+    scoreNoteCenterAuto().andThen(getSourceNoteAuto()).repeatedly(),
+    getSourceNoteAuto().andThen(scoreNoteCenterAuto()).repeatedly(),);
+            intake::hasNote); */
+    return shooter.aim();
   }
 
   public static Superstructure getInstance() {
