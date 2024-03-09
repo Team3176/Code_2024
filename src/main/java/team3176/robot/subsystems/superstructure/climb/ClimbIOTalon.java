@@ -14,7 +14,10 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.SPI;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
@@ -28,7 +31,9 @@ public class ClimbIOTalon implements ClimbIO {
   DigitalInput climbLBLimitswitch, climbRBLimitswitch;
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
-  private final StatusSignal<Double> leftPosition;
+  private final StatusSignal<Double> leftPosition;  
+
+
   // private final StatusSignal<Double> rightError;
   // private final StatusSignal<Double> leftError;
 

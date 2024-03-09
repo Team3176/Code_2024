@@ -1,20 +1,30 @@
 package team3176.robot.subsystems.superstructure.climb;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+
+import com.kauailabs.navx.frc.AHRS;
+
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
 import team3176.robot.util.TunablePID;
 
 /** Elevator handles the height of the intake from the ground. */
 public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
+  private AHRS gyro =  new AHRS(SPI.Port.kMXP);
+
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
+
+
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -42,6 +52,11 @@ public class Climb extends SubsystemBase {
 
   public double getRightPosition() {
     return inputs.rightPosition;
+  }
+
+  public void leftPIDPoision(){
+    double pivotVoltage =
+    leftPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
   }
   /*
   public Command leftGoToPosition(double position) {
