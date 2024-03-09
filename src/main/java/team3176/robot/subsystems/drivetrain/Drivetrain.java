@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
+import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 import team3176.robot.util.swerve.ModuleLimits;
 import team3176.robot.util.swerve.SwerveSetpoint;
@@ -55,12 +57,15 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double LENGTH = 20;
-  public static final double WIDTH = 20;
+  public static final double LENGTH = Units.inchesToMeters(20);
+  public static final double WIDTH = Units.inchesToMeters(20);
 
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+
+  private final LoggedTunableNumber pitchkP;
+  private final LoggedTunableNumber yawkP;
 
   // private Controller controller = Controller.getInstance();
   // private Vision m_Vision = Vision.getInstance();
@@ -112,6 +117,8 @@ public class Drivetrain extends SubsystemBase {
 
   private Drivetrain(GyroIO io) {
     this.io = io;
+    this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
+    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
     inputs = new GyroIOInputs();
 
     // check for duplicates
@@ -503,18 +510,22 @@ public class Drivetrain extends SubsystemBase {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
   }
 
-  // TODO: Pathplanner pathfinding
-  // complete the following method that returns a command from AutoBuilder that goes to the point
-  // given
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
     PathConstraints constraints =
         new PathConstraints(3.0, 1.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     return AutoBuilder.pathfindToPose(targetPose, constraints);
-    // Command pathfindingCommand = new PathfindHolonomic(targetPose, constraints,
-    // AutoBuilder::getPose 0.0, AutoBuilder::getVelocity, AutoBuilder:: get, 0.0, null);
-    // Replace with your command
-
+  }
+  /*
+   * flips if needed
+   */
+  public Command goToPoint(Pose2d pose) {
+    PathConstraints constraints =
+        new PathConstraints(3.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    return new ConditionalCommand(
+        AutoBuilder.pathfindToPoseFlipped(pose, constraints),
+        AutoBuilder.pathfindToPose(pose, constraints),
+        AllianceFlipUtil::shouldFlip);
   }
 
   public Command chaseNoteTeleo(
@@ -544,9 +555,9 @@ public class Drivetrain extends SubsystemBase {
             Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed =
                 new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (1 / 10.0), -1.0, 1.0),
+                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
                     0,
-                    yawError * (1 / 20.0));
+                    yawError * (yawkP.get()));
             driveVelocity(speed);
           } else {
             if (PhotonVisionSystem.getInstance().notePitch < -12) {

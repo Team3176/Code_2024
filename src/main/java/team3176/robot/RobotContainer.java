@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
@@ -46,6 +47,8 @@ public class RobotContainer {
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
+  private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,6 +58,8 @@ public class RobotContainer {
     drivetrain = Drivetrain.getInstance();
 
     leds = LEDSubsystem.getInstance();
+    endMatchAlert.onTrue(leds.EndgameStart());
+    hasNote.whileTrue(leds.setHasNote());
 
     // superstructure = Superstructure.getInstance();
     visualization = new Visualization();
@@ -101,6 +106,7 @@ public class RobotContainer {
     /*
      * Translation Stick
      */
+    controller.transStick.button(1).whileTrue(superstructure.doItAll());
     controller
         .transStick
         .button(2)
@@ -143,7 +149,13 @@ public class RobotContainer {
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                 .alongWith(superstructure.aimShooterTune()));
     controller.rotStick.button(3).whileTrue(superstructure.aimClose());
-    controller.rotStick.button(4).whileTrue(superstructure.aimAmp());
+    controller
+        .rotStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimPodium()));
     controller
         .rotStick
         .button(8)

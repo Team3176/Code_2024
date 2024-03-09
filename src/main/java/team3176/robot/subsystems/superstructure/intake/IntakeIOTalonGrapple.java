@@ -93,8 +93,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    //pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    //pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    // pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
+    // pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
@@ -168,12 +168,18 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   }
 
   private int getLaserCanDist() {
-    return lasercan.getMeasurement().distance_mm;
+    int measurement;
+    try {
+      measurement = lasercan.getMeasurement().distance_mm;
+    } catch (Error e) {
+      System.out.println("[Error] getLaserCanDist failed.");
+      measurement = 200;
+    }
+    return measurement;
   }
 
   private boolean isNotePresent() {
-    if (lasercan.getMeasurement().distance_mm
-        < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
+    if (getLaserCanDist() < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
       return true;
     } else {
       return false;

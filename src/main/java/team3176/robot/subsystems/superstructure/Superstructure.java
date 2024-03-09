@@ -1,7 +1,10 @@
 package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.function.DoubleSupplier;
+import team3176.robot.FieldConstants;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
@@ -37,15 +40,15 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(60, 40, 27, 0.35);
+    return aimShooter(60, 60, 30, 0.6);
   }
 
   public Command aimAmp() {
-    return aimShooter(17, 17, 27, 0.35);
+    return aimShooter(17, 17, 30, 0.35);
   }
 
   public Command aimPodium() {
-    return aimShooter(70, 100, 15, 0.8);
+    return aimShooter(80, 80, 7, 0.6);
   }
 
   public Command shoot() {
@@ -94,6 +97,29 @@ public class Superstructure {
 
   public Command spit() {
     return intake.spit().alongWith(transfer.spit());
+  }
+
+  public Command getSourceNoteAuto() {
+    return Drivetrain.getInstance()
+        .goToPoint(FieldConstants.sourePickup)
+        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intake.intakeNote()));
+  }
+
+  public Command scoreNoteCenterAuto() {
+    return Drivetrain.getInstance()
+        .goToPoint(FieldConstants.CenterScore)
+        .andThen(
+            Drivetrain.getInstance()
+                .driveAndAim(() -> 0, () -> 0)
+                .raceWith(
+                    aimClose().raceWith(new WaitCommand(0.3).andThen(shoot().withTimeout(0.5)))));
+  }
+
+  public Command doItAll() {
+    return new ConditionalCommand(
+        scoreNoteCenterAuto().andThen(getSourceNoteAuto()).repeatedly(),
+        getSourceNoteAuto().andThen(scoreNoteCenterAuto()).repeatedly(),
+        intake::hasNote);
   }
 
   public static Superstructure getInstance() {
