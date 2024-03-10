@@ -105,7 +105,7 @@ public class RobotContainer {
     /*
      * Translation Stick
      */
-    controller.transStick.button(1).whileTrue(superstructure.doItAll());
+    // controller.transStick.button(1).whileTrue(superstructure.doItAll());
     controller
         .transStick
         .button(2)
@@ -139,22 +139,22 @@ public class RobotContainer {
      *  Rotation Stick
      */
 
-    controller.rotStick.button(1).whileTrue(superstructure.shoot());
-    controller
-        .rotStick
-        .button(2)
-        .whileTrue(
-            drivetrain
-                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimShooterTune()));
-    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
-    controller
-        .rotStick
-        .button(4)
-        .whileTrue(
-            drivetrain
-                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimPodium()));
+    // controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    // controller
+    //    .rotStick
+    //    .button(2)
+    //    .whileTrue(
+    //        drivetrain
+    //            .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+    //            .alongWith(superstructure.aimShooterTune()));
+    // controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+    // controller
+    //    .rotStick
+    //    .button(4)
+    //    .whileTrue(
+    //        drivetrain
+    //            .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+    //            .alongWith(superstructure.aimPodium()));
     controller
         .rotStick
         .button(8)
@@ -164,7 +164,7 @@ public class RobotContainer {
      * Operator
      */
     // controller.operator.x().whileTrue(superstructure.spit());
-    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
+    // controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
     controller
         .operator
         .leftBumper()
