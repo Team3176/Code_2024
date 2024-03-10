@@ -91,15 +91,18 @@ public class SuperStructureConstants {
   public static final double ANGLER_HIGH_POS = 70 + ANGLER_ZERO_POS;
   public static final double ANGLER_SIM_OFFSET = 70 + ANGLER_ZERO_POS;
 
-  public static final double SHOOTER_kP = 0.006;
-  public static final double SHOOTER_kI = 0; // .0025
-  public static final double SHOOTER_kD = 0; // .001
-  public static final double SHOOTER_kg = 0.2;
-  public static final double SHOOTER_TOLERANCE = 3;
-  public static final double SHOOTER_ZERO_POS = 0;
-  public static final double SHOOTER_PIVOT_CARRY_POS = SHOOTER_ZERO_POS;
-  public static final double SHOOTER_PIVOT_TOP_POS = 30 + SHOOTER_ZERO_POS;
-  public static final double SHOOTER_PIVOT_SIM_OFFSET = 70 + SHOOTER_ZERO_POS;
+  public static final double SHOOTER_PIVOT_kP = 0.006;
+  public static final double SHOOTER_PIVOT_kI = 0; // .0025
+  public static final double SHOOTER_PIVOT_kD = 0; // .001
+  public static final double SHOOTER_PIVOT_kg = 0.2;
+  public static final double SHOOTER_PIVOT_MIN_OUTPUT = -0.2;
+  public static final double SHOOTER_PIVOT_MAX_OUTPUT = 0.2;
+
+  public static final double SHOOTER_PIVOT_TOLERANCE = 3;
+  public static final double SHOOTER_PIVOT_ZERO_POS = 0;
+  public static final double SHOOTER_PIVOT_CARRY_POS = SHOOTER_PIVOT_ZERO_POS;
+  public static final double SHOOTER_PIVOT_TOP_POS = 30 + SHOOTER_PIVOT_ZERO_POS;
+  public static final double SHOOTER_PIVOT_SIM_OFFSET = 70 + SHOOTER_PIVOT_ZERO_POS;
 
   public static final double SHOOTER_UPPERWHEEL_kP = 0.006;
   public static final double SHOOTER_UPPERWHEEL_kI = 0; // .0025

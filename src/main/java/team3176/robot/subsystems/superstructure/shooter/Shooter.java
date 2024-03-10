@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase {
   public static Shooter getInstance() {
     if (instance == null) {
       if (Constants.getMode() != Mode.SIM) {
-        instance = new Shooter(new ShooterIOTalonSpark() {});
+        instance = new Shooter(new ShooterIOTalonSparkInternal() {});
 
       } else {
         instance = new Shooter(new ShooterIOSim() {});
