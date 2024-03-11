@@ -28,7 +28,6 @@ import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -125,7 +124,6 @@ public class Drivetrain extends SubsystemBase {
           });
   private ChassisSpeeds desiredSpeeds;
   private TunablePID orientationPID;
-  // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
     this.io = io;
@@ -323,14 +321,6 @@ public class Drivetrain extends SubsystemBase {
     }
     return states;
   }
-  /**
-   * @return returns the chassis yaw wrapped between -pi and pi
-   */
-  public Rotation2d getPoseYawWrapped() {
-    // its ugly but rotation2d is continuos but I imagine most of our applications
-    // we want it bounded between -pi and pi
-    return Rotation2d.fromRadians(MathUtil.angleModulus(getPose().getRotation().getRadians()));
-  }
 
   /**
    * The unbounded angle
@@ -367,13 +357,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetFieldOrientation() {
-    // do not need to invert because the navx rotation2D call returns a NWU
-    // coordsys!
-    // this.FieldAngleOffset = m_NavX.getRotation2d();
     Rotation2d redOrBlueZero = new Rotation2d();
-    // if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-    //   redOrBlueZero.plus(Rotation2d.fromDegrees(180));
-    // }
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+      redOrBlueZero.plus(Rotation2d.fromDegrees(180));
+    }
     resetPose(new Pose2d(getPose().getTranslation(), redOrBlueZero));
   }
 
@@ -383,23 +370,19 @@ public class Drivetrain extends SubsystemBase {
     };
   }
 
-  public void setCoastMode() {
+  private void setCoastMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustCoast();
     }
   }
 
-  public void setBrakeMode() {
+  private void setBrakeMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustBrake();
     }
   }
 
-  // TODO
   private Rotation2d getAimAngle() {
-    // get the position of the speaker
-    // FieldConstants.java
-    // AllianceFlipUtil.java
     Translation2d difference =
         (this.getPose()
             .getTranslation()
@@ -493,7 +476,6 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           ChassisSpeeds speeds = baseJoystickSpeeds.get();
-
           if (angle != null) {
             speeds.omegaRadiansPerSecond =
                 MathUtil.clamp(
@@ -588,23 +570,8 @@ public class Drivetrain extends SubsystemBase {
     return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
   }
 
-  private void resetPoseToVision() {
-    // call resetPose() and pass in visionPose3d
-    resetPose(visionPose3d.toPose2d());
-    // use the .toPose2d() method to convert a 3d pose into a 2d pose
-
-  }
-  // TODO: @Liam 11/27
   public Command resetPoseToVisionCommand() {
-    // we want to use a instant command
-
-    // InstantCommand takes in a function reference either () -> { your code here}
-    // or a reference to an existing function this::function_name
-    // here we want to use the resetPoseToVision function you created earlier
-    // use the this::function_name pattern and construct a new InstantCommand to be returned
-
-    // Replace with your command
-    return new InstantCommand(this::resetPoseToVision);
+    return new InstantCommand(() -> resetPose(visionPose3d.toPose2d()));
   }
 
   @Override
@@ -618,10 +585,15 @@ public class Drivetrain extends SubsystemBase {
     Logger.processInputs("Drivetrain/gyro", inputs);
 
     orientationPID.checkParemeterUpdate();
+
+    // Stop the drivetrain if disabled
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());
     }
+
+    // odom updates
+
     double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
     int sampleCount = sampleTimestamps.length;
     for (int i = 0; i < sampleCount; i++) {
@@ -650,21 +622,11 @@ public class Drivetrain extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 
-    for (int i = 0; i < pods.size(); i++) {
-      deltas[i] = pods.get(i).getDelta();
-    }
-    Twist2d twist = kinematics.toTwist2d(deltas);
-    wheelOnlyHeading = getPoseOdom().exp(twist).getRotation();
-    // update encoders
-    // this.poseEstimator.update(getSensorYaw(), getSwerveModulePositions());
     this.odom.update(getSensorYaw(), getSwerveModulePositions());
 
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.update();
     }
-
-    SmartDashboard.putNumber("NavYaw", getPoseYawWrapped().getDegrees());
   }
 }
