@@ -70,7 +70,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     thrustFalconConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
     thrustFalconConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
     thrustFalconConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
-    //thrustFalconConfig.Feedback.SensorToMechanismRatio = (1.0 / THRUST_GEAR_RATIO);
+    // thrustFalconConfig.Feedback.SensorToMechanismRatio = (1.0 / THRUST_GEAR_RATIO);
     // thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
     // thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
@@ -171,7 +171,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
   @Override
   public void setDrive(double velMetersPerSecond) {
-    double velRotationsPerSec = velMetersPerSecond * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI)) * 1.0 / THRUST_GEAR_RATIO;
+    double velRotationsPerSec =
+        velMetersPerSecond * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI)) * 1.0 / THRUST_GEAR_RATIO;
     thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
   }
 
