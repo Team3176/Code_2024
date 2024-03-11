@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,6 +30,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private int id;
   private CANSparkMax turnSparkMax;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
@@ -58,8 +60,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnSparkMax.restoreFactoryDefaults();
     var thrustFalconConfig = new TalonFXConfiguration();
 
-    thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
-    thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    thrustFalconConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    thrustFalconConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
+    thrustFalconConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    thrustFalconConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
+    thrustFalconConfig.Feedback.SensorToMechanismRatio = (1.0 / THRUST_GEAR_RATIO);
+    // thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;
+    // thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
     thrustFalconConfig.Slot0.kP = 0.1;
@@ -144,9 +151,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public void setDrive(double velMetersPerSecond) {
     double velRotationsPerSec =
         velMetersPerSecond
-            * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI))
-            * (1.0 / THRUST_GEAR_RATIO);
-    thrustFalcon.setControl(this.thrustVelocity.withVelocity(velRotationsPerSec));
+            * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI));
+    thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
   }
 
   /** Run the turn motor at the specified voltage. */
