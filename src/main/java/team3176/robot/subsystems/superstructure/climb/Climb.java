@@ -17,12 +17,15 @@ public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
   private AHRS gyro = new AHRS(SPI.Port.kMXP);
-  private double leftSetPoint = 0;
+  private double leftSetPoint = 30;
   private double leftOffPoint;
+  private double rightSetPoint = 0;
+  private double rightOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
   private TunablePID leftPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climbRight", 0.001, 0, 0);
 
   int counter = 0;
 
@@ -51,6 +54,13 @@ public class Climb extends SubsystemBase {
     /* System.out.println(
     gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
     return leftVoltage;
+  }
+
+  public double rightPIDPosition() {
+    double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
+    /* System.out.println(
+    gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
+    return rightVoltage;
   }
 
   public double getLeftPosition() {
@@ -139,10 +149,15 @@ public class Climb extends SubsystemBase {
     return this.runEnd(
         () -> {
           io.setLeftVoltage(5 * leftPIDPosition());
+          io.setRightVoltage(5 * rightPIDPosition());
         },
         () -> {
           io.setLeftVoltage(0.0);
         });
+  }
+
+  public Command testVoltage() {
+    return this.run(() -> io.setLeftVoltage(3));
   }
 
   /*   public Command rightGoToPosition(double position) {

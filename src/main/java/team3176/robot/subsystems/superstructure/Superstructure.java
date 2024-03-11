@@ -95,6 +95,10 @@ public class Superstructure {
     return climb.stopLeftRight();
   }
 
+  public Command testVoltage() {
+    return climb.testVoltage();
+  }
+
   // public Command spit() {
   //  return shooter.aim();
 
