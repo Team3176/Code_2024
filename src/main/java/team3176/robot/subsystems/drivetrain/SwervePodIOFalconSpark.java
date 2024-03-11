@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.Queue;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.constants.SwervePodHardwareID;
 
@@ -30,7 +31,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private int id;
   private CANSparkMax turnSparkMax;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
-  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
+      new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
@@ -44,6 +46,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private final StatusSignal<Double> driveTemps;
 
   private final StatusSignal<Double> turnAbsolutePosition;
+
+  private final Queue<Double> turnPositionQueue;
+  private final Queue<Double> drivePositionQueue;
+  private final Queue<Double> timestampQueue;
 
   // public static final double FEET2TICS = 12.0 * (1.0/ (DrivetrainConstants.WHEEL_DIAMETER_INCHES
   // * Math.PI)) * (1.0 /DrivetrainConstants.THRUST_GEAR_RATIO) *
@@ -98,16 +104,18 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     turnAbsolutePosition = azimuthEncoder.getAbsolutePosition();
     // BaseStatusSignal.setUpdateFrequencyForAll(50.0, drivePosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        drivePosition,
-        driveVelocity,
-        driveAppliedVolts,
-        driveCurrentStator,
-        driveCurrentSupply,
-        driveTemps,
-        turnAbsolutePosition);
+        SwervePod.ODOMETRY_FREQUENCY, drivePosition, turnAbsolutePosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, driveVelocity, driveAppliedVolts, driveCurrentStator, driveCurrentSupply, driveTemps);
     thrustFalcon.optimizeBusUtilization();
-    // azimuthEncoder.optimizeBusUtilization();
+
+    timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+    drivePositionQueue =
+        PhoenixOdometryThread.getInstance()
+            .registerSignal(thrustFalcon, thrustFalcon.getPosition());
+    turnPositionQueue =
+        PhoenixOdometryThread.getInstance()
+            .registerSignal(azimuthEncoder, azimuthEncoder.getAbsolutePosition());
   }
 
   @Override
@@ -145,13 +153,25 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
+
+    inputs.odometryTimestamps =
+        timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryDrivePositionsRad =
+        drivePositionQueue.stream()
+            .mapToDouble((Double value) -> Units.rotationsToRadians(value))
+            .toArray();
+    inputs.odometryTurnPositions =
+        turnPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromRotations(value))
+            .toArray(Rotation2d[]::new);
+    timestampQueue.clear();
+    drivePositionQueue.clear();
+    turnPositionQueue.clear();
   }
 
   @Override
   public void setDrive(double velMetersPerSecond) {
-    double velRotationsPerSec =
-        velMetersPerSecond
-            * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI));
+    double velRotationsPerSec = velMetersPerSecond * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI));
     thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
   }
 

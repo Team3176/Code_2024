@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -44,7 +46,6 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
-import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
@@ -63,6 +64,8 @@ public class Drivetrain extends SubsystemBase {
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+
+  static final Lock odometryLock = new ReentrantLock();
 
   private final LoggedTunableNumber pitchkP;
   private final LoggedTunableNumber yawkP;
@@ -88,6 +91,13 @@ public class Drivetrain extends SubsystemBase {
   };
   public static final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(SwerveModuleTranslations);
+  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
       new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
@@ -97,8 +107,10 @@ public class Drivetrain extends SubsystemBase {
   private SwervePod podBR;
 
   Rotation2d wheelOnlyHeading = new Rotation2d();
+  private Rotation2d rawGyroRotation = new Rotation2d();
+
   private final GyroIO io;
-  private GyroIOInputs inputs;
+  private GyroIOInputsAutoLogged inputs;
   public Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
   SwerveSetpointGenerator setpointGenerator;
@@ -119,7 +131,7 @@ public class Drivetrain extends SubsystemBase {
     this.io = io;
     this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
     this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
-    inputs = new GyroIOInputs();
+    inputs = new GyroIOInputsAutoLogged();
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
@@ -169,6 +181,10 @@ public class Drivetrain extends SubsystemBase {
     pods.add(podBR);
 
     visionPose3d = new Pose3d();
+
+    PhoenixOdometryThread.getInstance().start();
+    SparkMaxOdometryThread.getInstance().start();
+
     odom =
         new SwerveDriveOdometry(
             kinematics,
@@ -593,13 +609,47 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    odometryLock.lock();
     io.updateInputs(inputs);
+    for (SwervePod p : pods) {
+      p.periodic();
+    }
+    odometryLock.unlock();
+    Logger.processInputs("Drivetrain/gyro", inputs);
+
     orientationPID.checkParemeterUpdate();
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());
     }
-    Logger.processInputs("Drivetrain/gyro", inputs);
+    double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
+    int sampleCount = sampleTimestamps.length;
+    for (int i = 0; i < sampleCount; i++) {
+      // Read wheel positions and deltas from each module
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+        modulePositions[moduleIndex] = pods.get(moduleIndex).getOdometryPositions()[i];
+        moduleDeltas[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
+        lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+      }
+      // Update gyro angle
+      if (inputs.isConnected) {
+        // Use the real gyro angle
+        rawGyroRotation = inputs.odometryYawPositions[i];
+      } else {
+        // Use the angle delta from the kinematics and module deltas
+        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+      }
+
+      // Apply update
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+    }
     SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 
     for (int i = 0; i < pods.size(); i++) {
@@ -608,7 +658,7 @@ public class Drivetrain extends SubsystemBase {
     Twist2d twist = kinematics.toTwist2d(deltas);
     wheelOnlyHeading = getPoseOdom().exp(twist).getRotation();
     // update encoders
-    this.poseEstimator.update(getSensorYaw(), getSwerveModulePositions());
+    // this.poseEstimator.update(getSensorYaw(), getSwerveModulePositions());
     this.odom.update(getSensorYaw(), getSwerveModulePositions());
 
     if (Constants.getMode() == Mode.SIM) {
