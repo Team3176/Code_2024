@@ -143,8 +143,14 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
-    inputs.laserCanMeasurement = lasercan.getMeasurement().distance_mm;
-    inputs.isNotePresent = isNotePresent();
+    var measurement = lasercan.getMeasurement();
+    if (measurement == null) {
+      inputs.laserCanMeasurement = 200.0;
+    } else {
+      inputs.laserCanMeasurement = measurement.distance_mm;
+    }
+    inputs.isNotePresent =
+        inputs.laserCanMeasurement < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE;
   }
 
   /*   @Override

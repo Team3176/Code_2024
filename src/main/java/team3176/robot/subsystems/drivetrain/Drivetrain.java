@@ -595,7 +595,7 @@ public class Drivetrain extends SubsystemBase {
     // odom updates
 
     double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
-    int sampleCount = sampleTimestamps.length;
+    int sampleCount = Math.min(sampleTimestamps.length, inputs.odometryYawTimestamps.length);
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
@@ -609,9 +609,8 @@ public class Drivetrain extends SubsystemBase {
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
-      // Update gyro angle
-      //      if (inputs.isConnected) {
-      if (false) {
+
+      if (inputs.isConnected) {
         // Use the real gyro angle
         rawGyroRotation = inputs.odometryYawPositions[i];
       } else {
