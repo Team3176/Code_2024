@@ -31,8 +31,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private int id;
   private CANSparkMax turnSparkMax;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
+  // private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new
+  // VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
-      new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
+      new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
@@ -75,10 +77,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     // thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
-    thrustFalconConfig.Slot0.kP = 0.1;
+    thrustFalconConfig.Slot0.kP = 0.4;
     thrustFalconConfig.Slot0.kI = 0.0;
     thrustFalconConfig.Slot0.kD = 0.0;
     thrustFalconConfig.Slot0.kV = 0.12;
+    thrustFalconConfig.Slot1.kP = 5;
+    thrustFalconConfig.Slot1.kI = 0;
+    thrustFalconConfig.Slot1.kD = 0.001;
 
     thrustFalcon.getConfigurator().apply(thrustFalconConfig);
     // turnSparkMax.setOpenLoopRampRate(0.0);
@@ -174,6 +179,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     double velRotationsPerSec =
         velMetersPerSecond * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI)) * 1.0 / THRUST_GEAR_RATIO;
     thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
+    // thrustFalcon.setControl(thrustVelocity.withVelocity(velRotationsPerSec));
   }
 
   /** Run the turn motor at the specified voltage. */

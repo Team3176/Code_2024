@@ -610,7 +610,8 @@ public class Drivetrain extends SubsystemBase {
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
       // Update gyro angle
-      if (inputs.isConnected) {
+      //      if (inputs.isConnected) {
+      if (false) {
         // Use the real gyro angle
         rawGyroRotation = inputs.odometryYawPositions[i];
       } else {
