@@ -4,22 +4,16 @@
 
 package team3176.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
-import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.intake.Intake;
@@ -38,36 +32,36 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  private Drivetrain drivetrain;
+  // private Drivetrain drivetrain;
   private LEDSubsystem leds;
   private Superstructure superstructure;
   private PhotonVisionSystem vision;
-  private Visualization visualization;
+  // private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
-  private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
-  private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
+  // private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  // private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
     superstructure = Superstructure.getInstance();
-    drivetrain = Drivetrain.getInstance();
+    // drivetrain = Drivetrain.getInstance();
 
     leds = LEDSubsystem.getInstance();
-    endMatchAlert.onTrue(leds.EndgameStart());
-    hasNote.whileTrue(leds.setHasNote());
+    // endMatchAlert.onTrue(leds.EndgameStart());
+    // hasNote.whileTrue(leds.setHasNote());
 
     // superstructure = Superstructure.getInstance();
-    visualization = new Visualization();
+    // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
-
+    /*
     drivetrain.setDefaultCommand(
         drivetrain
             .swerveDriveJoysticks(
@@ -95,9 +89,9 @@ public class RobotContainer {
     // "chaseNote",
     // drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
 
-    autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
+    // autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
-    SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
+    // SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
     configureBindings();
   }
 
@@ -106,6 +100,7 @@ public class RobotContainer {
      * Translation Stick
      */
     // controller.transStick.button(1).whileTrue(superstructure.doItAll());
+    /*
     controller
         .transStick
         .button(2)
@@ -155,11 +150,12 @@ public class RobotContainer {
     //        drivetrain
     //            .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
     //            .alongWith(superstructure.aimPodium()));
+    /*
     controller
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-
+    */
     /*
      * Operator
      */
@@ -190,7 +186,7 @@ public class RobotContainer {
         .onTrue(Intake.getInstance().EmergencyHold());
 
     // PID Roll for left arm
-    controller.operator.x().whileTrue(superstructure.moveClimbLeftRightPIDPosition());
+    controller.operator.x().whileTrue(superstructure.moveClimbLeftPIDPosition());
   }
 
   public void clearCanFaults() {

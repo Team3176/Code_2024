@@ -17,7 +17,7 @@ public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
   private AHRS gyro = new AHRS(SPI.Port.kMXP);
-  private double leftSetPoint = 0;
+  private double leftSetPoint = 30;
   private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
@@ -51,6 +51,10 @@ public class Climb extends SubsystemBase {
     /* System.out.println(
     gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
     return leftVoltage;
+  }
+
+  public Command setLeftPIDPosition() {
+    return this.runEnd(() -> leftPIDPosition(), () -> stopLeft());
   }
 
   public double getLeftPosition() {
