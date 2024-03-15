@@ -1,16 +1,20 @@
 package team3176.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class LoggedNotePhotonCam {
 
-  private PhotonCameraIO io;
-  private PhotonCameraInputsAutoLogged inputs;
   String name = "notecam";
+
   public double noteYaw;
   public double notePitch;
   public boolean seeNote;
+
+  private PhotonCameraIO io;
+
+  private PhotonCameraInputsAutoLogged inputs;
 
   public LoggedNotePhotonCam() {
     this.io = new PhotonCameraIO(name);
@@ -19,8 +23,8 @@ public class LoggedNotePhotonCam {
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("photonvision/" + this.name, inputs);
-    var results = inputs.results;
+    Logger.processInputs("photonvision/notecam", inputs);
+    PhotonPipelineResult results = io.getResult(inputs.rawBytes);
     if (results.hasTargets()) {
       PhotonTrackedTarget target = results.getBestTarget();
       Logger.recordOutput("photonvision/noteyaw", target.getYaw());
