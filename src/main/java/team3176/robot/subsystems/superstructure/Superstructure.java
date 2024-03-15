@@ -3,8 +3,13 @@ package team3176.robot.subsystems.superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
+import java.lang.invoke.ConstantBootstraps;
 import java.util.function.DoubleSupplier;
+
+import team3176.robot.Constants;
 import team3176.robot.FieldConstants;
+import team3176.robot.Constants.RobotType;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
@@ -25,7 +30,6 @@ public class Superstructure {
   public Superstructure() {
     NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
     climb = Climb.getInstance();
-    // elevator = Elevator.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
     transfer = new Transfer();

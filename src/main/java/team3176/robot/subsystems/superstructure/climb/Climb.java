@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
 import team3176.robot.util.TunablePID;
 
@@ -133,7 +134,7 @@ public class Climb extends SubsystemBase {
 
   public static Climb getInstance() {
     if (instance == null) {
-      if (Constants.getMode() == Mode.REAL) {
+      if (Constants.getMode() == Mode.REAL && Constants.getRobot() != RobotType.ROBOT_DEFENSE) {
         instance = new Climb(new ClimbIOTalon() {});
         System.out.println("Climb instance created for Mode.REAL");
       } else {

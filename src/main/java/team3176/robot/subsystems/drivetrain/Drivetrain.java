@@ -57,9 +57,14 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double LENGTH = Units.inchesToMeters(20);
-  public static final double WIDTH = Units.inchesToMeters(20);
-
+  public static final double LENGTH = switch(Constants.getRobot()) {
+    case ROBOT_2024C ->
+      Units.inchesToMeters(20);
+    case ROBOT_DEFENSE ->
+      Units.inchesToMeters(24);
+    default -> Units.inchesToMeters(20);
+  };
+  public static final double WIDTH = LENGTH;
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
@@ -151,6 +156,21 @@ public class Drivetrain extends SubsystemBase {
           podBR =
               new SwervePod(
                   3, new SwervePodIOFalconSpark(Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
+          break;
+        case ROBOT_DEFENSE:
+          System.out.println("[init] normal swervePods");
+          podFR =
+              new SwervePod(
+                  0, new SwervePodIOFalconSpark(Hardwaremap.POD001, Hardwaremap.STEER_FR_CID));
+          podFL =
+              new SwervePod(
+                  1, new SwervePodIOFalconSpark(Hardwaremap.POD002, Hardwaremap.STEER_FL_CID));
+          podBL =
+              new SwervePod(
+                  2, new SwervePodIOFalconSpark(Hardwaremap.POD006, Hardwaremap.STEER_BL_CID));
+          podBR =
+              new SwervePod(
+                  3, new SwervePodIOFalconSpark(Hardwaremap.POD007, Hardwaremap.STEER_BR_CID));
           break;
         case CTRL_BOARD:
         case ROBOT_SIMBOT:

@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
@@ -89,7 +90,7 @@ public class Intake extends SubsystemBase {
 
   public static Intake getInstance() {
     if (instance == null) {
-      if (Constants.getMode() == Mode.REAL) {
+      if (Constants.getMode() == Mode.REAL && Constants.getRobot() != RobotType.ROBOT_DEFENSE) {
         instance = new Intake(new IntakeIOTalonGrapple() {});
       } else {
         instance = new Intake(new IntakeIOSim() {});

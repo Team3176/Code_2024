@@ -1,5 +1,7 @@
 package team3176.robot.constants;
 
+import team3176.robot.Constants;
+
 /** File for storing all hardware IDs to prevent double assignments */
 public class Hardwaremap {
   /*
@@ -71,7 +73,7 @@ public class Hardwaremap {
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
   public static final String SWERVEPOD_REV_CBN = "rio";
-
+  
   public static final SwervePodHardwareID FR = POD007;
   public static final SwervePodHardwareID FL = POD008;
   public static final SwervePodHardwareID BL = POD002;

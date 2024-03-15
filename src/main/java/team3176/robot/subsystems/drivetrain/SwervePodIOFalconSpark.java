@@ -69,8 +69,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     var thrustFalconConfig = new TalonFXConfiguration();
 
     thrustFalconConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    thrustFalconConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-    thrustFalconConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    thrustFalconConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    thrustFalconConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     thrustFalconConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
     // thrustFalconConfig.Feedback.SensorToMechanismRatio = (1.0 / THRUST_GEAR_RATIO);
     // thrustFalconConfig.CurrentLimits.StatorCurrentLimit = 40;

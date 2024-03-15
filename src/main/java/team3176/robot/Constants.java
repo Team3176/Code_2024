@@ -51,6 +51,7 @@ public final class Constants {
 
   public static enum RobotType {
     ROBOT_2024C,
+    ROBOT_DEFENSE,
     CTRL_BOARD,
     ROBOT_SIMBOT
   }
