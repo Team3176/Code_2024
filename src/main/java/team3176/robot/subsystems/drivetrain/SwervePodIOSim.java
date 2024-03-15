@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import java.util.Random;
 import org.littletonrobotics.junction.Logger;
@@ -66,6 +67,11 @@ public class SwervePodIOSim implements SwervePodIO {
     inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
     inputs.turnTempCelcius = 0.0;
+
+    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
+    inputs.odometryTurnPositions =
+        new Rotation2d[] {Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees)};
   }
 
   @Override
