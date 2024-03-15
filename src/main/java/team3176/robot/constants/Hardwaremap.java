@@ -1,6 +1,7 @@
 package team3176.robot.constants;
 
 import team3176.robot.Constants;
+import team3176.robot.Constants.RobotType;
 
 /** File for storing all hardware IDs to prevent double assignments */
 public class Hardwaremap {
@@ -51,7 +52,7 @@ public class Hardwaremap {
    * Drivetrain CIDs
    */
   // statics constants for swerve pods
-  public static final String SWERVEPOD_CTRE_CBN = "canivore";
+  public static final String SWERVEPOD_CTRE_CBN = Constants.getRobot() == RobotType.ROBOT_2024C ? "canivore" : "canivore";
   public static final String SWERVEPOD_CBN = SWERVEPOD_CTRE_CBN;
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -172.135);
@@ -73,7 +74,7 @@ public class Hardwaremap {
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -138);
 
   public static final String SWERVEPOD_REV_CBN = "rio";
-  
+
   public static final SwervePodHardwareID FR = POD007;
   public static final SwervePodHardwareID FL = POD008;
   public static final SwervePodHardwareID BL = POD002;
