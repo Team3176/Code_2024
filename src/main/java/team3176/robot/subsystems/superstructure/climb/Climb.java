@@ -17,7 +17,7 @@ public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
   private AHRS gyro = new AHRS(SPI.Port.kMXP);
-  private double leftSetPoint = 30;
+  private double leftSetPoint = 0;
   private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
@@ -48,12 +48,16 @@ public class Climb extends SubsystemBase {
 
   public double leftPIDPosition() {
     double leftVoltage = leftPIDController.calculate(gyro.getRoll(), leftSetPoint);
+    Logger.recordOutput("climb/roll", gyro.getRoll());
+    Logger.recordOutput("climb/leftvoltage", leftVoltage);
     /* System.out.println(
     gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
+    io.setLeftVoltage(leftVoltage);
     return leftVoltage;
   }
 
   public Command setLeftPIDPosition() {
+
     return this.runEnd(() -> leftPIDPosition(), () -> stopLeft());
   }
 
@@ -162,18 +166,19 @@ public class Climb extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
     pid.checkParemeterUpdate();
+    leftPIDController.checkParemeterUpdate();
     // int counter = 0;
-    if (counter == 20) {
-      System.out.println(
-          gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      counter = 0;
-    }
-    counter++;
-    if (Math.abs(gyro.getRoll()) > 1) {
-      io.setLeftVoltage(.5);
-    } else {
-      io.setLeftVoltage(0);
-    }
+    // if (counter == 20) {
+    //   System.out.println(
+    //       gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    //   counter = 0;
+    // }
+    // counter++;
+    // if (Math.abs(gyro.getRoll()) > 1) {
+    //   io.setLeftVoltage(.5);
+    // } else {
+    //   io.setLeftVoltage(0);
+    // }
   }
 
   public static Climb getInstance() {

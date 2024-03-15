@@ -79,7 +79,12 @@ public class Superstructure {
 
   public Command moveClimbLeftPIDPosition() {
     // return climb.moveLeftRightPIDPosition();
+<<<<<<< HEAD
     return climb.setLeftPIDPosition().withName("climbPIDS");
+=======
+    return climb.setLeftPIDPosition();
+    // .withName("climbPID");
+>>>>>>> 9d17c3d7fbbd5040b30302e9d9758a8f588ae2e5
   }
 
   public Command stopClimbLeft() {
