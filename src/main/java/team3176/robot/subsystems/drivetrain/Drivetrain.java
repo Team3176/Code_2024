@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -583,6 +584,14 @@ public class Drivetrain extends SubsystemBase {
             driveVelocity(new ChassisSpeeds());
           }
         });
+  }
+  public void runWheelRadiusCharacterization(double omegaSpeed) {
+    driveVelocity(new ChassisSpeeds(0,0,omegaSpeed));
+  }
+
+  /** Get the position of all drive wheels in radians. */
+  public double[] getWheelRadiusCharacterizationPosition() {
+    return pods.stream().mapToDouble(SwervePod::getThrustPosition).toArray();
   }
 
   public Command stop() {

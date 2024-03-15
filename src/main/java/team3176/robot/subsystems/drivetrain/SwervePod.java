@@ -161,6 +161,9 @@ public class SwervePod {
   public double getThrustEncoderVelocity() {
     return inputs.driveVelocityRadPerSec;
   }
+    public double getThrustPosition() {
+    return inputs.drivePositionRad;
+  }
 
   public double[] getOdometryTimestamps() {
     return inputs.odometryTimestamps;
