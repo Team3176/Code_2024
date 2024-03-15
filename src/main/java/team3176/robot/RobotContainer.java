@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import team3176.robot.commands.drivetrain.*;
+// import team3176.robot.commands.drivetrain.*;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.controller.Controller;
-import team3176.robot.subsystems.leds.LEDSubsystem;
+// import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.intake.Intake;
-import team3176.robot.subsystems.vision.PhotonVisionSystem;
+// import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,9 +33,9 @@ public class RobotContainer {
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
   // private Drivetrain drivetrain;
-  private LEDSubsystem leds;
+  // private LEDSubsystem leds;
   private Superstructure superstructure;
-  private PhotonVisionSystem vision;
+  // private PhotonVisionSystem vision;
   // private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
@@ -50,14 +50,14 @@ public class RobotContainer {
     superstructure = Superstructure.getInstance();
     // drivetrain = Drivetrain.getInstance();
 
-    leds = LEDSubsystem.getInstance();
+    // leds = LEDSubsystem.getInstance();
     // endMatchAlert.onTrue(leds.EndgameStart());
     // hasNote.whileTrue(leds.setHasNote());
 
     // superstructure = Superstructure.getInstance();
     // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
-      vision = PhotonVisionSystem.getInstance();
+      // vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
@@ -187,6 +187,8 @@ public class RobotContainer {
 
     // PID Roll for left arm
     controller.operator.x().whileTrue(superstructure.moveClimbLeftPIDPosition());
+    controller.operator.a().whileTrue(superstructure.moveClimbRightPIDPosition());
+
   }
 
   public void clearCanFaults() {
