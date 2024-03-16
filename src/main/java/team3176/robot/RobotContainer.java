@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import team3176.robot.commands.WheelRadiusCharacterization;
 import team3176.robot.commands.WheelRadiusCharacterization.Direction;
 import team3176.robot.constants.Hardwaremap;
@@ -108,7 +107,10 @@ public class RobotContainer {
     /*
      * Translation Stick
      */
-    controller.transStick.button(1).whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
+    controller
+        .transStick
+        .button(1)
+        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
     controller
         .transStick
         .button(2)

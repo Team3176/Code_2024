@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -61,7 +60,7 @@ public class Drivetrain extends SubsystemBase {
   public static final double LENGTH =
       switch (Constants.getRobot()) {
         case ROBOT_2024C -> Units.inchesToMeters(20);
-        case ROBOT_DEFENSE -> Units.inchesToMeters(24);
+        case ROBOT_DEFENSE -> Units.inchesToMeters(25);
         default -> Units.inchesToMeters(20);
       };
   public static final double WIDTH = LENGTH;
@@ -161,16 +160,16 @@ public class Drivetrain extends SubsystemBase {
           System.out.println("[init] normal swervePods");
           podFR =
               new SwervePod(
-                  0, new SwervePodIOFalconSpark(Hardwaremap.POD001, Hardwaremap.STEER_FR_CID));
+                  0, new SwervePodIOFalconSpark(Hardwaremap.POD006, Hardwaremap.STEER_FR_CID));
           podFL =
               new SwervePod(
-                  1, new SwervePodIOFalconSpark(Hardwaremap.POD002, Hardwaremap.STEER_FL_CID));
+                  1, new SwervePodIOFalconSpark(Hardwaremap.POD001, Hardwaremap.STEER_FL_CID));
           podBL =
               new SwervePod(
-                  2, new SwervePodIOFalconSpark(Hardwaremap.POD006, Hardwaremap.STEER_BL_CID));
+                  2, new SwervePodIOFalconSpark(Hardwaremap.POD009, Hardwaremap.STEER_BL_CID));
           podBR =
               new SwervePod(
-                  3, new SwervePodIOFalconSpark(Hardwaremap.POD007, Hardwaremap.STEER_BR_CID));
+                  3, new SwervePodIOFalconSpark(Hardwaremap.POD003, Hardwaremap.STEER_BR_CID));
           break;
         case CTRL_BOARD:
         case ROBOT_SIMBOT:
@@ -459,7 +458,7 @@ public class Drivetrain extends SubsystemBase {
         double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
 
         // Square values
-        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0);
         omega = Math.copySign(omega * omega, omega);
         // Calcaulate new linear velocity
         Translation2d linearVelocity =
@@ -585,8 +584,9 @@ public class Drivetrain extends SubsystemBase {
           }
         });
   }
+
   public void runWheelRadiusCharacterization(double omegaSpeed) {
-    driveVelocity(new ChassisSpeeds(0,0,omegaSpeed));
+    driveVelocity(new ChassisSpeeds(0, 0, omegaSpeed));
   }
 
   /** Get the position of all drive wheels in radians. */

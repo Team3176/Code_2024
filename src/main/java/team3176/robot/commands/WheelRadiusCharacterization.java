@@ -7,22 +7,20 @@ package team3176.robot.commands;
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.DoubleSupplier;
 import lombok.RequiredArgsConstructor;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.LoggedTunableNumber;
-
-import org.littletonrobotics.junction.Logger;
 
 public class WheelRadiusCharacterization extends Command {
   private static final LoggedTunableNumber characterizationSpeed =
       new LoggedTunableNumber("WheelRadiusCharacterization/SpeedRadsPerSec", 0.1);
-  private static final double driveRadius = Math.hypot(Drivetrain.LENGTH,Drivetrain.WIDTH);
+  private static final double driveRadius = Math.hypot(Drivetrain.LENGTH, Drivetrain.WIDTH);
   private static final DoubleSupplier gyroYawRadsSupplier =
       () -> Drivetrain.getInstance().getPoseOdom().getRotation().getRadians();
 
