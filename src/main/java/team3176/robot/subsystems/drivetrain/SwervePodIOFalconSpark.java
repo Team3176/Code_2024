@@ -81,7 +81,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     thrustFalconConfig.Slot0.kI = 0.0;
     thrustFalconConfig.Slot0.kD = 0.0;
     thrustFalconConfig.Slot0.kV = 0.12;
-    thrustFalconConfig.Slot1.kP = 5;
+    thrustFalconConfig.Slot1.kP = 7.5;
     thrustFalconConfig.Slot1.kI = 0;
     thrustFalconConfig.Slot1.kD = 0.001;
 
