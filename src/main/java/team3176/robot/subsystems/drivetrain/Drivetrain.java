@@ -59,7 +59,7 @@ public class Drivetrain extends SubsystemBase {
   public static final double MAX_WHEEL_SPEED = 4.2;
   public static final double LENGTH =
       switch (Constants.getRobot()) {
-        case ROBOT_2024C -> Units.inchesToMeters(20);
+        case ROBOT_2024C -> Units.inchesToMeters(18.7);
         case ROBOT_DEFENSE -> Units.inchesToMeters(24.5);
         default -> Units.inchesToMeters(20);
       };
