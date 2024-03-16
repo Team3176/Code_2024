@@ -19,8 +19,8 @@ public class SwervePod {
 
   private SwerveModuleState desiredState = new SwerveModuleState();
   boolean lastHasResetOccurred;
-  public static final double WHEEL_DIAMETER = Units.inchesToMeters(2.93); // Inches
-  static final double ODOMETRY_FREQUENCY = 100.0;
+  public static final double WHEEL_DIAMETER = Units.inchesToMeters(2.99); // Inches
+  static final double ODOMETRY_FREQUENCY = 200.0;
 
   /**
    * Numerical identifier to differentiate between pods. For 4 Pods: 0 = FrontRight (FR), 1 =

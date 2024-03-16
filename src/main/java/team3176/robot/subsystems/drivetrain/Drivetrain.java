@@ -60,7 +60,7 @@ public class Drivetrain extends SubsystemBase {
   public static final double LENGTH =
       switch (Constants.getRobot()) {
         case ROBOT_2024C -> Units.inchesToMeters(20);
-        case ROBOT_DEFENSE -> Units.inchesToMeters(25);
+        case ROBOT_DEFENSE -> Units.inchesToMeters(24.5);
         default -> Units.inchesToMeters(20);
       };
   public static final double WIDTH = LENGTH;
