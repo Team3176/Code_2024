@@ -53,7 +53,7 @@ public class Hardwaremap {
    */
   // statics constants for swerve pods
   public static final String SWERVEPOD_CTRE_CBN =
-      Constants.getRobot() == RobotType.ROBOT_2024C ? "canivore" : "canivore";
+      Constants.getRobot() == RobotType.ROBOT_2024C ? "canivore" : "rio";
   public static final String SWERVEPOD_CBN = SWERVEPOD_CTRE_CBN;
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, 81.73);

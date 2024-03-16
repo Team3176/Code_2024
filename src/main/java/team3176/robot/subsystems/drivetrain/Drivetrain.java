@@ -59,8 +59,8 @@ public class Drivetrain extends SubsystemBase {
   public static final double MAX_WHEEL_SPEED = 4.2;
   public static final double LENGTH =
       switch (Constants.getRobot()) {
-        case ROBOT_2024C -> Units.inchesToMeters(20);
-        case ROBOT_DEFENSE -> Units.inchesToMeters(25);
+        case ROBOT_2024C -> Units.inchesToMeters(18.7);
+        case ROBOT_DEFENSE -> Units.inchesToMeters(24.5);
         default -> Units.inchesToMeters(20);
       };
   public static final double WIDTH = LENGTH;
@@ -103,7 +103,7 @@ public class Drivetrain extends SubsystemBase {
       };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 10.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
@@ -284,7 +284,7 @@ public class Drivetrain extends SubsystemBase {
     //       output.chassisSpeeds().vxMetersPerSecond,
     //       output.chassisSpeeds().vyMetersPerSecond,
     //       output.chassisSpeeds().omegaRadiansPerSecond
-    //     });
+    //    });
     Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
