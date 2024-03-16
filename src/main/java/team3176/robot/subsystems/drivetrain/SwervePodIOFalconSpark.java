@@ -19,6 +19,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.Queue;
 import org.littletonrobotics.junction.Logger;
+import team3176.robot.Constants;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.SwervePodHardwareID;
 
 public class SwervePodIOFalconSpark implements SwervePodIO {
@@ -30,7 +32,8 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public static final double THRUST_ENCODER_UNITS_PER_REVOLUTION = 2048;
   private int id;
   private CANSparkMax turnSparkMax;
-  final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
+  final VelocityVoltage thrustVelocity =
+      new VelocityVoltage(0.0, 0.0, false, 0.0, 0, false, false, false);
   // private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new
   // VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
@@ -77,11 +80,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     // thrustFalconConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     // thrustFalconConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
 
-    thrustFalconConfig.Slot0.kP = 0.4;
+    thrustFalconConfig.Slot0.kP = 0.2;
     thrustFalconConfig.Slot0.kI = 0.0;
     thrustFalconConfig.Slot0.kD = 0.0;
     thrustFalconConfig.Slot0.kV = 0.12;
-    thrustFalconConfig.Slot1.kP = 7.5;
+    thrustVelocity.Slot = 0;
+
+    thrustFalconConfig.Slot1.kP = 5.0;
     thrustFalconConfig.Slot1.kI = 0;
     thrustFalconConfig.Slot1.kD = 0.001;
 
@@ -178,8 +183,11 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public void setDrive(double velMetersPerSecond) {
     double velRotationsPerSec =
         velMetersPerSecond * (1.0 / (SwervePod.WHEEL_DIAMETER * Math.PI)) * 1.0 / THRUST_GEAR_RATIO;
-    thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
-    // thrustFalcon.setControl(thrustVelocity.withVelocity(velRotationsPerSec));
+    if (Constants.getRobot() == RobotType.ROBOT_2024C) {
+      thrustFalcon.setControl(velocityTorqueCurrentFOC.withVelocity(velRotationsPerSec));
+    } else {
+      thrustFalcon.setControl(thrustVelocity.withVelocity(velRotationsPerSec));
+    }
   }
 
   /** Run the turn motor at the specified voltage. */
