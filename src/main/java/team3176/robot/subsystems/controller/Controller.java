@@ -23,6 +23,7 @@ public class Controller {
   public final CommandJoystick transStick;
   public final CommandJoystick rotStick;
   public final CommandXboxController operator;
+  public final CommandJoystick switchBox;
 
   /* First Part of Creating the Buttons on the Joysticks */
 
@@ -32,6 +33,7 @@ public class Controller {
     transStick = new CommandJoystick(ControllerConstants.TRANS_ID);
     rotStick = new CommandJoystick(ControllerConstants.ROT_ID);
     operator = new CommandXboxController(ControllerConstants.OP_ID);
+    switchBox = new CommandJoystick(3);
   }
 
   /**

@@ -107,10 +107,20 @@ public class RobotContainer {
     /*
      * Translation Stick
      */
+    /*     controller
+    .transStick
+    .button(1)
+    .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE)); */
     controller
         .transStick
         .button(1)
-        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
+        .whileTrue(
+            drivetrain
+                .swerveDriveJoysticks(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin() * 1.5)
+                .withName("boost drive"));
     controller
         .transStick
         .button(2)
@@ -193,6 +203,15 @@ public class RobotContainer {
         .start()
         .and(controller.operator.povLeft())
         .onTrue(Intake.getInstance().EmergencyHold());
+
+    /*
+     * SwitchBox
+     */
+
+    controller
+        .switchBox
+        .button(1)
+        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
   }
 
   public void clearCanFaults() {
