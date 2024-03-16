@@ -17,7 +17,6 @@ public class Visualization extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // double elevatorPosition = Elevator.getInstance().getPosition();
     Pose3d intake =
         new Pose3d(
             new Translation3d(0.2541, 0.0, 0.12),
