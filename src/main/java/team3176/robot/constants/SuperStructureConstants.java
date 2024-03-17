@@ -69,18 +69,6 @@ public class SuperStructureConstants {
   public static final double TRANSFER_kg = 0.2;
   public static final double TRANSFER_TOLERANCE = 3;
 
-  public static final double ELEVATOR_kP = 0.006;
-  public static final double ELEVATOR_kI = 0; // .0025
-  public static final double ELEVATOR_kD = 0; // .001
-  public static final double ELEVATOR_kg = 0.2;
-  public static final double ELEVATOR_TOLERANCE = 3;
-  public static final double ELEVATOR_ZERO_POS = 150;
-  public static final double ELEVATOR_PICKUP_POS = ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_AMP_POS = 20 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_TRAP_POS = 45 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_TOP_POS = 100 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_SIM_OFFSET = 70 + ELEVATOR_ZERO_POS;
-
   public static final double ANGLER_kP = 0.006;
   public static final double ANGLER_kI = 0; // .0025
   public static final double ANGLER_kD = 0; // .001

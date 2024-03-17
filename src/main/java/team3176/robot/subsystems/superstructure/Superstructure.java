@@ -8,7 +8,6 @@ import team3176.robot.FieldConstants;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
-import team3176.robot.subsystems.superstructure.elevator.Elevator;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
@@ -17,7 +16,6 @@ import team3176.robot.util.NoteVisualizer;
 public class Superstructure {
   private static Superstructure instance;
   private Climb climb;
-  private Elevator elevator;
   private Intake intake;
   private Transfer transfer;
   private Shooter shooter;
