@@ -17,6 +17,7 @@ public interface ConveyorIO {
 
     public double WheelVelocity = 0.0;
     public double AppliedVolts = 0.0;
+    public double laserDist = 0.0;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 

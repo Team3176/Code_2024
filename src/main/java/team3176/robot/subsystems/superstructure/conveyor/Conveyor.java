@@ -7,13 +7,13 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.util.LoggedTunableNumber;
 
-public class Transfer extends SubsystemBase {
+public class Conveyor extends SubsystemBase {
   private ConveyorIO io;
 
   private ConveyorIOInputsAutoLogged inputs;
   private LoggedTunableNumber conveyorVelocity;
 
-  public Transfer() {
+  public Conveyor() {
     io = new ConveyorIOTalon();
     inputs = new ConveyorIOInputsAutoLogged();
     this.conveyorVelocity = new LoggedTunableNumber("conveyor/velocity", 0.6);

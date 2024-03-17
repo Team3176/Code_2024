@@ -64,11 +64,6 @@ public class Intake extends SubsystemBase {
     io.setPivotVolts(0.0);
   }
 
-  @AutoLogOutput
-  public boolean hasNote() {
-    return inputs.laserCanMeasurement < 120;
-  }
-
   public Command EmergencyHold() {
     return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
   }
@@ -115,7 +110,6 @@ public class Intake extends SubsystemBase {
 
   public Command spinIntakeUntilPivot() {
     return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
 

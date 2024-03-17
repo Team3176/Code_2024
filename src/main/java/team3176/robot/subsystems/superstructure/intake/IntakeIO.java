@@ -29,8 +29,6 @@ public interface IntakeIO {
     public boolean isPivotLinebreak = false;
     public boolean upperLimitSwitch = false;
     public boolean lowerLimitSwitch = false;
-    public double laserCanMeasurement = 0;
-    public boolean isNotePresent = false;
 
     // constructor if needed for some inputs
     IntakeIOInputs() {}
