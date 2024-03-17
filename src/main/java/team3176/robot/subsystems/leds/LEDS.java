@@ -15,16 +15,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.List;
 import java.util.Optional;
 
-public class AdressableLEDs extends SubsystemBase {
-  private static AdressableLEDs instance;
+public class LEDS extends SubsystemBase {
+  private static LEDS instance;
 
-  public static AdressableLEDs getInstance() {
+  public static LEDS getInstance() {
     if (instance == null) {
-      instance = new AdressableLEDs();
+      instance = new LEDS();
     }
     return instance;
   }
@@ -41,16 +42,14 @@ public class AdressableLEDs extends SubsystemBase {
   public boolean trapping = false;
   public boolean endgameAlert = false;
   public boolean sameBattery = false;
-  public boolean armCoast = false;
-  public boolean armEstopped = false;
   public boolean autoFinished = false;
   public double autoFinishedTime = 0.0;
   public boolean lowBatteryAlert = false;
   public boolean demoMode = false;
 
   private Optional<Alliance> alliance = Optional.empty();
-  private Color allianceColor = Color.kGold;
-  private Color secondaryDisabledColor = Color.kDarkBlue;
+  private Color allianceColor = Color.kBlueViolet;
+  private Color secondaryDisabledColor = Color.kBlack;
   private boolean lastEnabledAuto = false;
   private double lastEnabledTime = 0.0;
   private boolean estopped = false;
@@ -63,13 +62,13 @@ public class AdressableLEDs extends SubsystemBase {
   // Constants
   private static final boolean prideLeds = false;
   private static final int minLoopCycleCount = 10;
-  private static final int length = 20;
-  private static final int staticSectionLength = 10;
+  private static final int length = 30;
+  private static final int staticSectionLength = 20;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
   private static final double breathDuration = 1.0;
   private static final double rainbowCycleLength = 25.0;
-  private static final double rainbowDuration = 0.25;
+  private static final double rainbowDuration = 1.0;
   private static final double waveExponent = 0.4;
   private static final double waveFastCycleLength = 25.0;
   private static final double waveFastDuration = 0.25;
@@ -80,7 +79,7 @@ public class AdressableLEDs extends SubsystemBase {
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
-  private AdressableLEDs() {
+  private LEDS() {
     leds = new AddressableLED(3);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
@@ -95,6 +94,10 @@ public class AdressableLEDs extends SubsystemBase {
               }
             });
     loadingNotifier.startPeriodic(0.02);
+  }
+
+  public Command AutoDrive() {
+    return this.runEnd(() -> autoDrive = true, () -> autoDrive = false);
   }
 
   public synchronized void periodic() {
@@ -135,10 +138,7 @@ public class AdressableLEDs extends SubsystemBase {
     if (estopped) {
       solid(Color.kRed);
     } else if (DriverStation.isDisabled()) {
-      if (armCoast) {
-        // Arm coast alert
-        solid(Color.kWhite);
-      } else if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
+      if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
         // Auto fade
         solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
       } else if (lowBatteryAlert) {
@@ -161,7 +161,7 @@ public class AdressableLEDs extends SubsystemBase {
                 Color.kWhite,
                 Color.kDeepPink,
                 new Color(0.15, 0.3, 1.0)),
-            3,
+            20,
             5.0);
         buffer.setLED(staticSectionLength, allianceColor);
       } else {
@@ -182,16 +182,18 @@ public class AdressableLEDs extends SubsystemBase {
     } else { // Enabled
       if (requestAmp) {
         strobe(Color.kWhite, strobeFastDuration);
+      } else if (hasNote) {
+        solid(Color.kGreen);
       } else if (trapping || climbing || autoDrive || autoShoot) {
         rainbow(rainbowCycleLength, rainbowDuration);
       } else if (wantNote) {
         solid(Color.kOrange);
-      } else if (hasNote) {
-        strobe(Color.kRed, strobeSlowDuration);
+      } else {
+        wave(allianceColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
       }
 
       if (endgameAlert) {
-        strobe(Color.kRed, strobeFastDuration);
+        strobe(Color.kBlue, strobeFastDuration);
       }
     }
 

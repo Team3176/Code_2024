@@ -6,8 +6,10 @@ package team3176.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,6 +24,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import team3176.robot.Constants.RobotType;
+import team3176.robot.subsystems.leds.LEDS;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,7 +34,9 @@ import team3176.robot.Constants.RobotType;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private Spark spark;
+  private static final double lowBatteryVoltage = 11.8;
+  private static final double lowBatteryDisabledTime = 1.5;
+  private final Timer disabledTimer = new Timer();
   private RobotContainer robotContainer;
   Thread fisheyeThread;
   private static final boolean FISHEYE_CAMERA = false;
@@ -155,6 +160,15 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    // Low battery alert
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+    }
+    if (RobotController.getBatteryVoltage() <= lowBatteryVoltage
+        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
+      LEDS.getInstance().lowBatteryAlert = true;
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
