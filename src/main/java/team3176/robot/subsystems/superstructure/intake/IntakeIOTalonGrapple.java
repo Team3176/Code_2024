@@ -65,14 +65,14 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
 
-    lasercan = new LaserCan(Hardwaremap.intakeLaserCan_CID);
-    try {
-      lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
-      lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      lasercan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("LaserCan configuration failed");
-    }
+    // lasercan = new LaserCan(Hardwaremap.intakeLaserCan_CID);
+    // try {
+    //   lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
+    //   lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+    //   lasercan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("LaserCan configuration failed");
+    // }
 
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
@@ -143,14 +143,6 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
-    var measurement = lasercan.getMeasurement();
-    if (measurement == null) {
-      inputs.laserCanMeasurement = 200.0;
-    } else {
-      inputs.laserCanMeasurement = measurement.distance_mm;
-    }
-    inputs.isNotePresent =
-        inputs.laserCanMeasurement < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE;
   }
 
   /*   @Override
@@ -173,22 +165,5 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     pivotController.setControl(pivotVolts.withOutput(volts));
   }
 
-  private int getLaserCanDist() {
-    int measurement;
-    try {
-      measurement = lasercan.getMeasurement().distance_mm;
-    } catch (Error e) {
-      System.out.println("[Error] getLaserCanDist failed.");
-      measurement = 200;
-    }
-    return measurement;
-  }
 
-  private boolean isNotePresent() {
-    if (getLaserCanDist() < SuperStructureConstants.INTAKE_LASERCAN_DIST_TO_NOTE) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
