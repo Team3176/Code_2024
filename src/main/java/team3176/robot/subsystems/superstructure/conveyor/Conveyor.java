@@ -1,10 +1,8 @@
 package team3176.robot.subsystems.superstructure.conveyor;
 
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
-import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.util.LoggedTunableNumber;
 
 public class Conveyor extends SubsystemBase {
@@ -20,8 +18,7 @@ public class Conveyor extends SubsystemBase {
   }
 
   public Command run() {
-    return this.runEnd(
-        () -> io.setController(conveyorVelocity.get()), () -> io.setController(0));
+    return this.runEnd(() -> io.setController(conveyorVelocity.get()), () -> io.setController(0));
   }
 
   public Command spit() {

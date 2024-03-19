@@ -18,10 +18,10 @@ public interface ClimbIO {
     public double rightPosition = 0.0;
     public double leftError = 0.0;
     public double rightError = 0.0;
-    // public double VelocityRadPerSec = 0.0;
-    // public double AppliedVolts = 0.0;
-    // public double[] CurrentAmps = new double[] {};
-    // public double[] TempCelcius = new double[] {};
+    public double leftVolts = 0.0;
+    public double rightVolts = 0.0;
+    public double leftAmps = 0.0;
+    public double rightAmps = 0.0;
     public boolean isLeftLimitswitch = true;
     public boolean isRightLimitswitch = true;
 

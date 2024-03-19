@@ -7,7 +7,6 @@
 
 package team3176.robot.subsystems.superstructure.intake;
 
-import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -23,7 +22,6 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
@@ -164,6 +162,4 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   public void setPivotVolts(double volts) {
     pivotController.setControl(pivotVolts.withOutput(volts));
   }
-
-
 }

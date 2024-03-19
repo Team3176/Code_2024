@@ -7,6 +7,8 @@
 
 package team3176.robot.subsystems.superstructure.transfer;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
@@ -17,19 +19,24 @@ public class TransferIOTalon implements TransferIO {
   private TalonFX transferController =
       new TalonFX(Hardwaremap.shooterTransfer_CID, Hardwaremap.shooterTransfer_CBN);
 
-  private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
+  private TalonFXConfiguration configs = new TalonFXConfiguration();
+  private StatusSignal<Double> velocity;
+  private StatusSignal<Double> volts;
 
   public TransferIOTalon() {
 
-    transferController.getConfigurator().apply(configsWheelLower2);
-    // }
+    transferController.getConfigurator().apply(configs);
+    velocity = transferController.getVelocity();
+    volts = transferController.getMotorVoltage();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts);
+    transferController.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(TransferIOInputs inputs) {
-    inputs.transferWheelVelocity =
-        Units.rotationsToRadians(transferController.getVelocity().getValue());
-    inputs.transferAppliedVolts = transferController.getMotorVoltage().getValue();
+    BaseStatusSignal.refreshAll(velocity, volts);
+    inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValue());
+    inputs.transferAppliedVolts = volts.getValue();
   }
 
   @Override
