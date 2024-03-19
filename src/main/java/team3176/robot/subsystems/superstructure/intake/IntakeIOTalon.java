@@ -21,6 +21,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
@@ -75,8 +76,8 @@ public class IntakeIOTalon implements IntakeIO {
 
     // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
-    pivotConfigs.Voltage.PeakForwardVoltage = 12;
-    pivotConfigs.Voltage.PeakReverseVoltage = 12;
+    pivotConfigs.Voltage.PeakForwardVoltage = 8;
+    pivotConfigs.Voltage.PeakReverseVoltage = -10;
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
@@ -100,16 +101,9 @@ public class IntakeIOTalon implements IntakeIO {
     rollerTemp = rollerController.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        pivotAppliedVolts,
-        pivotCurrentAmps,
-        pivotVelocity,
-        pivotPosition,
-        pivotTemp,
-        rollerAppliedVolts,
-        rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        50, pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
 
     rollerController.optimizeBusUtilization();
     pivotController.optimizeBusUtilization();
@@ -118,15 +112,8 @@ public class IntakeIOTalon implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        pivotAppliedVolts,
-        pivotCurrentAmps,
-        pivotVelocity,
-        pivotPosition,
-        pivotTemp,
-        rollerAppliedVolts,
-        rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
+    BaseStatusSignal.refreshAll(rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
 
     inputs.isRollerLinebreak = (!rollerLinebreak.get());
     inputs.isPivotLinebreak = (!pivotLinebreak.get());
@@ -165,4 +152,6 @@ public class IntakeIOTalon implements IntakeIO {
   public void setPivotVolts(double volts) {
     pivotController.setControl(pivotVolts.withOutput(volts));
   }
+
+
 }
