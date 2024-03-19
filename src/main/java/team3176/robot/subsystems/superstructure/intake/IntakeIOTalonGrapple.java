@@ -7,7 +7,6 @@
 
 package team3176.robot.subsystems.superstructure.intake;
 
-import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -34,7 +33,6 @@ public class IntakeIOTalonGrapple implements IntakeIO {
   VoltageOut pivotVolts = new VoltageOut(0.0);
   PositionVoltage voltPosition;
   private SparkPIDController pivotPID;
-  private LaserCan lasercan;
 
   DigitalInput rollerLinebreak;
   DigitalInput pivotLinebreak;
@@ -62,15 +60,6 @@ public class IntakeIOTalonGrapple implements IntakeIO {
 
     rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
     pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
-
-    // lasercan = new LaserCan(Hardwaremap.intakeLaserCan_CID);
-    // try {
-    //   lasercan.setRangingMode(LaserCan.RangingMode.SHORT);
-    //   lasercan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-    //   lasercan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    // } catch (ConfigurationFailedException e) {
-    //   System.out.println("LaserCan configuration failed");
-    // }
 
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
