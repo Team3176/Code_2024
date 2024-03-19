@@ -8,6 +8,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringArrayPublisher;
+import edu.wpi.first.networktables.StringArraySubscriber;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +85,24 @@ public class PhotonVisionSystem extends SubsystemBase {
   public double notePitch;
   public boolean seeNote;
 
+  private StringArraySubscriber driveCamSub;
+  private StringArrayPublisher driveCamPub;
+
   private PhotonVisionSystem() {
 
     notecam = new LoggedNotePhotonCam();
     aprilCameras.add(new LoggedAprilPhotonCam("camera1", Robot2camera1));
     aprilCameras.add(new LoggedAprilPhotonCam("camera2", Robot2camera2));
     aprilCameras.add(new LoggedAprilPhotonCam("camera3", Robot2camera3));
+    SendableCameraWrapper noteCamStreamer = SendableCameraWrapper.wrap("notecamsee", "none");
+    ShuffleboardTab noteCamTab = Shuffleboard.getTab("noteCamStream");
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable cameraTable = inst.getTable("CameraPublisher/camera1-processed");
+    driveCamSub = cameraTable.getStringArrayTopic("streams").subscribe(new String[] {"none"});
+    NetworkTable cameraTableSee = inst.getTable("CameraPublisher/notecamsee");
+    driveCamPub = cameraTableSee.getStringArrayTopic("streams").publish();
+    noteCamTab.add(noteCamStreamer);
+
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
       field.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -99,6 +119,16 @@ public class PhotonVisionSystem extends SubsystemBase {
       instance = new PhotonVisionSystem();
     }
     return instance;
+  }
+
+  public Command cameraSwitcher() {
+    return this.runEnd(
+        () -> {
+          driveCamPub.set(driveCamSub.get());
+        },
+        () -> {
+          driveCamPub.set(new String[] {"none"});
+        });
   }
 
   @Override
