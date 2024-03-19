@@ -77,6 +77,7 @@ public class Superstructure {
     return climb.moveLeftRightPosition(deltaLeft, deltaRight);
   }
 
+<<<<<<< HEAD
   public Command moveClimbLeftPIDPosition() {
     // return climb.moveLeftRightPIDPosition();
     return climb.setLeftPIDPosition().withName("climbPIDS");
@@ -85,6 +86,14 @@ public class Superstructure {
   public Command moveClimbRightPIDPosition() {
     // return climb.moveLeftRightPIDPosition();
     return climb.setRightPIDPosition().withName("climbPIDS");
+=======
+  public Command moveClimbLeftPIDVoltageRoll() {
+    return climb.setLeftPIDVoltageRoll().withName("climbLeftPIDS");
+  }
+  
+  public Command moveClimbRightPIDVoltageRoll() {
+    return climb.setRightPIDVoltageRoll().withName("climbRightPIDS");
+>>>>>>> 71977f79e6a8a956f558316f461a316332f85be4
   }
 
   public Command stopClimbLeft() {
