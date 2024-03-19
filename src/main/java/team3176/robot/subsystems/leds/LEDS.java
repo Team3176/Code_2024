@@ -49,6 +49,7 @@ public class LEDS extends SubsystemBase {
 
   private Optional<Alliance> alliance = Optional.empty();
   private Color allianceColor = Color.kBlueViolet;
+  private Color teamColor = Color.kBlueViolet;
   private Color secondaryDisabledColor = Color.kBlack;
   private boolean lastEnabledAuto = false;
   private double lastEnabledTime = 0.0;
@@ -80,7 +81,7 @@ public class LEDS extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private LEDS() {
-    leds = new AddressableLED(3);
+    leds = new AddressableLED(3);   //PWM port
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
@@ -163,10 +164,10 @@ public class LEDS extends SubsystemBase {
                 new Color(0.15, 0.3, 1.0)),
             20,
             5.0);
-        buffer.setLED(staticSectionLength, allianceColor);
+        buffer.setLED(staticSectionLength, teamColor);
       } else {
         // Default pattern
-        wave(allianceColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
+        wave(teamColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
       }
 
       // Same battery alert
@@ -189,7 +190,7 @@ public class LEDS extends SubsystemBase {
       } else if (wantNote) {
         solid(Color.kOrange);
       } else {
-        wave(allianceColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
+        wave(teamColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
       }
 
       if (endgameAlert) {
