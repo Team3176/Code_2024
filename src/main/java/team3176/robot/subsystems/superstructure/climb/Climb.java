@@ -22,9 +22,9 @@ public class Climb extends SubsystemBase {
   //private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
-  private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
-  private TunablePID leftPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
-  private TunablePID rightPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
+  private TunablePID pid = new TunablePID("climbLeft", 1, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climbLeft", 1, 0, 0);
 
 
   int counter = 0;
@@ -49,34 +49,28 @@ public class Climb extends SubsystemBase {
         });
   }
 
-  public double leftPIDPosition() {
+  public void leftPIDVoltageRoll() {
     double leftVoltage = leftPIDController.calculate(gyro.getRoll(), leftSetPoint);
     Logger.recordOutput("climb/roll", gyro.getRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
-    /* System.out.println(
-    gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
     io.setLeftVoltage(leftVoltage);
-    return leftVoltage;
+    //return leftVoltage;
   }
 
-    public double rightPIDPosition() {
+    public void rightPIDVoltageRoll() {
     double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
     Logger.recordOutput("climb/roll", gyro.getRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
-    /* System.out.println(
-    gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); */
-    io.setLeftVoltage(rightVoltage);
-    return rightVoltage;
+    io.setRightVoltage(rightVoltage);
+    //return rightVoltage;
   }
 
-  public Command setLeftPIDPosition() {
-
-    return this.runEnd(() -> leftPIDPosition(), () -> stopLeft());
+  public Command setLeftPIDVoltageRoll() {
+    return this.run(() -> leftPIDVoltageRoll());//, () -> stopLeft());
   }
 
-  public Command setRightPIDPosition() {
-
-    return this.runEnd(() -> rightPIDPosition(), () -> stopLeft());
+  public Command setRightPIDVoltageRoll() {
+    return this.run(() -> rightPIDVoltageRoll());//, () -> stopLeft());
   }
 
 
@@ -88,16 +82,6 @@ public class Climb extends SubsystemBase {
     return inputs.rightPosition;
   }
 
-  /*
-  public Command leftGoToPosition(double position) {
-    return this.runEnd(
-        () -> {
-          io.setLeft(pid.calculate(getLeftPosition(), position));
-          System.out.println(position);
-        },
-        io::stopLeft);
-  }
-  */
   private void leftGoToPosition(double position) {
     if (position > SuperStructureConstants.CLIMBLEFT_TOP_POS) {
       position = SuperStructureConstants.CLIMBLEFT_TOP_POS;
@@ -161,43 +145,13 @@ public class Climb extends SubsystemBase {
         });
   }
 
-  public Command moveLeftRightPIDPosition() {
-    System.out.println("MOVELEFTRUGHTPIDPOSITION IS RUNNING!!!!!!!!!!!!!!!!!!");
-    return this.runEnd(
-        () -> {
-          io.setLeftVoltage(5 * leftPIDPosition());
-        },
-        () -> {
-          io.setLeftVoltage(0.0);
-        });
-  }
-
-  /*   public Command rightGoToPosition(double position) {
-    return this.runEnd(
-        () -> {
-          io.setRight(pid.calculate(getRightPosition(), position));
-        },
-        io::stopRight);
-  } */
-
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
     pid.checkParemeterUpdate();
     leftPIDController.checkParemeterUpdate();
-    // int counter = 0;
-    // if (counter == 20) {
-    //   System.out.println(
-    //       gyro.getRoll() + " WE'RE GETTING RHW GYRO ROLL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //   counter = 0;
-    // }
-    // counter++;
-    // if (Math.abs(gyro.getRoll()) > 1) {
-    //   io.setLeftVoltage(.5);
-    // } else {
-    //   io.setLeftVoltage(0);
-    // }
+
   }
 
   public static Climb getInstance() {
