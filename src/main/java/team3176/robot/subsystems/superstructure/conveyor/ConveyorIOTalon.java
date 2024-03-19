@@ -7,20 +7,17 @@
 
 package team3176.robot.subsystems.superstructure.conveyor;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 
 public class ConveyorIOTalon implements ConveyorIO {
 
-  private TalonFX controller =
-      new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
-  private LaserCan laserCan; 
+  private TalonFX controller = new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
+  private LaserCan laserCan;
   private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
 
   public ConveyorIOTalon() {
@@ -38,11 +35,10 @@ public class ConveyorIOTalon implements ConveyorIO {
 
   @Override
   public void updateInputs(ConveyorIOInputs inputs) {
-    inputs.WheelVelocity =
-        Units.rotationsToRadians(controller.getVelocity().getValue());
+    inputs.WheelVelocity = Units.rotationsToRadians(controller.getVelocity().getValue());
     inputs.AppliedVolts = controller.getMotorVoltage().getValue();
     var measurement = laserCan.getMeasurement();
-    if(measurement != null) {
+    if (measurement != null) {
       inputs.laserDist = measurement.distance_mm;
     }
   }

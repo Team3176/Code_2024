@@ -21,7 +21,6 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
-import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.util.TalonUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
@@ -152,6 +151,4 @@ public class IntakeIOTalon implements IntakeIO {
   public void setPivotVolts(double volts) {
     pivotController.setControl(pivotVolts.withOutput(volts));
   }
-
-
 }

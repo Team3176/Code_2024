@@ -116,7 +116,7 @@ public class Superstructure {
     return new ConditionalCommand(
         scoreNoteCenterAuto().andThen(getSourceNoteAuto()).repeatedly(),
         getSourceNoteAuto().andThen(scoreNoteCenterAuto()).repeatedly(),
-        () ->true);
+        () -> true);
   }
 
   public static Superstructure getInstance() {
