@@ -101,7 +101,7 @@ public class PhotonVisionSystem extends SubsystemBase {
     driveCamSub = cameraTable.getStringArrayTopic("streams").subscribe(new String[] {"none"});
     NetworkTable cameraTableSee = inst.getTable("CameraPublisher/notecamsee");
     driveCamPub = cameraTableSee.getStringArrayTopic("streams").publish();
-    noteCamTab.add(noteCamStreamer);
+    noteCamTab.add(noteCamStreamer).withSize(2, 2);
 
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
