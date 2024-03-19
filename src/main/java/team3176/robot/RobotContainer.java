@@ -188,7 +188,6 @@ public class RobotContainer {
     // PID Roll for left arm
     controller.operator.x().whileTrue(superstructure.moveClimbLeftPIDPosition());
     controller.operator.a().whileTrue(superstructure.moveClimbRightPIDPosition());
-
   }
 
   public void clearCanFaults() {

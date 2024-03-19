@@ -19,13 +19,12 @@ public class Climb extends SubsystemBase {
   private AHRS gyro = new AHRS(SPI.Port.kMXP);
   private double leftSetPoint = 0;
   private double rightSetPoint = 0;
-  //private double leftOffPoint;
+  // private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
-  private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
-  private TunablePID leftPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
-  private TunablePID rightPIDController = new TunablePID("climbLeft", 0.001, 0, 0);
-
+  private TunablePID pid = new TunablePID("pid", 0.001, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
 
   int counter = 0;
 
@@ -59,7 +58,7 @@ public class Climb extends SubsystemBase {
     return leftVoltage;
   }
 
-    public double rightPIDPosition() {
+  public double rightPIDPosition() {
     double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
     Logger.recordOutput("climb/roll", gyro.getRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
@@ -78,7 +77,6 @@ public class Climb extends SubsystemBase {
 
     return this.runEnd(() -> rightPIDPosition(), () -> stopLeft());
   }
-
 
   public double getLeftPosition() {
     return inputs.leftPosition;
