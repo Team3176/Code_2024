@@ -32,7 +32,7 @@ public class Superstructure {
   public boolean readyToShoot() {
     ChassisSpeeds speed = Drivetrain.getInstance().getCurrentChassisSpeed();
     double driveVelocity = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond);
-    boolean drivetrainReady = driveVelocity < 0.1 && speed.omegaRadiansPerSecond < 0.1;
+    boolean drivetrainReady = driveVelocity < 0.25 && speed.omegaRadiansPerSecond < 0.1;
     return shooter.readyToShoot() && drivetrainReady;
   }
 
