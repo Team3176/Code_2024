@@ -226,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocityAuto,
+        this::driveVelocity,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -344,9 +344,9 @@ public class Drivetrain extends SubsystemBase {
     }
     return new Pose2d();
   }
-  
+
   public ChassisSpeeds getCurrentChassisSpeed() {
-      return kinematics.toChassisSpeeds(getModuleStates());
+    return kinematics.toChassisSpeeds(getModuleStates());
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
@@ -620,9 +620,10 @@ public class Drivetrain extends SubsystemBase {
         });
   }
 
-  //Not protected by mutex lock to not interrupt the pathplanner command
+  // Not protected by mutex lock to not interrupt the pathplanner command
   public Command autoChaseTarget(orientationGoal goal) {
-    return Commands.runEnd(() -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
+    return Commands.runEnd(
+        () -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
   }
 
   public void runWheelRadiusCharacterization(double omegaSpeed) {
