@@ -226,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocity,
+        this::driveVelocityAuto,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -615,7 +615,7 @@ public class Drivetrain extends SubsystemBase {
           driveVelocity(getNoteChaseSpeeds());
         });
   }
-  
+
   //Not protected by mutex lock to not interrupt the pathplanner command
   public Command autoChaseTarget(orientationGoal goal) {
     return Commands.runEnd(() -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
