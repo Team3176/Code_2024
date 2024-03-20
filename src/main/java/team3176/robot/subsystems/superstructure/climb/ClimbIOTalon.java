@@ -120,8 +120,8 @@ public class ClimbIOTalon implements ClimbIO {
     inputs.rightPosition = rightPosition.getValueAsDouble();
     inputs.leftError = leftError.getValue();
     inputs.rightError = rightError.getValue();
-    inputs.rightAmps = rightAmps.getValue();
-    inputs.leftAmps = leftAmps.getValue();
+    inputs.rightAmpsStator = rightAmps.getValue();
+    inputs.leftAmpsStator = leftAmps.getValue();
     inputs.rightVolts = rightVolts.getValue();
     inputs.leftVolts = leftVolts.getValue();
   }

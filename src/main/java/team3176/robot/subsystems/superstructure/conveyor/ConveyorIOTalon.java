@@ -47,7 +47,7 @@ public class ConveyorIOTalon implements ConveyorIO {
     BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current);
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
-    inputs.current = current.getValue();
+    inputs.ampsStator = current.getValue();
     var measurement = laserCan.getMeasurement();
     if (measurement != null) {
       inputs.laserDist = measurement.distance_mm;

@@ -20,8 +20,8 @@ public interface ClimbIO {
     public double rightError = 0.0;
     public double leftVolts = 0.0;
     public double rightVolts = 0.0;
-    public double leftAmps = 0.0;
-    public double rightAmps = 0.0;
+    public double leftAmpsStator = 0.0;
+    public double rightAmpsStator = 0.0;
     public boolean isLeftLimitswitch = true;
     public boolean isRightLimitswitch = true;
 

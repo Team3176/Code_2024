@@ -23,8 +23,8 @@ public interface ShooterIO {
     public double wheelLowerAppliedVolts = 0.0;
     public boolean lowerLimitSwitch = false;
     public boolean upperLimitSwitch = false;
-    public double wheelLowerCurrentAmps = 0.0;
-    public double wheeUpperCurrentAmps = 0.0;
+    public double wheelLowerAmpsStator = 0.0;
+    public double wheeUpperAmpsStator = 0.0;
     public double pivotCurrentAmps = 0.0;
     public double lowerWheelError = 0.0;
     public double upperWheelError = 0.0;

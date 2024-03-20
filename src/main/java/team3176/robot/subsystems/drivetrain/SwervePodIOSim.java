@@ -50,7 +50,7 @@ public class SwervePodIOSim implements SwervePodIO {
     inputs.drivePositionRad += delta + simNoise.nextGaussian(0.0, 2.0) * Math.pow(delta, 2) * 0.1;
     inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
     inputs.driveAppliedVolts = driveAppliedVolts;
-    inputs.driveCurrentAmpsStator = Math.abs(driveSim.getCurrentDrawAmps());
+    inputs.driveAmpsStator = Math.abs(driveSim.getCurrentDrawAmps());
     inputs.driveTempCelcius = 0.0;
     currentDriveSpeed = driveSim.getAngularVelocityRadPerSec();
 
@@ -65,7 +65,7 @@ public class SwervePodIOSim implements SwervePodIO {
             + moduleOffsetError;
     inputs.turnVelocityRPM = turnSim.getAngularVelocityRPM();
     inputs.turnAppliedVolts = turnAppliedVolts;
-    inputs.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
+    inputs.turnAmps = Math.abs(turnSim.getCurrentDrawAmps());
     inputs.turnTempCelcius = 0.0;
 
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};

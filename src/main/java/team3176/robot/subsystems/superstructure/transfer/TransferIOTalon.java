@@ -22,21 +22,24 @@ public class TransferIOTalon implements TransferIO {
   private TalonFXConfiguration configs = new TalonFXConfiguration();
   private StatusSignal<Double> velocity;
   private StatusSignal<Double> volts;
+  private StatusSignal<Double> ampsStator;
 
   public TransferIOTalon() {
 
     transferController.getConfigurator().apply(configs);
     velocity = transferController.getVelocity();
     volts = transferController.getMotorVoltage();
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts);
+    ampsStator = transferController.getStatorCurrent();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts,ampsStator);
     transferController.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(TransferIOInputs inputs) {
-    BaseStatusSignal.refreshAll(velocity, volts);
+    BaseStatusSignal.refreshAll(velocity, volts,ampsStator);
     inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValue());
     inputs.transferAppliedVolts = volts.getValue();
+    inputs.ampsStator = ampsStator.getValue();
   }
 
   @Override
