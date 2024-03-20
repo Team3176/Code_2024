@@ -153,7 +153,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
     inputs.wheelLowerAmpsStator = lowerCurrentAmps.getValueAsDouble();
     inputs.wheeUpperAmpsStator = upperCurrentAmps.getValueAsDouble();
-    inputs.pivotCurrentAmps = pivotShooter.getOutputCurrent();
+    inputs.pivotAmpsStator = pivotShooter.getOutputCurrent();
   }
 
   @Override

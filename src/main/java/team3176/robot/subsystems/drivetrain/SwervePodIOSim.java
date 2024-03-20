@@ -65,7 +65,7 @@ public class SwervePodIOSim implements SwervePodIO {
             + moduleOffsetError;
     inputs.turnVelocityRPM = turnSim.getAngularVelocityRPM();
     inputs.turnAppliedVolts = turnAppliedVolts;
-    inputs.turnAmps = Math.abs(turnSim.getCurrentDrawAmps());
+    inputs.turnAmpsStator = Math.abs(turnSim.getCurrentDrawAmps());
     inputs.turnTempCelcius = 0.0;
 
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};

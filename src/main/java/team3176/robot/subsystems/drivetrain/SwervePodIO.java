@@ -18,7 +18,7 @@ public interface SwervePodIO {
     public double turnAbsolutePositionDegreesSimNoNoise = 0.0;
     public double turnVelocityRPM = 0.0;
     public double turnAppliedVolts = 0.0;
-    public double turnAmps = 0.0;
+    public double turnAmpsStator = 0.0;
     public double turnTempCelcius = 0.0;
 
     public double[] odometryTimestamps = new double[] {};

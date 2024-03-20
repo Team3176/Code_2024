@@ -161,7 +161,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
     // inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
-    inputs.turnAmps = turnSparkMax.getOutputCurrent();
+    inputs.turnAmpsStator = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
 
     inputs.odometryTimestamps =

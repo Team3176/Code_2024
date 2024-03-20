@@ -30,13 +30,13 @@ public class TransferIOTalon implements TransferIO {
     velocity = transferController.getVelocity();
     volts = transferController.getMotorVoltage();
     ampsStator = transferController.getStatorCurrent();
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts,ampsStator);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts, ampsStator);
     transferController.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(TransferIOInputs inputs) {
-    BaseStatusSignal.refreshAll(velocity, volts,ampsStator);
+    BaseStatusSignal.refreshAll(velocity, volts, ampsStator);
     inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValue());
     inputs.transferAppliedVolts = volts.getValue();
     inputs.ampsStator = ampsStator.getValue();
