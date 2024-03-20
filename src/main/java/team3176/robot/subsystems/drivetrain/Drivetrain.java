@@ -29,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -613,6 +614,11 @@ public class Drivetrain extends SubsystemBase {
         () -> {
           driveVelocity(getNoteChaseSpeeds());
         });
+  }
+  
+  //Not protected by mutex lock to not interrupt the pathplanner command
+  public Command autoChaseTarget(orientationGoal goal) {
+    return Commands.runEnd(() -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
   }
 
   public void runWheelRadiusCharacterization(double omegaSpeed) {
