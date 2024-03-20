@@ -226,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocity,
+        this::driveVelocityAuto,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -665,6 +665,7 @@ public class Drivetrain extends SubsystemBase {
 
     double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
     int sampleCount = Math.min(sampleTimestamps.length, inputs.odometryYawTimestamps.length);
+    sampleCount = sampleCount == 0 ? 1 : sampleCount;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
