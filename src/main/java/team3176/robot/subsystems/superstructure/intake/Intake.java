@@ -10,6 +10,7 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -107,14 +108,9 @@ public class Intake extends SubsystemBase {
     return this.runOnce(() -> this.pivotSetpoint = 0.0);
   }
 
-  public Command spinIntakeUntilPivot() {
+  public Command spinIntakeUntilNote() {
     return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .andThen(() -> io.setRollerVolts(0.0));
-  }
-
-  public Command spinIntakeUntilRoller() {
-    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> rollerSwitch())
+        .until(() -> Conveyor.getInstance().hasNote())
         .andThen(() -> io.setRollerVolts(0.0));
   }
 
@@ -132,28 +128,17 @@ public class Intake extends SubsystemBase {
 
   public Command intakeNote() {
     return (deployPivot()
-            .andThen(spinIntakeUntilPivot())
+            .andThen(spinIntakeUntilNote())
             .andThen(retractPivot()) //
             .andThen(stopRollers()))
         .finallyDo(
             () -> {
-              pivotState = pivotStates.RETRACT;
+              this.pivotSetpoint = 0.0;
               io.setRollerVolts(0.0);
             });
   }
 
-  public Command intakeNoteroller() {
-    return (deployPivot()
-            .andThen(spinIntakeUntilPivot())
-            .andThen(retractPivot()) //
-            .andThen(stopRollers()))
-        .finallyDo(
-            () -> {
-              pivotState = pivotStates.RETRACT;
-              io.setRollerVolts(0.0);
-            });
-  }
-
+  // TODO: might need to deploy the intake during a spit but maybe not
   public Command spit() {
     return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
   }
@@ -166,9 +151,10 @@ public class Intake extends SubsystemBase {
 
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
     commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
-    if (pivotSetpoint < 0.1) {
-      commandVolts -= 0.5;
-    }
+    // TODO: check if we need this to hold the intake in still I think not
+    // if (pivotSetpoint < 0.1) {
+    //   commandVolts -= 0.5;
+    // }
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
     Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);

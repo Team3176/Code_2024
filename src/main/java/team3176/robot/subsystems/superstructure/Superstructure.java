@@ -8,6 +8,7 @@ import team3176.robot.FieldConstants;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
@@ -19,12 +20,14 @@ public class Superstructure {
   private Intake intake;
   private Transfer transfer;
   private Shooter shooter;
+  private Conveyor conveyor;
 
   public Superstructure() {
     NoteVisualizer.setRobotPoseSupplier(Drivetrain.getInstance()::getPose);
     climb = Climb.getInstance();
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
+    conveyor = Conveyor.getInstance();
     transfer = new Transfer();
   }
 
@@ -49,7 +52,11 @@ public class Superstructure {
   }
 
   public Command shoot() {
-    return intake.spinIntake();
+    return conveyor.runShoot();
+  }
+
+  public Command intakeNote() {
+    return conveyor.runFast().alongWith(intake.intakeNote()).until(conveyor::hasNote);
   }
 
   public Command runShooterPivot(double volts) {
