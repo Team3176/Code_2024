@@ -186,14 +186,9 @@ public class RobotContainer {
         .onTrue(Intake.getInstance().EmergencyHold());
 
     // PID Roll for left arm
-<<<<<<< HEAD
-    controller.operator.x().whileTrue(superstructure.moveClimbLeftPIDPosition());
-    controller.operator.a().whileTrue(superstructure.moveClimbRightPIDPosition());
-=======
+
     controller.operator.x().whileTrue(superstructure.moveClimbLeftPIDVoltageRoll());
     controller.operator.a().whileTrue(superstructure.moveClimbRightPIDVoltageRoll());
-
->>>>>>> 71977f79e6a8a956f558316f461a316332f85be4
   }
 
   public void clearCanFaults() {

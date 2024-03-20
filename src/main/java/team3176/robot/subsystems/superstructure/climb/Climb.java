@@ -22,16 +22,10 @@ public class Climb extends SubsystemBase {
   // private double leftOffPoint;
 
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
-<<<<<<< HEAD
+
   private TunablePID pid = new TunablePID("pid", 0.001, 0, 0);
   private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
   private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
-=======
-  private TunablePID pid = new TunablePID("climbLeft", 1, 0, 0);
-  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
-  private TunablePID rightPIDController = new TunablePID("climbLeft", 1, 0, 0);
-
->>>>>>> 71977f79e6a8a956f558316f461a316332f85be4
 
   int counter = 0;
 
@@ -60,27 +54,25 @@ public class Climb extends SubsystemBase {
     Logger.recordOutput("climb/roll", gyro.getRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
-    //return leftVoltage;
+    // return leftVoltage;
   }
 
-<<<<<<< HEAD
-  public double rightPIDPosition() {
-=======
-    public void rightPIDVoltageRoll() {
->>>>>>> 71977f79e6a8a956f558316f461a316332f85be4
+  public void rightPIDVoltageRoll() {
     double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
     Logger.recordOutput("climb/roll", gyro.getRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
-    //return rightVoltage;
+    // return rightVoltage;
   }
 
   public Command setLeftPIDVoltageRoll() {
-    return this.run(() -> leftPIDVoltageRoll());//, () -> stopLeft());
+    return this.runEnd(
+        () -> leftPIDVoltageRoll(), () -> io.setLeftVoltage(0)); // , () -> stopLeft());
   }
 
   public Command setRightPIDVoltageRoll() {
-    return this.run(() -> rightPIDVoltageRoll());//, () -> stopLeft());
+    return this.runEnd(
+        () -> rightPIDVoltageRoll(), () -> io.setRightVoltage(0)); // , () -> stopLeft());
   }
 
   public double getLeftPosition() {
@@ -160,7 +152,6 @@ public class Climb extends SubsystemBase {
     Logger.processInputs("Climb", inputs);
     pid.checkParemeterUpdate();
     leftPIDController.checkParemeterUpdate();
-
   }
 
   public static Climb getInstance() {
