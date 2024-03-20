@@ -80,6 +80,12 @@ public class Drivetrain extends SubsystemBase {
     ROBOT_CENTRIC
   }
 
+  public enum orientationGoal {
+    PATHPLANNER,
+    NOTECAM,
+    SPEAKER
+  }
+
   // private PowerDistribution PDH = new PowerDistribution();
   // PowerDistribution(PowerManagementConstants.PDP_CAN_ID, ModuleType.kCTRE);
 
@@ -128,6 +134,7 @@ public class Drivetrain extends SubsystemBase {
           });
   private ChassisSpeeds desiredSpeeds;
   private TunablePID orientationPID;
+  private orientationGoal autonTarget;
 
   private Drivetrain(GyroIO io) {
     this.io = io;
@@ -213,7 +220,7 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator =
         new SwerveDrivePoseEstimator(
             kinematics, getSensorYaw(), getSwerveModulePositions(), odom.getPoseMeters());
-
+    autonTarget = orientationGoal.PATHPLANNER;
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetPose,
@@ -287,6 +294,27 @@ public class Drivetrain extends SubsystemBase {
     //    });
     Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
+  }
+
+  public void driveVelocityAuto(ChassisSpeeds speeds) {
+    switch (autonTarget) {
+      case NOTECAM -> {
+        speeds.omegaRadiansPerSecond = getNoteChaseSpeeds().omegaRadiansPerSecond;
+        driveVelocity(speeds);
+      }
+      case PATHPLANNER -> driveVelocity(speeds);
+      case SPEAKER -> {
+        Rotation2d aimAngle = getAimAngle();
+        speeds.omegaRadiansPerSecond =
+            MathUtil.clamp(
+                orientationPID.calculate(
+                    this.getPose().getRotation().getRadians(), aimAngle.getRadians()),
+                -2.5,
+                2.5);
+        driveVelocity(speeds);
+      }
+      default -> driveVelocity(speeds);
+    }
   }
 
   public void driveVelocityFieldCentric(ChassisSpeeds speeds) {
@@ -398,6 +426,25 @@ public class Drivetrain extends SubsystemBase {
   private void setBrakeMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustBrake();
+    }
+  }
+
+  private ChassisSpeeds getNoteChaseSpeeds() {
+    if (PhotonVisionSystem.getInstance().seeNote) {
+      double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+      double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
+      Logger.recordOutput("Drivetrain/yawError", yawError);
+      ChassisSpeeds speed =
+          new ChassisSpeeds(
+              MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
+              0,
+              yawError * (yawkP.get()));
+      return speed;
+    } else {
+      if (PhotonVisionSystem.getInstance().notePitch < -12) {
+        return new ChassisSpeeds(0.7, 0.0, 0.0);
+      }
+      return new ChassisSpeeds();
     }
   }
 
@@ -551,11 +598,9 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed = baseJoy.get();
-            speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
+            ChassisSpeeds chaseNote = getNoteChaseSpeeds();
+            speed.omegaRadiansPerSecond = chaseNote.omegaRadiansPerSecond;
             driveVelocityFieldCentric(speed);
           } else {
             driveVelocityFieldCentric(baseJoy.get());
@@ -566,22 +611,7 @@ public class Drivetrain extends SubsystemBase {
   public Command chaseNote() {
     return this.run(
         () -> {
-          if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
-            ChassisSpeeds speed =
-                new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
-                    0,
-                    yawError * (yawkP.get()));
-            driveVelocity(speed);
-          } else {
-            if (PhotonVisionSystem.getInstance().notePitch < -12) {
-              driveVelocity(new ChassisSpeeds(0.7, 0.0, 0.0));
-            }
-            driveVelocity(new ChassisSpeeds());
-          }
+          driveVelocity(getNoteChaseSpeeds());
         });
   }
 
