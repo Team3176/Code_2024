@@ -9,25 +9,39 @@ public class Conveyor extends SubsystemBase {
   private ConveyorIO io;
 
   private ConveyorIOInputsAutoLogged inputs;
-  private LoggedTunableNumber conveyorVelocity;
+  private LoggedTunableNumber conveyorIntakeFastVelocity;
+  private LoggedTunableNumber conveyorIntakeSlowVelocity;
+  private LoggedTunableNumber conveyorShootVelocity;
 
   public Conveyor() {
     io = new ConveyorIOTalon();
     inputs = new ConveyorIOInputsAutoLogged();
-    this.conveyorVelocity = new LoggedTunableNumber("conveyor/velocity", 0.6);
+    this.conveyorIntakeFastVelocity = new LoggedTunableNumber("conveyor/IntakeFast", 0.4);
+    this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.2);
+    this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.2);
   }
 
-  public Command run() {
-    return this.runEnd(() -> io.setController(conveyorVelocity.get()), () -> io.setController(0));
+  public boolean hasNote() {
+    return inputs.laserDist < 100;
+  }
+
+  public Command runFast() {
+    return this.runEnd(() -> io.setController(conveyorIntakeFastVelocity.get()), () -> io.setController(0));
+  }
+  public Command runSlow() {
+    return this.runEnd(() -> io.setController(conveyorIntakeSlowVelocity.get()), () -> io.setController(0));
+  }
+  public Command runShoot() {
+    return this.runEnd(() -> io.setController(conveyorShootVelocity.get()), () -> io.setController(0));
   }
 
   public Command spit() {
     return this.runEnd(() -> io.setController(-1.5), () -> io.setController(0));
   }
 
+
   @Override
   public void periodic() {
-    // TODO Auto-generated method stub
     io.updateInputs(inputs);
     Logger.processInputs("conveyor", inputs);
   }
