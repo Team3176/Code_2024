@@ -122,7 +122,7 @@ public class RobotContainer {
     controller
         .transStick
         .button(2)
-        .onTrue(Intake.getInstance().intakeNote())
+        .onTrue(superstructure.intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
@@ -131,7 +131,7 @@ public class RobotContainer {
         .whileTrue(
             drivetrain
                 .chaseNote()
-                .alongWith(Intake.getInstance().intakeNote())
+                .alongWith(superstructure.intakeNote())
                 .alongWith(leds.AutoDriveStart().asProxy()));
     controller
         .transStick
@@ -142,7 +142,7 @@ public class RobotContainer {
                     () -> controller.getForward(),
                     () -> controller.getStrafe(),
                     () -> controller.getSpin())
-                .alongWith(Intake.getInstance().intakeNote()));
+                .alongWith(superstructure.intakeNote()));
     controller
         .transStick
         .button(10)
@@ -194,7 +194,7 @@ public class RobotContainer {
         .onFalse(superstructure.stopClimbRight());
         */
     controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
-    controller.operator.povDown().onTrue(Intake.getInstance().intakeNote());
+    controller.operator.povDown().onTrue(superstructure.intakeNote());
 
     controller
         .operator

@@ -100,13 +100,13 @@ public class Superstructure {
   }
 
   public Command spit() {
-    return intake.spit().alongWith(transfer.spit());
+    return intake.spit().alongWith(transfer.spit()).alongWith(conveyor.spit());
   }
 
   public Command getSourceNoteAuto() {
     return Drivetrain.getInstance()
         .goToPoint(FieldConstants.sourePickup)
-        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intake.intakeNote()));
+        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
   }
 
   public Command scoreNoteCenterAuto() {
