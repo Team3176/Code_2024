@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -26,6 +27,13 @@ public class Superstructure {
     intake = Intake.getInstance();
     shooter = Shooter.getInstance();
     transfer = new Transfer();
+  }
+
+  public boolean readyToShoot() {
+    ChassisSpeeds speed = Drivetrain.getInstance().getCurrentChassisSpeed();
+    double driveVelocity = Math.hypot(speed.vxMetersPerSecond,speed.vyMetersPerSecond);
+    boolean drivetrainReady = driveVelocity < 0.1 && speed.omegaRadiansPerSecond < 0.1;
+    return shooter.readyToShoot() && drivetrainReady;
   }
 
   public Command aimShooterTune() {

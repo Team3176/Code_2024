@@ -121,7 +121,7 @@ public class Shooter extends SubsystemBase {
 
   @AutoLogOutput
   public boolean isAtAngle() {
-    return pivotPIDController.atSetpoint();
+    return pivotPIDController.atSetpoint() || inputs.pivotPosition.getDegrees() > 26.0;
   }
 
   public boolean readyToShoot() {

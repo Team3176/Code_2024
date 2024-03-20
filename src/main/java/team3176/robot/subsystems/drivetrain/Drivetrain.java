@@ -344,6 +344,10 @@ public class Drivetrain extends SubsystemBase {
     }
     return new Pose2d();
   }
+  
+  public ChassisSpeeds getCurrentChassisSpeed() {
+      return kinematics.toChassisSpeeds(getModuleStates());
+  }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
     visionPose3d = p;

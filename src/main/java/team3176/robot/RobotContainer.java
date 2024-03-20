@@ -101,7 +101,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("aimSpeaker", drivetrain.autoChaseTarget(orientationGoal.SPEAKER).withTimeout(2.0));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
-
+    
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
     configureBindings();
   }
