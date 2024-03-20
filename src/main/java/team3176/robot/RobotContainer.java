@@ -92,8 +92,7 @@ public class RobotContainer {
             .withTimeout(1.5)
             .withName("shooting"));
     NamedCommands.registerCommand(
-        "chaseNote",
-        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
+        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 

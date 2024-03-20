@@ -98,20 +98,13 @@ public class Intake extends SubsystemBase {
   public Command deployPivot() {
     return this.runOnce(
         () -> {
-          this.pivotState = pivotStates.DEPLOY;
-          this.pivotSetpoint = 1.7;
+          this.pivotSetpoint = DEPLOY_POS;
           deployTime.restart();
         });
   }
 
   public Command retractPivot() {
     return this.runOnce(() -> this.pivotSetpoint = 0.0);
-  }
-
-  public Command spinIntakeUntilNote() {
-    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> Conveyor.getInstance().hasNote())
-        .andThen(() -> io.setRollerVolts(0.0));
   }
 
   public Command spinIntake() {
@@ -125,17 +118,18 @@ public class Intake extends SubsystemBase {
   public Command stopRollers() {
     return this.runOnce(() -> io.setRollerVolts(0));
   }
-
+  /*
+   * this can be much simpler than before just needs to spin the intake and retract when done.
+   * keep the high level logic up in superstructure
+   */
   public Command intakeNote() {
     return (deployPivot()
-            .andThen(spinIntakeUntilNote())
-            .andThen(retractPivot()) //
-            .andThen(stopRollers()))
+            .andThen(spinIntake())
         .finallyDo(
             () -> {
               this.pivotSetpoint = 0.0;
               io.setRollerVolts(0.0);
-            });
+            }));
   }
 
   // TODO: might need to deploy the intake during a spit but maybe not
@@ -165,30 +159,5 @@ public class Intake extends SubsystemBase {
       pivot_offset = inputs.pivotPosition;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
-    // pivot state machine
-    // switch (pivotState) {
-    //   case DEPLOY:
-    //     /*         if (deployTime.get() < 0.5) { */
-    //     runPivot(2.0);
-    //     /*         } else {
-    //       runPivot(0);
-    //     } */
-    //     if (inputs.lowerLimitSwitch) {
-    //       pivotState = pivotStates.IDLE;
-    //     }
-    //     break;
-    //   case RETRACT:
-    //     runPivot(-2);
-    //     if (inputs.upperLimitSwitch) {
-    //       pivotState = pivotStates.HOLD;
-    //     }
-    //     break;
-    //   case IDLE:
-    //     runPivot(0.0);
-    //     break;
-    //   case HOLD:
-    //     runPivot(-0.2);
-    //     break;
-    // }
   }
 }
