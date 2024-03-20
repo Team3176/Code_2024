@@ -22,8 +22,10 @@ import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -76,6 +78,7 @@ public class RobotContainer {
                 () -> controller.getSpin())
             .withName("default drive"));
     leds.setDefaultCommand(leds.DefaultLED());
+    //These all need to be sped up
     NamedCommands.registerCommand(
         "shoot",
         superstructure
@@ -92,8 +95,10 @@ public class RobotContainer {
             .withTimeout(1.5)
             .withName("shooting"));
     NamedCommands.registerCommand(
-        "chaseNote",
+        "chaseNoteFull",
         drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
+    NamedCommands.registerCommand("chaseNote", drivetrain.autoChaseTarget(orientationGoal.NOTECAM).withTimeout(2.0));
+    NamedCommands.registerCommand("aimSpeaker", drivetrain.autoChaseTarget(orientationGoal.SPEAKER).withTimeout(2.0));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
