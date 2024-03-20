@@ -9,6 +9,8 @@ package team3176.robot.subsystems.superstructure.conveyor;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
@@ -18,7 +20,10 @@ public class ConveyorIOTalon implements ConveyorIO {
 
   private TalonFX controller = new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
   private LaserCan laserCan;
-  private TalonFXConfiguration configsWheelLower2 = new TalonFXConfiguration();
+  private TalonFXConfiguration configs = new TalonFXConfiguration();
+  private final StatusSignal<Double> wheelVelocity;
+  private final StatusSignal<Double> appliedVolts;
+  private final StatusSignal<Double> current;
 
   public ConveyorIOTalon() {
     laserCan = new LaserCan(Hardwaremap.LaserCan_CID);
@@ -29,14 +34,20 @@ public class ConveyorIOTalon implements ConveyorIO {
     } catch (ConfigurationFailedException e) {
       System.out.println("LaserCan configuration failed");
     }
-    controller.getConfigurator().apply(configsWheelLower2);
-    // }
+    controller.getConfigurator().apply(configs);
+    wheelVelocity = controller.getVelocity();
+    appliedVolts = controller.getMotorVoltage();
+    current = controller.getStatorCurrent();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, wheelVelocity, appliedVolts, current);
+    controller.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(ConveyorIOInputs inputs) {
-    inputs.WheelVelocity = Units.rotationsToRadians(controller.getVelocity().getValue());
-    inputs.AppliedVolts = controller.getMotorVoltage().getValue();
+    BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current);
+    inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
+    inputs.appliedVolts = appliedVolts.getValue();
+    inputs.ampsStator = current.getValue();
     var measurement = laserCan.getMeasurement();
     if (measurement != null) {
       inputs.laserDist = measurement.distance_mm;

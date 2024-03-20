@@ -41,11 +41,11 @@ public class IntakeIOSim implements IntakeIO {
             + SuperStructureConstants.INTAKE_PIVOT_SIM_OFFSET;
     inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
     inputs.pivotAppliedVolts = appliedVolts;
-    inputs.pivotCurrentAmps = pivotSim.getCurrentDrawAmps();
+    inputs.pivotAmpsStator = pivotSim.getCurrentDrawAmps();
     inputs.pivotTempCelcius = 0.0;
     inputs.rollerVelocityRadPerSec = rollerSim.getAngularVelocityRadPerSec();
     inputs.rollerAppliedVolts = appliedVolts;
-    inputs.rollerCurrentAmps = rollerSim.getCurrentDrawAmps();
+    inputs.rollerAmpsStator = rollerSim.getCurrentDrawAmps();
     inputs.rollerTempCelcius = 0.0;
     Logger.recordOutput("Intake/SimPivotPos", pivotSim.getAngleRads());
   }
