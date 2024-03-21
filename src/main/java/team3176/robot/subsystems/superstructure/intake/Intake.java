@@ -10,7 +10,6 @@ import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
-import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
 
@@ -124,7 +123,7 @@ public class Intake extends SubsystemBase {
    */
   public Command intakeNote() {
     return (deployPivot()
-            .andThen(spinIntake())
+        .andThen(spinIntake())
         .finallyDo(
             () -> {
               this.pivotSetpoint = 0.0;
