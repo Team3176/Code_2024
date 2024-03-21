@@ -42,25 +42,11 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    this.pivotPID = new TunablePID("intakePivot", 4.0, 0.0, 0.0);
+    this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
-    // kG.put(27.0, 0.6);
-    // kG.put(,)
-  }
-
-  private void stopRoller() {
-    io.setRollerVolts(0.0);
-  }
-
-  private void pivotGoToPosition(int position) {
-    io.setPivotPIDPosition(position);
-  }
-
-  private void stopPivot() {
-    io.setPivotVolts(0.0);
   }
 
   public Command EmergencyHold() {
@@ -143,7 +129,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/state", pivotState);
 
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
+    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.0);
     // TODO: check if we need this to hold the intake in still I think not
     // if (pivotSetpoint < 0.1) {
     //   commandVolts -= 0.5;

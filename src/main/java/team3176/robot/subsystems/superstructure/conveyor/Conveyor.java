@@ -19,8 +19,8 @@ public class Conveyor extends SubsystemBase {
   private Conveyor(ConveyorIO io) {
     this.io = io;
     inputs = new ConveyorIOInputsAutoLogged();
-    this.conveyorIntakeFastVelocity = new LoggedTunableNumber("conveyor/IntakeFast", 0.4);
-    this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.2);
+    this.conveyorIntakeFastVelocity = new LoggedTunableNumber("conveyor/IntakeFast", 0.5);
+    this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.3);
     this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.2);
   }
 
@@ -52,7 +52,7 @@ public class Conveyor extends SubsystemBase {
   }
 
   public Command spit() {
-    return this.runEnd(() -> io.setController(-1.5), () -> io.setController(0));
+    return this.runEnd(() -> io.setController(-2.0), () -> io.setController(0));
   }
 
   @Override
