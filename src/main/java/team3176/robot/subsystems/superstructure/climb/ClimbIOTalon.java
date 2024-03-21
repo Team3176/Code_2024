@@ -29,6 +29,7 @@ public class ClimbIOTalon implements ClimbIO {
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
   private final StatusSignal<Double> leftPosition;
+
   // private final StatusSignal<Double> rightError;
   // private final StatusSignal<Double> leftError;
 
