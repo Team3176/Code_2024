@@ -25,7 +25,15 @@ public class Conveyor extends SubsystemBase {
   }
 
   public boolean hasNote() {
+    return isLaser1() || isLaser2();
+  }
+
+  public boolean isLaser1() {
     return inputs.laserDist1 < 100;
+  }
+
+  public boolean isLaser2() {
+    return inputs.laserDist2 < 100;
   }
 
   public Command runFast() {

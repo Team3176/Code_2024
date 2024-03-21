@@ -56,7 +56,12 @@ public class Superstructure {
   }
 
   public Command intakeNote() {
-    return conveyor.runFast().alongWith(intake.intakeNote()).until(conveyor::hasNote);
+    return conveyor
+        .runFast()
+        .alongWith(intake.intakeNote())
+        .until(conveyor::isLaser2)
+        .andThen(conveyor.runSlow())
+        .until(conveyor::isLaser1);
   }
 
   public Command runShooterPivot(double volts) {
