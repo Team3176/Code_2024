@@ -20,9 +20,6 @@ public interface ConveyorIO {
     public double ampsStator = 0.0;
     public double laserDist1 = 0.0;
     public double laserDist2 = 0.0;
-    // public double[] CurrentAmps = new double[] {};
-    // public double[] TempCelcius = new double[] {};
-
     // constructor if needed for some inputs
     ConveyorIOInputs() {}
   }

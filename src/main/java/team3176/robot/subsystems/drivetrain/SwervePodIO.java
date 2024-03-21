@@ -10,15 +10,15 @@ public interface SwervePodIO {
     public double driveVelocityRadPerSec = 0.0;
     public double driveAppliedVolts = 0.0;
     public double drivePositionSimNoNoise = 0.0;
-    public double driveCurrentAmpsStator = 0.0;
-    public double driveCurrentAmpsSupply = 0.0;
+    public double driveAmpsStator = 0.0;
+    public double driveAmpsSupply = 0.0;
     public double driveTempCelcius = 0.0;
 
     public double turnAbsolutePositionDegrees = 0.0;
     public double turnAbsolutePositionDegreesSimNoNoise = 0.0;
     public double turnVelocityRPM = 0.0;
     public double turnAppliedVolts = 0.0;
-    public double turnCurrentAmps = 0.0;
+    public double turnAmpsStator = 0.0;
     public double turnTempCelcius = 0.0;
 
     public double[] odometryTimestamps = new double[] {};

@@ -121,13 +121,13 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
-    inputs.pivotCurrentAmps = pivotCurrentAmps.getValueAsDouble();
+    inputs.pivotAmpsStator = pivotCurrentAmps.getValueAsDouble();
     inputs.pivotTempCelcius = pivotTemp.getValueAsDouble();
     inputs.pivotPosition = Units.rotationsToRadians(pivotPosition.getValueAsDouble());
     inputs.pivotVelocityRadPerSec = Units.rotationsToRadians(pivotVelocity.getValueAsDouble());
 
     inputs.rollerAppliedVolts = rollerAppliedVolts.getValueAsDouble();
-    inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
+    inputs.rollerAmpsStator = rollerCurrentAmps.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
   }
