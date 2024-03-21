@@ -39,7 +39,7 @@ public class ConveyorIOTalon implements ConveyorIO {
     inputs.AppliedVolts = controller.getMotorVoltage().getValue();
     var measurement = laserCan.getMeasurement();
     if (measurement != null) {
-      inputs.laserDist = measurement.distance_mm;
+      inputs.laserDist1 = measurement.distance_mm;
     }
   }
 
