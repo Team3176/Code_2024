@@ -41,7 +41,13 @@ public class Superstructure {
   }
 
   public Command aimAmp() {
-    return aimShooter(17, 17, 30, 0.35).alongWith(climb.setLeftPosition(), climb.setRightPosition());
+    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
+    // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
+    return Drivetrain.getInstance()
+        .goToPoint(FieldConstants.ampFace)
+        .andThen(
+            aimShooter(17, 17, 30, 0.35)
+                .alongWith(climb.setAmpLeftPosition(), climb.setAmpRightPosition()));
   }
 
   public Command aimPodium() {
