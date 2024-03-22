@@ -1,6 +1,6 @@
 package team3176.robot.subsystems.superstructure.climb;
 
-import com.kauailabs.navx.frc.AHRS;
+//import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
 // import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
 import team3176.robot.util.TunablePID;
 
@@ -16,7 +17,7 @@ import team3176.robot.util.TunablePID;
 public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
-  private AHRS gyro = new AHRS(SPI.Port.kMXP);
+  //private AHRS gyro = new AHRS(SPI.Port.kMXP);
 
   private double leftSetPoint = 0;
   private double rightSetPoint = 0;
@@ -51,29 +52,29 @@ public class Climb extends SubsystemBase {
   }
 
   public void leftPIDVoltageRoll() {
-    double leftVoltage = leftPIDController.calculate(gyro.getRoll(), leftSetPoint);
-    Logger.recordOutput("climb/roll", gyro.getRoll());
+    double leftVoltage = leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
     // return leftVoltage;
   }
 
   public void rightPIDVoltageRoll() {
-    double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
-    Logger.recordOutput("climb/roll", gyro.getRoll());
+    double rightVoltage = rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
     // return rightVoltage;
   }
 
   public void leftRightPIDVoltageRoll() {
-    double rightVoltage = rightPIDController.calculate(gyro.getRoll(), rightSetPoint);
-    Logger.recordOutput("climb/roll", gyro.getRoll());
+    double rightVoltage = rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
     // return rightVoltage;
-    double leftVoltage = leftPIDController.calculate(gyro.getRoll(), leftSetPoint);
-    Logger.recordOutput("climb/roll", gyro.getRoll());
+    double leftVoltage = leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
     // return leftVoltage;
