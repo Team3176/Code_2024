@@ -20,6 +20,8 @@ public class Climb extends SubsystemBase {
   private double rightSetPoint = 0;
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -42,7 +44,8 @@ public class Climb extends SubsystemBase {
   }
 
   public void leftPIDVoltageRoll() {
-    double leftVoltage = leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    double leftVoltage =
+        leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
@@ -50,7 +53,8 @@ public class Climb extends SubsystemBase {
   }
 
   public void rightPIDVoltageRoll() {
-    double rightVoltage = rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    double rightVoltage =
+        rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
@@ -58,12 +62,14 @@ public class Climb extends SubsystemBase {
   }
 
   public void leftRightPIDVoltageRoll() {
-    double rightVoltage = rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    double rightVoltage =
+        rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
     // return rightVoltage;
-    double leftVoltage = leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    double leftVoltage =
+        leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
