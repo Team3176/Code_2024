@@ -17,8 +17,9 @@ public interface ConveyorIO {
 
     public double WheelVelocity = 0.0;
     public double appliedVolts = 0.0;
-    public double laserDist = 0.0;
     public double ampsStator = 0.0;
+    public double laserDistIntakeSide = 0.0;
+    public double laserDistShooterSide = 0.0;
     // constructor if needed for some inputs
     ConveyorIOInputs() {}
   }

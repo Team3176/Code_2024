@@ -19,18 +19,27 @@ import team3176.robot.constants.Hardwaremap;
 public class ConveyorIOTalon implements ConveyorIO {
 
   private TalonFX controller = new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
-  private LaserCan laserCan;
+  private LaserCan laserCanIntakeSide;
+  private LaserCan laserCanShooterSide;
   private TalonFXConfiguration configs = new TalonFXConfiguration();
   private final StatusSignal<Double> wheelVelocity;
   private final StatusSignal<Double> appliedVolts;
   private final StatusSignal<Double> current;
 
   public ConveyorIOTalon() {
-    laserCan = new LaserCan(Hardwaremap.LaserCan_CID);
+    laserCanIntakeSide = new LaserCan(Hardwaremap.LaserCanIntakeSide_CID);
+    laserCanShooterSide = new LaserCan(Hardwaremap.LaserCanShooterSide_CID);
     try {
-      laserCan.setRangingMode(LaserCan.RangingMode.SHORT);
-      laserCan.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      laserCan.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      laserCanIntakeSide.setRangingMode(LaserCan.RangingMode.SHORT);
+      laserCanIntakeSide.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      laserCanIntakeSide.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("LaserCan configuration failed");
+    }
+    try {
+      laserCanShooterSide.setRangingMode(LaserCan.RangingMode.SHORT);
+      laserCanShooterSide.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      laserCanShooterSide.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("LaserCan configuration failed");
     }
@@ -48,9 +57,13 @@ public class ConveyorIOTalon implements ConveyorIO {
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
     inputs.ampsStator = current.getValue();
-    var measurement = laserCan.getMeasurement();
-    if (measurement != null) {
-      inputs.laserDist = measurement.distance_mm;
+    var measurement1 = laserCanIntakeSide.getMeasurement();
+    if (measurement1 != null) {
+      inputs.laserDistIntakeSide = measurement1.distance_mm;
+    }
+    var measurement2 = laserCanShooterSide.getMeasurement();
+    if (measurement2 != null) {
+      inputs.laserDistShooterSide = measurement2.distance_mm;
     }
   }
 
