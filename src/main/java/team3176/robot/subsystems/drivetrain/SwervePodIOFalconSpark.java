@@ -143,7 +143,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     inputs.driveVelocityRadPerSec =
         Units.rotationsToRadians(driveVelocity.getValueAsDouble()) * (THRUST_GEAR_RATIO);
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
-    inputs.driveCurrentAmpsStator = driveCurrentStator.getValueAsDouble();
+    inputs.driveAmpsStator = driveCurrentStator.getValueAsDouble();
     inputs.driveTempCelcius = driveTemps.getValueAsDouble();
 
     inputs.turnAbsolutePositionDegrees =
@@ -161,7 +161,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
 
     // inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
     inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
-    inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
+    inputs.turnAmpsStator = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
 
     inputs.odometryTimestamps =
