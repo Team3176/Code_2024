@@ -54,11 +54,16 @@ public class Conveyor extends SubsystemBase {
   public Command spit() {
     return this.runEnd(() -> io.setController(-2.0), () -> io.setController(0));
   }
-    public Command runSlowReverse() {
+
+  public Command runSlowReverse() {
     return this.runEnd(() -> io.setController(-1.0), () -> io.setController(0));
   }
+
   public Command centerNote() {
-    return this.runSlow().until(() -> !isLaserIntakeSide()).andThen(runSlowReverse().until(() ->isLaserIntakeSide()));
+    return (this.runSlow()
+            .until(() -> !isLaserIntakeSide())
+            .andThen(runSlowReverse().until(() -> isLaserIntakeSide())))
+        .withTimeout(2.0);
   }
 
   @Override

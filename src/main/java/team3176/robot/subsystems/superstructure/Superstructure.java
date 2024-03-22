@@ -56,11 +56,10 @@ public class Superstructure {
   }
 
   public Command intakeNote() {
-    return (conveyor
-        .runFast().until(conveyor::isLaserIntakeSide).andThen(conveyor.runSlow())).
-        alongWith(intakeNote()).until(conveyor::isLaserShooterSide)
+    return (conveyor.runFast().until(conveyor::isLaserIntakeSide).andThen(conveyor.runSlow()))
+        .alongWith(intakeNote())
+        .until(conveyor::isLaserShooterSide)
         .andThen(conveyor.centerNote());
-        
   }
 
   public Command runShooterPivot(double volts) {
