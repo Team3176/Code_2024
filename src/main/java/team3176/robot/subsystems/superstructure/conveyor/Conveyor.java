@@ -25,14 +25,14 @@ public class Conveyor extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return isLaser1() || isLaser2();
+    return isLaserIntakeSide() || isLaserShooterSide();
   }
 
-  public boolean isLaser1() {
+  public boolean isLaserIntakeSide() {
     return inputs.laserDistIntakeSide < 100;
   }
 
-  public boolean isLaser2() {
+  public boolean isLaserShooterSide() {
     return inputs.laserDistShooterSide < 100;
   }
 
@@ -53,6 +53,12 @@ public class Conveyor extends SubsystemBase {
 
   public Command spit() {
     return this.runEnd(() -> io.setController(-2.0), () -> io.setController(0));
+  }
+    public Command runSlowReverse() {
+    return this.runEnd(() -> io.setController(-1.0), () -> io.setController(0));
+  }
+  public Command centerNote() {
+    return this.runSlow().until(() -> !isLaserIntakeSide()).andThen(runSlowReverse().until(() ->isLaserIntakeSide()));
   }
 
   @Override
