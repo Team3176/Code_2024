@@ -17,7 +17,7 @@ public interface TransferIO {
 
     public double transferWheelVelocity = 0.0;
     public double transferAppliedVolts = 0.0;
-    // public double[] CurrentAmps = new double[] {};
+    public double ampsStator = 0.0;
     // public double[] TempCelcius = new double[] {};
 
     // constructor if needed for some inputs
