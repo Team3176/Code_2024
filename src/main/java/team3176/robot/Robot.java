@@ -163,19 +163,19 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // robotContainer.checkAutonomousSelection();
-    // robotContainer.checkAllaince();
+    robotContainer.checkAutonomousSelection();
+    robotContainer.checkAllaince();
   }
 
   @Override
   public void autonomousInit() {
     robotContainer.clearCanFaults();
     //    robotContainer.setThrustBrake();
-    // autonomousCommand = robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
-      // autonomousCommand.schedule();
+      autonomousCommand.schedule();
     }
   }
 

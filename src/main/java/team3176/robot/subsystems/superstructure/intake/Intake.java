@@ -1,9 +1,11 @@
 package team3176.robot.subsystems.superstructure.intake;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
@@ -158,25 +160,25 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // io.updateInputs(inputs);
-    // Logger.processInputs("Intake", inputs);
-    // Logger.recordOutput("Intake/state", pivotState);
+    io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
+    Logger.recordOutput("Intake/state", pivotState);
 
-    // double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    // commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
-    // if (pivotSetpoint < 0.1) {
-    //   commandVolts -= 0.5;
-    // }
-    // Logger.recordOutput("Intake/PID_out", commandVolts);
-    // Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
-    // Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
-    // runPivot(commandVolts);
-    // pivotPID.checkParemeterUpdate();
-    // if (inputs.upperLimitSwitch && !ishomed) {
-    //   ishomed = true;
-    //   pivot_offset = inputs.pivotPosition;
-    // }
-    // lastRollerSpeed = inputs.rollerVelocityRadPerSec;
+    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
+    commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
+    if (pivotSetpoint < 0.1) {
+      commandVolts -= 0.5;
+    }
+    Logger.recordOutput("Intake/PID_out", commandVolts);
+    Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
+    Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
+    runPivot(commandVolts);
+    pivotPID.checkParemeterUpdate();
+    if (inputs.upperLimitSwitch && !ishomed) {
+      ishomed = true;
+      pivot_offset = inputs.pivotPosition;
+    }
+    lastRollerSpeed = inputs.rollerVelocityRadPerSec;
     // pivot state machine
     // switch (pivotState) {
     //   case DEPLOY:

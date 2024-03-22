@@ -4,19 +4,28 @@
 
 package team3176.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import team3176.robot.commands.WheelRadiusCharacterization;
+import team3176.robot.commands.WheelRadiusCharacterization.Direction;
 import team3176.robot.constants.Hardwaremap;
+import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
-// import team3176.robot.subsystems.leds.LEDSubsystem;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.intake.Intake;
-// import team3176.robot.subsystems.vision.PhotonVisionSystem;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,34 +40,34 @@ public class RobotContainer {
   private PowerDistribution pdh;
 
   // is this why we don't have a compressor? private final Compressor m_Compressor
-  // private Drivetrain drivetrain;
-  // private LEDSubsystem leds;
+  private Drivetrain drivetrain;
+  private LEDSubsystem leds;
   private Superstructure superstructure;
-  // private PhotonVisionSystem vision;
-  // private Visualization visualization;
+  private PhotonVisionSystem vision;
+  private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
-  // private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
     superstructure = Superstructure.getInstance();
-    // drivetrain = Drivetrain.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
-    // leds = LEDSubsystem.getInstance();
-    // endMatchAlert.onTrue(leds.EndgameStart());
+    leds = LEDSubsystem.getInstance();
+    endMatchAlert.onTrue(leds.EndgameStart());
 
     // superstructure = Superstructure.getInstance();
-    // visualization = new Visualization();
+    visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
-      // vision = PhotonVisionSystem.getInstance();
+      vision = PhotonVisionSystem.getInstance();
     }
 
     pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
-    /*
+
     drivetrain.setDefaultCommand(
         drivetrain
             .swerveDriveJoysticks(
@@ -67,7 +76,7 @@ public class RobotContainer {
                 () -> controller.getSpin())
             .withName("default drive"));
     leds.setDefaultCommand(leds.DefaultLED());
-    /*  NamedCommands.registerCommand(
+    NamedCommands.registerCommand(
         "shoot",
         superstructure
             .aimClose()
@@ -82,13 +91,13 @@ public class RobotContainer {
             .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
             .withTimeout(1.5)
             .withName("shooting"));
-    NamedCommands.registerCommand( */
-    // "chaseNote",
-    // drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
+    NamedCommands.registerCommand(
+        "chaseNote",
+        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
 
-    // autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
+    autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
-    // SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
+    SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
     configureBindings();
   }
 
@@ -97,80 +106,78 @@ public class RobotContainer {
      * Translation Stick
      */
     /*     controller
+    .transStick
+    .button(1)
+    .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE)); */
+    controller
         .transStick
         .button(1)
-    /*     .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE)); */
+        .whileTrue(
+            drivetrain
+                .swerveDriveJoysticks(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin() * 1.5)
+                .withName("boost drive"));
+    controller
+        .transStick
+        .button(2)
+        .onTrue(Intake.getInstance().intakeNote())
+        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
+    controller
+        .transStick
+        .button(3)
+        .whileTrue(
+            drivetrain
+                .chaseNote()
+                .alongWith(Intake.getInstance().intakeNote())
+                .alongWith(leds.AutoDriveStart().asProxy()));
+    controller
+        .transStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .chaseNoteTeleo(
+                    () -> controller.getForward(),
+                    () -> controller.getStrafe(),
+                    () -> controller.getSpin())
+                .alongWith(Intake.getInstance().intakeNote()));
+    controller
+        .transStick
+        .button(10)
+        .whileTrue(drivetrain.swerveDefenseCommand().withName("swerveDefense"));
 
-    /*     controller
-          .transStick
-          .button(1)
-          .whileTrue(
-              drivetrain
-                  .swerveDriveJoysticks(
-                      () -> controller.getForward(),
-                      () -> controller.getStrafe(),
-                      () -> controller.getSpin() * 1.5)
-                  .withName("boost drive"));
-      controller
-          .transStick
-          .button(2)
-          .onTrue(Intake.getInstance().intakeNote())
-          .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
-      controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
-      controller
-          .transStick
-          .button(3)
-          .whileTrue(
-              drivetrain
-                  .chaseNote()
-                  .alongWith(Intake.getInstance().intakeNote())
-                  .alongWith(leds.AutoDriveStart().asProxy()));
-      controller
-          .transStick
-          .button(4)
-          .whileTrue(
-              drivetrain
-                  .chaseNoteTeleo(
-                      () -> controller.getForward(),
-                      () -> controller.getStrafe(),
-                      () -> controller.getSpin())
-                  .alongWith(Intake.getInstance().intakeNote()));
-      controller
-          .transStick
-          .button(10)
-          .whileTrue(drivetrain.swerveDefenseCommand().withName("swerveDefense"));
-    */
     /*
      *  Rotation Stick
      */
 
-    // controller.rotStick.button(1).whileTrue(superstructure.shoot());
-    // controller
-    //    .rotStick
-    //    .button(2)
-    //    .whileTrue(
-    //        drivetrain
-    //            .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-    //            .alongWith(superstructure.aimShooterTune()));
-    // controller.rotStick.button(3).whileTrue(superstructure.aimClose());
-    // controller
-    //    .rotStick
-    //    .button(4)
-    //    .whileTrue(
-    //        drivetrain
-    //            .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-    //            .alongWith(superstructure.aimPodium()));
-    /*
+    controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    controller
+        .rotStick
+        .button(2)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimShooterTune()));
+    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+    controller
+        .rotStick
+        .button(4)
+        .whileTrue(
+            drivetrain
+                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                .alongWith(superstructure.aimPodium()));
     controller
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
-    */
+
     /*
      * Operator
      */
-    controller.operator.x().whileTrue(superstructure.moveClimbLeftRightPIDVoltageRoll());
-    // controller.operator.a().whileTrue(superstructure.moveClimbRightPIDVoltageRoll());
+    controller.operator.x().whileTrue(superstructure.spit());
+    controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
     controller
         .operator
         .leftBumper()
@@ -199,10 +206,10 @@ public class RobotContainer {
      * SwitchBox
      */
 
-    /* controller
-    .switchBox
-    .button(1)
-    .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE)); */
+    controller
+        .switchBox
+        .button(1)
+        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
   }
 
   public void clearCanFaults() {
