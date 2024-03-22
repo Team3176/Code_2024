@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -25,6 +26,7 @@ import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
@@ -95,11 +97,21 @@ public class RobotContainer {
             .withName("shooting"));
     NamedCommands.registerCommand(
         "chaseNoteFull",
-        drivetrain.chaseNote().raceWith(Intake.getInstance().intakeNote()).withTimeout(2.5));
+        drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
+
+    Command chaseNoteAuto =
+        drivetrain
+            .autoChaseTarget(orientationGoal.NOTECAM)
+            .until(() -> Conveyor.getInstance().hasNote())
+            .withTimeout(2.0);
+    
+    //using schedule to prevent intake from being cancelled if the path ends
     NamedCommands.registerCommand(
-        "chaseNote", drivetrain.autoChaseTarget(orientationGoal.NOTECAM).withTimeout(2.0));
+        "intake", chaseNoteAuto.alongWith(new ScheduleCommand(superstructure.intakeNote().withTimeout(3.0))));
     NamedCommands.registerCommand(
-        "aimSpeaker", drivetrain.autoChaseTarget(orientationGoal.SPEAKER).withTimeout(2.0));
+        "aimSpeaker", drivetrain.autoChaseTarget(orientationGoal.SPEAKER).alongWith(superstructure.aimShooterTune()));
+    NamedCommands.registerCommand(
+        "shoot", superstructure.shoot());
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 

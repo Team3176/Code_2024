@@ -23,7 +23,7 @@ public class Transfer extends SubsystemBase {
     transferLookup.put(3.2, 1.0);
   }
 
-  public Command shoot() {
+  public Command spinup() {
     return this.runEnd(
         () -> io.setTransferController(transferVelocity.get()), () -> io.setTransferController(0));
   }

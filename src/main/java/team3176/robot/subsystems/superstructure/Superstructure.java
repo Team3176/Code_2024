@@ -40,7 +40,10 @@ public class Superstructure {
   }
 
   public Command aimShooterTune() {
-    return shooter.aim().alongWith(transfer.shoot());
+    return shooter.aim().alongWith(transfer.spinup());
+  }
+  public Command aimAuto() {
+    return aimShooterTune().raceWith(new WaitCommand(2.0).until(() -> !conveyor.hasNote()).andThen(new WaitCommand(0.1)));
   }
 
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
