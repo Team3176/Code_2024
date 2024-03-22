@@ -85,6 +85,10 @@ public class Superstructure {
     return climb.setRightPIDVoltageRoll().withName("climbRightPIDS");
   }
 
+  public Command moveClimbLeftRightPIDVoltageRoll() {
+    return climb.setRightLeftPIDVoltageRoll();
+  }
+
   public Command stopClimbLeft() {
     return climb.stopLeft();
   }
