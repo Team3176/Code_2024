@@ -9,6 +9,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.LoggedTunableNumber;
 // import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
 import team3176.robot.util.TunablePID;
 
@@ -22,7 +23,9 @@ public class Climb extends SubsystemBase {
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
   private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
   private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
-
+  private LoggedTunableNumber LeftClimbHeight = new LoggedTunableNumber("climbLeftHeight",0 );
+  private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
+  private LoggedTunableNumber LeftRightClimbHeight = new LoggedTunableNumber("climbLeftRightHeight", 0);
   private Climb(ClimbIO io) {
     this.io = io;
   }
@@ -138,6 +141,22 @@ public class Climb extends SubsystemBase {
     return this.runEnd(
         () -> {
           rightGoToPosition((position.getAsDouble()));
+        },
+        () -> io.setRightVoltage(0.0));
+  }
+
+  public Command setLeftPosition() {
+    return this.runEnd(
+        () -> {
+          leftGoToPosition(LeftClimbHeight.get());
+        },
+        () -> io.setLeftVoltage(0.0));
+  }
+
+  public Command setRightPosition() {
+    return this.runEnd(
+        () -> {
+          rightGoToPosition(RightClimbHeight.get());
         },
         () -> io.setRightVoltage(0.0));
   }
