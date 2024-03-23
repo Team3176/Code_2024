@@ -40,6 +40,8 @@ public interface ClimbIO {
 
   public default void setRightPIDPosition(double rotations) {}
 
+  public default void setClimbVoltage(double voltage) {}
+
   // public default void stopLeft() {}
 
   // public default void stopRight() {}

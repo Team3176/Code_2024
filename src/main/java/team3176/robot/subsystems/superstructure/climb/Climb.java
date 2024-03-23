@@ -23,9 +23,11 @@ public class Climb extends SubsystemBase {
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
   private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
   private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
-  private LoggedTunableNumber LeftClimbHeight = new LoggedTunableNumber("climbLeftHeight",0 );
+  private LoggedTunableNumber LeftClimbHeight = new LoggedTunableNumber("climbLeftHeight", 0);
   private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
-  private LoggedTunableNumber LeftRightClimbHeight = new LoggedTunableNumber("climbLeftRightHeight", 0);
+  private LoggedTunableNumber LeftRightClimbHeight =
+      new LoggedTunableNumber("climbLeftRightHeight", 0);
+
   private Climb(ClimbIO io) {
     this.io = io;
   }
@@ -90,7 +92,7 @@ public class Climb extends SubsystemBase {
   }
 
   public Command setRightLeftPIDVoltageRoll() {
-    return this.runEnd(() -> leftRightPIDVoltageRoll(), () -> io.setClimbVoltge(0));
+    return this.runEnd(() -> leftRightPIDVoltageRoll(), () -> io.setClimbVoltage(0));
   }
 
   public double getLeftPosition() {
