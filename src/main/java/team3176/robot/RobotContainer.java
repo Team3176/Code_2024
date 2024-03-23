@@ -124,7 +124,6 @@ public class RobotContainer {
         .button(2)
         .onTrue(Intake.getInstance().intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
-    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
         .button(3)
@@ -143,6 +142,7 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin())
                 .alongWith(Intake.getInstance().intakeNote()));
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
         .button(10)
@@ -151,7 +151,6 @@ public class RobotContainer {
     /*
      *  Rotation Stick
      */
-
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
     controller
         .rotStick
