@@ -110,7 +110,8 @@ public class Superstructure {
   public Command getSourceNoteAuto() {
     return Drivetrain.getInstance()
         .goToPoint(FieldConstants.sourePickup)
-        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
+        // .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
+        .andThen(Drivetrain.getInstance().chaseNote());
   }
 
   public Command scoreNoteCenterAuto() {

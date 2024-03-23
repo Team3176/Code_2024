@@ -7,7 +7,6 @@
 
 package team3176.robot.subsystems.superstructure.conveyor;
 
-import au.grapplerobotics.ConfigurationFailedException;
 // import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -19,7 +18,7 @@ import team3176.robot.constants.Hardwaremap;
 public class ConveyorIOTalon implements ConveyorIO {
 
   private TalonFX controller = new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
-/*   private LaserCan laserCanIntakeSide;
+  /*   private LaserCan laserCanIntakeSide;
   private LaserCan laserCanShooterSide; */
   private TalonFXConfiguration configs = new TalonFXConfiguration();
   private final StatusSignal<Double> wheelVelocity;
@@ -27,7 +26,7 @@ public class ConveyorIOTalon implements ConveyorIO {
   private final StatusSignal<Double> current;
 
   public ConveyorIOTalon() {
-/*     laserCanIntakeSide = new LaserCan(Hardwaremap.LaserCanIntakeSide_CID);
+    /*     laserCanIntakeSide = new LaserCan(Hardwaremap.LaserCanIntakeSide_CID);
     laserCanShooterSide = new LaserCan(Hardwaremap.LaserCanShooterSide_CID);
     try {
       laserCanIntakeSide.setRangingMode(LaserCan.RangingMode.SHORT);
@@ -57,7 +56,7 @@ public class ConveyorIOTalon implements ConveyorIO {
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
     inputs.ampsStator = current.getValue();
-/*     var measurement1 = laserCanIntakeSide.getMeasurement();
+    /*     var measurement1 = laserCanIntakeSide.getMeasurement();
     if (measurement1 != null) {
       inputs.laserDistIntakeSide = measurement1.distance_mm;
     }

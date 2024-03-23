@@ -98,7 +98,9 @@ public class RobotContainer {
             .withTimeout(1.5)
             .withName("shooting"));
     NamedCommands.registerCommand(
-        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
+        // "chaseNote",
+        // drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
+        "chaseNote", drivetrain.chaseNote().withTimeout(2.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -124,11 +126,13 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin() * 1.5)
                 .withName("boost drive"));
-    controller
+    /*controller
         .transStick
         .button(2)
         .onTrue(superstructure.intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+    */
+    /*
     controller
         .transStick
         .button(3)
@@ -147,7 +151,7 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin())
                 .alongWith(superstructure.intakeNote()));
-
+    */
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -199,7 +203,7 @@ public class RobotContainer {
         .onFalse(superstructure.stopClimbRight());
         */
     controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
-    controller.operator.povDown().onTrue(superstructure.intakeNote());
+    // controller.operator.povDown().onTrue(superstructure.intakeNote());
 
     controller
         .operator
