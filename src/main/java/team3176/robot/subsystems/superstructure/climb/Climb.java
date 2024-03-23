@@ -147,6 +147,18 @@ public class Climb extends SubsystemBase {
         () -> io.setRightVoltage(0.0));
   }
 
+  public Command setAmpPosition() {
+    return this.runEnd(
+        () -> {
+          leftGoToPosition(LeftClimbHeight.get());
+          rightGoToPosition(RightClimbHeight.get());
+        },
+        () -> {
+          io.setLeftVoltage(0.0);
+          io.setRightVoltage(0.0);
+        });
+  }
+
   public Command setAmpLeftPosition() {
     return this.runEnd(
         () -> {
