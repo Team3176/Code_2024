@@ -6,15 +6,27 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
+import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.util.LoggedTunableNumber;
+// import team3176.robot.subsystems.superstructure.ClimbIOInputsAutoLogged;
 import team3176.robot.util.TunablePID;
 
 /** Elevator handles the height of the intake from the ground. */
 public class Climb extends SubsystemBase {
   private static Climb instance;
   private final ClimbIO io;
+  private double leftSetPoint = 0;
+  private double rightSetPoint = 0;
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
   private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
+  private LoggedTunableNumber LeftClimbHeight = new LoggedTunableNumber("climbLeftHeight", 0);
+  private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
+  private LoggedTunableNumber LeftRightClimbHeight =
+      new LoggedTunableNumber("climbLeftRightHeight", 0);
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -34,6 +46,53 @@ public class Climb extends SubsystemBase {
           io.setLeftVoltage(0.0);
           io.setRightVoltage(0.0);
         });
+  }
+
+  public void leftPIDVoltageRoll() {
+    double leftVoltage =
+        leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
+    Logger.recordOutput("climb/leftvoltage", leftVoltage);
+    io.setLeftVoltage(leftVoltage);
+    // return leftVoltage;
+  }
+
+  public void rightPIDVoltageRoll() {
+    double rightVoltage =
+        rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
+    Logger.recordOutput("climb/rightvoltage", rightVoltage);
+    io.setRightVoltage(rightVoltage);
+    // return rightVoltage;
+  }
+
+  public void leftRightPIDVoltageRoll() {
+    double rightVoltage =
+        rightPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), rightSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
+    Logger.recordOutput("climb/rightvoltage", rightVoltage);
+    io.setRightVoltage(rightVoltage);
+    // return rightVoltage;
+    double leftVoltage =
+        leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
+    Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
+    Logger.recordOutput("climb/leftvoltage", leftVoltage);
+    io.setLeftVoltage(leftVoltage);
+    // return leftVoltage;
+  }
+
+  public Command setLeftPIDVoltageRoll() {
+    return this.runEnd(
+        () -> leftPIDVoltageRoll(), () -> io.setLeftVoltage(0)); // , () -> stopLeft());
+  }
+
+  public Command setRightPIDVoltageRoll() {
+    return this.runEnd(
+        () -> rightPIDVoltageRoll(), () -> io.setRightVoltage(0)); // , () -> stopLeft());
+  }
+
+  public Command setRightLeftPIDVoltageRoll() {
+    return this.runEnd(() -> leftRightPIDVoltageRoll(), () -> io.setClimbVoltage(0));
   }
 
   public double getLeftPosition() {
@@ -88,6 +147,22 @@ public class Climb extends SubsystemBase {
         () -> io.setRightVoltage(0.0));
   }
 
+  public Command setLeftPosition() {
+    return this.runEnd(
+        () -> {
+          leftGoToPosition(LeftClimbHeight.get());
+        },
+        () -> io.setLeftVoltage(0.0));
+  }
+
+  public Command setRightPosition() {
+    return this.runEnd(
+        () -> {
+          rightGoToPosition(RightClimbHeight.get());
+        },
+        () -> io.setRightVoltage(0.0));
+  }
+
   public Command moveRightPosition(DoubleSupplier delta) {
     return this.runEnd(
         () -> {
@@ -133,7 +208,7 @@ public class Climb extends SubsystemBase {
 
   public static Climb getInstance() {
     if (instance == null) {
-      if (Constants.getMode() == Mode.REAL) {
+      if (Constants.getMode() == Mode.REAL && Constants.getRobot() != RobotType.ROBOT_DEFENSE) {
         instance = new Climb(new ClimbIOTalon() {});
         System.out.println("Climb instance created for Mode.REAL");
       } else {

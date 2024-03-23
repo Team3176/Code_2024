@@ -114,7 +114,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
         upperCurrentAmps,
         lowerCurrentAmps,
         upperVelocity,
-        lowerVelocity);
+        lowerVelocity,
+        upperError,
+        lowerError);
 
     wheelUpperController.optimizeBusUtilization();
     wheelLowerController.optimizeBusUtilization();
@@ -132,7 +134,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
         upperCurrentAmps,
         lowerCurrentAmps,
         upperVelocity,
-        lowerVelocity);
+        lowerVelocity,
+        lowerError,
+        upperError);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
     inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(upperVelocity.getValue());
@@ -147,9 +151,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
 
-    inputs.wheelLowerCurrentAmps = lowerCurrentAmps.getValueAsDouble();
-    inputs.wheeUpperCurrentAmps = upperCurrentAmps.getValueAsDouble();
-    inputs.pivotCurrentAmps = pivotShooter.getOutputCurrent();
+    inputs.wheelLowerAmpsStator = lowerCurrentAmps.getValueAsDouble();
+    inputs.wheeUpperAmpsStator = upperCurrentAmps.getValueAsDouble();
+    inputs.pivotAmpsStator = pivotShooter.getOutputCurrent();
   }
 
   @Override

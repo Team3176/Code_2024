@@ -28,13 +28,14 @@ import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -44,7 +45,6 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
-import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
@@ -57,12 +57,18 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double LENGTH = Units.inchesToMeters(20);
-  public static final double WIDTH = Units.inchesToMeters(20);
-
+  public static final double LENGTH =
+      switch (Constants.getRobot()) {
+        case ROBOT_2024C -> Units.inchesToMeters(18.7);
+        case ROBOT_DEFENSE -> Units.inchesToMeters(24.5);
+        default -> Units.inchesToMeters(20);
+      };
+  public static final double WIDTH = LENGTH;
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+
+  static final Lock odometryLock = new ReentrantLock();
 
   private final LoggedTunableNumber pitchkP;
   private final LoggedTunableNumber yawkP;
@@ -88,17 +94,26 @@ public class Drivetrain extends SubsystemBase {
   };
   public static final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(SwerveModuleTranslations);
+  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 10.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
   private SwervePod podBR;
 
   Rotation2d wheelOnlyHeading = new Rotation2d();
+  private Rotation2d rawGyroRotation = new Rotation2d();
+
   private final GyroIO io;
-  private GyroIOInputs inputs;
+  private GyroIOInputsAutoLogged inputs;
   public Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
   SwerveSetpointGenerator setpointGenerator;
@@ -113,13 +128,12 @@ public class Drivetrain extends SubsystemBase {
           });
   private ChassisSpeeds desiredSpeeds;
   private TunablePID orientationPID;
-  // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
 
   private Drivetrain(GyroIO io) {
     this.io = io;
     this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
     this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
-    inputs = new GyroIOInputs();
+    inputs = new GyroIOInputsAutoLogged();
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
@@ -141,6 +155,21 @@ public class Drivetrain extends SubsystemBase {
           podBR =
               new SwervePod(
                   3, new SwervePodIOFalconSpark(Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
+          break;
+        case ROBOT_DEFENSE:
+          System.out.println("[init] normal swervePods");
+          podFR =
+              new SwervePod(
+                  0, new SwervePodIOFalconSpark(Hardwaremap.POD006, Hardwaremap.STEER_FR_CID));
+          podFL =
+              new SwervePod(
+                  1, new SwervePodIOFalconSpark(Hardwaremap.POD001, Hardwaremap.STEER_FL_CID));
+          podBL =
+              new SwervePod(
+                  2, new SwervePodIOFalconSpark(Hardwaremap.POD009, Hardwaremap.STEER_BL_CID));
+          podBR =
+              new SwervePod(
+                  3, new SwervePodIOFalconSpark(Hardwaremap.POD003, Hardwaremap.STEER_BR_CID));
           break;
         case CTRL_BOARD:
         case ROBOT_SIMBOT:
@@ -169,6 +198,10 @@ public class Drivetrain extends SubsystemBase {
     pods.add(podBR);
 
     visionPose3d = new Pose3d();
+
+    PhoenixOdometryThread.getInstance().start();
+    SparkMaxOdometryThread.getInstance().start();
+
     odom =
         new SwerveDriveOdometry(
             kinematics,
@@ -251,7 +284,7 @@ public class Drivetrain extends SubsystemBase {
     //       output.chassisSpeeds().vxMetersPerSecond,
     //       output.chassisSpeeds().vyMetersPerSecond,
     //       output.chassisSpeeds().omegaRadiansPerSecond
-    //     });
+    //    });
     Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
@@ -307,14 +340,6 @@ public class Drivetrain extends SubsystemBase {
     }
     return states;
   }
-  /**
-   * @return returns the chassis yaw wrapped between -pi and pi
-   */
-  public Rotation2d getPoseYawWrapped() {
-    // its ugly but rotation2d is continuos but I imagine most of our applications
-    // we want it bounded between -pi and pi
-    return Rotation2d.fromRadians(MathUtil.angleModulus(getPose().getRotation().getRadians()));
-  }
 
   /**
    * The unbounded angle
@@ -351,13 +376,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetFieldOrientation() {
-    // do not need to invert because the navx rotation2D call returns a NWU
-    // coordsys!
-    // this.FieldAngleOffset = m_NavX.getRotation2d();
     Rotation2d redOrBlueZero = new Rotation2d();
-    // if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-    //   redOrBlueZero.plus(Rotation2d.fromDegrees(180));
-    // }
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+      redOrBlueZero.plus(Rotation2d.fromDegrees(180));
+    }
     resetPose(new Pose2d(getPose().getTranslation(), redOrBlueZero));
   }
 
@@ -367,23 +389,19 @@ public class Drivetrain extends SubsystemBase {
     };
   }
 
-  public void setCoastMode() {
+  private void setCoastMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustCoast();
     }
   }
 
-  public void setBrakeMode() {
+  private void setBrakeMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustBrake();
     }
   }
 
-  // TODO
   private Rotation2d getAimAngle() {
-    // get the position of the speaker
-    // FieldConstants.java
-    // AllianceFlipUtil.java
     Translation2d difference =
         (this.getPose()
             .getTranslation()
@@ -440,7 +458,7 @@ public class Drivetrain extends SubsystemBase {
         double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
 
         // Square values
-        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0);
         omega = Math.copySign(omega * omega, omega);
         // Calcaulate new linear velocity
         Translation2d linearVelocity =
@@ -477,7 +495,6 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           ChassisSpeeds speeds = baseJoystickSpeeds.get();
-
           if (angle != null) {
             speeds.omegaRadiansPerSecond =
                 MathUtil.clamp(
@@ -568,53 +585,76 @@ public class Drivetrain extends SubsystemBase {
         });
   }
 
+  public void runWheelRadiusCharacterization(double omegaSpeed) {
+    driveVelocity(new ChassisSpeeds(0, 0, omegaSpeed));
+  }
+
+  /** Get the position of all drive wheels in radians. */
+  public double[] getWheelRadiusCharacterizationPosition() {
+    return pods.stream().mapToDouble(SwervePod::getThrustPosition).toArray();
+  }
+
   public Command stop() {
     return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
   }
 
-  private void resetPoseToVision() {
-    // call resetPose() and pass in visionPose3d
-    resetPose(visionPose3d.toPose2d());
-    // use the .toPose2d() method to convert a 3d pose into a 2d pose
-
-  }
-  // TODO: @Liam 11/27
   public Command resetPoseToVisionCommand() {
-    // we want to use a instant command
-
-    // InstantCommand takes in a function reference either () -> { your code here}
-    // or a reference to an existing function this::function_name
-    // here we want to use the resetPoseToVision function you created earlier
-    // use the this::function_name pattern and construct a new InstantCommand to be returned
-
-    // Replace with your command
-    return new InstantCommand(this::resetPoseToVision);
+    return new InstantCommand(() -> resetPose(visionPose3d.toPose2d()));
   }
 
   @Override
   public void periodic() {
+    odometryLock.lock();
     io.updateInputs(inputs);
+    for (SwervePod p : pods) {
+      p.periodic();
+    }
+    odometryLock.unlock();
+    Logger.processInputs("Drivetrain/gyro", inputs);
+
     orientationPID.checkParemeterUpdate();
+
+    // Stop the drivetrain if disabled
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());
     }
-    Logger.processInputs("Drivetrain/gyro", inputs);
-    SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 
-    for (int i = 0; i < pods.size(); i++) {
-      deltas[i] = pods.get(i).getDelta();
+    // odom updates
+
+    double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
+    int sampleCount = Math.min(sampleTimestamps.length, inputs.odometryYawTimestamps.length);
+    for (int i = 0; i < sampleCount; i++) {
+      // Read wheel positions and deltas from each module
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+        modulePositions[moduleIndex] = pods.get(moduleIndex).getOdometryPositions()[i];
+        moduleDeltas[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
+        lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+      }
+
+      if (inputs.isConnected) {
+        // Use the real gyro angle
+        rawGyroRotation = inputs.odometryYawPositions[i];
+      } else {
+        // Use the angle delta from the kinematics and module deltas
+        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+      }
+
+      // Apply update
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    Twist2d twist = kinematics.toTwist2d(deltas);
-    wheelOnlyHeading = getPoseOdom().exp(twist).getRotation();
-    // update encoders
-    this.poseEstimator.update(getSensorYaw(), getSwerveModulePositions());
+
     this.odom.update(getSensorYaw(), getSwerveModulePositions());
 
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.update();
     }
-
-    SmartDashboard.putNumber("NavYaw", getPoseYawWrapped().getDegrees());
   }
 }

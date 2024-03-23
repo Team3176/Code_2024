@@ -5,27 +5,27 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package team3176.robot.subsystems.superstructure.transfer;
+package team3176.robot.subsystems.superstructure.conveyor;
 
 import org.littletonrobotics.junction.AutoLog;
 
 /** Template hardware interface for a closed loop subsystem. */
-public interface TransferIO {
+public interface ConveyorIO {
   /** Contains all of the input data received from hardware. */
   @AutoLog
-  public static class TransferIOInputs {
+  public static class ConveyorIOInputs {
 
-    public double transferWheelVelocity = 0.0;
-    public double transferAppliedVolts = 0.0;
+    public double WheelVelocity = 0.0;
+    public double appliedVolts = 0.0;
     public double ampsStator = 0.0;
-    // public double[] TempCelcius = new double[] {};
-
+    public double laserDistIntakeSide = 0.0;
+    public double laserDistShooterSide = 0.0;
     // constructor if needed for some inputs
-    TransferIOInputs() {}
+    ConveyorIOInputs() {}
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(TransferIOInputs inputs) {}
+  public default void updateInputs(ConveyorIOInputs inputs) {}
 
-  public default void setTransferController(double voltage) {}
+  public default void setController(double voltage) {}
 }

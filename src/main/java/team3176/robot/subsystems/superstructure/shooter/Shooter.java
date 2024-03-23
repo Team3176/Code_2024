@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.AllianceFlipUtil;
@@ -53,7 +54,7 @@ public class Shooter extends SubsystemBase {
 
   public static Shooter getInstance() {
     if (instance == null) {
-      if (Constants.getMode() != Mode.SIM) {
+      if (Constants.getMode() != Mode.SIM && Constants.getRobot() != RobotType.ROBOT_DEFENSE) {
         instance = new Shooter(new ShooterIOTalonSpark() {});
 
       } else {

@@ -29,8 +29,12 @@ public class ClimbIOTalon implements ClimbIO {
   TalonFXConfiguration configsLeft, configsRight;
   private final StatusSignal<Double> rightPosition;
   private final StatusSignal<Double> leftPosition;
-  // private final StatusSignal<Double> rightError;
-  // private final StatusSignal<Double> leftError;
+  private final StatusSignal<Double> rightError;
+  private final StatusSignal<Double> leftError;
+  private final StatusSignal<Double> rightVolts;
+  private final StatusSignal<Double> leftVolts;
+  private final StatusSignal<Double> rightAmps;
+  private final StatusSignal<Double> leftAmps;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
@@ -76,25 +80,50 @@ public class ClimbIOTalon implements ClimbIO {
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();
-    // rightError = climbRight.getClosedLoopError();
-    // leftError = climbLeft.getClosedLoopError();
+    rightError = climbRight.getClosedLoopError();
+    leftError = climbLeft.getClosedLoopError();
+    rightAmps = climbRight.getStatorCurrent();
+    leftAmps = climbLeft.getStatorCurrent();
+    rightVolts = climbRight.getMotorVoltage();
+    leftVolts = climbLeft.getMotorVoltage();
 
     climbRight.setPosition(0);
     climbLeft.setPosition(0.0);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, leftPosition, rightPosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        leftPosition,
+        rightPosition,
+        rightError,
+        leftError,
+        rightAmps,
+        leftAmps,
+        rightVolts,
+        leftVolts);
     climbLeft.optimizeBusUtilization();
     climbRight.optimizeBusUtilization();
   }
   /** Updates the set of loggable inputs. */
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftPosition, rightPosition);
+    BaseStatusSignal.refreshAll(
+        leftPosition,
+        rightPosition,
+        rightError,
+        leftError,
+        rightAmps,
+        leftAmps,
+        rightVolts,
+        leftVolts);
     inputs.isLeftLimitswitch = (!climbLBLimitswitch.get());
     inputs.isRightLimitswitch = (!climbRBLimitswitch.get());
     inputs.leftPosition = leftPosition.getValueAsDouble();
     inputs.rightPosition = rightPosition.getValueAsDouble();
-    // inputs.leftError = leftError.getValue();
-    // inputs.rightError = rightError.getValue();
+    inputs.leftError = leftError.getValue();
+    inputs.rightError = rightError.getValue();
+    inputs.rightAmpsStator = rightAmps.getValue();
+    inputs.leftAmpsStator = leftAmps.getValue();
+    inputs.rightVolts = rightVolts.getValue();
+    inputs.leftVolts = leftVolts.getValue();
   }
 
   @Override
@@ -125,6 +154,11 @@ public class ClimbIOTalon implements ClimbIO {
   @Override
   public void setLeftVoltage(double voltage) {
     climbLeft.setVoltage(voltage);
+  }
+
+  public void setClimbVoltage(double voltage) {
+    climbLeft.setVoltage(voltage);
+    climbRight.setVoltage(voltage);
   }
   // System.out.println("ElevatorIOFalcon.set was called");
   // elevatorLeaderMotor.setControl(voltPosition.withPosition(.25));
