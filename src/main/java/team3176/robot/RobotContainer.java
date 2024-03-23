@@ -51,7 +51,7 @@ public class RobotContainer {
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
   private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
-  private Trigger hasNote = new Trigger(() -> Intake.getInstance().hasNote());
+  private Trigger hasNote = new Trigger(() -> Intake.hasNote());
   private LEDS ledsRio;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */

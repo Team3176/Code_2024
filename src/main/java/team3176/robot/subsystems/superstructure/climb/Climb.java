@@ -54,7 +54,6 @@ public class Climb extends SubsystemBase {
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
-    // return leftVoltage;
   }
 
   public void rightPIDVoltageRoll() {
@@ -63,7 +62,6 @@ public class Climb extends SubsystemBase {
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
-    // return rightVoltage;
   }
 
   public void leftRightPIDVoltageRoll() {
@@ -72,23 +70,22 @@ public class Climb extends SubsystemBase {
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/rightvoltage", rightVoltage);
     io.setRightVoltage(rightVoltage);
-    // return rightVoltage;
+
     double leftVoltage =
         leftPIDController.calculate(Drivetrain.getInstance().getChassisRoll(), leftSetPoint);
     Logger.recordOutput("climb/roll", Drivetrain.getInstance().getChassisRoll());
     Logger.recordOutput("climb/leftvoltage", leftVoltage);
     io.setLeftVoltage(leftVoltage);
-    // return leftVoltage;
   }
 
   public Command setLeftPIDVoltageRoll() {
     return this.runEnd(
-        () -> leftPIDVoltageRoll(), () -> io.setLeftVoltage(0)); // , () -> stopLeft());
+        () -> leftPIDVoltageRoll(), () -> io.setLeftVoltage(0));
   }
 
   public Command setRightPIDVoltageRoll() {
     return this.runEnd(
-        () -> rightPIDVoltageRoll(), () -> io.setRightVoltage(0)); // , () -> stopLeft());
+        () -> rightPIDVoltageRoll(), () -> io.setRightVoltage(0));
   }
 
   public Command setRightLeftPIDVoltageRoll() {
@@ -102,16 +99,7 @@ public class Climb extends SubsystemBase {
   public double getRightPosition() {
     return inputs.rightPosition;
   }
-  /*
-  public Command leftGoToPosition(double position) {
-    return this.runEnd(
-        () -> {
-          io.setLeft(pid.calculate(getLeftPosition(), position));
-          System.out.println(position);
-        },
-        io::stopLeft);
-  }
-  */
+
   private void leftGoToPosition(double position) {
     if (position > SuperStructureConstants.CLIMBLEFT_TOP_POS) {
       position = SuperStructureConstants.CLIMBLEFT_TOP_POS;
@@ -190,14 +178,6 @@ public class Climb extends SubsystemBase {
           io.setLeftVoltage(0.0);
         });
   }
-
-  /*   public Command rightGoToPosition(double position) {
-    return this.runEnd(
-        () -> {
-          io.setRight(pid.calculate(getRightPosition(), position));
-        },
-        io::stopRight);
-  } */
 
   @Override
   public void periodic() {

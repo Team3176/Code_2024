@@ -51,10 +51,6 @@ public class Intake extends SubsystemBase {
     // kG.put(,)
   }
 
-  private void stopRoller() {
-    io.setRollerVolts(0.0);
-  }
-
   private void pivotGoToPosition(int position) {
     io.setPivotPIDPosition(position);
   }
@@ -179,30 +175,5 @@ public class Intake extends SubsystemBase {
       pivot_offset = inputs.pivotPosition;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
-    // pivot state machine
-    // switch (pivotState) {
-    //   case DEPLOY:
-    //     /*         if (deployTime.get() < 0.5) { */
-    //     runPivot(2.0);
-    //     /*         } else {
-    //       runPivot(0);
-    //     } */
-    //     if (inputs.lowerLimitSwitch) {
-    //       pivotState = pivotStates.IDLE;
-    //     }
-    //     break;
-    //   case RETRACT:
-    //     runPivot(-2);
-    //     if (inputs.upperLimitSwitch) {
-    //       pivotState = pivotStates.HOLD;
-    //     }
-    //     break;
-    //   case IDLE:
-    //     runPivot(0.0);
-    //     break;
-    //   case HOLD:
-    //     runPivot(-0.2);
-    //     break;
-    // }
   }
 }
