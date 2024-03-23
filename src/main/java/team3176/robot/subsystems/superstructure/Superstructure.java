@@ -44,9 +44,17 @@ public class Superstructure {
   public Command aimAmp(boolean withDrive) {
     // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
     // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
-    return Drivetrain.getInstance()
+    if (withDrive) {
+      return Drivetrain.getInstance()
         .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
-        .alongWith(aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition()));
+        .alongWith(aimAmpShooterClimb());
+    } else {
+      return aimAmpShooterClimb();
+    }
+    
+  }
+  private Command aimAmpShooterClimb() {
+    return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
   }
 
   public Command aimPodium() {
