@@ -55,8 +55,8 @@ public class SuperStructureConstants {
   public static final double INTAKE_PIVOT_PICKUP_POS = 70 + INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_CARRY_POS = INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_SIM_OFFSET = 75 + INTAKE_PIVOT_ZERO_POS;
-  public static final int INTAKE_LASERCAN_DIST_TO_NOTE = 200;
-
+/*   public static final int INTAKE_LASERCAN_DIST_TO_NOTE = 200;
+ */
   public static final double INTAKE_ROLLER_kP = 0.006;
   public static final double INTAKE_ROLLER_kI = 0; // .0025
   public static final double INTAKE_ROLLER_kD = 0; // .001
