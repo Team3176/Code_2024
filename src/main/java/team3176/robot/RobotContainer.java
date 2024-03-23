@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -24,6 +25,7 @@ import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
+import team3176.robot.subsystems.leds.LEDS;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
@@ -52,6 +54,8 @@ public class RobotContainer {
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
   private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
+  private Trigger hasNote = new Trigger(() -> Conveyor.getInstance().hasNote());
+  private LEDS ledsRio;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -61,6 +65,7 @@ public class RobotContainer {
     drivetrain = Drivetrain.getInstance();
 
     leds = LEDSubsystem.getInstance();
+    ledsRio = LEDS.getInstance();
     endMatchAlert.onTrue(leds.EndgameStart());
 
     // superstructure = Superstructure.getInstance();
@@ -104,14 +109,17 @@ public class RobotContainer {
             .autoChaseTarget(orientationGoal.NOTECAM)
             .until(() -> Conveyor.getInstance().hasNote())
             .withTimeout(2.0);
-    
-    //using schedule to prevent intake from being cancelled if the path ends
+
+    // using schedule to prevent intake from being cancelled if the path ends
     NamedCommands.registerCommand(
-        "intake", chaseNoteAuto.alongWith(new ScheduleCommand(superstructure.intakeNote().withTimeout(3.0))));
+        "intake",
+        chaseNoteAuto.alongWith(new ScheduleCommand(superstructure.intakeNote().withTimeout(3.0))));
     NamedCommands.registerCommand(
-        "aimSpeaker", drivetrain.autoChaseTarget(orientationGoal.SPEAKER).alongWith(superstructure.aimShooterTune()));
-    NamedCommands.registerCommand(
-        "shoot", superstructure.shoot());
+        "aimSpeaker",
+        drivetrain
+            .autoChaseTarget(orientationGoal.SPEAKER)
+            .alongWith(superstructure.aimShooterTune()));
+    NamedCommands.registerCommand("shoot", superstructure.shoot());
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -142,7 +150,6 @@ public class RobotContainer {
         .button(2)
         .onTrue(superstructure.intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
-    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
         .button(3)
@@ -150,7 +157,7 @@ public class RobotContainer {
             drivetrain
                 .chaseNote()
                 .alongWith(superstructure.intakeNote())
-                .alongWith(leds.AutoDriveStart().asProxy()));
+                .alongWith(ledsRio.AutoDrive().asProxy()));
     controller
         .transStick
         .button(4)
@@ -161,6 +168,8 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin())
                 .alongWith(superstructure.intakeNote()));
+
+    controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
         .button(10)
@@ -169,7 +178,6 @@ public class RobotContainer {
     /*
      *  Rotation Stick
      */
-
     controller.rotStick.button(1).whileTrue(superstructure.shoot());
     controller
         .rotStick
@@ -228,6 +236,11 @@ public class RobotContainer {
         .switchBox
         .button(1)
         .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
+    controller
+        .switchBox
+        .button(2)
+        .whileTrue(
+            Commands.run(() -> ledsRio.hasNote = true).finallyDo(() -> ledsRio.hasNote = false));
   }
 
   public void clearCanFaults() {
