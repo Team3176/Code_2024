@@ -129,7 +129,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/state", pivotState);
 
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.0);
+    commandVolts = MathUtil.clamp(commandVolts, -3.0, 1.5);
     // TODO: check if we need this to hold the intake in still I think not
     // if (pivotSetpoint < 0.1) {
     //   commandVolts -= 0.5;
