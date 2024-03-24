@@ -26,7 +26,7 @@ public class Hardwaremap {
   public static final String shooterWheelLower_CBN = "rio";
   public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
-  public static final String intakeRoller_CBN = "canivore";
+  public static final String intakeRoller_CBN = "rio";
   public static final String intakePivot_CBN = "rio";
   /*   public static final String LaserCan_CBN = "rio"; */
   public static final String climbLeft_CBN = "rio";

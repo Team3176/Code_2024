@@ -126,12 +126,12 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin() * 1.5)
                 .withName("boost drive"));
-    /*controller
+    controller
         .transStick
         .button(2)
         .onTrue(superstructure.intakeNote())
         .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
-    */
+
     /*
     controller
         .transStick
