@@ -13,6 +13,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
 public class ConveyorIOTalon implements ConveyorIO {
@@ -20,6 +21,8 @@ public class ConveyorIOTalon implements ConveyorIO {
   private TalonFX controller = new TalonFX(Hardwaremap.conveyor, Hardwaremap.conveyor_CBN);
   /*   private LaserCan laserCanIntakeSide;
   private LaserCan laserCanShooterSide; */
+  private DigitalInput frontLinebreak = new DigitalInput(Hardwaremap.conveyorFrontLinebreak);
+  private DigitalInput backLinebreak = new DigitalInput(Hardwaremap.conveyorBackLinebreak);
   private TalonFXConfiguration configs = new TalonFXConfiguration();
   private final StatusSignal<Double> wheelVelocity;
   private final StatusSignal<Double> appliedVolts;
@@ -56,6 +59,8 @@ public class ConveyorIOTalon implements ConveyorIO {
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
     inputs.ampsStator = current.getValue();
+    inputs.isFrontLinebreak = !frontLinebreak.get();
+    inputs.isBackLinebreak = !backLinebreak.get();
     /*     var measurement1 = laserCanIntakeSide.getMeasurement();
     if (measurement1 != null) {
       inputs.laserDistIntakeSide = measurement1.distance_mm;

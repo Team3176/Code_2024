@@ -58,8 +58,8 @@ public class IntakeIOTalonGrapple implements IntakeIO {
     // voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     // voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
-    rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
-    pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
+    // rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
+    // pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
 
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
