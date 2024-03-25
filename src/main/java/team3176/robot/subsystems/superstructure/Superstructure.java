@@ -46,13 +46,13 @@ public class Superstructure {
     // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
     if (withDrive) {
       return Drivetrain.getInstance()
-        .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
-        .alongWith(aimAmpShooterClimb());
+          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+          .alongWith(aimAmpShooterClimb());
     } else {
       return aimAmpShooterClimb();
     }
-    
   }
+
   private Command aimAmpShooterClimb() {
     return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
   }

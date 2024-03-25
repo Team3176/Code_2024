@@ -20,13 +20,10 @@ public class Climb extends SubsystemBase {
   private double leftSetPoint = 0;
   private double rightSetPoint = 0;
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
-  private TunablePID pid = new TunablePID("climbLeft", 0.001, 0, 0);
-  private TunablePID leftPIDController = new TunablePID("climbLeft", 1, 0, 0);
-  private TunablePID rightPIDController = new TunablePID("climbRight", 1, 0, 0);
-  private LoggedTunableNumber LeftClimbHeight = new LoggedTunableNumber("climbLeftHeight", 0);
-  private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
-  private LoggedTunableNumber LeftRightClimbHeight =
-      new LoggedTunableNumber("climbLeftRightHeight", 0);
+  private TunablePID pid = new TunablePID("climb/climbLeft", 0.001, 0, 0);
+  private TunablePID leftPIDController = new TunablePID("climb/climbLeft", 1, 0, 0);
+  private TunablePID rightPIDController = new TunablePID("climb/climbRight", 1, 0, 0);
+  private LoggedTunableNumber AmpClimbHeight = new LoggedTunableNumber("climb/climbAmpHeight", 0);
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -150,8 +147,8 @@ public class Climb extends SubsystemBase {
   public Command setAmpPosition() {
     return this.runEnd(
         () -> {
-          leftGoToPosition(LeftClimbHeight.get());
-          rightGoToPosition(RightClimbHeight.get());
+          leftGoToPosition(AmpClimbHeight.get());
+          rightGoToPosition(AmpClimbHeight.get());
         },
         () -> {
           io.setLeftVoltage(0.0);
@@ -162,7 +159,7 @@ public class Climb extends SubsystemBase {
   public Command setAmpLeftPosition() {
     return this.runEnd(
         () -> {
-          leftGoToPosition(LeftClimbHeight.get());
+          leftGoToPosition(AmpClimbHeight.get());
         },
         () -> io.setLeftVoltage(0.0));
   }
@@ -170,7 +167,7 @@ public class Climb extends SubsystemBase {
   public Command setAmpRightPosition() {
     return this.runEnd(
         () -> {
-          rightGoToPosition(RightClimbHeight.get());
+          rightGoToPosition(AmpClimbHeight.get());
         },
         () -> io.setRightVoltage(0.0));
   }
