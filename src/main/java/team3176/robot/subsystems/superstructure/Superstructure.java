@@ -71,9 +71,9 @@ public class Superstructure {
   }
 
   public Command intakeNote() {
-    return (conveyor.runFast().until(conveyor::isLaserIntakeSide).andThen(conveyor.runSlow()))
-        .alongWith(intakeNote())
-        .until(conveyor::isLaserShooterSide)
+    return (conveyor.runFast().until(conveyor::isLaserShooterSide).andThen(conveyor.runSlow()))
+        .alongWith(intake.intakeNote())
+        .until(conveyor::hasNoteTooFar)
         .andThen(conveyor.centerNote());
   }
 
@@ -124,7 +124,8 @@ public class Superstructure {
   public Command getSourceNoteAuto() {
     return Drivetrain.getInstance()
         .goToPoint(FieldConstants.sourePickup)
-        .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
+        // .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
+        .andThen(Drivetrain.getInstance().chaseNote());
   }
 
   public Command scoreNoteCenterAuto() {

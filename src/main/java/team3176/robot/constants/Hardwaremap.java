@@ -14,36 +14,38 @@ public class Hardwaremap {
   public static final int shooterTransfer_CID = 5;
   public static final int shooterPivot_CID = 8;
   public static final int intakeRoller_CID = 9;
-  public static final int LaserCanIntakeSide_CID = 49;
-  public static final int LaserCanShooterSide_CID = 51;
+  /*   public static final int LaserCanIntakeSide_CID = 49;
+  public static final int LaserCanShooterSide_CID = 51; */
   public static final int intakePivot_CID = 4;
   public static final int climbLeft_CID = 45;
   public static final int climbRight_CID = 46;
   public static int PDH_CID = 1;
 
-  public static final String conveyor_CBN = "conveyor";
+  public static final String conveyor_CBN = "rio";
   public static final String shooterWheelUpper_CBN = "rio";
   public static final String shooterWheelLower_CBN = "rio";
   public static final String shooterTransfer_CBN = "rio";
   public static final String shooterPivot_CBN = "rio";
-  public static final String intakeRoller_CBN = "canivore";
+  public static final String intakeRoller_CBN = "rio";
   public static final String intakePivot_CBN = "rio";
-  public static final String LaserCan_CBN = "rio";
+  /*   public static final String LaserCan_CBN = "rio"; */
   public static final String climbLeft_CBN = "rio";
   public static final String climbRight_CBN = "rio";
 
   public static String PDH_CBN = "rio";
 
-  public static final int elevatorLeaderLimitSwitch_DIO = 6;
-  public static final int elevatorFollowerLimitSwitch_DIO = 7;
-  public static final int climbLBLimitSwitch_DIO = 4;
-  public static final int climbRBLimitSwitch_DIO = 5;
-  public static final int intakeRollerLinebreak_DIO = 0;
-  public static final int intakePivotLinebreak_DIO = 1;
-  public static final int intakeUpperLimitSwitch_DIO = 2;
-  public static final int intakeLowerLimitSwitch_DIO = 3;
-  public static final int shooterPivotLower_DIO = 8;
-  public static final int shooterPivotUpper_DIO = 9;
+  // public static final int elevatorLeaderLimitSwitch_DIO = 5;
+  // public static final int elevatorFollowerLimitSwitch_DIO = 6;
+  public static final int climbLBLimitSwitch_DIO = 9;
+  public static final int climbRBLimitSwitch_DIO = 0; // 1;
+  // public static final int intakeRollerLinebreak_DIO = 5;
+  // public static final int intakePivotLinebreak_DIO = 4;
+  public static final int intakeUpperLimitSwitch_DIO = 7;
+  public static final int intakeLowerLimitSwitch_DIO = 8; // 7;
+  public static final int shooterPivotLower_DIO = 2; // 8;
+  public static final int shooterPivotUpper_DIO = 1; // 9;
+  public static final int conveyorFrontLinebreak = 6;
+  public static final int conveyorBackLinebreak = 4;
 
   public static final int blinkin_pwm_port = 9;
 
@@ -57,19 +59,19 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD001 =
       new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, 81.73);
   public static final SwervePodHardwareID POD002 =
-      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, 156);
+      new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, 16.084);
   public static final SwervePodHardwareID POD003 =
       new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, 145.54);
   public static final SwervePodHardwareID POD004 =
-      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -169.4); // 120.5
+      new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -43.945); // 120.5
   public static final SwervePodHardwareID POD005 =
       new SwervePodHardwareID(5, 13, SWERVEPOD_CBN, 14, SWERVEPOD_CBN, -30.525);
   public static final SwervePodHardwareID POD006 =
       new SwervePodHardwareID(6, 23, SWERVEPOD_CBN, 24, SWERVEPOD_CBN, -95.98);
   public static final SwervePodHardwareID POD007 =
-      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, 0.02);
+      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, 146.777);
   public static final SwervePodHardwareID POD008 =
-      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -153.5);
+      new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -23.357);
   public static final SwervePodHardwareID POD009 =
       new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, 1.45);
 

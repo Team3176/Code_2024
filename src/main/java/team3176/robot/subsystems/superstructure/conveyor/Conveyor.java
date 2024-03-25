@@ -20,7 +20,7 @@ public class Conveyor extends SubsystemBase {
     this.io = io;
     inputs = new ConveyorIOInputsAutoLogged();
     this.conveyorIntakeFastVelocity = new LoggedTunableNumber("conveyor/IntakeFast", 0.5);
-    this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.3);
+    this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.1);
     this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.2);
   }
 
@@ -28,12 +28,23 @@ public class Conveyor extends SubsystemBase {
     return isLaserIntakeSide() || isLaserShooterSide();
   }
 
+  public boolean hasNoteTooFar() {
+    return !isLaserIntakeSide() && isLaserShooterSide();
+  }
+
   public boolean isLaserIntakeSide() {
-    return inputs.laserDistIntakeSide < 100;
+    return inputs.isFrontLinebreak;
+    // return inputs.laserDistIntakeSide < 100;
+  }
+
+  public boolean isLaserIntakeSideFalse() {
+    return !inputs.isFrontLinebreak;
+    // return inputs.laserDistIntakeSide < 100;
   }
 
   public boolean isLaserShooterSide() {
-    return inputs.laserDistShooterSide < 100;
+    return inputs.isBackLinebreak;
+    // return inputs.laserDistShooterSide < 100;
   }
 
   public Command runFast() {
@@ -56,7 +67,7 @@ public class Conveyor extends SubsystemBase {
   }
 
   public Command runSlowReverse() {
-    return this.runEnd(() -> io.setController(-1.0), () -> io.setController(0));
+    return this.runEnd(() -> io.setController(-.1), () -> io.setController(0));
   }
 
   public Command centerNote() {

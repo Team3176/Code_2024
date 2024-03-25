@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 1.7;
+  private final double DEPLOY_POS = 6.1;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
@@ -54,7 +54,7 @@ public class Intake extends SubsystemBase {
   }
 
   private void runPivot(double volts) {
-    // this assumes positive voltage deploys the intake and negative voltage retracks it.
+    // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
     if ((inputs.lowerLimitSwitch && volts > 0.0)) {
       volts = 0.0;
@@ -129,7 +129,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/state", pivotState);
 
     double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.0);
+    commandVolts = MathUtil.clamp(commandVolts, -3.0, 1.5);
     // TODO: check if we need this to hold the intake in still I think not
     // if (pivotSetpoint < 0.1) {
     //   commandVolts -= 0.5;
