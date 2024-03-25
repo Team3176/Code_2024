@@ -56,5 +56,7 @@ public interface ClimbIO {
 
   public default void setRightVoltage(double voltage) {}
 
+  public default void setClimbVoltge(double voltage) {}
+
   public default void reset() {}
 }
