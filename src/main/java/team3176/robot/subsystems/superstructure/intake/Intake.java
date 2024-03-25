@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 2.3;
+  private final double DEPLOY_POS = 6.1;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
