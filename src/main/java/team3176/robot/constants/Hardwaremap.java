@@ -48,6 +48,14 @@ public class Hardwaremap {
   public static final int conveyorBackLinebreak = 4;
 
   public static final int blinkin_pwm_port = 9;
+// vision static IP's
+// notecam and camera 1 = 10.31.76.101, hostname = photonvision-note
+// spare orangepi = 10.31.76.102, hostname = photonvision-spare
+// camera 2it comm = 10.31.76.203, hostname = photonvision-camera2
+
+
+
+
 
   /*
    * Drivetrain CIDs
