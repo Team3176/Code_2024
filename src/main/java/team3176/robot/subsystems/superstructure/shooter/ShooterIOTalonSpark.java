@@ -81,8 +81,9 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelUpper.Slot0.kV = 0.1;
     configsWheelUpper.Voltage.PeakForwardVoltage = 12;
     configsWheelUpper.Voltage.PeakReverseVoltage = -12;
-    configsWheelUpper.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    configsWheelUpper.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     configsWheelUpper.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelUpper.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
     configsWheelLower.Slot0.kP = 0.1;
     configsWheelLower.Slot0.kI = 0.0;
@@ -92,6 +93,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelLower.Voltage.PeakReverseVoltage = -12;
     configsWheelLower.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     configsWheelLower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelLower.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
