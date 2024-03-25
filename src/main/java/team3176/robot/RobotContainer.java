@@ -177,11 +177,7 @@ public class RobotContainer {
     //         drivetrain
     //             .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
     //             .alongWith(superstructure.aimPodium()));
-    controller
-        .rotStick
-        .button(4)
-        .whileTrue(
-            superstructure.aimAmp(false));
+    controller.rotStick.button(4).whileTrue(superstructure.aimAmp(false));
     controller
         .rotStick
         .button(8)
