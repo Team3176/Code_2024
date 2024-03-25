@@ -21,6 +21,7 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -84,6 +85,7 @@ public class LoggedAprilPhotonCam {
     estimator =
         new PhotonPoseEstimator(
             field, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robot2Camera);
+    estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
   }
 
   public Transform3d getRobot2Camera() {
@@ -189,10 +191,10 @@ public class LoggedAprilPhotonCam {
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
     PhotonPipelineResult results = io.getResult(inputs.rawBytes);
-
-    // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    results.setTimestampSeconds(inputs.timestamp);
+    //Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     generateLoggingData(results);
-    // estimator.setRobotToCameraTransform(robot2Camera);
+    //Logger.recordOutput("photonvision/" + name + "/timestamp", results.getTimestampSeconds());
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());
