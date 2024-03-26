@@ -415,14 +415,13 @@ public class Drivetrain extends SubsystemBase {
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     return difference.getAngle();
   }
+
   private Rotation2d getAimAnglePass() {
-  Translation2d difference =
-      (this.getPose()
-          .getTranslation()
-          .minus(
-              AllianceFlipUtil.apply(
-                  FieldConstants.passLocation.getTranslation())));
-  return difference.getAngle();
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(AllianceFlipUtil.apply(FieldConstants.passLocation.getTranslation())));
+    return difference.getAngle();
   }
 
   public Command swerveDefenseCommand() {
@@ -540,6 +539,7 @@ public class Drivetrain extends SubsystemBase {
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
   }
+
   public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
   }

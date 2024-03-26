@@ -137,12 +137,8 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin() * 1.5)
                 .withName("boost drive"));
-    controller
-        .transStick
-        .button(2)
-        .onTrue(
-           
-                superstructure.intakeNote().withName("intakeNote"));
+    controller.transStick.button(2).onTrue(superstructure.intakeNote().withName("intakeNote"));
+
     controller
         .transStick
         .button(3)
@@ -180,16 +176,19 @@ public class RobotContainer {
         .whileTrue(
             Commands.either(
                 superstructure.aimShooterTune().withName("shooterAimOverride"),
-                Commands.either(drivetrain
-                    .driveAndAimPass(() -> controller.getForward(), () -> controller.getStrafe())
-                    .asProxy()
-                    .alongWith(superstructure.aimShooterTune())
-                    .withName("aimTuneAndDrive"), 
+                Commands.either(
                     drivetrain
-                    .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                    .asProxy()
-                    .alongWith(superstructure.aimShooterTune())
-                    .withName("aimTuneAndDrive"), () -> Shooter.getInstance().getDistance() > 9.0),
+                        .driveAndAimPass(
+                            () -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimShooterTune())
+                        .withName("aimTuneAndDrive"),
+                    drivetrain
+                        .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimShooterTune())
+                        .withName("aimTuneAndDrive"),
+                    () -> Shooter.getInstance().getDistance() > 9.0),
                 shooterOverride));
     controller.rotStick.button(3).whileTrue(superstructure.aimShooterTune().withName("aimClose"));
     // this is reverse switch once we prove out the auto score
