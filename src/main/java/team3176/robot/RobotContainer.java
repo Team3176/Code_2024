@@ -139,12 +139,16 @@ public class RobotContainer {
     controller
         .transStick
         .button(2)
-        .onTrue(superstructure.intakeNote().withName("intakeNote"))
-        .onFalse(
-            Intake.getInstance()
-                .stopRollers()
-                .andThen(Intake.getInstance().retractPivot())
-                .withName("stopIntake"));
+        .onTrue(
+            Commands.either(
+                superstructure.intakeNote().withName("intakeNote"),
+                drivetrain
+                    .chaseNote()
+                    .asProxy()
+                    .alongWith(superstructure.intakeNote())
+                    .alongWith(ledsRio.AutoDrive().asProxy())
+                    .withName("intakeAutoDrive"),
+                intakeOverride));
 
     controller
         .transStick
