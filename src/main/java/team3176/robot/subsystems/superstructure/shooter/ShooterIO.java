@@ -16,18 +16,20 @@ public interface ShooterIO {
   @AutoLog
   public static class ShooterIOInputs {
     public Rotation2d pivotPosition = new Rotation2d();
-    public double wheelUpperVelocityRadPerSec = 0.0;
-    public double wheelLowerVelocityRadPerSec = 0.0;
+    public double wheelLeftVelocityRadPerSec = 0.0;
+    public double wheelRightVelocityRadPerSec = 0.0;
     public double pivotAppliedVolts = 0.0;
-    public double wheelUpperAppliedVolts = 0.0;
-    public double wheelLowerAppliedVolts = 0.0;
+    public double wheelLeftAppliedVolts = 0.0;
+    public double wheelRightAppliedVolts = 0.0;
     public boolean lowerLimitSwitch = false;
     public boolean upperLimitSwitch = false;
-    public double wheelLowerAmpsStator = 0.0;
-    public double wheeUpperAmpsStator = 0.0;
+    public double wheelRightAmpsStator = 0.0;
+    public double wheelLeftAmpsStator = 0.0;
+    public double wheelRightAmpsSupply = 0.0;
+    public double wheelLeftAmpsSupply = 0.0;
     public double pivotAmpsStator = 0.0;
-    public double lowerWheelError = 0.0;
-    public double upperWheelError = 0.0;
+    public double rightWheelError = 0.0;
+    public double leftWheelError = 0.0;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 

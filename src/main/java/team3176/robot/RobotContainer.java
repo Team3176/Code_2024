@@ -129,10 +129,13 @@ public class RobotContainer {
     controller
         .transStick
         .button(2)
-        .onTrue(superstructure.intakeNote())
-        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+        .onTrue(superstructure.intakeNote().withName("intakeNote"))
+        .onFalse(
+            Intake.getInstance()
+                .stopRollers()
+                .andThen(Intake.getInstance().retractPivot())
+                .withName("stopIntake"));
 
-    /*
     controller
         .transStick
         .button(3)
@@ -140,8 +143,10 @@ public class RobotContainer {
             drivetrain
                 .chaseNote()
                 .alongWith(superstructure.intakeNote())
-                .alongWith(ledsRio.AutoDrive().asProxy()));
-    controller
+                .alongWith(ledsRio.AutoDrive().asProxy())
+                .withName("intakeAutoDrive"));
+    /*
+        controller
         .transStick
         .button(4)
         .whileTrue(
@@ -161,15 +166,16 @@ public class RobotContainer {
     /*
      *  Rotation Stick
      */
-    controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    controller.rotStick.button(1).whileTrue(superstructure.shoot().withName("shoot"));
     controller
         .rotStick
         .button(2)
         .whileTrue(
             drivetrain
                 .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimShooterTune()));
-    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+                .alongWith(superstructure.aimShooterTune())
+                .withName("aimTuneAndDrive"));
+    controller.rotStick.button(3).whileTrue(superstructure.aimClose().withName("aimClose"));
     // controller
     //     .rotStick
     //     .button(4)
@@ -177,8 +183,8 @@ public class RobotContainer {
     //         drivetrain
     //             .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
     //             .alongWith(superstructure.aimPodium()));
-    controller.rotStick.button(4).whileTrue(superstructure.aimAmp(false));
-        //.onFalse(superstructure.climbDown());
+    controller.rotStick.button(4).whileTrue(superstructure.aimAmp(false).withName("aimAmp"));
+    // .onFalse(superstructure.climbDown());
     controller
         .rotStick
         .button(8)
