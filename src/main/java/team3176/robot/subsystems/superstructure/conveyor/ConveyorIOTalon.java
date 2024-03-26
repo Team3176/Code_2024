@@ -51,13 +51,14 @@ public class ConveyorIOTalon implements ConveyorIO {
     appliedVolts = controller.getMotorVoltage();
     currentSupply = controller.getSupplyCurrent();
     current = controller.getStatorCurrent();
-    BaseStatusSignal.setUpdateFrequencyForAll(50, wheelVelocity, appliedVolts, current,currentSupply);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, wheelVelocity, appliedVolts, current, currentSupply);
     controller.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(ConveyorIOInputs inputs) {
-    BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current,currentSupply);
+    BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current, currentSupply);
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
     inputs.ampsStator = current.getValue();

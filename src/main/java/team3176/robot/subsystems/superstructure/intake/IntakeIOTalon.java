@@ -104,9 +104,20 @@ public class IntakeIOTalon implements IntakeIO {
     rollerTemp = rollerController.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, pivotAppliedVolts, pivotCurrentAmpsStator, pivotVelocity, pivotPosition, pivotTemp,pivotCurrentAmpsSupply);
+        50,
+        pivotAppliedVolts,
+        pivotCurrentAmpsStator,
+        pivotVelocity,
+        pivotPosition,
+        pivotTemp,
+        pivotCurrentAmpsSupply);
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, rollerAppliedVolts, rollerVelocity, rollerCurrentAmpsStator, rollerTemp,rollerCurrentAmpsSupply);
+        50,
+        rollerAppliedVolts,
+        rollerVelocity,
+        rollerCurrentAmpsStator,
+        rollerTemp,
+        rollerCurrentAmpsSupply);
 
     rollerController.optimizeBusUtilization();
     pivotController.optimizeBusUtilization();
@@ -115,8 +126,18 @@ public class IntakeIOTalon implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        pivotAppliedVolts, pivotCurrentAmpsStator, pivotVelocity, pivotPosition, pivotTemp,pivotCurrentAmpsSupply);
-    BaseStatusSignal.refreshAll(rollerAppliedVolts, rollerVelocity, rollerCurrentAmpsStator, rollerTemp,rollerCurrentAmpsSupply);
+        pivotAppliedVolts,
+        pivotCurrentAmpsStator,
+        pivotVelocity,
+        pivotPosition,
+        pivotTemp,
+        pivotCurrentAmpsSupply);
+    BaseStatusSignal.refreshAll(
+        rollerAppliedVolts,
+        rollerVelocity,
+        rollerCurrentAmpsStator,
+        rollerTemp,
+        rollerCurrentAmpsSupply);
 
     // inputs.isRollerLinebreak = (!rollerLinebreak.get());
     // inputs.isPivotLinebreak = (!pivotLinebreak.get());
