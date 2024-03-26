@@ -115,8 +115,8 @@ public class Shooter extends SubsystemBase {
   @AutoLogOutput
   public boolean isAtSpeed() {
     double closeValue = 0.1;
-    return (Math.abs(inputs.lowerWheelError) < closeValue
-        && Math.abs(inputs.upperWheelError) < closeValue);
+    return (Math.abs(inputs.rightWheelError) < closeValue
+        && Math.abs(inputs.leftWheelError) < closeValue);
   }
 
   @AutoLogOutput
