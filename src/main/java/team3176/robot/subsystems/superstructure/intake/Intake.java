@@ -56,11 +56,6 @@ public class Intake extends SubsystemBase {
   private void runPivot(double volts) {
     // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
-    if ((inputs.lowerLimitSwitch && volts > 0.0)) {
-      volts = 0.0;
-    } else if ((inputs.upperLimitSwitch && volts < 0.0)) {
-      volts = -.2;
-    }
     io.setPivotVolts(volts);
   }
 
