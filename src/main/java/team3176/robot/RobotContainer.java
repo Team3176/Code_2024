@@ -181,7 +181,7 @@ public class RobotContainer {
                         .driveAndAimPass(
                             () -> controller.getForward(), () -> controller.getStrafe())
                         .asProxy()
-                        .alongWith(superstructure.aimShooterTune())
+                        .alongWith(superstructure.aimPass())
                         .withName("aimTuneAndDrive"),
                     drivetrain
                         .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
