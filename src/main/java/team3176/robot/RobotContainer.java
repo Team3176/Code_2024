@@ -29,6 +29,7 @@ import team3176.robot.subsystems.superstructure.*;
 import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -180,7 +181,7 @@ public class RobotContainer {
             Commands.either(
                 superstructure.aimClose().withName("shooterAimOverride"),
                 Commands.either(drivetrain
-                    .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                    .driveAndAimPass(() -> controller.getForward(), () -> controller.getStrafe())
                     .asProxy()
                     .alongWith(superstructure.aimShooterTune())
                     .withName("aimTuneAndDrive"), 
@@ -188,7 +189,7 @@ public class RobotContainer {
                     .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                     .asProxy()
                     .alongWith(superstructure.aimShooterTune())
-                    .withName("aimTuneAndDrive"), () ->false),
+                    .withName("aimTuneAndDrive"), () -> Shooter.getInstance().getDistance() > 9.0),
                 shooterOverride));
     controller.rotStick.button(3).whileTrue(superstructure.aimShooterTune().withName("aimClose"));
     // this is reverse switch once we prove out the auto score
