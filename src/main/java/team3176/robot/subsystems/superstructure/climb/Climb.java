@@ -31,6 +31,8 @@ public class Climb extends SubsystemBase {
 
   private Climb(ClimbIO io) {
     this.io = io;
+    leftPIDController.setTolerance(1.0);
+    rightPIDController.setTolerance(1.0);
   }
 
   public Command stopLeft() {
@@ -149,31 +151,7 @@ public class Climb extends SubsystemBase {
   }
 
   public Command setAmpPosition() {
-    return this.runEnd(
-        () -> {
-          leftGoToPosition(AmpClimbHeight.get());
-          rightGoToPosition(AmpClimbHeight.get());
-        },
-        () -> {
-          io.setLeftVoltage(0.0);
-          io.setRightVoltage(0.0);
-        });
-  }
-
-  public Command setAmpLeftPosition() {
-    return this.runEnd(
-        () -> {
-          leftGoToPosition(AmpClimbHeight.get());
-        },
-        () -> io.setLeftVoltage(0.0));
-  }
-
-  public Command setAmpRightPosition() {
-    return this.runEnd(
-        () -> {
-          rightGoToPosition(AmpClimbHeight.get());
-        },
-        () -> io.setRightVoltage(0.0));
+    return goToPosition(() -> AmpClimbHeight.get());
   }
 
   public Command moveRightPosition(DoubleSupplier delta) {
@@ -202,6 +180,23 @@ public class Climb extends SubsystemBase {
           io.setRightVoltage(0.0);
           io.setLeftVoltage(0.0);
         });
+  }
+  /** Given a double supplier run the PID until we reach the setpoint then end */
+  public Command goToPosition(DoubleSupplier position) {
+    return this.runEnd(
+            () -> {
+              leftGoToPosition(position.getAsDouble());
+              rightGoToPosition(position.getAsDouble());
+            },
+            () -> {
+              io.setLeftVoltage(0.0);
+              io.setRightVoltage(0.0);
+            })
+        .until(() -> leftPIDController.atSetpoint() && rightPIDController.atSetpoint());
+  }
+
+  public Command stow() {
+    return goToPosition(() -> 0.0);
   }
 
   /*   public Command rightGoToPosition(double position) {
