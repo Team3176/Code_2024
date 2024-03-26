@@ -54,8 +54,15 @@ public class Shooter extends SubsystemBase {
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
-    pivotLookup.put(1.0, 30.0);
-    pivotLookup.put(3.2, 5.0);
+    pivotLookup.put(1.07, 35.0);
+    pivotLookup.put(1.62, 25.0);
+    pivotLookup.put(1.97, 22.0);
+    pivotLookup.put(2.3, 19.5);
+    pivotLookup.put(2.7, 18.0);
+    pivotLookup.put(2.69, 18.0);
+    pivotLookup.put(2.92, 16.5);
+    pivotLookup.put(2.98, 16.5);
+
     shooterFlywheelLookupLeft = new InterpolatingDoubleTreeMap();
     shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
     // shooterFlywheelLookup.put(1.0, 60.0);
@@ -103,7 +110,7 @@ public class Shooter extends SubsystemBase {
     // Logger.recordOutput("shooter/distance", diff.toTranslation2d().getNorm());
     // Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
 
-    return Rotation2d.fromDegrees(aimAngle.get());
+    return Rotation2d.fromDegrees(pivotLookup.get(getDistance()));
   }
 
   @AutoLogOutput
@@ -152,7 +159,7 @@ public class Shooter extends SubsystemBase {
         () -> {
           io.setFlywheelRightVelocity(flywheelRightVelocity.get());
           io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
-          this.pivotSetpoint = getAimAngle();
+          this.pivotSetpoint = Rotation2d.fromDegrees(aimAngle.get());
         },
         () -> {
           io.setFlywheelVelocity(flywheelIdle.get());
@@ -164,8 +171,14 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          // io.setFlywheelLowerVelocity(shooterFlywheelLookup.get(getDistance()));
-          // io.setFlywheelUpperVelocity(shooterFlywheelLookup.get(getDistance()));
+          if(getDistance() < 1.1) {
+            io.setFlywheelRightVelocity(80.0);
+            io.setFlywheelLeftVelocity(80.0);
+          } else {
+            io.setFlywheelRightVelocity(flywheelRightVelocity.get());
+            io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
+          }
+          
           this.pivotSetpoint = getAimAngle();
         },
         () -> {

@@ -186,7 +186,7 @@ public class RobotContainer {
                     drivetrain
                         .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                         .asProxy()
-                        .alongWith(superstructure.aimShooterTune())
+                        .alongWith(superstructure.aimShooterLookup())
                         .withName("aimTuneAndDrive"),
                     () -> Shooter.getInstance().getDistance() > 9.0),
                 shooterOverride));

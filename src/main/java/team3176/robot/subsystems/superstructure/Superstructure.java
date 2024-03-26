@@ -39,9 +39,12 @@ public class Superstructure {
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
     return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
   }
+  public Command aimShooterLookup() {
+    return shooter.aimLookup().alongWith(transfer.shoot(0.6));
+  }
 
   public Command aimClose() {
-    return aimShooter(60, 60, 35, 0.6).withName("aimClose");
+    return aimShooter(80, 80, 35, 0.6).withName("aimClose");
   }
 
   public Command aimAmp(boolean withDrive) {
