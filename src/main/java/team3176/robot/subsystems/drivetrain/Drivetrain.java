@@ -316,6 +316,11 @@ public class Drivetrain extends SubsystemBase {
     return new Pose2d();
   }
 
+  public double distanceToPoint(Pose2d point) {
+    Transform2d dif = getPose().minus(point);
+    return dif.getTranslation().getNorm();
+  }
+
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
     visionPose3d = p;
     poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);

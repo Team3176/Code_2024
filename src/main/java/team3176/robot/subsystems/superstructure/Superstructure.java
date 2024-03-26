@@ -45,21 +45,25 @@ public class Superstructure {
   }
 
   public Command aimAmp(boolean withDrive) {
-    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
-    // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
     if (withDrive) {
       return Drivetrain.getInstance()
           .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
-          .alongWith(aimAmpShooterClimb())
+          .alongWith(
+              new WaitCommand(10.0)
+                  .until(
+                      () ->
+                          Drivetrain.getInstance()
+                                  .distanceToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+                              < 2.0)
+                  .andThen(aimShooterAmp().alongWith(climb.setAmpPosition())))
           .withName("aimAmpandDrive");
     } else {
-      return aimAmpShooterClimb().withName("aimAmp");
+      return aimShooterAmp().alongWith(climb.setAmpPosition()).withName("aimAmp");
     }
   }
 
-  private Command aimAmpShooterClimb() {
-    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
-    return aimShooterTune().alongWith(climb.setAmpPosition());
+  private Command aimShooterAmp() {
+    return aimShooter(17, 17, 30, 0.35);
   }
 
   public Command aimPodium() {
