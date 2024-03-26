@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +39,9 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber flywheelIdle;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
-  // private InterpolatingDoubleTreeMap shooterFlywheelLookup;
+  private InterpolatingDoubleTreeMap shooterFlywheelLookupLeft;
+  private InterpolatingDoubleTreeMap shooterFlywheelLookupRight;
+  private InterpolatingDoubleTreeMap pivotLookup;
 
   private Shooter(ShooterIO io) {
     this.io = io;
@@ -50,6 +53,11 @@ public class Shooter extends SubsystemBase {
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
+    pivotLookup = new InterpolatingDoubleTreeMap();
+    pivotLookup.put(1.0, 30.0);
+    pivotLookup.put(3.2, 5.0);
+    shooterFlywheelLookupLeft = new InterpolatingDoubleTreeMap();
+    shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
   }
