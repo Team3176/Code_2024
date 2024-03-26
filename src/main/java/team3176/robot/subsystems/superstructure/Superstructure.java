@@ -41,7 +41,7 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(60, 60, 30, 0.6);
+    return aimShooter(60, 60, 35, 0.6);
   }
 
   public Command aimAmp(boolean withDrive) {
@@ -57,7 +57,8 @@ public class Superstructure {
   }
 
   private Command aimAmpShooterClimb() {
-    return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
+    //return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
+    return aimShooterTune().alongWith(climb.setAmpPosition());
   }
 
   public Command aimPodium() {
@@ -102,6 +103,12 @@ public class Superstructure {
   public Command moveClimbLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
     return climb.moveLeftRightPosition(deltaLeft, deltaRight);
   }
+
+  /* 
+  public Command climbDown() {
+    return climb.moveLeftRightPosition(0, 0);
+  }
+  */
 
   public Command stopClimbLeft() {
     return climb.stopLeft();
