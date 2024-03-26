@@ -93,14 +93,14 @@ public class Shooter extends SubsystemBase {
 
   @AutoLogOutput
   private Rotation2d getAimAngle() {
-    // Pose3d current =
-    //     new Pose3d(Drivetrain.getInstance().getPose())
-    //         .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
-    // Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
-    // Translation3d diff = current.getTranslation().minus(goal);
-    // double z = diff.getZ();
-    // double distance = diff.toTranslation2d().getNorm();
-    // Logger.recordOutput("shooter/distance", diff.toTranslation2d().getNorm());
+    Pose3d current =
+        new Pose3d(Drivetrain.getInstance().getPose())
+            .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
+    Translation3d goal = FieldConstants.Speaker.centerSpeakerOpening;
+    Translation3d diff = current.getTranslation().minus(goal);
+    double z = diff.getZ();
+    double distance = diff.toTranslation2d().getNorm();
+    Logger.recordOutput("shooter/distance", diff.toTranslation2d().getNorm());
     // Rotation2d angle = Rotation2d.fromRadians(Math.atan2(z, distance));
 
     return Rotation2d.fromDegrees(aimAngle.get());
