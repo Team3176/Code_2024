@@ -28,13 +28,14 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
-  public static final double FLYWHEEL_IDLE = 20;
+  //public static final double FLYWHEEL_IDLE = 20;
 
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
   private final LoggedTunableNumber flywheelLeftVelocity;
   private final LoggedTunableNumber flywheelRightVelocity;
   private final LoggedTunableNumber forwardPivotVoltageOffset;
+  private final LoggedTunableNumber flywheelIdle;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
   // private InterpolatingDoubleTreeMap shooterFlywheelLookup;
@@ -48,6 +49,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
+    this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
   }
@@ -72,7 +74,7 @@ public class Shooter extends SubsystemBase {
           forwardPivotVoltageOffset.get()
               * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
     }
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 12);
+    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
     io.setPivotVoltage(pivotVoltage);
   }
 
@@ -145,7 +147,7 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
-          io.setFlywheelVelocity(FLYWHEEL_IDLE);
+          io.setFlywheelVelocity(flywheelIdle.get());
           pivotSetpoint = new Rotation2d();
         });
   }
@@ -159,7 +161,7 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
-          io.setFlywheelVelocity(FLYWHEEL_IDLE);
+          io.setFlywheelVelocity(flywheelIdle.get());
           pivotSetpoint = new Rotation2d();
         });
   }
@@ -173,7 +175,7 @@ public class Shooter extends SubsystemBase {
           this.pivotSetpoint = Rotation2d.fromDegrees(angleDegrees);
         },
         () -> {
-          io.setFlywheelVelocity(FLYWHEEL_IDLE);
+          io.setFlywheelVelocity(flywheelIdle.get());
           pivotSetpoint = new Rotation2d();
         });
   }

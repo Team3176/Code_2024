@@ -184,7 +184,8 @@ public class RobotContainer {
             Commands.either(
                 superstructure.aimClose().withName("shooterAimOverride"),
                 drivetrain
-                    .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe()).asProxy()
+                    .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                    .asProxy()
                     .alongWith(superstructure.aimShooterTune())
                     .withName("aimTuneAndDrive"),
                 shooterOverride));
