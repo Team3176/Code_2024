@@ -52,12 +52,12 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   @Override
-  public void setWheelUpperVoltage(double voltage) {
+  public void setWheelLeftVoltage(double voltage) {
     wheelUpperAppliedVolts = MathUtil.clamp(voltage, -12, 12);
     wheelSimUpper.setInputVoltage(wheelUpperAppliedVolts);
   }
 
-  public void setWheelLowerVoltage(double voltage) {
+  public void setWheelRightVoltage(double voltage) {
     wheelLowerAppliedVolts = MathUtil.clamp(voltage, -12, 12);
     wheelSimLower.setInputVoltage(wheelLowerAppliedVolts);
   }

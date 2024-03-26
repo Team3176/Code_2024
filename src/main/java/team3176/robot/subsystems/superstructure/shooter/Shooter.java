@@ -32,8 +32,8 @@ public class Shooter extends SubsystemBase {
 
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
-  private final LoggedTunableNumber flywheelUpperVelocity;
-  private final LoggedTunableNumber flywheelLowerVelocity;
+  private final LoggedTunableNumber flywheelLeftVelocity;
+  private final LoggedTunableNumber flywheelRightVelocity;
   private final LoggedTunableNumber forwardPivotVoltageOffset;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
@@ -45,8 +45,8 @@ public class Shooter extends SubsystemBase {
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 30);
-    this.flywheelUpperVelocity = new LoggedTunableNumber("shooter/velocityUpper", 60.0);
-    this.flywheelLowerVelocity = new LoggedTunableNumber("shooter/velocityLower", 60.0);
+    this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 60.0);
+    this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 60.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.55);
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
@@ -140,8 +140,8 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          io.setFlywheelLowerVelocity(flywheelLowerVelocity.get());
-          io.setFlywheelUpperVelocity(flywheelUpperVelocity.get());
+          io.setFlywheelRightVelocity(flywheelRightVelocity.get());
+          io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
@@ -164,12 +164,12 @@ public class Shooter extends SubsystemBase {
         });
   }
 
-  public Command aim(double upper, double lower, double angleDegrees) {
+  public Command aim(double left, double right, double angleDegrees) {
 
     return this.runEnd(
         () -> {
-          io.setFlywheelLowerVelocity(upper);
-          io.setFlywheelUpperVelocity(lower);
+          io.setFlywheelRightVelocity(left);
+          io.setFlywheelLeftVelocity(right);
           this.pivotSetpoint = Rotation2d.fromDegrees(angleDegrees);
         },
         () -> {

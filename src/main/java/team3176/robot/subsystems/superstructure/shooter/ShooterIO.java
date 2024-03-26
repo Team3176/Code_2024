@@ -40,17 +40,17 @@ public interface ShooterIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void setWheelUpperVoltage(double voltage) {}
+  public default void setWheelLeftVoltage(double voltage) {}
 
-  public default void setWheelLowerVoltage(double voltage) {}
+  public default void setWheelRightVoltage(double voltage) {}
 
   public default void setPivotVoltage(double voltage) {}
 
   public default void setFlywheelVelocity(double velocity) {}
 
-  public default void setFlywheelLowerVelocity(double velocity) {}
+  public default void setFlywheelRightVelocity(double velocity) {}
 
-  public default void setFlywheelUpperVelocity(double velocity) {}
+  public default void setFlywheelLeftVelocity(double velocity) {}
 
   // public default void setShooterPivotPID(int position) {}
 
