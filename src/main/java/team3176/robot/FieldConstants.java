@@ -16,7 +16,7 @@ public class FieldConstants {
   public static final Pose2d sourePickup = new Pose2d(14.29, 1.13, Rotation2d.fromDegrees(-27.2));
   public static final Pose2d CenterScore = new Pose2d(1.3, 5.52, Rotation2d.fromDegrees(0.0));
   // initial guess taken from pathplanner
-  public static final Pose2d ampFace = new Pose2d(1.85, 7.74, Rotation2d.fromDegrees(-90));
+  public static final Pose2d ampFace = new Pose2d(1.85, 7.9, Rotation2d.fromDegrees(-90));
 
   public static final Translation2d ampCenter =
       new Translation2d(Units.inchesToMeters(72.455), fieldWidth);

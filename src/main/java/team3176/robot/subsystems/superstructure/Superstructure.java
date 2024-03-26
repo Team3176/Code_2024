@@ -64,7 +64,7 @@ public class Superstructure {
   }
 
   private Command aimShooterAmp() {
-    return aimShooter(17, 17, 30, 0.35);
+    return aimShooter(22, 22, 35, 0.35);
   }
 
   public Command aimPodium() {
