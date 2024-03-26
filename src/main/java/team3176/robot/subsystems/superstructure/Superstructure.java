@@ -47,7 +47,7 @@ public class Superstructure {
   public Command aimAmp(boolean withDrive) {
     if (withDrive) {
       return Drivetrain.getInstance()
-          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace)).asProxy()
           .alongWith(
               new WaitCommand(10.0)
                   .until(
