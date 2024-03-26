@@ -144,6 +144,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         Units.rotationsToRadians(driveVelocity.getValueAsDouble()) * (THRUST_GEAR_RATIO);
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveAmpsStator = driveCurrentStator.getValueAsDouble();
+    inputs.driveAmpsSupply = driveCurrentSupply.getValue();
     inputs.driveTempCelcius = driveTemps.getValueAsDouble();
 
     inputs.turnAbsolutePositionDegrees =

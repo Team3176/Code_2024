@@ -29,22 +29,22 @@ public class PhotonVisionSystem extends SubsystemBase {
    *
    * cameras have the convention similar reporting position in the camera frame with +x being the axis through the lense and +y to the left, z up
    */
-  public static final Transform3d Robot2camera1 =
+  public static final Transform3d Robot2camera2 =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(-10), Units.inchesToMeters(8), Units.inchesToMeters(10)),
           new Rotation3d(
-              Units.degreesToRadians(0),
-              Units.degreesToRadians(-30),
-              Units.degreesToRadians(-180 + 20)));
-  public static final Transform3d Robot2camera2 =
+              Units.degreesToRadians(2.5),
+              Units.degreesToRadians(-31),
+              Units.degreesToRadians(-180 + 18)));
+  public static final Transform3d Robot2camera1 =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(-10), Units.inchesToMeters(-8), Units.inchesToMeters(10)),
           new Rotation3d(
               Units.degreesToRadians(0),
-              Units.degreesToRadians(-30),
-              Units.degreesToRadians(-180 - 20)));
+              Units.degreesToRadians(-29),
+              Units.degreesToRadians(-180 - 18)));
   public static final Transform3d Robot2camera3 =
       new Transform3d(
           new Translation3d(

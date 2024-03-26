@@ -34,7 +34,6 @@ public class PhotonCameraIO {
     }
     inputs.rawBytes = packet.getData();
     inputs.isConnected = this.cam.isConnected();
-    
   }
 
   public PhotonPipelineResult getResult(byte[] b) {

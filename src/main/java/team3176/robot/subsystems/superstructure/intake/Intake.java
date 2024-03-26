@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 6.1;
+  private final double DEPLOY_POS = 2.1;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
@@ -127,21 +127,21 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
-
-    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
+    double pivot_pos = inputs.pivotPosition - pivot_offset;
+    if (!ishomed && pivotSetpoint > 1.0) {
+      pivot_pos = -3.0;
+    }
+    double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
     commandVolts = MathUtil.clamp(commandVolts, -3.0, 1.5);
-    // TODO: check if we need this to hold the intake in still I think not
-    // if (pivotSetpoint < 0.1) {
-    //   commandVolts -= 0.5;
-    // }
+
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
-    Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
+    Logger.recordOutput("Intake/offsetPos", pivot_pos);
     runPivot(commandVolts);
     pivotPID.checkParemeterUpdate();
-    if (inputs.upperLimitSwitch && !ishomed) {
+    if (inputs.lowerLimitSwitch) {
       ishomed = true;
-      pivot_offset = inputs.pivotPosition;
+      pivot_offset = inputs.pivotPosition - DEPLOY_POS;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
   }

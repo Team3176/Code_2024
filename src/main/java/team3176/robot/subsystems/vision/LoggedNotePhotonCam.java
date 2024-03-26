@@ -1,8 +1,10 @@
 package team3176.robot.subsystems.vision;
 
+import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
 public class LoggedNotePhotonCam {
 
@@ -34,8 +36,22 @@ public class LoggedNotePhotonCam {
       double noteskew = target.getSkew();
       double notearea = target.getArea();
       seeNote = true;
+      ArrayList<Double> x = new ArrayList<Double>();
+      ArrayList<Double> y = new ArrayList<Double>();
+      for (PhotonTrackedTarget t : results.getTargets()) {
+        for (TargetCorner c : t.getMinAreaRectCorners()) {
+          x.add(c.x);
+          y.add(c.y);
+        }
+      }
+      double[] xarray = x.stream().mapToDouble(Double::doubleValue).toArray();
+      double[] yarray = y.stream().mapToDouble(Double::doubleValue).toArray();
+      Logger.recordOutput("photonvision/" + name + "/xarray", xarray);
+      Logger.recordOutput("photonvision/" + name + "/yarray", yarray);
     } else {
       seeNote = false;
+      Logger.recordOutput("photonvision/" + name + "/xarray", new double[] {});
+      Logger.recordOutput("photonvision/" + name + "/yarray", new double[] {});
     }
   }
 }
