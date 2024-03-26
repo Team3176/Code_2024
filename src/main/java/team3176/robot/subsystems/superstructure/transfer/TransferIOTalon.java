@@ -25,7 +25,8 @@ public class TransferIOTalon implements TransferIO {
   private StatusSignal<Double> ampsStator;
 
   public TransferIOTalon() {
-
+    configs.CurrentLimits.StatorCurrentLimit = 50;
+    configs.CurrentLimits.StatorCurrentLimitEnable = true;
     transferController.getConfigurator().apply(configs);
     velocity = transferController.getVelocity();
     volts = transferController.getMotorVoltage();

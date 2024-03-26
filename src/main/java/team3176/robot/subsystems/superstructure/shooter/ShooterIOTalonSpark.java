@@ -56,8 +56,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   private final StatusSignal<Double> upperAppliedVolts;
   private final StatusSignal<Double> lowerAppliedVolts;
-  private final StatusSignal<Double> upperCurrentAmps;
-  private final StatusSignal<Double> lowerCurrentAmps;
+  private final StatusSignal<Double> upperCurrentAmpsStator;
+  private final StatusSignal<Double> lowerCurrentAmpsStator;
+  private final StatusSignal<Double> upperCurrentAmpsSupply;
+  private final StatusSignal<Double> lowerCurrentAmpsSupply;
   private final StatusSignal<Double> upperVelocity;
   private final StatusSignal<Double> lowerVelocity;
   private final StatusSignal<Double> upperError;
@@ -84,6 +86,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     // configsWheelUpper.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     configsWheelUpper.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     configsWheelUpper.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelUpper.CurrentLimits.StatorCurrentLimit = 60;
+    configsWheelUpper.CurrentLimits.StatorCurrentLimitEnable = true;
     configsWheelUpper.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
     configsWheelLower.Slot0.kP = 0.1;
@@ -94,6 +98,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelLower.Voltage.PeakReverseVoltage = -12;
     configsWheelLower.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     configsWheelLower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelLower.CurrentLimits.StatorCurrentLimit = 60;
+    configsWheelLower.CurrentLimits.StatorCurrentLimitEnable = true;
     configsWheelLower.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
@@ -103,8 +109,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
     upperAppliedVolts = wheelUpperController.getMotorVoltage();
     lowerAppliedVolts = wheelLowerController.getMotorVoltage();
-    upperCurrentAmps = wheelUpperController.getStatorCurrent();
-    lowerCurrentAmps = wheelLowerController.getStatorCurrent();
+    upperCurrentAmpsStator = wheelUpperController.getStatorCurrent();
+    lowerCurrentAmpsStator = wheelLowerController.getStatorCurrent();
+    upperCurrentAmpsSupply = wheelUpperController.getSupplyCurrent();
+    lowerCurrentAmpsSupply = wheelLowerController.getSupplyCurrent();
     upperVelocity = wheelUpperController.getVelocity();
     lowerVelocity = wheelLowerController.getVelocity();
     upperError = wheelUpperController.getClosedLoopError();
@@ -114,8 +122,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
         50,
         upperAppliedVolts,
         lowerAppliedVolts,
-        upperCurrentAmps,
-        lowerCurrentAmps,
+        upperCurrentAmpsStator,
+        lowerCurrentAmpsStator,
+        lowerCurrentAmpsSupply,
+        upperCurrentAmpsSupply,
         upperVelocity,
         lowerVelocity,
         upperError,
@@ -134,8 +144,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
     BaseStatusSignal.refreshAll(
         upperAppliedVolts,
         lowerAppliedVolts,
-        upperCurrentAmps,
-        lowerCurrentAmps,
+        upperCurrentAmpsStator,
+        lowerCurrentAmpsStator,
+        lowerCurrentAmpsSupply,
+        upperCurrentAmpsSupply,
         upperVelocity,
         lowerVelocity,
         lowerError,
@@ -154,8 +166,11 @@ public class ShooterIOTalonSpark implements ShooterIO {
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
 
-    inputs.wheelLowerAmpsStator = lowerCurrentAmps.getValueAsDouble();
-    inputs.wheeUpperAmpsStator = upperCurrentAmps.getValueAsDouble();
+    inputs.wheelLowerAmpsStator = lowerCurrentAmpsStator.getValueAsDouble();
+    inputs.wheeUpperAmpsStator = upperCurrentAmpsStator.getValueAsDouble();
+    inputs.wheelUpperAmpsSupply = upperCurrentAmpsSupply.getValue();
+    inputs.wheelLowerAmpsSupply = lowerCurrentAmpsSupply.getValue();
+
     inputs.pivotAmpsStator = pivotShooter.getOutputCurrent();
   }
 

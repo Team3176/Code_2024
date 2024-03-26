@@ -25,6 +25,8 @@ public interface ShooterIO {
     public boolean upperLimitSwitch = false;
     public double wheelLowerAmpsStator = 0.0;
     public double wheeUpperAmpsStator = 0.0;
+    public double wheelLowerAmpsSupply = 0.0;
+    public double wheelUpperAmpsSupply = 0.0;
     public double pivotAmpsStator = 0.0;
     public double lowerWheelError = 0.0;
     public double upperWheelError = 0.0;

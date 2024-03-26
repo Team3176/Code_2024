@@ -40,13 +40,15 @@ public class IntakeIOTalon implements IntakeIO {
   DigitalInput lowerLimitSwitch;
 
   private final StatusSignal<Double> pivotAppliedVolts;
-  private final StatusSignal<Double> pivotCurrentAmps;
+  private final StatusSignal<Double> pivotCurrentAmpsStator;
+  private final StatusSignal<Double> pivotCurrentAmpsSupply;
   private final StatusSignal<Double> pivotVelocity;
   private final StatusSignal<Double> pivotPosition;
   private final StatusSignal<Double> pivotTemp;
 
   private final StatusSignal<Double> rollerAppliedVolts;
-  private final StatusSignal<Double> rollerCurrentAmps;
+  private final StatusSignal<Double> rollerCurrentAmpsStator;
+  private final StatusSignal<Double> rollerCurrentAmpsSupply;
   private final StatusSignal<Double> rollerVelocity;
   private final StatusSignal<Double> rollerTemp;
 
@@ -80,8 +82,8 @@ public class IntakeIOTalon implements IntakeIO {
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    // pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    // pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimit = 60;
+    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
@@ -89,20 +91,22 @@ public class IntakeIOTalon implements IntakeIO {
     pivotController.setPosition(0, 0);
 
     pivotAppliedVolts = pivotController.getMotorVoltage();
-    pivotCurrentAmps = pivotController.getStatorCurrent();
+    pivotCurrentAmpsStator = pivotController.getStatorCurrent();
+    pivotCurrentAmpsSupply = pivotController.getSupplyCurrent();
     pivotVelocity = pivotController.getVelocity();
     pivotPosition = pivotController.getPosition();
     pivotTemp = pivotController.getDeviceTemp();
 
     rollerAppliedVolts = rollerController.getMotorVoltage();
-    rollerCurrentAmps = rollerController.getStatorCurrent();
+    rollerCurrentAmpsStator = rollerController.getStatorCurrent();
+    rollerCurrentAmpsSupply = rollerController.getSupplyCurrent();
     rollerVelocity = rollerController.getVelocity();
     rollerTemp = rollerController.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
+        50, pivotAppliedVolts, pivotCurrentAmpsStator, pivotVelocity, pivotPosition, pivotTemp,pivotCurrentAmpsSupply);
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
+        50, rollerAppliedVolts, rollerVelocity, rollerCurrentAmpsStator, rollerTemp,rollerCurrentAmpsSupply);
 
     rollerController.optimizeBusUtilization();
     pivotController.optimizeBusUtilization();
@@ -111,8 +115,8 @@ public class IntakeIOTalon implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        pivotAppliedVolts, pivotCurrentAmps, pivotVelocity, pivotPosition, pivotTemp);
-    BaseStatusSignal.refreshAll(rollerAppliedVolts, rollerVelocity, rollerCurrentAmps, rollerTemp);
+        pivotAppliedVolts, pivotCurrentAmpsStator, pivotVelocity, pivotPosition, pivotTemp,pivotCurrentAmpsSupply);
+    BaseStatusSignal.refreshAll(rollerAppliedVolts, rollerVelocity, rollerCurrentAmpsStator, rollerTemp,rollerCurrentAmpsSupply);
 
     // inputs.isRollerLinebreak = (!rollerLinebreak.get());
     // inputs.isPivotLinebreak = (!pivotLinebreak.get());
@@ -121,13 +125,14 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
-    inputs.pivotAmpsStator = pivotCurrentAmps.getValueAsDouble();
+    inputs.pivotAmpsStator = pivotCurrentAmpsStator.getValueAsDouble();
     inputs.pivotTempCelcius = pivotTemp.getValueAsDouble();
     inputs.pivotPosition = Units.rotationsToRadians(pivotPosition.getValueAsDouble());
     inputs.pivotVelocityRadPerSec = Units.rotationsToRadians(pivotVelocity.getValueAsDouble());
 
     inputs.rollerAppliedVolts = rollerAppliedVolts.getValueAsDouble();
-    inputs.rollerAmpsStator = rollerCurrentAmps.getValueAsDouble();
+    inputs.rollerAmpsStator = rollerCurrentAmpsStator.getValueAsDouble();
+    inputs.rollerAmpsSupply = rollerCurrentAmpsSupply.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
   }
