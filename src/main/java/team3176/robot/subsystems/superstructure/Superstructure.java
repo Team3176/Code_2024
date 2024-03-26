@@ -13,6 +13,7 @@ import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
+import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.NoteVisualizer;
 
 public class Superstructure {
@@ -54,12 +55,24 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(60, 60, 30, 0.6);
+    return aimShooter(60, 60, 35, 0.6);
   }
 
-  public Command aimAmp() {
-    return aimShooter(17, 17, 30, 0.35)
-        .alongWith(climb.setLeftPosition(), climb.setRightPosition());
+  public Command aimAmp(boolean withDrive) {
+    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
+    // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
+    if (withDrive) {
+      return Drivetrain.getInstance()
+          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+          .alongWith(aimAmpShooterClimb());
+    } else {
+      return aimAmpShooterClimb();
+    }
+  }
+
+  private Command aimAmpShooterClimb() {
+    //return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
+    return aimShooterTune().alongWith(climb.setAmpPosition());
   }
 
   public Command aimPodium() {
@@ -104,6 +117,12 @@ public class Superstructure {
   public Command moveClimbLeftRightPosition(DoubleSupplier deltaLeft, DoubleSupplier deltaRight) {
     return climb.moveLeftRightPosition(deltaLeft, deltaRight);
   }
+
+  /* 
+  public Command climbDown() {
+    return climb.moveLeftRightPosition(0, 0);
+  }
+  */
 
   public Command stopClimbLeft() {
     return climb.stopLeft();

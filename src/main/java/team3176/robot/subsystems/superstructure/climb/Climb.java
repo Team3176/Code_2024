@@ -27,6 +27,7 @@ public class Climb extends SubsystemBase {
   private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
   private LoggedTunableNumber LeftRightClimbHeight =
       new LoggedTunableNumber("climbLeftRightHeight", 0);
+  private LoggedTunableNumber AmpClimbHeight = new LoggedTunableNumber("climb/climbAmpHeight", 0);
 
   private Climb(ClimbIO io) {
     this.io = io;
@@ -147,18 +148,30 @@ public class Climb extends SubsystemBase {
         () -> io.setRightVoltage(0.0));
   }
 
-  public Command setLeftPosition() {
+  public Command setAmpPosition() {
     return this.runEnd(
         () -> {
-          leftGoToPosition(LeftClimbHeight.get());
+          leftGoToPosition(AmpClimbHeight.get());
+          rightGoToPosition(AmpClimbHeight.get());
+        },
+        () -> {
+          io.setLeftVoltage(0.0);
+          io.setRightVoltage(0.0);
+        });
+  }
+
+  public Command setAmpLeftPosition() {
+    return this.runEnd(
+        () -> {
+          leftGoToPosition(AmpClimbHeight.get());
         },
         () -> io.setLeftVoltage(0.0));
   }
 
-  public Command setRightPosition() {
+  public Command setAmpRightPosition() {
     return this.runEnd(
         () -> {
-          rightGoToPosition(RightClimbHeight.get());
+          rightGoToPosition(AmpClimbHeight.get());
         },
         () -> io.setRightVoltage(0.0));
   }
