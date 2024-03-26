@@ -83,7 +83,7 @@ public class IntakeIOTalon implements IntakeIO {
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
     pivotConfigs.CurrentLimits.SupplyCurrentLimit = 60;
-    pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
