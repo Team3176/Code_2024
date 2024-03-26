@@ -182,11 +182,11 @@ public class RobotContainer {
         .button(2)
         .whileTrue(
             Commands.either(
+                superstructure.aimClose().withName("shooterAimOverride"),
                 drivetrain
                     .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                     .alongWith(superstructure.aimShooterTune())
                     .withName("aimTuneAndDrive"),
-                superstructure.aimClose().withName("shooterAimOverride"),
                 shooterOverride));
     controller.rotStick.button(3).whileTrue(superstructure.aimClose().withName("aimClose"));
     // this is reverse switch once we prove out the auto score
@@ -195,8 +195,8 @@ public class RobotContainer {
         .button(4)
         .whileTrue(
             Commands.either(
-                superstructure.aimAmp(false).withName("aimAmp"),
-                superstructure.aimAmp(true).withName("aimAmpDrive"),
+                superstructure.aimAmp(true).withName("aimAmp"),
+                superstructure.aimAmp(false).withName("aimAmpDrive"),
                 ampOverride))
         .onFalse(Climb.getInstance().stow());
     controller
