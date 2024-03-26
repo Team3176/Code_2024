@@ -128,7 +128,7 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
     double pivot_pos = inputs.pivotPosition - pivot_offset;
-    if (!ishomed) {
+    if (!ishomed && pivotSetpoint > 1.0) {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
