@@ -27,7 +27,7 @@ public class Climb extends SubsystemBase {
   private LoggedTunableNumber RightClimbHeight = new LoggedTunableNumber("climbRightHeight", 0);
   private LoggedTunableNumber LeftRightClimbHeight =
       new LoggedTunableNumber("climbLeftRightHeight", 0);
-  private LoggedTunableNumber AmpClimbHeight = new LoggedTunableNumber("climb/climbAmpHeight", 0);
+  private LoggedTunableNumber AmpClimbHeight = new LoggedTunableNumber("climb/climbAmpHeight", 60);
 
   private Climb(ClimbIO io) {
     this.io = io;

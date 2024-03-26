@@ -41,13 +41,13 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.25, 0.00);
+    this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.6, 0.00);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
-    this.aimAngle = new LoggedTunableNumber("shooter/angle", 30);
-    this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 60.0);
-    this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 60.0);
-    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.55);
+    this.aimAngle = new LoggedTunableNumber("shooter/angle", 16.5);
+    this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
+    this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
+    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
   }
