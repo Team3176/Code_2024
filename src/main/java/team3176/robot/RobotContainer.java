@@ -179,7 +179,7 @@ public class RobotContainer {
         .button(2)
         .whileTrue(
             Commands.either(
-                superstructure.aimClose().withName("shooterAimOverride"),
+                superstructure.aimShooterTune().withName("shooterAimOverride"),
                 Commands.either(drivetrain
                     .driveAndAimPass(() -> controller.getForward(), () -> controller.getStrafe())
                     .asProxy()
