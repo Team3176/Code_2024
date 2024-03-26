@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
           forwardPivotVoltageOffset.get()
               * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
     }
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 12);
+    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
     io.setPivotVoltage(pivotVoltage);
   }
 
