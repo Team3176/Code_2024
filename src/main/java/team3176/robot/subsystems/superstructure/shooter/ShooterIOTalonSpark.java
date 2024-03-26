@@ -28,10 +28,10 @@ import team3176.robot.constants.Hardwaremap;
 
 public class ShooterIOTalonSpark implements ShooterIO {
 
-  private TalonFX wheelUpperController =
-      new TalonFX(Hardwaremap.shooterWheelUpper_CID, Hardwaremap.shooterWheelUpper_CBN);
-  private TalonFX wheelLowerController =
-      new TalonFX(Hardwaremap.shooterWheelLower_CID, Hardwaremap.shooterWheelLower_CBN);
+  private TalonFX wheelLeftController =
+      new TalonFX(Hardwaremap.shooterWheelLeft_CID, Hardwaremap.shooterWheelUpper_CBN);
+  private TalonFX wheelRightController =
+      new TalonFX(Hardwaremap.shooterWheelRight_CID, Hardwaremap.shooterWheelLower_CBN);
 
   /* private TalonFX pivotController =
        new TalonFX(Hardwaremap.shooterPivot_CID, Hardwaremap.shooterPivot_CBN);
@@ -48,22 +48,22 @@ public class ShooterIOTalonSpark implements ShooterIO {
   // private StatusSignal CANcoderPosition = cancoder.getPosition();
   final VelocityVoltage flywheelVelocity = new VelocityVoltage(0);
 
-  private TalonFXConfiguration configsWheelUpper = new TalonFXConfiguration();
-  private TalonFXConfiguration configsWheelLower = new TalonFXConfiguration();
+  private TalonFXConfiguration configsWheelLeft = new TalonFXConfiguration();
+  private TalonFXConfiguration configsWheelRight = new TalonFXConfiguration();
 
   private DigitalInput lowerLimitSwitch;
   private DigitalInput upperLimitSwitch;
 
-  private final StatusSignal<Double> upperAppliedVolts;
-  private final StatusSignal<Double> lowerAppliedVolts;
-  private final StatusSignal<Double> upperCurrentAmpsStator;
-  private final StatusSignal<Double> lowerCurrentAmpsStator;
-  private final StatusSignal<Double> upperCurrentAmpsSupply;
-  private final StatusSignal<Double> lowerCurrentAmpsSupply;
-  private final StatusSignal<Double> upperVelocity;
-  private final StatusSignal<Double> lowerVelocity;
-  private final StatusSignal<Double> upperError;
-  private final StatusSignal<Double> lowerError;
+  private final StatusSignal<Double> leftAppliedVolts;
+  private final StatusSignal<Double> rightAppliedVolts;
+  private final StatusSignal<Double> leftCurrentAmpsStator;
+  private final StatusSignal<Double> rightCurrentAmpsStator;
+  private final StatusSignal<Double> leftCurrentAmpsSupply;
+  private final StatusSignal<Double> rightCurrentAmpsSupply;
+  private final StatusSignal<Double> leftVelocity;
+  private final StatusSignal<Double> rightVelocity;
+  private final StatusSignal<Double> leftError;
+  private final StatusSignal<Double> rightError;
 
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
@@ -77,62 +77,62 @@ public class ShooterIOTalonSpark implements ShooterIO {
     upperLimitSwitch = new DigitalInput(Hardwaremap.shooterPivotUpper_DIO);
     /*-------------------------------- Private instance variables ---------------------------------*/
 
-    configsWheelUpper.Slot0.kP = 0.1;
-    configsWheelUpper.Slot0.kI = 0.0;
-    configsWheelUpper.Slot0.kD = 0.0000;
-    configsWheelUpper.Slot0.kV = 0.1;
-    configsWheelUpper.Voltage.PeakForwardVoltage = 12;
-    configsWheelUpper.Voltage.PeakReverseVoltage = -12;
+    configsWheelLeft.Slot0.kP = 0.1;
+    configsWheelLeft.Slot0.kI = 0.0;
+    configsWheelLeft.Slot0.kD = 0.0000;
+    configsWheelLeft.Slot0.kV = 0.1;
+    configsWheelLeft.Voltage.PeakForwardVoltage = 12;
+    configsWheelLeft.Voltage.PeakReverseVoltage = -12;
     // configsWheelUpper.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    configsWheelUpper.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    configsWheelUpper.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    configsWheelUpper.CurrentLimits.SupplyCurrentLimit = 60;
-    configsWheelUpper.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configsWheelUpper.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
+    configsWheelLeft.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    configsWheelLeft.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelLeft.CurrentLimits.SupplyCurrentLimit = 60;
+    configsWheelLeft.CurrentLimits.SupplyCurrentLimitEnable = true;
+    configsWheelLeft.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
-    configsWheelLower.Slot0.kP = 0.1;
-    configsWheelLower.Slot0.kI = 0.0;
-    configsWheelLower.Slot0.kD = 0.0000;
-    configsWheelLower.Slot0.kV = 0.11;
-    configsWheelLower.Voltage.PeakForwardVoltage = 12;
-    configsWheelLower.Voltage.PeakReverseVoltage = -12;
-    configsWheelLower.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    configsWheelLower.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    configsWheelLower.CurrentLimits.SupplyCurrentLimit = 60;
-    configsWheelLower.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configsWheelLower.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
+    configsWheelRight.Slot0.kP = 0.1;
+    configsWheelRight.Slot0.kI = 0.0;
+    configsWheelRight.Slot0.kD = 0.0000;
+    configsWheelRight.Slot0.kV = 0.11;
+    configsWheelRight.Voltage.PeakForwardVoltage = 12;
+    configsWheelRight.Voltage.PeakReverseVoltage = -12;
+    configsWheelRight.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    configsWheelRight.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    configsWheelRight.CurrentLimits.SupplyCurrentLimit = 60;
+    configsWheelRight.CurrentLimits.SupplyCurrentLimitEnable = true;
+    configsWheelRight.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
 
     m_PidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    wheelUpperController.getConfigurator().apply(configsWheelUpper);
-    wheelLowerController.getConfigurator().apply(configsWheelLower);
+    wheelLeftController.getConfigurator().apply(configsWheelLeft);
+    wheelRightController.getConfigurator().apply(configsWheelRight);
 
-    upperAppliedVolts = wheelUpperController.getMotorVoltage();
-    lowerAppliedVolts = wheelLowerController.getMotorVoltage();
-    upperCurrentAmpsStator = wheelUpperController.getStatorCurrent();
-    lowerCurrentAmpsStator = wheelLowerController.getStatorCurrent();
-    upperCurrentAmpsSupply = wheelUpperController.getSupplyCurrent();
-    lowerCurrentAmpsSupply = wheelLowerController.getSupplyCurrent();
-    upperVelocity = wheelUpperController.getVelocity();
-    lowerVelocity = wheelLowerController.getVelocity();
-    upperError = wheelUpperController.getClosedLoopError();
-    lowerError = wheelLowerController.getClosedLoopError();
+    leftAppliedVolts = wheelLeftController.getMotorVoltage();
+    rightAppliedVolts = wheelRightController.getMotorVoltage();
+    leftCurrentAmpsStator = wheelLeftController.getStatorCurrent();
+    rightCurrentAmpsStator = wheelRightController.getStatorCurrent();
+    leftCurrentAmpsSupply = wheelLeftController.getSupplyCurrent();
+    rightCurrentAmpsSupply = wheelRightController.getSupplyCurrent();
+    leftVelocity = wheelLeftController.getVelocity();
+    rightVelocity = wheelRightController.getVelocity();
+    leftError = wheelLeftController.getDifferentialClosedLoopError();
+    rightError = wheelRightController.getDifferentialClosedLoopError();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
-        upperAppliedVolts,
-        lowerAppliedVolts,
-        upperCurrentAmpsStator,
-        lowerCurrentAmpsStator,
-        lowerCurrentAmpsSupply,
-        upperCurrentAmpsSupply,
-        upperVelocity,
-        lowerVelocity,
-        upperError,
-        lowerError);
+        leftAppliedVolts,
+        rightAppliedVolts,
+        leftCurrentAmpsStator,
+        rightCurrentAmpsStator,
+        rightCurrentAmpsSupply,
+        leftCurrentAmpsSupply,
+        leftVelocity,
+        rightVelocity,
+        leftError,
+        rightError);
 
-    wheelUpperController.optimizeBusUtilization();
-    wheelLowerController.optimizeBusUtilization();
+    wheelLeftController.optimizeBusUtilization();
+    wheelRightController.optimizeBusUtilization();
 
     // }
   }
@@ -142,34 +142,34 @@ public class ShooterIOTalonSpark implements ShooterIO {
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        upperAppliedVolts,
-        lowerAppliedVolts,
-        upperCurrentAmpsStator,
-        lowerCurrentAmpsStator,
-        lowerCurrentAmpsSupply,
-        upperCurrentAmpsSupply,
-        upperVelocity,
-        lowerVelocity,
-        lowerError,
-        upperError);
+        leftAppliedVolts,
+        rightAppliedVolts,
+        leftCurrentAmpsStator,
+        rightCurrentAmpsStator,
+        rightCurrentAmpsSupply,
+        leftCurrentAmpsSupply,
+        leftVelocity,
+        rightVelocity,
+        rightError,
+        leftError);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
-    inputs.wheelUpperVelocityRadPerSec = Units.rotationsToRadians(upperVelocity.getValue());
-    inputs.wheelLowerVelocityRadPerSec = Units.rotationsToRadians(lowerVelocity.getValue());
+    inputs.wheelLeftVelocityRadPerSec = Units.rotationsToRadians(leftVelocity.getValue());
+    inputs.wheelRightVelocityRadPerSec = Units.rotationsToRadians(rightVelocity.getValue());
 
-    inputs.upperWheelError = upperError.getValue();
-    inputs.lowerWheelError = lowerError.getValue();
+    inputs.leftWheelError = leftError.getValue();
+    inputs.rightWheelError = rightError.getValue();
 
-    inputs.wheelUpperAppliedVolts = upperAppliedVolts.getValue();
-    inputs.wheelLowerAppliedVolts = lowerAppliedVolts.getValue();
+    inputs.wheelLeftAppliedVolts = leftAppliedVolts.getValue();
+    inputs.wheelRightAppliedVolts = rightAppliedVolts.getValue();
 
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
 
-    inputs.wheelLowerAmpsStator = lowerCurrentAmpsStator.getValueAsDouble();
-    inputs.wheeUpperAmpsStator = upperCurrentAmpsStator.getValueAsDouble();
-    inputs.wheelUpperAmpsSupply = upperCurrentAmpsSupply.getValue();
-    inputs.wheelLowerAmpsSupply = lowerCurrentAmpsSupply.getValue();
+    inputs.wheelRightAmpsStator = rightCurrentAmpsStator.getValueAsDouble();
+    inputs.wheelLeftAmpsStator = leftCurrentAmpsStator.getValueAsDouble();
+    inputs.wheelLeftAmpsSupply = leftCurrentAmpsSupply.getValue();
+    inputs.wheelRightAmpsSupply = rightCurrentAmpsSupply.getValue();
 
     inputs.pivotAmpsStator = pivotShooter.getOutputCurrent();
   }
@@ -181,28 +181,28 @@ public class ShooterIOTalonSpark implements ShooterIO {
 
   @Override
   public void setFlywheelVelocity(double velocity) {
-    wheelLowerController.setControl(flywheelVelocity.withVelocity(velocity));
-    wheelUpperController.setControl(flywheelVelocity.withVelocity(velocity));
+    wheelRightController.setControl(flywheelVelocity.withVelocity(velocity));
+    wheelLeftController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
   public void setFlywheelUpperVelocity(double velocity) {
-    wheelUpperController.setControl(flywheelVelocity.withVelocity(velocity));
+    wheelLeftController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
   public void setFlywheelLowerVelocity(double velocity) {
-    wheelLowerController.setControl(flywheelVelocity.withVelocity(velocity));
+    wheelRightController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
   public void setWheelUpperVoltage(double velocity) {
-    wheelUpperController.set(velocity);
+    wheelLeftController.set(velocity);
   }
 
   @Override
   public void setWheelLowerVoltage(double velocity) {
-    wheelLowerController.set(velocity);
+    wheelRightController.set(velocity);
   }
 
   @Override
