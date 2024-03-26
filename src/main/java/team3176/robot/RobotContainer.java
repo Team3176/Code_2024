@@ -140,16 +140,8 @@ public class RobotContainer {
         .transStick
         .button(2)
         .onTrue(
-            Commands.either(
-                superstructure.intakeNote().withName("intakeNote"),
-                drivetrain
-                    .chaseNote()
-                    .asProxy()
-                    .alongWith(superstructure.intakeNote())
-                    .alongWith(ledsRio.AutoDrive().asProxy())
-                    .withName("intakeAutoDrive"),
-                intakeOverride));
-
+           
+                superstructure.intakeNote().withName("intakeNote"));
     controller
         .transStick
         .button(3)
@@ -187,13 +179,18 @@ public class RobotContainer {
         .whileTrue(
             Commands.either(
                 superstructure.aimClose().withName("shooterAimOverride"),
-                drivetrain
+                Commands.either(drivetrain
                     .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
                     .asProxy()
                     .alongWith(superstructure.aimShooterTune())
-                    .withName("aimTuneAndDrive"),
+                    .withName("aimTuneAndDrive"), 
+                    drivetrain
+                    .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                    .asProxy()
+                    .alongWith(superstructure.aimShooterTune())
+                    .withName("aimTuneAndDrive"), () ->false),
                 shooterOverride));
-    controller.rotStick.button(3).whileTrue(superstructure.aimClose().withName("aimClose"));
+    controller.rotStick.button(3).whileTrue(superstructure.aimShooterTune().withName("aimClose"));
     // this is reverse switch once we prove out the auto score
     controller
         .rotStick

@@ -70,6 +70,9 @@ public class Superstructure {
   public Command aimPodium() {
     return aimShooter(80, 80, 7, 0.6).withName("aimPodium");
   }
+  public Command aimPass() {
+    return aimShooter(90, 40, 25, 0.6).withName("aimPodium");
+  }
 
   public Command shoot() {
     return conveyor.runShoot().withName("shoot");

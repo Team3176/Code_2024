@@ -320,6 +320,9 @@ public class Drivetrain extends SubsystemBase {
     Transform2d dif = getPose().minus(point);
     return dif.getTranslation().getNorm();
   }
+  public double distanceToSpeaker() {
+    return 0.0;//distanceToPoint(new Pose2d( AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).toTranslation2d())
+  }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
     visionPose3d = p;
@@ -414,6 +417,15 @@ public class Drivetrain extends SubsystemBase {
                 AllianceFlipUtil.apply(
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     return difference.getAngle();
+  }
+  private Rotation2d getAimAnglePass() {
+  Translation2d difference =
+      (this.getPose()
+          .getTranslation()
+          .minus(
+              AllianceFlipUtil.apply(
+                  FieldConstants.passLocation.getTranslation())));
+  return difference.getAngle();
   }
 
   public Command swerveDefenseCommand() {
@@ -530,6 +542,9 @@ public class Drivetrain extends SubsystemBase {
 
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
+  }
+  public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
   }
 
   public Command goToPoint(int x, int y) {
