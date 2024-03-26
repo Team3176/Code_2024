@@ -27,6 +27,7 @@ public class ConveyorIOTalon implements ConveyorIO {
   private final StatusSignal<Double> wheelVelocity;
   private final StatusSignal<Double> appliedVolts;
   private final StatusSignal<Double> current;
+  private final StatusSignal<Double> currentSupply;
 
   public ConveyorIOTalon() {
     /*     laserCanIntakeSide = new LaserCan(Hardwaremap.LaserCanIntakeSide_CID);
@@ -48,17 +49,19 @@ public class ConveyorIOTalon implements ConveyorIO {
     controller.getConfigurator().apply(configs);
     wheelVelocity = controller.getVelocity();
     appliedVolts = controller.getMotorVoltage();
+    currentSupply = controller.getSupplyCurrent();
     current = controller.getStatorCurrent();
-    BaseStatusSignal.setUpdateFrequencyForAll(50, wheelVelocity, appliedVolts, current);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, wheelVelocity, appliedVolts, current,currentSupply);
     controller.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(ConveyorIOInputs inputs) {
-    BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current);
+    BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current,currentSupply);
     inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
     inputs.appliedVolts = appliedVolts.getValue();
     inputs.ampsStator = current.getValue();
+    inputs.ampsSupply = currentSupply.getValue();
     inputs.isFrontLinebreak = !frontLinebreak.get();
     inputs.isBackLinebreak = !backLinebreak.get();
     /*     var measurement1 = laserCanIntakeSide.getMeasurement();

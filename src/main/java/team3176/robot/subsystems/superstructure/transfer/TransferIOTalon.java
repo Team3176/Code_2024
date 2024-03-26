@@ -23,6 +23,8 @@ public class TransferIOTalon implements TransferIO {
   private StatusSignal<Double> velocity;
   private StatusSignal<Double> volts;
   private StatusSignal<Double> ampsStator;
+  private StatusSignal<Double> ampsSupply;
+  
 
   public TransferIOTalon() {
     configs.CurrentLimits.StatorCurrentLimit = 50;
@@ -31,16 +33,18 @@ public class TransferIOTalon implements TransferIO {
     velocity = transferController.getVelocity();
     volts = transferController.getMotorVoltage();
     ampsStator = transferController.getStatorCurrent();
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts, ampsStator);
+    ampsSupply = transferController.getSupplyCurrent();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocity, volts, ampsStator,ampsSupply);
     transferController.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs(TransferIOInputs inputs) {
-    BaseStatusSignal.refreshAll(velocity, volts, ampsStator);
+    BaseStatusSignal.refreshAll(velocity, volts, ampsStator,ampsSupply);
     inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValue());
     inputs.transferAppliedVolts = volts.getValue();
     inputs.ampsStator = ampsStator.getValue();
+    inputs.ampsSupply = ampsSupply.getValue();
   }
 
   @Override
