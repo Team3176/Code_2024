@@ -155,7 +155,8 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin() * 1.5)
                 .withName("boost drive"));
-    controller.transStick.button(2).onTrue(superstructure.intakeNote().withName("intakeNote"));
+    controller
+        .transStick.button(2).onTrue(superstructure.intakeNote().withName("intakeNote")).onFalse(superstructure.retractIntakePivot());
 
     controller
         .transStick

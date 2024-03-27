@@ -14,19 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shootAim"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "CenterToWing1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
           }
         },
         {
@@ -48,12 +42,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Wing2ToCenter"
@@ -69,12 +57,6 @@
           "type": "path",
           "data": {
             "pathName": "CenterToWing3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
           }
         },
         {

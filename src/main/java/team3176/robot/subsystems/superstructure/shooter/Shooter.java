@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase {
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
-    pivotLookup.put(1.07, 35.0);
+    pivotLookup.put(1.07, 38.0);
     pivotLookup.put(1.62, 25.0);
     pivotLookup.put(1.97, 22.0);
     pivotLookup.put(2.3, 19.5);

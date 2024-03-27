@@ -59,7 +59,7 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(80, 80, 35, 0.6).withName("aimClose");
+    return aimShooter(80, 80, 38, 0.5).withName("aimClose");
   }
 
   public Command aimAmp(boolean withDrive) {
@@ -102,6 +102,10 @@ public class Superstructure {
         .alongWith(intake.intakeNote())
         .until(conveyor::hasNoteTooFar)
         .andThen(conveyor.centerNote());
+  }
+
+  public Command retractIntakePivot() {
+    return intake.retractPivot();
   }
 
   public Command runShooterPivot(double volts) {
