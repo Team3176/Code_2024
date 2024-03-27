@@ -21,7 +21,7 @@ public class Conveyor extends SubsystemBase {
     inputs = new ConveyorIOInputsAutoLogged();
     this.conveyorIntakeFastVelocity = new LoggedTunableNumber("conveyor/IntakeFast", 0.5);
     this.conveyorIntakeSlowVelocity = new LoggedTunableNumber("conveyor/IntakeSlow", 0.1);
-    this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.2);
+    this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.5);
   }
 
   public boolean hasNote() {
