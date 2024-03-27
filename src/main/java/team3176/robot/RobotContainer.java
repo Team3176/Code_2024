@@ -108,6 +108,16 @@ public class RobotContainer {
                     .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
                     .withName("shooting")));
     NamedCommands.registerCommand(
+        "shootLookup",
+        superstructure
+            .aimShooterLookup()
+            .asProxy()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.5)
+                    .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
+                    .withName("shooting")));
+    NamedCommands.registerCommand(
         "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
 
     Command chaseNoteAuto =
