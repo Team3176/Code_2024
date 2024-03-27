@@ -345,10 +345,10 @@ public class Drivetrain extends SubsystemBase {
     return new Pose2d();
   }
 
-
   public ChassisSpeeds getCurrentChassisSpeed() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
+
   public double distanceToPoint(Pose2d point) {
     Transform2d dif = getPose().minus(point);
     return dif.getTranslation().getNorm();
