@@ -69,6 +69,12 @@ public class ShooterIOTalonSpark implements ShooterIO {
     pivotShooter.restoreFactoryDefaults();
     pivotEncoder.setPosition(0.0);
     pivotShooter.setSmartCurrentLimit(80);
+    pivotShooter.getEncoder().setPositionConversionFactor(18 / 255);
+    // SparkPIDController pidController = pivotShooter.getPIDController();
+    // pidController.setIMaxAccum(0.5, 0);
+    // pidController.setP(1.0);
+    // pidController.setI(0.2);
+    // pidController.setD(0.001);
     pivotShooter.setIdleMode(IdleMode.kBrake);
     pivotShooter.setInverted(true);
     pivotShooter.burnFlash();
@@ -152,7 +158,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
         rightVelocity,
         rightError,
         leftError);
-    inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
+    inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() );
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
     inputs.wheelLeftVelocityRadPerSec = Units.rotationsToRadians(leftVelocity.getValue());
     inputs.wheelRightVelocityRadPerSec = Units.rotationsToRadians(rightVelocity.getValue());
