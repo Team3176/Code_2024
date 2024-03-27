@@ -1,5 +1,5 @@
 {
-    "version": "v0.3",
+    "version": "v0.3.1",
     "robotConfiguration": {
         "mass": 74.08797700309194,
         "rotationalInertia": 6,
@@ -16,26 +16,26 @@
         "North3Note": {
             "waypoints": [
                 {
-                    "x": 1.527046799659729,
-                    "y": 6.424683570861816,
-                    "heading": 0,
+                    "x": 0.6933403611183167,
+                    "y": 6.652110576629639,
+                    "heading": 1.0445278830522644,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 22
                 },
                 {
-                    "x": 7.530223369598389,
-                    "y": 7.477188587188721,
-                    "heading": 0,
+                    "x": 7.720338821411133,
+                    "y": 7.310452938079834,
+                    "heading": 0.1899884683112146,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 11
                 },
                 {
-                    "x": 5.8540120124816895,
-                    "y": 6.8729729652404785,
+                    "x": 5.880190372467041,
+                    "y": 7.069122314453125,
                     "heading": 0,
                     "isInitialGuess": false,
                     "translationConstrained": true,
@@ -45,15 +45,15 @@
                 {
                     "x": 7.70564079284668,
                     "y": 5.839958667755127,
-                    "heading": 0,
+                    "heading": -0.13953873523509996,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 14
                 },
                 {
-                    "x": 5.054887771606445,
-                    "y": 6.424683570861816,
+                    "x": 5.910356521606445,
+                    "y": 6.782541751861572,
                     "heading": 0,
                     "isInitialGuess": false,
                     "translationConstrained": true,
@@ -6765,6 +6765,7 @@
                 {
                     "name": "Marker",
                     "target": 12,
+                    "trajTargetIndex": 12,
                     "targetTimestamp": 11.876846257820025,
                     "offset": 0,
                     "command": {
