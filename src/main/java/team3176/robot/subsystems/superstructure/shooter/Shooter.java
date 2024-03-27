@@ -31,6 +31,8 @@ public class Shooter extends SubsystemBase {
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   // public static final double FLYWHEEL_IDLE = 20;
 
+  private int pivotHasHomed = 0;
+
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
   private final LoggedTunableNumber flywheelLeftVelocity;
@@ -67,6 +69,9 @@ public class Shooter extends SubsystemBase {
     shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
+    if (inputs.lowerLimitSwitch) {
+      this.homePivot();
+    }
   }
 
   public static Shooter getInstance() {
@@ -201,6 +206,37 @@ public class Shooter extends SubsystemBase {
         });
   }
 
+  public Command aimAllWayUp() {
+    return this.runEnd(
+        () -> {
+          io.setFlywheelLeftVelocity(80);
+          io.setFlywheelLeftVelocity(40);
+          double voltage = 0;
+          double voltageStepSize = 0.5;
+          while (!inputs.upperLimitSwitch) {
+            voltage = voltage + voltageStepSize;
+            io.setPivotVoltage(voltage);
+          }
+          inputs.pivotPosition = new Rotation2d(Math.toRadians(32));
+        },
+        () -> {
+          io.setFlywheelVelocity(flywheelIdle.get());
+          io.setPivotVoltage(0);
+        });
+  }
+
+  public Command homePivot() {
+    return this.runOnce(
+        () -> {
+          if (inputs.lowerLimitSwitch) {
+            io.setPivotEncoderZero();
+          }
+          ;
+          this.pivotSetpoint = new Rotation2d();
+          this.pivotHasHomed++;
+        });
+  }
+
   public Command stopFlywheel() {
     return this.runOnce(() -> io.setFlywheelVelocity(0.0));
   }
@@ -220,6 +256,8 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
     Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());
-    PIDPositionPeriodic();
+    if (pivotHasHomed > 0) {
+      PIDPositionPeriodic();
+    }
   }
 }

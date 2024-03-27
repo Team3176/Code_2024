@@ -91,6 +91,16 @@ public class RobotContainer {
     leds.setDefaultCommand(leds.DefaultLED());
     // These all need to be sped up
     NamedCommands.registerCommand(
+        "shootCloseOne",
+        superstructure
+            .aimAllWayUp()
+            .asProxy()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.5)
+                    .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
+                    .withName("shooting")));
+    NamedCommands.registerCommand(
         "shoot",
         superstructure
             .aimClose()

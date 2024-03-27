@@ -206,6 +206,11 @@ public class ShooterIOTalonSpark implements ShooterIO {
   }
 
   @Override
+  public void setPivotEncoderZero() {
+    pivotEncoder.setPosition(0);
+  }
+
+  @Override
   public void reset() {
     // to be implemented
   }

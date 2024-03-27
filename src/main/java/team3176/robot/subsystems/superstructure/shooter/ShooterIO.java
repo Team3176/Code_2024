@@ -52,6 +52,8 @@ public interface ShooterIO {
 
   public default void setFlywheelLeftVelocity(double velocity) {}
 
+  public default void setPivotEncoderZero() {}
+
   // public default void setShooterPivotPID(int position) {}
 
   public default void reset() {}

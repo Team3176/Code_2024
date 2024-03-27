@@ -62,6 +62,10 @@ public class Superstructure {
     return aimShooter(80, 80, 38, 0.5).withName("aimClose");
   }
 
+  public Command aimAllWayUp() {
+    return shooter.aimAllWayUp().alongWith(transfer.shoot(0.6).withName("aimAllWayUp"));
+  }
+
   public Command aimAmp(boolean withDrive) {
     if (withDrive) {
       return Drivetrain.getInstance()
