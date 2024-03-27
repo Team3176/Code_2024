@@ -53,34 +53,47 @@ public class Superstructure {
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
     return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
   }
+  public Command aimShooterLookup() {
+    return shooter.aimLookup().alongWith(transfer.shoot(0.6));
+  }
 
   public Command aimClose() {
-    return aimShooter(60, 60, 35, 0.6);
+    return aimShooter(80, 80, 35, 0.6).withName("aimClose");
   }
 
   public Command aimAmp(boolean withDrive) {
-    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
-    // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
     if (withDrive) {
       return Drivetrain.getInstance()
-          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
-          .alongWith(aimAmpShooterClimb());
+          .goToPoint((FieldConstants.ampFace))
+          .asProxy()
+          .alongWith(
+              new WaitCommand(10.0)
+                  .until(
+                      () ->
+                          Drivetrain.getInstance()
+                                  .distanceToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+                              < 2.0)
+                  .andThen(aimShooterAmp().alongWith(climb.setAmpPosition())))
+          .withName("aimAmpandDrive");
     } else {
-      return aimAmpShooterClimb();
+      return aimShooterAmp().alongWith(climb.setAmpPosition()).withName("aimAmp");
     }
   }
 
-  private Command aimAmpShooterClimb() {
-    //return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
-    return aimShooterTune().alongWith(climb.setAmpPosition());
+  private Command aimShooterAmp() {
+    return aimShooter(22, 22, 35, 0.35);
   }
 
   public Command aimPodium() {
-    return aimShooter(80, 80, 7, 0.6);
+    return aimShooter(80, 80, 7, 0.6).withName("aimPodium");
+  }
+
+  public Command aimPass() {
+    return aimShooter(90, 40, 14, 0.6).withName("aimPodium");
   }
 
   public Command shoot() {
-    return conveyor.runShoot();
+    return conveyor.runShoot().withName("shoot");
   }
 
   public Command intakeNote() {
@@ -118,7 +131,7 @@ public class Superstructure {
     return climb.moveLeftRightPosition(deltaLeft, deltaRight);
   }
 
-  /* 
+  /*
   public Command climbDown() {
     return climb.moveLeftRightPosition(0, 0);
   }
@@ -137,7 +150,7 @@ public class Superstructure {
   }
 
   public Command spit() {
-    return intake.spit().alongWith(transfer.spit()).alongWith(conveyor.spit());
+    return intake.spit().alongWith(transfer.spit()).alongWith(conveyor.spit()).withName("spit");
   }
 
   public Command getSourceNoteAuto() {

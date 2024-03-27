@@ -26,6 +26,8 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
+import team3176.robot.Constants;
+import team3176.robot.Constants.Mode;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunableTransform3d;
 
@@ -192,9 +194,11 @@ public class LoggedAprilPhotonCam {
     Logger.processInputs("photonvision/" + this.name, inputs);
     PhotonPipelineResult results = io.getResult(inputs.rawBytes);
     results.setTimestampSeconds(inputs.timestamp);
-    //Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    if (Constants.getMode() == Mode.REPLAY) {
+      Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    }
     generateLoggingData(results);
-    //Logger.recordOutput("photonvision/" + name + "/timestamp", results.getTimestampSeconds());
+    // Logger.recordOutput("photonvision/" + name + "/timestamp", results.getTimestampSeconds());
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());

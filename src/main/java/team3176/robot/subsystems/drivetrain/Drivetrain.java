@@ -345,8 +345,13 @@ public class Drivetrain extends SubsystemBase {
     return new Pose2d();
   }
 
+
   public ChassisSpeeds getCurrentChassisSpeed() {
     return kinematics.toChassisSpeeds(getModuleStates());
+  }
+  public double distanceToPoint(Pose2d point) {
+    Transform2d dif = getPose().minus(point);
+    return dif.getTranslation().getNorm();
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
@@ -460,6 +465,14 @@ public class Drivetrain extends SubsystemBase {
             .minus(
                 AllianceFlipUtil.apply(
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
+
+  private Rotation2d getAimAnglePass() {
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(AllianceFlipUtil.apply(FieldConstants.passLocation.getTranslation())));
     return difference.getAngle();
   }
 
@@ -577,6 +590,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
+  }
+
+  public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
   }
 
   public Command goToPoint(int x, int y) {
