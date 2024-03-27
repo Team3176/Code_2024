@@ -171,14 +171,14 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          if(getDistance() < 1.1) {
+          if (getDistance() < 1.1) {
             io.setFlywheelRightVelocity(80.0);
             io.setFlywheelLeftVelocity(80.0);
           } else {
             io.setFlywheelRightVelocity(flywheelRightVelocity.get());
             io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
           }
-          
+
           this.pivotSetpoint = getAimAngle();
         },
         () -> {
