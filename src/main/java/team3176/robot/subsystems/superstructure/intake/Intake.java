@@ -127,7 +127,7 @@ public class Intake extends SubsystemBase {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 1.5);
+    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.5);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);

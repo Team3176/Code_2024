@@ -101,10 +101,12 @@ public class RobotContainer {
         "shootAim",
         superstructure
             .aimClose()
-            .alongWith(drivetrain.driveAndAim(() -> 0, () -> 0))
-            .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
-            .withTimeout(0.8)
-            .withName("shooting"));
+            .asProxy()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.5)
+                    .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
+                    .withName("shooting")));
     NamedCommands.registerCommand(
         "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
 
@@ -156,7 +158,10 @@ public class RobotContainer {
                     () -> controller.getSpin() * 1.5)
                 .withName("boost drive"));
     controller
-        .transStick.button(2).onTrue(superstructure.intakeNote().withName("intakeNote")).onFalse(superstructure.retractIntakePivot());
+        .transStick
+        .button(2)
+        .onTrue(superstructure.intakeNote().withName("intakeNote"))
+        .onFalse(superstructure.retractIntakePivot());
 
     controller
         .transStick

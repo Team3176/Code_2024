@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2952921076968478,
-        "y": 5.46844284727773
+        "x": 2.2050697410876046,
+        "y": 5.492445188825977
       },
       "isLocked": false,
       "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 2.758467645124463,
-        "y": 4.1097946041567255
+        "x": 2.4106692936128944,
+        "y": 4.14136241510425
       },
       "prevControl": {
-        "x": 1.3689410328416176,
-        "y": 4.048037865833043
+        "x": 1.2651860724138941,
+        "y": 4.126676732781186
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.45,
+      "waypointRelativePos": 0.25,
       "command": {
         "type": "parallel",
         "data": {
