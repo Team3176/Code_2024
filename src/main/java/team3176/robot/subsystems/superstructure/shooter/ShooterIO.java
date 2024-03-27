@@ -46,6 +46,8 @@ public interface ShooterIO {
 
   public default void setPivotVoltage(double voltage) {}
 
+  public default void setPivotPosition(Rotation2d position, double FFvoltage) {}
+
   public default void setFlywheelVelocity(double velocity) {}
 
   public default void setFlywheelRightVelocity(double velocity) {}

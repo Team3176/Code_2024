@@ -83,24 +83,33 @@ public class Shooter extends SubsystemBase {
   }
 
   private void PIDPositionPeriodic() {
-    double pivotVoltage =
+    boolean do_on_rio = true;
+    if(do_on_rio) {
+      double pivotVoltage =
         pivotPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -1.0, 1.0);
-    Logger.recordOutput("Shooter/pidRawOut", pivotVoltage);
-    if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage +=
+      pivotVoltage = MathUtil.clamp(pivotVoltage, -1.0, 1.0);
+      Logger.recordOutput("Shooter/pidRawOut", pivotVoltage);
+      if (pivotSetpoint.getDegrees() > 1.0) {
+        pivotVoltage +=
+            forwardPivotVoltageOffset.get()
+                * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
+      }
+      Logger.recordOutput(
+          "Shooter/feedforwardVolts",
           forwardPivotVoltageOffset.get()
-              * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
-    }
-    Logger.recordOutput(
-        "Shooter/feedforwardVolts",
-        forwardPivotVoltageOffset.get()
-            * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13)));
+              * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13)));
 
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
-    Logger.recordOutput("shooter/velocityError", pivotPIDController.getVelocityError());
-    Logger.recordOutput("Shooter/commandedVolts", pivotVoltage);
-    io.setPivotVoltage(pivotVoltage);
+      pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
+      Logger.recordOutput("shooter/velocityError", pivotPIDController.getVelocityError());
+      Logger.recordOutput("Shooter/commandedVolts", pivotVoltage);
+      io.setPivotVoltage(pivotVoltage);
+    } else {
+      double ffvolts =
+            forwardPivotVoltageOffset.get()
+                * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
+      io.setPivotPosition(pivotSetpoint.minus(pivotOffSet), ffvolts);
+    }
+    
   }
 
   @AutoLogOutput
@@ -227,6 +236,7 @@ public class Shooter extends SubsystemBase {
     if (inputs.lowerLimitSwitch) {
       pivotOffSet = inputs.pivotPosition;
     }
+    Logger.recordOutput("shooter/offset", pivotOffSet);
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
     Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());

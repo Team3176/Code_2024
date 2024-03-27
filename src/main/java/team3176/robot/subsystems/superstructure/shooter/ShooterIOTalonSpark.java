@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -44,6 +45,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
   // private CANcoder cancoder = new CANcoder(0);
   private RelativeEncoder pivotEncoder =
       pivotShooter.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    SparkPIDController pidController;
   private CANcoderConfiguration toApply = new CANcoderConfiguration();
   // private StatusSignal CANcoderPosition = cancoder.getPosition();
   final VelocityVoltage flywheelVelocity = new VelocityVoltage(0);
@@ -69,12 +71,12 @@ public class ShooterIOTalonSpark implements ShooterIO {
     pivotShooter.restoreFactoryDefaults();
     pivotEncoder.setPosition(0.0);
     pivotShooter.setSmartCurrentLimit(80);
-    pivotShooter.getEncoder().setPositionConversionFactor(18 / 255);
-    // SparkPIDController pidController = pivotShooter.getPIDController();
-    // pidController.setIMaxAccum(0.5, 0);
-    // pidController.setP(1.0);
-    // pidController.setI(0.2);
-    // pidController.setD(0.001);
+    pivotEncoder.setPositionConversionFactor(18 / 255);
+    pidController = pivotShooter.getPIDController();
+    pidController.setIMaxAccum(0.5, 0);
+    pidController.setP(1.0);
+    pidController.setI(0.2);
+    pidController.setD(0.001);
     pivotShooter.setIdleMode(IdleMode.kBrake);
     pivotShooter.setInverted(true);
     pivotShooter.burnFlash();
@@ -183,6 +185,10 @@ public class ShooterIOTalonSpark implements ShooterIO {
   @Override
   public void setPivotVoltage(double voltage) {
     pivotShooter.setVoltage(voltage);
+  }
+  @Override
+  public void setPivotPosition(Rotation2d position, double FFvoltage) {
+    pidController.setReference(position.getRotations(),ControlType.kPosition,0,FFvoltage);
   }
 
   @Override
