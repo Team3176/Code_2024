@@ -106,7 +106,7 @@ public class RobotContainer {
             .withTimeout(0.8)
             .withName("shooting"));
     NamedCommands.registerCommand(
-        "chaseNoteFull",
+        "chaseNote",
         drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
 
     Command chaseNoteAuto =
