@@ -94,16 +94,16 @@ public class RobotContainer {
         "shoot",
         superstructure
             .aimClose()
-            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
-            .withTimeout(1.5)
+            .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
+            .withTimeout(0.8)
             .withName("shooting"));
     NamedCommands.registerCommand(
         "shootAim",
         superstructure
             .aimClose()
             .alongWith(drivetrain.driveAndAim(() -> 0, () -> 0))
-            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
-            .withTimeout(1.5)
+            .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
+            .withTimeout(0.8)
             .withName("shooting"));
     NamedCommands.registerCommand(
         "chaseNoteFull",
