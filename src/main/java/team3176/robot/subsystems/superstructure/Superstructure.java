@@ -39,6 +39,7 @@ public class Superstructure {
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
     return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
   }
+
   public Command aimShooterLookup() {
     return shooter.aimLookup().alongWith(transfer.shoot(0.6));
   }
@@ -75,7 +76,7 @@ public class Superstructure {
   }
 
   public Command aimPass() {
-    return aimShooter(90, 40, 14, 0.6).withName("aimPodium");
+    return aimShooter(90, 40, 16, 0.6).withName("aimPodium");
   }
 
   public Command shoot() {
