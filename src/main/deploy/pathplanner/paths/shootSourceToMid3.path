@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7174983320037067,
-        "y": 4.47274771310106
+        "x": 3.9946565984681266,
+        "y": 2.6367102954276334
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9854391022602467,
-        "y": 2.996945230246094
+        "x": 5.894208117641587,
+        "y": 4.36339054456278
       },
       "isLocked": false,
-      "linkedName": "SourceStart"
+      "linkedName": "shootSourceSide"
     },
     {
       "anchor": {
-        "x": 2.8026277146304293,
-        "y": 1.588788060388622
+        "x": 8.000787379215604,
+        "y": 4.104930494191975
       },
       "prevControl": {
-        "x": 1.8026277146304293,
-        "y": 1.588788060388622
+        "x": 6.639440241908653,
+        "y": 4.052877159451502
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "mid3"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
@@ -43,10 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Speaker",
+  "folder": null,
   "previewStartingState": {
-    "rotation": -62.05112100535446,
+    "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

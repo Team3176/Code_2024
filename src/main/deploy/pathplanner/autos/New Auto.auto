@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 5.5
+      "x": 0.7012643218040466,
+      "y": 4.475527763366699
     },
-    "rotation": 0
+    "rotation": -60.64225138380537
   },
   "command": {
     "type": "sequential",
@@ -14,12 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StraightChar"
+            "pathName": "Source4Note345"
           }
         }
       ]
     }
   },
   "folder": null,
-  "choreoAuto": false
+  "choreoAuto": true
 }

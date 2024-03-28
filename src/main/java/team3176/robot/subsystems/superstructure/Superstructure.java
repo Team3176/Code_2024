@@ -1,5 +1,6 @@
 package team3176.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -32,38 +33,64 @@ public class Superstructure {
     transfer = new Transfer();
   }
 
+  public boolean readyToShoot() {
+    ChassisSpeeds speed = Drivetrain.getInstance().getCurrentChassisSpeed();
+    double driveVelocity = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond);
+    boolean drivetrainReady = driveVelocity < 0.25 && speed.omegaRadiansPerSecond < 0.1;
+    return shooter.readyToShoot() && drivetrainReady;
+  }
+
   public Command aimShooterTune() {
-    return shooter.aim().alongWith(transfer.shoot()).withName("aimTune");
+    return shooter.aim().alongWith(transfer.spinup());
+  }
+
+  public Command aimAuto() {
+    return aimShooterTune()
+        .raceWith(
+            new WaitCommand(2.0).until(() -> !conveyor.hasNote()).andThen(new WaitCommand(0.1)));
   }
 
   public Command aimShooter(double upper, double lower, double angle, double transferVel) {
     return shooter.aim(upper, lower, angle).alongWith(transfer.shoot(transferVel));
   }
 
+  public Command aimShooterLookup() {
+    return shooter.aimLookup().alongWith(transfer.shoot(0.6));
+  }
+
   public Command aimClose() {
-    return aimShooter(60, 60, 35, 0.6).withName("aimClose");
+    return aimShooter(80, 80, 38, 0.5).withName("aimClose");
   }
 
   public Command aimAmp(boolean withDrive) {
-    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpLeftPosition(),
-    // climb.setAmpRightPosition()).alongWith(Drivetrain.getInstance().goToPoint(FieldConstants.ampFaceCorner));
     if (withDrive) {
       return Drivetrain.getInstance()
-          .goToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
-          .alongWith(aimAmpShooterClimb())
+          .goToPoint((FieldConstants.ampFace))
+          .asProxy()
+          .alongWith(
+              new WaitCommand(10.0)
+                  .until(
+                      () ->
+                          Drivetrain.getInstance()
+                                  .distanceToPoint(AllianceFlipUtil.apply(FieldConstants.ampFace))
+                              < 2.0)
+                  .andThen(aimShooterAmp().alongWith(climb.setAmpPosition())))
           .withName("aimAmpandDrive");
     } else {
-      return aimAmpShooterClimb().withName("aimAmp");
+      return aimShooterAmp().alongWith(climb.setAmpPosition()).withName("aimAmp");
     }
   }
 
-  private Command aimAmpShooterClimb() {
-    // return aimShooter(17, 17, 30, 0.35).alongWith(climb.setAmpPosition());
-    return aimShooterTune().alongWith(climb.setAmpPosition());
+  private Command aimShooterAmp() {
+    return aimShooter(22, 22, 35, 0.35);
   }
 
   public Command aimPodium() {
     return aimShooter(80, 80, 7, 0.6).withName("aimPodium");
+  }
+
+  public Command aimPass() {
+    return aimShooter(90, 40, 16, 0.6).withName("aimPodium");
   }
 
   public Command shoot() {
@@ -75,6 +102,10 @@ public class Superstructure {
         .alongWith(intake.intakeNote())
         .until(conveyor::hasNoteTooFar)
         .andThen(conveyor.centerNote());
+  }
+
+  public Command retractIntakePivot() {
+    return intake.retractPivot();
   }
 
   public Command runShooterPivot(double volts) {

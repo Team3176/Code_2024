@@ -17,13 +17,13 @@ public class Transfer extends SubsystemBase {
   public Transfer() {
     io = new TransferIOTalon();
     inputs = new TransferIOInputsAutoLogged();
-    this.transferVelocity = new LoggedTunableNumber("transfer/velocity", 0.6);
+    this.transferVelocity = new LoggedTunableNumber("transfer/velocity", 0.5);
     this.transferLookup = new InterpolatingDoubleTreeMap();
     transferLookup.put(1.0, 0.6);
     transferLookup.put(3.2, 1.0);
   }
 
-  public Command shoot() {
+  public Command spinup() {
     return this.runEnd(
         () -> io.setTransferController(transferVelocity.get()), () -> io.setTransferController(0));
   }

@@ -186,22 +186,22 @@ public class ShooterIOTalonSpark implements ShooterIO {
   }
 
   @Override
-  public void setFlywheelUpperVelocity(double velocity) {
+  public void setFlywheelLeftVelocity(double velocity) {
     wheelLeftController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
-  public void setFlywheelLowerVelocity(double velocity) {
+  public void setFlywheelRightVelocity(double velocity) {
     wheelRightController.setControl(flywheelVelocity.withVelocity(velocity));
   }
 
   @Override
-  public void setWheelUpperVoltage(double velocity) {
+  public void setWheelLeftVoltage(double velocity) {
     wheelLeftController.set(velocity);
   }
 
   @Override
-  public void setWheelLowerVoltage(double velocity) {
+  public void setWheelRightVoltage(double velocity) {
     wheelRightController.set(velocity);
   }
 

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 5.5
+      "x": 0.7770997285842896,
+      "y": 6.6476969718933105
     },
-    "rotation": 0
+    "rotation": 61.82141721128172
   },
   "command": {
     "type": "sequential",
@@ -14,12 +14,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StraightChar9ft"
+            "pathName": "Amp4NoteFar"
           }
         }
       ]
     }
   },
   "folder": null,
-  "choreoAuto": false
+  "choreoAuto": true
 }

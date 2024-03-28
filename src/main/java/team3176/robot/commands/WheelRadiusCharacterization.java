@@ -19,7 +19,7 @@ import team3176.robot.util.LoggedTunableNumber;
 
 public class WheelRadiusCharacterization extends Command {
   private static final LoggedTunableNumber characterizationSpeed =
-      new LoggedTunableNumber("WheelRadiusCharacterization/SpeedRadsPerSec", 0.1);
+      new LoggedTunableNumber("WheelRadiusCharacterization/SpeedRadsPerSec", 0.7);
   private static final double driveRadius = Math.hypot(Drivetrain.LENGTH, Drivetrain.WIDTH);
   private static final DoubleSupplier gyroYawRadsSupplier =
       () -> Drivetrain.getInstance().getPoseOdom().getRotation().getRadians();

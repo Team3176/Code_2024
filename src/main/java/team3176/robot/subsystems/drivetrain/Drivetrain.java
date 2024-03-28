@@ -29,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -80,6 +81,12 @@ public class Drivetrain extends SubsystemBase {
     ROBOT_CENTRIC
   }
 
+  public enum orientationGoal {
+    PATHPLANNER,
+    NOTECAM,
+    SPEAKER
+  }
+
   // private PowerDistribution PDH = new PowerDistribution();
   // PowerDistribution(PowerManagementConstants.PDP_CAN_ID, ModuleType.kCTRE);
 
@@ -128,6 +135,7 @@ public class Drivetrain extends SubsystemBase {
           });
   private ChassisSpeeds desiredSpeeds;
   private TunablePID orientationPID;
+  private orientationGoal autonTarget;
 
   private Drivetrain(GyroIO io) {
     this.io = io;
@@ -213,12 +221,12 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator =
         new SwerveDrivePoseEstimator(
             kinematics, getSensorYaw(), getSwerveModulePositions(), odom.getPoseMeters());
-
+    autonTarget = orientationGoal.PATHPLANNER;
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocity,
+        this::driveVelocityAuto,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -289,6 +297,27 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
   }
 
+  public void driveVelocityAuto(ChassisSpeeds speeds) {
+    switch (autonTarget) {
+      case NOTECAM -> {
+        speeds.omegaRadiansPerSecond = getNoteChaseSpeeds().omegaRadiansPerSecond;
+        driveVelocity(speeds);
+      }
+      case PATHPLANNER -> driveVelocity(speeds);
+      case SPEAKER -> {
+        Rotation2d aimAngle = getAimAngle();
+        speeds.omegaRadiansPerSecond =
+            MathUtil.clamp(
+                orientationPID.calculate(
+                    this.getPose().getRotation().getRadians(), aimAngle.getRadians()),
+                -2.5,
+                2.5);
+        driveVelocity(speeds);
+      }
+      default -> driveVelocity(speeds);
+    }
+  }
+
   public void driveVelocityFieldCentric(ChassisSpeeds speeds) {
     Rotation2d fieldOffset = this.getPose().getRotation();
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
@@ -314,6 +343,15 @@ public class Drivetrain extends SubsystemBase {
       return simNoNoiseOdom.getPoseTrue();
     }
     return new Pose2d();
+  }
+
+  public ChassisSpeeds getCurrentChassisSpeed() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public double distanceToPoint(Pose2d point) {
+    Transform2d dif = getPose().minus(point);
+    return dif.getTranslation().getNorm();
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
@@ -401,6 +439,25 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  private ChassisSpeeds getNoteChaseSpeeds() {
+    if (PhotonVisionSystem.getInstance().seeNote) {
+      double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+      double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
+      Logger.recordOutput("Drivetrain/yawError", yawError);
+      ChassisSpeeds speed =
+          new ChassisSpeeds(
+              MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
+              0,
+              yawError * (yawkP.get()));
+      return speed;
+    } else {
+      if (PhotonVisionSystem.getInstance().notePitch < -12) {
+        return new ChassisSpeeds(0.7, 0.0, 0.0);
+      }
+      return new ChassisSpeeds();
+    }
+  }
+
   private Rotation2d getAimAngle() {
     Translation2d difference =
         (this.getPose()
@@ -408,6 +465,14 @@ public class Drivetrain extends SubsystemBase {
             .minus(
                 AllianceFlipUtil.apply(
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
+
+  private Rotation2d getAimAnglePass() {
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(AllianceFlipUtil.apply(FieldConstants.passLocation.getTranslation())));
     return difference.getAngle();
   }
 
@@ -527,6 +592,10 @@ public class Drivetrain extends SubsystemBase {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
   }
 
+  public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
+  }
+
   public Command goToPoint(int x, int y) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(180));
     PathConstraints constraints =
@@ -551,11 +620,9 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed = baseJoy.get();
-            speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
+            ChassisSpeeds chaseNote = getNoteChaseSpeeds();
+            speed.omegaRadiansPerSecond = chaseNote.omegaRadiansPerSecond;
             driveVelocityFieldCentric(speed);
           } else {
             driveVelocityFieldCentric(baseJoy.get());
@@ -566,23 +633,14 @@ public class Drivetrain extends SubsystemBase {
   public Command chaseNote() {
     return this.run(
         () -> {
-          if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
-            ChassisSpeeds speed =
-                new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
-                    0,
-                    yawError * (yawkP.get()));
-            driveVelocity(speed);
-          } else {
-            if (PhotonVisionSystem.getInstance().notePitch < -12) {
-              driveVelocity(new ChassisSpeeds(0.7, 0.0, 0.0));
-            }
-            driveVelocity(new ChassisSpeeds());
-          }
+          driveVelocity(getNoteChaseSpeeds());
         });
+  }
+
+  // Not protected by mutex lock to not interrupt the pathplanner command
+  public Command autoChaseTarget(orientationGoal goal) {
+    return Commands.runEnd(
+        () -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
   }
 
   public void runWheelRadiusCharacterization(double omegaSpeed) {
@@ -624,6 +682,7 @@ public class Drivetrain extends SubsystemBase {
 
     double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
     int sampleCount = Math.min(sampleTimestamps.length, inputs.odometryYawTimestamps.length);
+    sampleCount = sampleCount == 0 ? 1 : sampleCount;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];

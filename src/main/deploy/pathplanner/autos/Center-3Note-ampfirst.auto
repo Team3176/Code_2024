@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Wing1ToCenter"
@@ -45,12 +39,6 @@
           "type": "path",
           "data": {
             "pathName": "CenterToWing2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
           }
         },
         {

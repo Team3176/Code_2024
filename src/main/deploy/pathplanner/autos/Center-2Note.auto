@@ -14,19 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shootAim"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "CenterToWing2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "chaseNote"
           }
         },
         {

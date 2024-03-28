@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
     this.io = io;
     this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
-    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
+    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 4.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
   }
@@ -56,11 +56,6 @@ public class Intake extends SubsystemBase {
   private void runPivot(double volts) {
     // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
-    if ((inputs.lowerLimitSwitch && volts > 0.0)) {
-      volts = 0.0;
-    } else if ((inputs.upperLimitSwitch && volts < 0.0)) {
-      volts = -.2;
-    }
     io.setPivotVolts(volts);
   }
 
@@ -132,7 +127,7 @@ public class Intake extends SubsystemBase {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 1.5);
+    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.5);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
