@@ -42,6 +42,7 @@ public class Shooter extends SubsystemBase {
   private InterpolatingDoubleTreeMap shooterFlywheelLookupLeft;
   private InterpolatingDoubleTreeMap shooterFlywheelLookupRight;
   private InterpolatingDoubleTreeMap pivotLookup;
+  private boolean isHomed = false;
 
   private Shooter(ShooterIO io) {
     this.io = io;
@@ -114,6 +115,19 @@ public class Shooter extends SubsystemBase {
               * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
     }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
+    io.setPivotVoltage(pivotVoltage);
+  }
+
+  private void manualFallbackPeriodic() {
+    double pivotVoltage = 0.0;
+    if (pivotSetpoint.getDegrees() > 1.0) {
+      pivotVoltage = 2.0;
+      // if we are at the top hold there
+      if (inputs.upperLimitSwitch) {
+        pivotVoltage = 1.0;
+      }
+    }
+
     io.setPivotVoltage(pivotVoltage);
   }
 
@@ -240,10 +254,16 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
     if (inputs.lowerLimitSwitch) {
       pivotOffSet = inputs.pivotPosition;
+      isHomed = true;
     }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
     Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());
-    PIDPositionPeriodic();
+    if (isHomed) {
+      PIDPositionPeriodic();
+    } else {
+      // run in manual mode doing bang bang control based off limit switch
+      manualFallbackPeriodic();
+    }
   }
 }
