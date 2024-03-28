@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
-/*     pivotLookup.put(1.07, 38.0);
+    /*     pivotLookup.put(1.07, 38.0);
     pivotLookup.put(1.62, 25.0);
     pivotLookup.put(1.97, 22.0);
     pivotLookup.put(2.3, 19.5);
@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
     pivotLookup.put(3.38, 14.5);
     pivotLookup.put(3.47, 14.0);
     pivotLookup.put(3.58, 13.5);
-    pivotLookup.put(3.7,13.5);
+    pivotLookup.put(3.7, 13.5);
     pivotLookup.put(3.94, 12.5);
 
     shooterFlywheelLookupLeft = new InterpolatingDoubleTreeMap();
@@ -117,17 +117,17 @@ public class Shooter extends SubsystemBase {
     pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
     io.setPivotVoltage(pivotVoltage);
   }
+
   private void manualFallbackPeriodic() {
     double pivotVoltage = 0.0;
-    if(pivotSetpoint.getDegrees() > 1.0) {
+    if (pivotSetpoint.getDegrees() > 1.0) {
       pivotVoltage = 2.0;
-      //if we are at the top hold there 
-      if(inputs.upperLimitSwitch) {
-      pivotVoltage = 1.0;
+      // if we are at the top hold there
+      if (inputs.upperLimitSwitch) {
+        pivotVoltage = 1.0;
       }
     }
-    
-   
+
     io.setPivotVoltage(pivotVoltage);
   }
 
@@ -259,12 +259,11 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
     Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());
-    if(isHomed) {
+    if (isHomed) {
       PIDPositionPeriodic();
     } else {
       // run in manual mode doing bang bang control based off limit switch
       manualFallbackPeriodic();
     }
-    
   }
 }
