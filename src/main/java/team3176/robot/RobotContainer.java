@@ -252,7 +252,7 @@ public class RobotContainer {
             superstructure.moveClimbLeftRightPosition(
                 () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbLeftRight());
-
+    controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
     /*
     controller
         .operator

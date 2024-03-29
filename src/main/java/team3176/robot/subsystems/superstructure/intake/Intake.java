@@ -87,6 +87,10 @@ public class Intake extends SubsystemBase {
     return this.runOnce(() -> this.pivotSetpoint = 0.0);
   }
 
+  public Command climbIntake() {
+    return this.runOnce(() -> this.pivotSetpoint = 0.7);
+  }
+
   public Command spinIntake() {
     return this.runEnd(() -> io.setRollerVolts(rollerVolts.get()), () -> io.setRollerVolts(0));
   }
@@ -127,7 +131,10 @@ public class Intake extends SubsystemBase {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.5);
+    // if(pivot_pos <= 0.7) {
+    //   commandVolts *= 1.2;
+    // }
+    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.5);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);

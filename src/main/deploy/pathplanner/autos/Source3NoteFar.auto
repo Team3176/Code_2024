@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7174983320037067,
+      "y": 4.47274771310106
+    },
+    "rotation": -62.352067554690386
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootAim"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SourceToMid5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid5ToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootToMid4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid4ToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
