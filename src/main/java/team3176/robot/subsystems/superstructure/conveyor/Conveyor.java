@@ -2,6 +2,7 @@ package team3176.robot.subsystems.superstructure.conveyor;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
@@ -24,8 +25,14 @@ public class Conveyor extends SubsystemBase {
     this.conveyorShootVelocity = new LoggedTunableNumber("conveyor/Shoot", 0.5);
   }
 
+  @AutoLogOutput
   public boolean hasNote() {
     return isLaserIntakeSide() || isLaserShooterSide();
+  }
+
+  @AutoLogOutput
+  public boolean NoteCentered() {
+    return isLaserIntakeSide() && isLaserShooterSide();
   }
 
   public boolean hasNoteTooFar() {
