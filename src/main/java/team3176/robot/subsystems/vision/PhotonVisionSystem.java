@@ -48,11 +48,9 @@ public class PhotonVisionSystem extends SubsystemBase {
   public static final Transform3d Robot2camera3 =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(4), Units.inchesToMeters(-11), Units.inchesToMeters(21)),
+              Units.inchesToMeters(12), Units.inchesToMeters(10), Units.inchesToMeters(10.5)),
           new Rotation3d(
-              Units.degreesToRadians(0),
-              Units.degreesToRadians(72.5 - 90),
-              Units.degreesToRadians(0)));
+              Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(0)));
   public static final Transform3d Robot2camera4 =
       new Transform3d(
           new Translation3d(
