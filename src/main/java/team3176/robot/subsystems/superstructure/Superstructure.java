@@ -90,7 +90,7 @@ public class Superstructure {
   }
 
   public Command aimPass() {
-    return aimShooter(80, 40, 25, 0.6).withName("aimPodium");
+    return aimShooter(80, 40, 27, 0.6).withName("aimPodium");
   }
 
   public Command shoot() {

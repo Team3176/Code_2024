@@ -46,7 +46,7 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 4.0, 0.6, 0.00);
+    this.pivotPIDController = new TunablePID("shooter/pid", 2.0, 10.0, 0.00);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 16.5);
@@ -63,6 +63,7 @@ public class Shooter extends SubsystemBase {
     // pivotLookup.put(2.69, 18.0);
     // pivotLookup.put(2.92, 16.5);
     // pivotLookup.put(2.98, 16.5);
+    pivotLookup.put(2.0, 22.0);
     pivotLookup.put(2.33, 22.0);
     pivotLookup.put(2.36, 21.0);
     pivotLookup.put(2.45, 19.0);
@@ -110,9 +111,7 @@ public class Shooter extends SubsystemBase {
     double pivotVoltage =
         pivotPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
     if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage +=
-          forwardPivotVoltageOffset.get()
-              * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
+      pivotVoltage += forwardPivotVoltageOffset.get() * Math.cos(getPosition().getRadians() * 0.6);
     }
     pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 3);
     io.setPivotVoltage(pivotVoltage);
