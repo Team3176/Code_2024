@@ -36,6 +36,7 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber flywheelLeftVelocity;
   private final LoggedTunableNumber flywheelRightVelocity;
   private final LoggedTunableNumber forwardPivotVoltageOffset;
+  private final LoggedTunableNumber forwardPivotScale;
   private final LoggedTunableNumber flywheelIdle;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
@@ -53,6 +54,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
+    this.forwardPivotScale = new LoggedTunableNumber("shooter/pivotScale", 1.0);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 35.0);
@@ -84,15 +86,15 @@ public class Shooter extends SubsystemBase {
 
   private void PIDPositionPeriodic() {
     boolean do_on_rio = true;
+    double ffvolts =
+            forwardPivotVoltageOffset.get()* Math.cos(getPosition().getRadians() * forwardPivotScale.get() + Units.degreesToRadians(6));
     if(do_on_rio) {
       double pivotVoltage =
         pivotPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
       pivotVoltage = MathUtil.clamp(pivotVoltage, -1.0, 1.0);
       Logger.recordOutput("Shooter/pidRawOut", pivotVoltage);
       if (pivotSetpoint.getDegrees() > 1.0) {
-        pivotVoltage +=
-            forwardPivotVoltageOffset.get()
-                * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
+        pivotVoltage += ffvolts;
       }
       Logger.recordOutput(
           "Shooter/feedforwardVolts",
@@ -104,9 +106,6 @@ public class Shooter extends SubsystemBase {
       Logger.recordOutput("Shooter/commandedVolts", pivotVoltage);
       io.setPivotVoltage(pivotVoltage);
     } else {
-      double ffvolts =
-            forwardPivotVoltageOffset.get()
-                * Math.cos(getPosition().getRadians() + Units.degreesToRadians(13));
       io.setPivotPosition(pivotSetpoint.minus(pivotOffSet), ffvolts);
     }
     
