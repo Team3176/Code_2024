@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.function.DoubleSupplier;
 import team3176.robot.FieldConstants;
+import team3176.robot.subsystems.controller.Controller;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
@@ -13,6 +14,7 @@ import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
+import team3176.robot.subsystems.vision.LoggedNotePhotonCam;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.NoteVisualizer;
 
@@ -159,10 +161,14 @@ public class Superstructure {
   }
 
   public Command getSourceNoteAuto() {
-    return Drivetrain.getInstance()
-        .goToPoint(FieldConstants.sourePickup)
+    if (LoggedNotePhotonCam.seeNote){
+      return Drivetrain.getInstance().chaseNote();
+    }
+    return Drivetrain.getInstance().driveAndAimSource(() -> (Controller.getInstance().getForward()), () -> (Controller.getInstance().getStrafe()));
+        // .goToPoint(FieldConstants.sourePickup)
         // .andThen(Drivetrain.getInstance().chaseNote().raceWith(intakeNote()));
-        .andThen(Drivetrain.getInstance().chaseNote());
+        // .alongWith(Drivetrain.getInstance().chaseNote())
+        // .andThen(intake.deployPivot());
   }
 
   public Command scoreNoteCenterAuto() {

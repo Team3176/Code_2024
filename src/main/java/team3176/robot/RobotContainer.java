@@ -245,6 +245,9 @@ public class RobotContainer {
      */
     controller.operator.x().whileTrue(superstructure.spit());
     controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
+    controller.operator.a().whileTrue(
+                                    drivetrain.driveAndAimSource(() -> (controller.getForward()*-1), () -> (controller.getStrafe()*-1)))
+                                    ;
     controller
         .operator
         .leftBumper()

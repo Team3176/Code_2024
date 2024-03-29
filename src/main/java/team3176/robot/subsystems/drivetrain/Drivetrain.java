@@ -439,7 +439,7 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  private ChassisSpeeds getNoteChaseSpeeds() {
+  private ChassisSpeeds  getNoteChaseSpeeds() {
     if (PhotonVisionSystem.getInstance().seeNote) {
       double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
       double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
@@ -473,6 +473,14 @@ public class Drivetrain extends SubsystemBase {
         (this.getPose()
             .getTranslation()
             .minus(AllianceFlipUtil.apply(FieldConstants.passLocation.getTranslation())));
+    return difference.getAngle();
+  }
+  
+  private Rotation2d getAimAngleSource() {
+    Translation2d difference = 
+        (this.getPose()
+            .getTranslation()
+            .minus(AllianceFlipUtil.apply(FieldConstants.sourePickup.getTranslation())));
     return difference.getAngle();
   }
 
@@ -594,6 +602,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
+  }
+
+  public Command driveAndAimSource(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngleSource);
   }
 
   public Command goToPoint(int x, int y) {
