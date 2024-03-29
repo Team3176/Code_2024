@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
-  // public static final double FLYWHEEL_IDLE = 20;
+  public static final double FLYWHEEL_IDLE = 0;
 
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
     this.forwardPivotScale = new LoggedTunableNumber("shooter/pivotScale", 1.0);
-    this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
+    this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", FLYWHEEL_IDLE);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 35.0);
     pivotLookup.put(1.62, 25.0);
