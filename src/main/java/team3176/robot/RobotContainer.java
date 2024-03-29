@@ -260,7 +260,8 @@ public class RobotContainer {
         .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
         */
-    controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
+    controller.operator.povUp().whileTrue(Intake.getInstance().EmergencyHold());
+    controller.operator.povDown().whileTrue(Intake.getInstance().manualDown());
     // controller.operator.povDown().onTrue(superstructure.intakeNote());
 
     controller

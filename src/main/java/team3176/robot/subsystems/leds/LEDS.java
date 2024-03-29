@@ -81,7 +81,7 @@ public class LEDS extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private LEDS() {
-    leds = new AddressableLED(3); // PWM port
+    leds = new AddressableLED(2); // PWM port
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);

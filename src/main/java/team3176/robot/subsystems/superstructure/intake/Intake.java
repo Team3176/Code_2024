@@ -53,6 +53,10 @@ public class Intake extends SubsystemBase {
     return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
   }
 
+  public Command manualDown() {
+    return this.runEnd(() -> io.setPivotVolts(2.0), () -> io.setPivotVolts(0.0));
+  }
+
   private void runPivot(double volts) {
     // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
