@@ -179,6 +179,7 @@ public class RobotContainer {
         .whileTrue(
             drivetrain
                 .chaseNote()
+                .until(() -> Conveyor.getInstance().isLaserIntakeSide())
                 .alongWith(superstructure.intakeNote())
                 .alongWith(ledsRio.AutoDrive().asProxy())
                 .withName("intakeAutoDrive"));

@@ -140,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
   private Drivetrain(GyroIO io) {
     this.io = io;
     this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
-    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
+    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.07);
     inputs = new GyroIOInputsAutoLogged();
 
     // check for duplicates
@@ -446,7 +446,8 @@ public class Drivetrain extends SubsystemBase {
       Logger.recordOutput("Drivetrain/yawError", yawError);
       ChassisSpeeds speed =
           new ChassisSpeeds(
-              MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
+              MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -2.0, 2.0)
+                  * Math.cos(Units.degreesToRadians(yawError)),
               0,
               yawError * (yawkP.get()));
       return speed;

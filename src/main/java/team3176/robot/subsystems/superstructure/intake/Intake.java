@@ -143,9 +143,9 @@ public class Intake extends SubsystemBase {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    // if(pivot_pos <= 0.7) {
-    //   commandVolts *= 1.2;
-    // }
+    if (pivot_pos <= 0.7) {
+      commandVolts *= 2.0;
+    }
     commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.5);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
