@@ -50,11 +50,19 @@ public class Intake extends SubsystemBase {
   }
 
   public Command EmergencyHold() {
-    return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
+    return this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0));
   }
 
   public Command manualDown() {
-    return this.runEnd(() -> io.setPivotVolts(2.0), () -> io.setPivotVolts(0.0));
+    return this.runEnd(
+        () -> {
+          io.setPivotVolts(2.5);
+          io.setRollerVolts(4.0);
+        },
+        () -> {
+          io.setPivotVolts(0.0);
+          io.setRollerVolts(0);
+        });
   }
 
   private void runPivot(double volts) {
@@ -145,7 +153,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/offsetPos", pivot_pos);
     runPivot(commandVolts);
     pivotPID.checkParemeterUpdate();
-    if (inputs.lowerLimitSwitch) {
+    if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
       pivot_offset = inputs.pivotPosition - DEPLOY_POS;
     }

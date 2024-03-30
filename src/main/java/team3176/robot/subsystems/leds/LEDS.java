@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.List;
 import java.util.Optional;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 
 public class LEDS extends SubsystemBase {
   private static LEDS instance;
@@ -81,7 +82,7 @@ public class LEDS extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private LEDS() {
-    leds = new AddressableLED(2); // PWM port
+    leds = new AddressableLED(1); // PWM port
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
@@ -183,7 +184,7 @@ public class LEDS extends SubsystemBase {
     } else { // Enabled
       if (requestAmp) {
         strobe(Color.kWhite, strobeFastDuration);
-      } else if (hasNote) {
+      } else if (Conveyor.getInstance().hasNote()) {
         solid(Color.kGreen);
       } else if (trapping || climbing || autoDrive || autoShoot) {
         rainbow(rainbowCycleLength, rainbowDuration);
