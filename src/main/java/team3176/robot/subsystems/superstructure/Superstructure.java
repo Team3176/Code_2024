@@ -161,7 +161,7 @@ public class Superstructure {
   }
 
   public Command getSourceNoteAuto() {
-    if (LoggedNotePhotonCam.seeNote){
+    if (LoggedNotePhotonCam.getInstance().seeNote){
       return Drivetrain.getInstance().chaseNote();
     }
     return Drivetrain.getInstance().driveAndAimSource(() -> (Controller.getInstance().getForward()), () -> (Controller.getInstance().getStrafe()));

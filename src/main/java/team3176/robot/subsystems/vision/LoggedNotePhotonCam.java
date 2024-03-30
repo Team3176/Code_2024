@@ -12,7 +12,7 @@ public class LoggedNotePhotonCam {
 
   public double noteYaw;
   public double notePitch;
-  public static boolean seeNote;
+  public boolean seeNote;
 
   private PhotonCameraIO io;
 
