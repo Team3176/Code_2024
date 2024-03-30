@@ -15,6 +15,7 @@ import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
 import team3176.robot.subsystems.vision.LoggedNotePhotonCam;
+import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.NoteVisualizer;
 
@@ -161,7 +162,7 @@ public class Superstructure {
   }
 
   public Command getSourceNoteAuto() {
-    if (LoggedNotePhotonCam.getInstance().seeNote){
+    if (PhotonVisionSystem.getInstance().seeNote){
       return Drivetrain.getInstance().chaseNote();
     }
     return Drivetrain.getInstance().driveAndAimSource(() -> (Controller.getInstance().getForward()), () -> (Controller.getInstance().getStrafe()));
