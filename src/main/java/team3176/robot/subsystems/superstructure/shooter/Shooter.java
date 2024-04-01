@@ -152,6 +152,13 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromDegrees(pivotLookup.get(getDistance()));
   }
 
+  // @AutoLogOutput
+  // private Rotation2d getAimAngleFuture() {
+  //   double futureDistance = 0;
+  //
+  //    return Rotation2d.fromDegrees(pivotLookup.get(futureDistance));
+  //  }
+
   @AutoLogOutput
   public double getDistance() {
     Pose3d current =

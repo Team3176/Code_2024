@@ -254,6 +254,8 @@ public class RobotContainer {
                 () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbLeftRight());
     controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
+    controller.operator.leftTrigger().onTrue(superstructure.aimClose());
+    controller.operator.rightTrigger().onTrue(superstructure.shoot());
     /*
     controller
         .operator
