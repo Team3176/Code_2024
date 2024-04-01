@@ -66,20 +66,20 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     controller = Controller.getInstance();
-    superstructure = Superstructure.getInstance();
+    // superstructure = Superstructure.getInstance();
     drivetrain = Drivetrain.getInstance();
 
-    leds = LEDSubsystem.getInstance();
-    ledsRio = LEDS.getInstance();
-    endMatchAlert.onTrue(leds.EndgameStart());
+    // leds = LEDSubsystem.getInstance();
+    // ledsRio = LEDS.getInstance();
+    // endMatchAlert.onTrue(leds.EndgameStart());
 
     // superstructure = Superstructure.getInstance();
-    visualization = new Visualization();
+    // visualization = new Visualization();
     if (Constants.VISION_CONNECTED) {
       vision = PhotonVisionSystem.getInstance();
     }
 
-    pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kRev);
+    pdh = new PowerDistribution(Hardwaremap.PDH_CID, ModuleType.kCTRE);
 
     drivetrain.setDefaultCommand(
         drivetrain
@@ -88,7 +88,7 @@ public class RobotContainer {
                 () -> controller.getStrafe(),
                 () -> controller.getSpin())
             .withName("default drive"));
-    leds.setDefaultCommand(leds.DefaultLED());
+    // leds.setDefaultCommand(leds.DefaultLED());
     // These all need to be sped up
     NamedCommands.registerCommand(
         "shoot",

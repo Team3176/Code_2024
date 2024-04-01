@@ -77,10 +77,10 @@ public class Hardwaremap {
 
   public static final String SWERVEPOD_REV_CBN = "rio";
 
-  public static final SwervePodHardwareID FR = POD006;
-  public static final SwervePodHardwareID FL = POD008;
+  public static final SwervePodHardwareID FR = POD001;
+  public static final SwervePodHardwareID FL = POD009;
   public static final SwervePodHardwareID BL = POD002;
-  public static final SwervePodHardwareID BR = POD004;
+  public static final SwervePodHardwareID BR = POD003;
 
   public static final int STEER_FR_CID = 11;
   public static final int STEER_FL_CID = 21;
