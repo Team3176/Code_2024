@@ -68,7 +68,7 @@ public class Drivetrain extends SubsystemBase {
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
-
+  private boolean visionOverride;
   static final Lock odometryLock = new ReentrantLock();
 
   private final LoggedTunableNumber pitchkP;
@@ -337,13 +337,14 @@ public class Drivetrain extends SubsystemBase {
     return odom.getPoseMeters();
   }
 
+  @AutoLogOutput
   public Pose2d getPoseFuture(double offsetSec) {
     ChassisSpeeds speeds = getCurrentChassisSpeed();
     Pose2d currentPose = getPose();
-    double futureX = currentPose.getX() * speeds.vxMetersPerSecond * offsetSec;
-    double futureY = currentPose.getY() * speeds.vyMetersPerSecond * offsetSec;
+    double futureX = currentPose.getX() + (speeds.vxMetersPerSecond * offsetSec);
+    double futureY = currentPose.getY() + (speeds.vyMetersPerSecond * offsetSec);
     double futureRotation2d =
-        currentPose.getRotation().getRadians() * speeds.omegaRadiansPerSecond * offsetSec;
+        currentPose.getRotation().getRadians() + (speeds.omegaRadiansPerSecond * offsetSec);
     Pose2d futurePose = new Pose2d(futureX, futureY, Rotation2d.fromRadians(futureRotation2d));
     return futurePose;
   }
@@ -366,8 +367,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
-    visionPose3d = p;
-    poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
+    if (visionOverride) {
+      visionPose3d = p;
+      poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
+    }
   }
 
   public void resetPose(Pose2d pose) {
@@ -670,6 +673,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Command resetPoseToVisionCommand() {
     return new InstantCommand(() -> resetPose(visionPose3d.toPose2d()));
+  }
+
+  public void setVisionOverride(boolean onoff) {
+    this.visionOverride = onoff;
   }
 
   @Override
