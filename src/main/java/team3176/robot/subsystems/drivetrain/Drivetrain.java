@@ -337,7 +337,7 @@ public class Drivetrain extends SubsystemBase {
     return odom.getPoseMeters();
   }
 
-  public Pose2d Pose2dFuture(double offsetSec) {
+  public Pose2d getPoseFuture(double offsetSec) {
     ChassisSpeeds speeds = getCurrentChassisSpeed();
     Pose2d currentPose = getPose();
     double futureX = currentPose.getX() * speeds.vxMetersPerSecond * offsetSec;
