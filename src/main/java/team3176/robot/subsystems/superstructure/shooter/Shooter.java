@@ -10,6 +10,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -30,6 +31,9 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
   // public static final double FLYWHEEL_IDLE = 20;
+  private double lastDistance = 0;
+  private double futureDistance = 0;
+  private double lastTimestamp;
 
   private final TunablePID pivotPIDController;
   private final LoggedTunableNumber aimAngle;
@@ -152,12 +156,10 @@ public class Shooter extends SubsystemBase {
     return Rotation2d.fromDegrees(pivotLookup.get(getDistance()));
   }
 
-  // @AutoLogOutput
-  // private Rotation2d getAimAngleFuture() {
-  //   double futureDistance = 0;
-  //
-  //    return Rotation2d.fromDegrees(pivotLookup.get(futureDistance));
-  //  }
+  @AutoLogOutput
+  private Rotation2d getAimAngleFuture() {
+    return Rotation2d.fromDegrees(pivotLookup.get(futureDistance));
+  }
 
   @AutoLogOutput
   public double getDistance() {
@@ -258,6 +260,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    this.futureDistance = getDistance() * ((getDistance() - this.lastDistance) / this.lastDistance) * (Timer.getFPGATimestamp() - this.lastTimestamp);
+    this.lastDistance = getDistance();
+    this.lastTimestamp = Timer.getFPGATimestamp();
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
     if (inputs.lowerLimitSwitch) {

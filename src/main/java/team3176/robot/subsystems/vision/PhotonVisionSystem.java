@@ -79,7 +79,7 @@ public class PhotonVisionSystem extends SubsystemBase {
 
     notecam = new LoggedNotePhotonCam();
     aprilCameras.add(new LoggedAprilPhotonCam("camera1", Robot2camera1));
-    // aprilCameras.add(new LoggedAprilPhotonCam("camera2", Robot2camera2));
+    aprilCameras.add(new LoggedAprilPhotonCam("camera2", Robot2camera2));
     // aprilCameras.add(new LoggedAprilPhotonCam("camera3", Robot2camera3));
     try {
       field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
