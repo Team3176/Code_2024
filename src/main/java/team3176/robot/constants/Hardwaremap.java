@@ -57,15 +57,15 @@ public class Hardwaremap {
       Constants.getRobot() == RobotType.ROBOT_2024C ? "canivore" : "rio";
   public static final String SWERVEPOD_CBN = SWERVEPOD_CTRE_CBN;
   public static final SwervePodHardwareID POD001 =
-      new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -6.326);
+      new SwervePodHardwareID(1, 10, SWERVEPOD_CBN, 12, SWERVEPOD_CBN, -98);
   public static final SwervePodHardwareID POD002 =
       new SwervePodHardwareID(2, 20, SWERVEPOD_CBN, 22, SWERVEPOD_CBN, 15.820);
   public static final SwervePodHardwareID POD003 =
-      new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, 141.943);
+      new SwervePodHardwareID(3, 30, SWERVEPOD_CBN, 32, SWERVEPOD_CBN, -117.8);
   public static final SwervePodHardwareID POD004 =
       new SwervePodHardwareID(4, 40, SWERVEPOD_CBN, 42, SWERVEPOD_CBN, -44.121); // 120.5
   public static final SwervePodHardwareID POD005 =
-      new SwervePodHardwareID(5, 13, SWERVEPOD_CBN, 14, SWERVEPOD_CBN, -30.525);
+      new SwervePodHardwareID(5, 13, SWERVEPOD_CBN, 14, SWERVEPOD_CBN, 81.6);
   public static final SwervePodHardwareID POD006 =
       new SwervePodHardwareID(6, 23, SWERVEPOD_CBN, 24, SWERVEPOD_CBN, -92.2);
   public static final SwervePodHardwareID POD007 =
@@ -73,7 +73,7 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD008 =
       new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -22.357);
   public static final SwervePodHardwareID POD009 =
-      new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, -94.658);
+      new SwervePodHardwareID(9, 15, SWERVEPOD_CBN, 16, SWERVEPOD_CBN, 174.1);
 
   public static final String SWERVEPOD_REV_CBN = "rio";
 

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -202,20 +203,20 @@ public class RobotContainer {
                 shooterOverride));
     controller.rotStick.button(3).whileTrue(superstructure.aimShooterTune().withName("aimClose")); */
     // this is reverse switch once we prove out the auto score
-    /*     controller
-        .rotStick
-        .button(4)
-        .whileTrue(
-            Commands.either(
-                superstructure.aimAmp(true).withName("aimAmp"),
-                superstructure.aimAmp(false).withName("aimAmpDrive"),
-                ampOverride))
-        .onFalse(Climb.getInstance().stow());
+    //  controller
+    //     .rotStick
+    //     .button(4)
+    //     .whileTrue(
+    //         Commands.either(
+    //             superstructure.aimAmp(true).withName("aimAmp"),
+    //             superstructure.aimAmp(false).withName("aimAmpDrive"),
+    //             ampOverride))
+    //     .onFalse(Climb.getInstance().stow());
     controller
         .rotStick
         .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain)); */
-
+        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    /*
     /*
      * Operator
      */
