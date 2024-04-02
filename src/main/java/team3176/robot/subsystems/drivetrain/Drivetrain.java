@@ -342,9 +342,10 @@ public class Drivetrain extends SubsystemBase {
     Pose2d currentPose = getPose();
     double futureX = currentPose.getX() * speeds.vxMetersPerSecond * offsetSec;
     double futureY = currentPose.getY() * speeds.vyMetersPerSecond * offsetSec;
-    double futureRotation2d  = currentPose.getRotation().getRadians() * speeds.omegaRadiansPerSecond * offsetSec;
-    Pose2d futurePose; 
-    futurePose = Pose2d(futureX, futureY, Rotation2d.fromRadians(futureRotation2d)futureRotation2d));
+    double futureRotation2d =
+        currentPose.getRotation().getRadians() * speeds.omegaRadiansPerSecond * offsetSec;
+    Pose2d futurePose;
+    futurePose = new Pose2d(futureX, futureY, Rotation2d.fromRadians(futureRotation2d));
     return odom.getPoseMeters();
   }
 
