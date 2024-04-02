@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -246,7 +245,7 @@ public class Shooter extends SubsystemBase {
             io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
           }
 
-          this.pivotSetpoint = getAimAngleFuture();
+          this.pivotSetpoint = getAimAngle();
         },
         () -> {
           io.setFlywheelVelocity(flywheelIdle.get());
@@ -279,12 +278,12 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    this.futureDistance =
-        getDistance()
-            * ((getDistance() - this.lastDistance) / this.lastDistance)
-            * (Timer.getFPGATimestamp() - this.lastTimestamp);
-    this.lastDistance = getDistance();
-    this.lastTimestamp = Timer.getFPGATimestamp();
+    //    this.futureDistance =
+    //        getDistance()
+    //            * ((getDistance() - this.lastDistance) / this.lastDistance)
+    //            * (Timer.getFPGATimestamp() - this.lastTimestamp);
+    //    this.lastDistance = getDistance();
+    //    this.lastTimestamp = Timer.getFPGATimestamp();
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
     if (inputs.lowerLimitSwitch) {

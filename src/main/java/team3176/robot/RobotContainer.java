@@ -150,6 +150,7 @@ public class RobotContainer {
     shooterOverride = controller.switchBox.button(1);
     ampOverride = controller.switchBox.button(2);
     intakeOverride = controller.switchBox.button(3);
+    visionOverride = controller.switchBox.button(4);
     /*
      * Translation Stick
      */
@@ -277,6 +278,12 @@ public class RobotContainer {
         .switchBox
         .button(5)
         .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
+    
+    controller.
+        .switchBox
+        .button(4)
+        .onTrue(drivetrain.setVisionOverride(true))
+        .onFalse(drivetrain.setVisionOverride(false));
   }
 
   public void clearCanFaults() {
