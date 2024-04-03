@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
@@ -72,6 +73,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     pivotShooter.setIdleMode(IdleMode.kBrake);
     pivotShooter.setInverted(true);
     pivotShooter.burnFlash();
+    pivotShooter.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    pivotShooter.setSoftLimit(SoftLimitDirection.kReverse, 0);
 
     lowerLimitSwitch = new DigitalInput(Hardwaremap.shooterPivotLower_DIO);
     upperLimitSwitch = new DigitalInput(Hardwaremap.shooterPivotUpper_DIO);

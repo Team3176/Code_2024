@@ -246,7 +246,7 @@ public class Shooter extends SubsystemBase {
             io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
           }
 
-          this.pivotSetpoint = getAimAngleFuture();
+          this.pivotSetpoint = getAimAngle();
         },
         () -> {
           io.setFlywheelVelocity(flywheelIdle.get());

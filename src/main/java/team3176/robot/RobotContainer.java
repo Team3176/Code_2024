@@ -225,7 +225,10 @@ public class RobotContainer {
                         .withName("aimTuneAndDrive"),
                     () -> Shooter.getInstance().getDistance() > 9.0),
                 shooterOverride));
-    controller.rotStick.button(3).whileTrue(superstructure.aimShooterTune().withName("aimClose"));
+    controller
+        .rotStick
+        .button(3)
+        .whileTrue(superstructure.aimShooterTune().withName("aimShooterTune"));
     // this is reverse switch once we prove out the auto score
     controller
         .rotStick
