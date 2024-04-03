@@ -367,7 +367,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
-    if (visionOverride) {
+    if (!visionOverride) {
       visionPose3d = p;
       poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
     }
@@ -675,8 +675,8 @@ public class Drivetrain extends SubsystemBase {
     return new InstantCommand(() -> resetPose(visionPose3d.toPose2d()));
   }
 
-  public void setVisionOverride(boolean onoff) {
-    this.visionOverride = onoff;
+  public Command setVisionOverride(boolean onoff) {
+    return new InstantCommand(() -> this.visionOverride = onoff);
   }
 
   @Override

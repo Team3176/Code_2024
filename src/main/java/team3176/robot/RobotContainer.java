@@ -60,6 +60,7 @@ public class RobotContainer {
   private Trigger shooterOverride;
   private Trigger ampOverride;
   private Trigger intakeOverride;
+  private Trigger visionOverride;
   private LEDS ledsRio;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -279,7 +280,7 @@ public class RobotContainer {
         .button(5)
         .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
     
-    controller.
+    controller
         .switchBox
         .button(4)
         .onTrue(drivetrain.setVisionOverride(true))
