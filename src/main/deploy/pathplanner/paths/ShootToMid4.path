@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 8.04997130566712,
-        "y": 2.525937359567027
+        "x": 7.13251781972314,
+        "y": 1.7143000301625615
       },
       "prevControl": {
-        "x": 5.814714328343006,
-        "y": 0.6091255897495544
+        "x": 6.003837788925578,
+        "y": 0.5186075215900454
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
             {
               "type": "named",
               "data": {
-                "name": "intake"
+                "name": "deployIntake"
               }
             }
           ]
@@ -62,7 +62,7 @@
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.5,
     "rotation": 38.13139526515736,
     "rotateFast": false
   },

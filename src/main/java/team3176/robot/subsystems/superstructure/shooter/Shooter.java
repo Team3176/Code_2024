@@ -62,12 +62,6 @@ public class Shooter extends SubsystemBase {
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 38.0);
     pivotLookup.put(1.62, 25.0);
-    // pivotLookup.put(1.97, 22.0);
-    // pivotLookup.put(2.3, 19.5);
-    // pivotLookup.put(2.7, 18.0);
-    // pivotLookup.put(2.69, 18.0);
-    // pivotLookup.put(2.92, 16.5);
-    // pivotLookup.put(2.98, 16.5);
     pivotLookup.put(2.0, 22.0);
     pivotLookup.put(2.33, 22.0);
     pivotLookup.put(2.36, 21.0);

@@ -118,14 +118,14 @@ public class RobotContainer {
                     .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
                     .withName("shooting")));
     NamedCommands.registerCommand(
-        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
+        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(1.5));
 
     Command chaseNoteAuto =
         drivetrain
             .autoChaseTarget(orientationGoal.NOTECAM)
             .until(() -> Conveyor.getInstance().hasNote())
             .withTimeout(2.0);
-
+    NamedCommands.registerCommand("deployIntake", Intake.getInstance().deployPivot());
     // using schedule to prevent intake from being cancelled if the path ends
     NamedCommands.registerCommand(
         "intake",
