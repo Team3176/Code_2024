@@ -42,6 +42,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Mid1toShoot"
