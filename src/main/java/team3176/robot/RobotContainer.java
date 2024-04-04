@@ -115,7 +115,7 @@ public class RobotContainer {
             .asProxy()
             .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
             .raceWith(
-                new WaitCommand(0.5).until(() -> superstructure.readyToShoot())
+                new WaitCommand(0.5) // .until(() -> superstructure.readyToShoot())
                     .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
                     .withName("shooting")));
     NamedCommands.registerCommand(
