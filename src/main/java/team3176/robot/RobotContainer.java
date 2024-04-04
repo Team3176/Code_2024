@@ -91,13 +91,14 @@ public class RobotContainer {
             .withName("default drive"));
     leds.setDefaultCommand(leds.DefaultLED());
     // These all need to be sped up
-    NamedCommands.registerCommand(
-        "shoot",
-        superstructure
-            .aimClose()
-            .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
-            .withTimeout(0.8)
-            .withName("shooting"));
+    NamedCommands.registerCommand("shoot", new WaitCommand(1.0));
+    // NamedCommands.registerCommand(
+    //     "shoot",
+    //     superstructure
+    //         .aimClose()
+    //         .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
+    //         .withTimeout(0.8)
+    //         .withName("shooting"));
     NamedCommands.registerCommand(
         "shootAim",
         superstructure
@@ -111,8 +112,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "shootLookup",
         superstructure
-            .aimShooterLookup()
-            .asProxy()
+            .aimShooterLookup().asProxy()
             .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
             .raceWith(
                 new WaitCommand(0.5) // .until(() -> superstructure.readyToShoot())

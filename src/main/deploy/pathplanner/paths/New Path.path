@@ -3,49 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3358293513462027,
-        "y": 2.9507020732791465
+        "x": 0.7140539671704343,
+        "y": 4.463394161163323
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8688314094309333,
-        "y": 1.2976053662063962
+        "x": 0.9309713931927864,
+        "y": 3.889968170561341
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.229595623253747,
-        "y": 1.1115697231394475
+        "x": 2.2190516256032513,
+        "y": 3.127455668973838
       },
       "prevControl": {
-        "x": 5.229595623253747,
-        "y": 1.1115697231394475
+        "x": 1.2190516256032513,
+        "y": 3.127455668973838
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Mid5"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 0.15,
-      "constraints": {
-        "maxVelocity": 4.0,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 400.0
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -53,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "deployIntake"
+                "name": "shootLookup"
               }
             }
           ]
@@ -62,21 +50,21 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.2,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
-    "velocity": 1.5,
-    "rotation": -14.127353412764444,
+    "velocity": 0,
+    "rotation": -30.65925492397043,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Speaker",
   "previewStartingState": {
-    "rotation": -61.023334359325524,
+    "rotation": -62.643946777418996,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
