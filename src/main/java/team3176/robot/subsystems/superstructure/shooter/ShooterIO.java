@@ -28,8 +28,8 @@ public interface ShooterIO {
     public double wheelRightAmpsSupply = 0.0;
     public double wheelLeftAmpsSupply = 0.0;
     public double pivotAmpsStator = 0.0;
-    public double rightWheelError = 0.0;
-    public double leftWheelError = 0.0;
+    public double rightWheelReference = 0.0;
+    public double leftWheelReference = 0.0;
     // public double[] CurrentAmps = new double[] {};
     // public double[] TempCelcius = new double[] {};
 

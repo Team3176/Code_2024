@@ -63,8 +63,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private final StatusSignal<Double> rightCurrentAmpsSupply;
   private final StatusSignal<Double> leftVelocity;
   private final StatusSignal<Double> rightVelocity;
-  private final StatusSignal<Double> leftError;
-  private final StatusSignal<Double> rightError;
+  private double leftSetpoint;
+  private double rightSetpoint;
 
   public ShooterIOTalonSpark() {
     pivotShooter.restoreFactoryDefaults();
@@ -118,8 +118,8 @@ public class ShooterIOTalonSpark implements ShooterIO {
     rightCurrentAmpsSupply = wheelRightController.getSupplyCurrent();
     leftVelocity = wheelLeftController.getVelocity();
     rightVelocity = wheelRightController.getVelocity();
-    leftError = wheelLeftController.getDifferentialClosedLoopError();
-    rightError = wheelRightController.getDifferentialClosedLoopError();
+    // leftError = wheelLeftController.getClosedLoopReference();
+    // rightError = wheelRightController.getClosedLoopReference();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
@@ -130,9 +130,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
         rightCurrentAmpsSupply,
         leftCurrentAmpsSupply,
         leftVelocity,
-        rightVelocity,
-        leftError,
-        rightError);
+        rightVelocity);
 
     wheelLeftController.optimizeBusUtilization();
     wheelRightController.optimizeBusUtilization();
@@ -152,16 +150,14 @@ public class ShooterIOTalonSpark implements ShooterIO {
         rightCurrentAmpsSupply,
         leftCurrentAmpsSupply,
         leftVelocity,
-        rightVelocity,
-        rightError,
-        leftError);
+        rightVelocity);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
     inputs.wheelLeftVelocityRadPerSec = Units.rotationsToRadians(leftVelocity.getValue());
     inputs.wheelRightVelocityRadPerSec = Units.rotationsToRadians(rightVelocity.getValue());
 
-    inputs.leftWheelError = leftError.getValue();
-    inputs.rightWheelError = rightError.getValue();
+    inputs.leftWheelReference = leftSetpoint;
+    inputs.rightWheelReference = rightSetpoint;
 
     inputs.wheelLeftAppliedVolts = leftAppliedVolts.getValue();
     inputs.wheelRightAppliedVolts = rightAppliedVolts.getValue();
@@ -186,16 +182,20 @@ public class ShooterIOTalonSpark implements ShooterIO {
   public void setFlywheelVelocity(double velocity) {
     wheelRightController.setControl(flywheelVelocity.withVelocity(velocity));
     wheelLeftController.setControl(flywheelVelocity.withVelocity(velocity));
+    leftSetpoint = velocity;
+    rightSetpoint = velocity;
   }
 
   @Override
   public void setFlywheelLeftVelocity(double velocity) {
     wheelLeftController.setControl(flywheelVelocity.withVelocity(velocity));
+    leftSetpoint = velocity;
   }
 
   @Override
   public void setFlywheelRightVelocity(double velocity) {
     wheelRightController.setControl(flywheelVelocity.withVelocity(velocity));
+    rightSetpoint = velocity;
   }
 
   @Override

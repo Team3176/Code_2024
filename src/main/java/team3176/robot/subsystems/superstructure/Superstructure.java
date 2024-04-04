@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import team3176.robot.FieldConstants;
 // import java.util.function.IntSupplier;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
@@ -33,10 +34,13 @@ public class Superstructure {
     transfer = new Transfer();
   }
 
+  @AutoLogOutput
   public boolean readyToShoot() {
+
     ChassisSpeeds speed = Drivetrain.getInstance().getCurrentChassisSpeed();
     double driveVelocity = Math.hypot(speed.vxMetersPerSecond, speed.vyMetersPerSecond);
-    boolean drivetrainReady = driveVelocity < 0.25 && speed.omegaRadiansPerSecond < 0.1;
+    boolean drivetrainReady =
+        driveVelocity < 0.25 && Drivetrain.getInstance().aimErrorDegrees() < 3.0;
     return shooter.readyToShoot() && drivetrainReady;
   }
 

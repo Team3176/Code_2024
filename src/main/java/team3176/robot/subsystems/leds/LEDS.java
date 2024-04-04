@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.List;
 import java.util.Optional;
+import team3176.robot.subsystems.superstructure.Superstructure;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 
 public class LEDS extends SubsystemBase {
@@ -197,7 +198,12 @@ public class LEDS extends SubsystemBase {
       if (requestAmp) {
         strobe(Color.kWhite, strobeFastDuration);
       } else if (Conveyor.getInstance().hasNote()) {
-        solid(Color.kGreen);
+        if (Superstructure.getInstance().readyToShoot()) {
+          solid(Color.kBlue);
+        } else {
+          solid(Color.kGreen);
+        }
+
       } else if (autoDrive || autoShoot) {
         rainbow(rainbowCycleLength, rainbowDuration);
       } else if (wantNote) {

@@ -483,6 +483,11 @@ public class Drivetrain extends SubsystemBase {
     return difference.getAngle();
   }
 
+  @AutoLogOutput
+  public double aimErrorDegrees() {
+    return Math.abs(getPose().getRotation().minus(getAimAngle()).getDegrees());
+  }
+
   private Rotation2d getAimAnglePass() {
     Translation2d difference =
         (this.getPose()

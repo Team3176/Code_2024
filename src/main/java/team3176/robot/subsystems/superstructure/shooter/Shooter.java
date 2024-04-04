@@ -40,6 +40,9 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber flywheelRightVelocity;
   private final LoggedTunableNumber forwardPivotVoltageOffset;
   private final LoggedTunableNumber flywheelIdle;
+
+  private double rightWheelSetpoint = 0.0;
+  private double leftWheelSetpoint = 0.0;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
   private InterpolatingDoubleTreeMap shooterFlywheelLookupLeft;
@@ -53,11 +56,11 @@ public class Shooter extends SubsystemBase {
     this.pivotPIDController = new TunablePID("shooter/pid", 7.0, 0.0, 0.00);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setIZone(Units.degreesToRadians(6));
-    pivotPIDController.setTolerance(Units.degreesToRadians(0.5));
+    pivotPIDController.setTolerance(Units.degreesToRadians(1.25));
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 16.5);
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
-    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.0);
+    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 1.2);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 38.0);
@@ -77,11 +80,11 @@ public class Shooter extends SubsystemBase {
     pivotLookup.put(2.72, 17.8);
     pivotLookup.put(2.78, 17.8);
     pivotLookup.put(2.85, 17.0);
-    pivotLookup.put(2.93, 16.0);
-    pivotLookup.put(3.03, 16.0);
-    pivotLookup.put(3.11, 16.0);
-    pivotLookup.put(3.21, 15.0);
-    pivotLookup.put(3.3, 14.5);
+    pivotLookup.put(2.93, 17.0);
+    pivotLookup.put(3.03, 17.0);
+    pivotLookup.put(3.11, 17.0);
+    pivotLookup.put(3.21, 16.0);
+    pivotLookup.put(3.3, 15.5);
     pivotLookup.put(3.38, 14.5);
     pivotLookup.put(3.47, 14.0);
     pivotLookup.put(3.58, 13.5);
@@ -90,6 +93,8 @@ public class Shooter extends SubsystemBase {
 
     shooterFlywheelLookupLeft = new InterpolatingDoubleTreeMap();
     shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
+
+    io.setFlywheelVelocity(0.0);
 
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
@@ -191,14 +196,25 @@ public class Shooter extends SubsystemBase {
 
   @AutoLogOutput
   public boolean isAtSpeed() {
-    double closeValue = 0.1;
-    return (Math.abs(inputs.rightWheelError) < closeValue
-        && Math.abs(inputs.leftWheelError) < closeValue);
+    double closeValue = 10.0;
+    return (Math.abs(rightWheelError()) < closeValue && Math.abs(leftWheelError()) < closeValue)
+        && inputs.leftWheelReference > flywheelIdle.get();
+  }
+
+  @AutoLogOutput
+  private double rightWheelError() {
+    return inputs.rightWheelReference
+        - Units.radiansToRotations(inputs.wheelRightVelocityRadPerSec);
+  }
+
+  @AutoLogOutput
+  private double leftWheelError() {
+    return inputs.leftWheelReference - Units.radiansToRotations(inputs.wheelLeftVelocityRadPerSec);
   }
 
   @AutoLogOutput
   public boolean isAtAngle() {
-    return pivotPIDController.atSetpoint() || inputs.pivotPosition.getDegrees() > 26.0;
+    return pivotPIDController.atSetpoint() || inputs.pivotPosition.getDegrees() > 33.0;
   }
 
   public boolean readyToShoot() {
