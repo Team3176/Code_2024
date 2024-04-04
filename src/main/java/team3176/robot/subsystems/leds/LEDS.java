@@ -64,7 +64,7 @@ public class LEDS extends SubsystemBase {
   // Constants
   private static final boolean prideLeds = false;
   private static final int minLoopCycleCount = 10;
-  private static final int length = 39;
+  private static final int length = 48;
   private static final int staticSectionLength = 20;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
@@ -100,6 +100,18 @@ public class LEDS extends SubsystemBase {
 
   public Command AutoDrive() {
     return this.runEnd(() -> autoDrive = true, () -> autoDrive = false);
+  }
+
+  public Command Intaking() {
+    return this.runEnd(() -> intaking = true, () -> intaking = false);
+  }
+
+  public Command Amping() {
+    return this.runEnd(() -> requestAmp = true, () -> requestAmp = false);
+  }
+
+  public Command Climbing() {
+    return this.runEnd(() -> climbing = true, () -> climbing = false);
   }
 
   public synchronized void periodic() {
@@ -186,10 +198,12 @@ public class LEDS extends SubsystemBase {
         strobe(Color.kWhite, strobeFastDuration);
       } else if (Conveyor.getInstance().hasNote()) {
         solid(Color.kGreen);
-      } else if (trapping || climbing || autoDrive || autoShoot) {
+      } else if (autoDrive || autoShoot) {
         rainbow(rainbowCycleLength, rainbowDuration);
       } else if (wantNote) {
         solid(Color.kOrange);
+      } else if (climbing || trapping) {
+        strobe(Color.kCrimson, strobeFastDuration);
       } else {
         wave(teamColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
       }
@@ -201,6 +215,10 @@ public class LEDS extends SubsystemBase {
 
     // Update LEDs
     leds.setData(buffer);
+  }
+
+  public void setWantNote(boolean doISeeNote) {
+    this.wantNote = doISeeNote;
   }
 
   private void solid(Color color) {

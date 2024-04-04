@@ -172,7 +172,11 @@ public class RobotContainer {
     controller
         .transStick
         .button(2)
-        .onTrue(superstructure.intakeNote().withName("intakeNote"))
+        .onTrue(
+            superstructure
+                .intakeNote()
+                .withName("intakeNote")
+                .alongWith(ledsRio.Intaking().asProxy()))
         .onFalse(superstructure.retractIntakePivot());
 
     controller
@@ -237,8 +241,14 @@ public class RobotContainer {
         .button(4)
         .whileTrue(
             Commands.either(
-                superstructure.aimAmp(true).withName("aimAmp"),
-                superstructure.aimAmp(false).withName("aimAmpDrive"),
+                superstructure
+                    .aimAmp(true)
+                    .withName("aimAmp")
+                    .alongWith(ledsRio.Amping().asProxy()),
+                superstructure
+                    .aimAmp(false)
+                    .withName("aimAmpDrive")
+                    .alongWith(ledsRio.Amping().asProxy()),
                 ampOverride))
         .onFalse(Climb.getInstance().stow());
     controller
@@ -255,8 +265,10 @@ public class RobotContainer {
         .operator
         .leftBumper()
         .whileTrue(
-            superstructure.moveClimbLeftRightPosition(
-                () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
+            superstructure
+                .moveClimbLeftRightPosition(
+                    () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY())
+                .alongWith(ledsRio.Climbing().asProxy()))
         .onFalse(superstructure.stopClimbLeftRight());
     controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
     controller.operator.leftTrigger().onTrue(superstructure.aimClose());
@@ -282,7 +294,7 @@ public class RobotContainer {
         .switchBox
         .button(5)
         .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
-    
+
     controller
         .switchBox
         .button(4)
