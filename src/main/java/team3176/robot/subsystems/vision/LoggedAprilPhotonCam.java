@@ -185,7 +185,10 @@ public class LoggedAprilPhotonCam {
         }
       }
     }
-    Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    //TODO: Remember to fix me for camera2
+    if (!name.equals("camera2")) {
+      Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    }
   }
 
   public void periodic() {

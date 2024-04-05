@@ -46,6 +46,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
@@ -482,6 +483,15 @@ public class Drivetrain extends SubsystemBase {
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     return difference.getAngle();
   }
+  private Rotation2d getAimAngleFuture() {
+    Translation2d difference =
+        (this.getPoseFuture(Shooter.LOOKAHEAD_SEC)
+            .getTranslation()
+            .minus(
+                AllianceFlipUtil.apply(
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
 
   @AutoLogOutput
   public double aimErrorDegrees() {
@@ -609,7 +619,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
-    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngleFuture);
   }
 
   public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {

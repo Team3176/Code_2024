@@ -29,6 +29,7 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
+  public static final double LOOKAHEAD_SEC = 1.0;
   // public static final double FLYWHEEL_IDLE = 20;
   private double lastDistance = 0;
   private double futureDistance = 0;
@@ -95,7 +96,6 @@ public class Shooter extends SubsystemBase {
     shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
 
     io.setFlywheelVelocity(0.0);
-
     // shooterFlywheelLookup.put(1.0, 60.0);
     // shooterFlywheelLookup.put(3.2, 100.0);
   }
@@ -183,12 +183,11 @@ public class Shooter extends SubsystemBase {
   @AutoLogOutput
   public double getDistanceFuture() {
     Pose3d current =
-        new Pose3d(Drivetrain.getInstance().getPoseFuture(1))
+        new Pose3d(Drivetrain.getInstance().getPoseFuture(LOOKAHEAD_SEC))
             .transformBy(new Transform3d(shooterTranslation, new Rotation3d()));
     Translation3d goal = AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening);
     Translation3d diff = current.getTranslation().minus(goal);
     double distance = diff.toTranslation2d().getNorm();
-    Logger.recordOutput("Shooter/podium", distance < 2.6 && distance > 2.37);
     return distance;
   }
 
@@ -257,7 +256,7 @@ public class Shooter extends SubsystemBase {
             io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
           }
 
-          this.pivotSetpoint = getAimAngle();
+          this.pivotSetpoint = getAimAngleFuture();
         },
         () -> {
           io.setFlywheelVelocity(flywheelIdle.get());

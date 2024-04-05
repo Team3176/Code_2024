@@ -83,7 +83,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelLeft.Slot0.kP = 0.1;
     configsWheelLeft.Slot0.kI = 0.0;
     configsWheelLeft.Slot0.kD = 0.0000;
-    configsWheelLeft.Slot0.kV = 0.1;
+    configsWheelLeft.Slot0.kV = 0.12;
     configsWheelLeft.Voltage.PeakForwardVoltage = 12;
     configsWheelLeft.Voltage.PeakReverseVoltage = -12;
     // configsWheelUpper.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -96,7 +96,7 @@ public class ShooterIOTalonSpark implements ShooterIO {
     configsWheelRight.Slot0.kP = 0.1;
     configsWheelRight.Slot0.kI = 0.0;
     configsWheelRight.Slot0.kD = 0.0000;
-    configsWheelRight.Slot0.kV = 0.11;
+    configsWheelRight.Slot0.kV = 0.12;
     configsWheelRight.Voltage.PeakForwardVoltage = 12;
     configsWheelRight.Voltage.PeakReverseVoltage = -12;
     configsWheelRight.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
