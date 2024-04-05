@@ -195,8 +195,9 @@ public class LEDS extends SubsystemBase {
         solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kPurple);
       }
     } else { // Enabled
-      if (false) {   ///Not convinced this will ever execute. Chk above. Likey a dead conditional branch IMO:w
-        
+      if (false) { /// Not convinced this will ever execute. Chk above. Likey a dead conditional
+        // branch IMO:w
+
         strobe(Color.kWhite, strobeFastDuration);
       } else if (Conveyor.getInstance().hasNote()) {
         if (Superstructure.getInstance().readyToShoot()) {

@@ -483,6 +483,7 @@ public class Drivetrain extends SubsystemBase {
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
     return difference.getAngle();
   }
+
   private Rotation2d getAimAngleFuture() {
     Translation2d difference =
         (this.getPoseFuture(Shooter.LOOKAHEAD_SEC)

@@ -185,7 +185,7 @@ public class LoggedAprilPhotonCam {
         }
       }
     }
-    //TODO: Remember to fix me for camera2
+    // TODO: Remember to fix me for camera2
     if (!name.equals("camera2")) {
       Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
     }

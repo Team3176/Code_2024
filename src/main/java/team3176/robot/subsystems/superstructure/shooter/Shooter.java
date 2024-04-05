@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
   public static final Rotation2d UPPER_LIMIT = Rotation2d.fromDegrees(54.46);
   public static final Rotation2d LOWER_LIMIT = Rotation2d.fromDegrees(13.4592);
   public static final Translation3d shooterTranslation = new Translation3d(-0.01, 0.0, 0.4309);
-  public static final double LOOKAHEAD_SEC = 1.0;
+  public static final double LOOKAHEAD_SEC = 0.5;
   // public static final double FLYWHEEL_IDLE = 20;
   private double lastDistance = 0;
   private double futureDistance = 0;
