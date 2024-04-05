@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    this.pivotPID = new TunablePID("intakePivot", 2.0, 0.0, 0.0);
+    this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 7.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
@@ -144,9 +144,9 @@ public class Intake extends SubsystemBase {
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
     if (pivot_pos <= 0.7) {
-      commandVolts *= 1.5;
+      commandVolts *= 1.6;
     }
-    commandVolts = MathUtil.clamp(commandVolts, -3.5, 1.5);
+    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);

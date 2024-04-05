@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -112,11 +111,20 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "shootLookup",
         superstructure
-            .aimShooterLookup().asProxy()
+            .aimShooterLookup()
             .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
             .raceWith(
-                new WaitCommand(0.5) // .until(() -> superstructure.readyToShoot())
-                    .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
+                new WaitCommand(0.6) // .until(() -> superstructure.readyToShoot())
+                    .andThen(superstructure.shoot().withTimeout(0.4))
+                    .withName("shooting")));
+    NamedCommands.registerCommand(
+        "shootLookupQuick",
+        superstructure
+            .aimShooterLookup()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.1) // .until(() -> superstructure.readyToShoot())
+                    .andThen(superstructure.shoot().withTimeout(0.4))
                     .withName("shooting")));
     NamedCommands.registerCommand(
         "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(1.5));
@@ -129,14 +137,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("deployIntake", Intake.getInstance().deployPivot());
     // using schedule to prevent intake from being cancelled if the path ends
     NamedCommands.registerCommand(
-        "intake",
-        chaseNoteAuto.alongWith(new ScheduleCommand(superstructure.intakeNote().withTimeout(3.0))));
+        "intake", chaseNoteAuto.alongWith(superstructure.intakeNote().withTimeout(3.0)));
     NamedCommands.registerCommand(
         "aimSpeaker",
         drivetrain
             .autoChaseTarget(orientationGoal.SPEAKER)
-            .alongWith(superstructure.aimShooterTune()));
-    NamedCommands.registerCommand("score", superstructure.shoot());
+            .alongWith(superstructure.aimShooterLookup())
+            .withTimeout(1.0));
+    NamedCommands.registerCommand("score", superstructure.shoot().withTimeout(0.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -271,8 +279,8 @@ public class RobotContainer {
                 .alongWith(ledsRio.Climbing().asProxy()))
         .onFalse(superstructure.stopClimbLeftRight());
     controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
-    controller.operator.leftTrigger().onTrue(superstructure.aimClose());
-    controller.operator.rightTrigger().onTrue(superstructure.shoot());
+    controller.operator.leftTrigger().whileTrue(superstructure.aimClose());
+    controller.operator.rightTrigger().whileTrue(superstructure.shoot());
     /*
     controller
         .operator

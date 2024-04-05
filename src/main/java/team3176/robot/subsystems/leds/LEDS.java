@@ -195,7 +195,7 @@ public class LEDS extends SubsystemBase {
         solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kPurple);
       }
     } else { // Enabled
-      if (requestAmp) {
+      if (false) {
         strobe(Color.kWhite, strobeFastDuration);
       } else if (Conveyor.getInstance().hasNote()) {
         if (Superstructure.getInstance().readyToShoot()) {

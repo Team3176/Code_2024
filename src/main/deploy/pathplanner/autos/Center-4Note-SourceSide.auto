@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shootAim"
+            "name": "shootLookup"
           }
         },
         {
@@ -24,33 +24,45 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Wing2ToCenter"
+            "pathName": "CenterToMid3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAim"
+            "name": "chaseNote"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToWing1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Wing1ToCenter"
+            "pathName": "Mid3ToShoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAim"
+            "name": "shootLookupQuick"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
           }
         }
       ]
