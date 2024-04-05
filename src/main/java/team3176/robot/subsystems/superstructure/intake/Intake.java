@@ -100,7 +100,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command climbIntake() {
-    return this.runOnce(() -> this.pivotSetpoint = 0.7);
+    return this.runOnce(() -> this.pivotSetpoint = 0.45);
   }
 
   public Command spinIntake() {

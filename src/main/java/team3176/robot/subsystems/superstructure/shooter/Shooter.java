@@ -53,14 +53,14 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
-    this.pivotPIDController = new TunablePID("shooter/pid", 7.0, 0.0, 0.00);
+    this.pivotPIDController = new TunablePID("shooter/pid", 8.0, 0.0, 0.5);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setIZone(Units.degreesToRadians(6));
-    pivotPIDController.setTolerance(Units.degreesToRadians(1.25));
+    pivotPIDController.setTolerance(Units.degreesToRadians(1.0));
     this.aimAngle = new LoggedTunableNumber("shooter/angle", 16.5);
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
-    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.8);
+    this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.7);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 38.0);
@@ -85,11 +85,11 @@ public class Shooter extends SubsystemBase {
     pivotLookup.put(3.11, 17.0);
     pivotLookup.put(3.21, 16.0);
     pivotLookup.put(3.3, 15.5);
-    pivotLookup.put(3.38, 14.5);
-    pivotLookup.put(3.47, 14.0);
-    pivotLookup.put(3.58, 13.5);
-    pivotLookup.put(3.7, 13.5);
-    pivotLookup.put(3.94, 12.5);
+    pivotLookup.put(3.38, 15.0);
+    pivotLookup.put(3.47, 14.5);
+    pivotLookup.put(3.58, 13.75);
+    pivotLookup.put(3.7, 13.75);
+    pivotLookup.put(3.94, 13.5);
 
     shooterFlywheelLookupLeft = new InterpolatingDoubleTreeMap();
     shooterFlywheelLookupRight = new InterpolatingDoubleTreeMap();
@@ -115,16 +115,18 @@ public class Shooter extends SubsystemBase {
   private void PIDPositionPeriodic() {
     double pivotVoltage =
         pivotPIDController.calculate(getPosition().getRadians(), pivotSetpoint.getRadians());
-    double clamp = 0.3 * Math.cos(getPosition().getRadians()) + 0.4;
+    double clamp = 1.0; // 0.3 * Math.cos(getPosition().getRadians()) + 0.4;
     pivotVoltage = MathUtil.clamp(pivotVoltage, -clamp, clamp);
     if (pivotSetpoint.getDegrees() > 1.0) {
-      pivotVoltage +=
-          forwardPivotVoltageOffset.get()
-              * Math.cos(
-                  getPosition().getRadians()
-                      * 0.8); // pivotFeedForward.get(getPosition().getDegrees());
+      pivotVoltage += forwardPivotVoltageOffset.get();
+      // * Math.cos(
+      //     getPosition().getRadians()
+      //         * 0.8); // pivotFeedForward.get(getPosition().getDegrees());
     }
-    pivotVoltage = MathUtil.clamp(pivotVoltage, -0.25, 2.5);
+    pivotVoltage = MathUtil.clamp(pivotVoltage, -1.0, 2.5);
+    if (pivotSetpoint.getDegrees() < 1.0) {
+      pivotVoltage = 0.0;
+    }
     io.setPivotVoltage(pivotVoltage);
   }
 
