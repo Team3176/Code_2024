@@ -17,6 +17,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
 import team3176.robot.FieldConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.subsystems.superstructure.Superstructure;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
@@ -46,6 +47,7 @@ public class Shooter extends SubsystemBase {
   private double leftWheelSetpoint = 0.0;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
+  private Rotation2d pivotTopPosition;
   private InterpolatingDoubleTreeMap shooterFlywheelLookupLeft;
   private InterpolatingDoubleTreeMap shooterFlywheelLookupRight;
   private InterpolatingDoubleTreeMap pivotLookup;
@@ -54,6 +56,7 @@ public class Shooter extends SubsystemBase {
 
   private Shooter(ShooterIO io) {
     this.io = io;
+    this.pivotTopPosition = new Rotation2d(Units.degreesToRadians(40));
     this.pivotPIDController = new TunablePID("shooter/pid", 8.0, 0.0, 0.5);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setIZone(Units.degreesToRadians(6));
@@ -297,8 +300,8 @@ public class Shooter extends SubsystemBase {
     //    this.lastTimestamp = Timer.getFPGATimestamp();
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
-    if (inputs.lowerLimitSwitch) {
-      pivotOffSet = inputs.pivotPosition;
+    if (inputs.upperLimitSwitch) {
+      pivotOffSet = inputs.pivotPosition.minus(pivotTopPosition) ;
       isHomed = true;
     }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
