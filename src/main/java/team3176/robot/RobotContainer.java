@@ -114,7 +114,7 @@ public class RobotContainer {
             .aimShooterLookup()
             .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
             .raceWith(
-                new WaitCommand(0.6) // .until(() -> superstructure.readyToShoot())
+                new WaitCommand(0.7) // .until(() -> superstructure.readyToShoot())
                     .andThen(superstructure.shoot().withTimeout(0.4))
                     .withName("shooting")));
     NamedCommands.registerCommand(
