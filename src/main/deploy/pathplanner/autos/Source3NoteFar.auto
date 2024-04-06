@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "SourceToMid5"

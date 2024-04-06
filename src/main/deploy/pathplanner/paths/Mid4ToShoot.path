@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.4840977052258277,
-        "y": 3.201478746427978
+        "x": 1.8232420006879377,
+        "y": 3.583306486827643
       },
       "prevControl": {
-        "x": 3.2287652597017797,
-        "y": 2.1080764319825045
+        "x": 2.567909555163892,
+        "y": 2.4899041723821695
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,25 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "spinup",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "aimSpeaker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.5,

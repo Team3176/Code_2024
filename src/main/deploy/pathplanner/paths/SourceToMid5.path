@@ -59,40 +59,6 @@
           ]
         }
       }
-    },
-    {
-      "name": "aim",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "aimSpeaker"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "score",
-      "waypointRelativePos": 0.2,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "score"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
