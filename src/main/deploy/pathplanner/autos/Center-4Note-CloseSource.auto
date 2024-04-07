@@ -56,13 +56,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Wing1ToCenter"
+            "pathName": "CenterToWing1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToWing1"
+            "pathName": "Wing1ToCenter"
           }
         },
         {
