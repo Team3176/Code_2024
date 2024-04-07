@@ -46,14 +46,16 @@ public class Shooter extends SubsystemBase {
   private double leftWheelSetpoint = 0.0;
   private Rotation2d pivotSetpoint = new Rotation2d();
   private Rotation2d pivotOffSet = new Rotation2d();
+  private Rotation2d pivotTopPosition;
   private InterpolatingDoubleTreeMap shooterFlywheelLookupLeft;
   private InterpolatingDoubleTreeMap shooterFlywheelLookupRight;
   private InterpolatingDoubleTreeMap pivotLookup;
   private InterpolatingDoubleTreeMap pivotFeedForward = new InterpolatingDoubleTreeMap();
-  private boolean isHomed = false;
+  public boolean isHomed = false;
 
   private Shooter(ShooterIO io) {
     this.io = io;
+    this.pivotTopPosition = new Rotation2d(Units.degreesToRadians(39));
     this.pivotPIDController = new TunablePID("shooter/pid", 8.0, 0.0, 0.5);
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setIZone(Units.degreesToRadians(6));
@@ -248,7 +250,8 @@ public class Shooter extends SubsystemBase {
 
     return this.runEnd(
         () -> {
-          if (getDistance() < 1.1) {
+          //          if (getDistance() < 1.1) {
+          if (false) {
             io.setFlywheelRightVelocity(80.0);
             io.setFlywheelLeftVelocity(80.0);
           } else {
@@ -297,8 +300,8 @@ public class Shooter extends SubsystemBase {
     //    this.lastTimestamp = Timer.getFPGATimestamp();
     pivotPIDController.checkParemeterUpdate();
     Logger.processInputs("Shooter", inputs);
-    if (inputs.lowerLimitSwitch) {
-      pivotOffSet = inputs.pivotPosition;
+    if (inputs.upperLimitSwitch && !isHomed) {
+      pivotOffSet = inputs.pivotPosition.minus(pivotTopPosition);
       isHomed = true;
     }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);

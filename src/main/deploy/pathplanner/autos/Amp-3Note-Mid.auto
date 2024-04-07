@@ -5,7 +5,7 @@
       "x": 0.7568917481584964,
       "y": 6.6322409988569975
     },
-    "rotation": 61.33626686262826
+    "rotation": 58.776513625062954
   },
   "command": {
     "type": "sequential",
@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Wing1ToAmp"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "shootLookup"
@@ -38,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AmpToMid1"
+            "pathName": "Wing1ToMid1"
           }
         },
         {

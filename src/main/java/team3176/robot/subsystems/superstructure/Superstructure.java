@@ -63,7 +63,7 @@ public class Superstructure {
   }
 
   public Command aimClose() {
-    return aimShooter(80, 80, 38, 0.5).withName("aimClose");
+    return aimShooter(90, 40, 38, 0.5).withName("aimClose");
   }
 
   public Command aimAmp(boolean withDrive) {
@@ -94,7 +94,7 @@ public class Superstructure {
   }
 
   public Command aimPass() {
-    return aimShooter(80, 40, 27, 0.6).withName("aimPass");
+    return aimShooter(70, 40, 27, 0.6).withName("aimPass");
   }
 
   public Command shoot() {

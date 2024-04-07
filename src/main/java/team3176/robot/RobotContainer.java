@@ -136,8 +136,7 @@ public class RobotContainer {
             .withTimeout(2.0);
     NamedCommands.registerCommand("deployIntake", Intake.getInstance().deployPivot());
     // using schedule to prevent intake from being cancelled if the path ends
-    NamedCommands.registerCommand(
-        "intake", chaseNoteAuto.alongWith(superstructure.intakeNote().withTimeout(3.0)));
+    NamedCommands.registerCommand("intake", superstructure.intakeNote().withTimeout(3.0));
     NamedCommands.registerCommand(
         "aimSpeaker",
         drivetrain
