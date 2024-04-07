@@ -41,6 +41,9 @@ public class Transfer extends SubsystemBase {
   public Command spit() {
     return this.runEnd(() -> io.setTransferController(-1.5), () -> io.setTransferController(0));
   }
+  public Command feed() {
+    return this.run(() -> io.setTransferController(-1.5));
+  }
 
   @Override
   public void periodic() {

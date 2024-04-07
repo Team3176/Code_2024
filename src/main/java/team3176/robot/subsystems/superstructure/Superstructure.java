@@ -163,7 +163,7 @@ public class Superstructure {
   }
 
   public Command feed() {
-    return shooter.reverse().alongWith(transfer.spit()).alongWith(conveyor.centerNote()).withName("feed");
+    return shooter.feed().alongWith(transfer.spit()).until(() -> !conveyor.isLaserIntakeSide()).alongWith(conveyor.centerNote()).withName("feed");
   }
 
   public Command getSourceNoteAuto() {
