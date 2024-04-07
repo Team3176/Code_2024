@@ -246,6 +246,7 @@ public class RobotContainer {
     controller
         .rotStick
         .button(4)
+        .onTrue(Intake.getInstance().climbIntake())
         .whileTrue(
             Commands.either(
                 superstructure
@@ -257,7 +258,7 @@ public class RobotContainer {
                     .withName("aimAmpDrive")
                     .alongWith(ledsRio.Amping().asProxy()),
                 ampOverride))
-        .onFalse(Climb.getInstance().stow());
+        .onFalse(Climb.getInstance().stow()).onFalse(Intake.getInstance().retractPivot());
     controller
         .rotStick
         .button(8)
@@ -277,7 +278,7 @@ public class RobotContainer {
                     () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY())
                 .alongWith(ledsRio.Climbing().asProxy()))
         .onFalse(superstructure.stopClimbLeftRight());
-    controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
+    controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake()).onFalse(Intake.getInstance().retractPivot());
     controller.operator.leftTrigger().whileTrue(superstructure.aimClose());
     controller.operator.rightTrigger().whileTrue(superstructure.shoot());
     /*
