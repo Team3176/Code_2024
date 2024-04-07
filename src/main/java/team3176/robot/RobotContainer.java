@@ -268,6 +268,7 @@ public class RobotContainer {
      */
     controller.operator.x().whileTrue(superstructure.spit());
     controller.operator.b().whileTrue(Intake.getInstance().spinIntakeRollersSlow());
+    controller.operator.y().whileTrue(superstructure.feed());
     controller
         .operator
         .leftBumper()

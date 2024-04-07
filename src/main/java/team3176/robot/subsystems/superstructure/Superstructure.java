@@ -162,6 +162,10 @@ public class Superstructure {
     return intake.spit().alongWith(transfer.spit()).alongWith(conveyor.spit()).withName("spit");
   }
 
+  public Command feed() {
+    return shooter.reverse().alongWith(transfer.spit()).alongWith(conveyor.centerNote()).withName("feed");
+  }
+
   public Command getSourceNoteAuto() {
     return Drivetrain.getInstance()
         .goToPoint(FieldConstants.sourePickup)

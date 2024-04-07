@@ -41,6 +41,7 @@ public class Shooter extends SubsystemBase {
   private final LoggedTunableNumber flywheelRightVelocity;
   private final LoggedTunableNumber forwardPivotVoltageOffset;
   private final LoggedTunableNumber flywheelIdle;
+  private final LoggedTunableNumber flywheelReverse;
 
   private double rightWheelSetpoint = 0.0;
   private double leftWheelSetpoint = 0.0;
@@ -65,6 +66,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.7);
     this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
+    this.flywheelReverse = new LoggedTunableNumber("shooter/feedVel", 10);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 38.0);
     pivotLookup.put(1.62, 25.0);
@@ -289,6 +291,9 @@ public class Shooter extends SubsystemBase {
     return this.run(() -> io.setPivotVoltage(volts));
   }
 
+  public Command reverse() {
+    return this.run(() -> io.setFlywheelLeftVelocity(flywheelReverse.get()));
+  }
   @Override
   public void periodic() {
     io.updateInputs(inputs);
