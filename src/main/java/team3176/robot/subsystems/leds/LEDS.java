@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import team3176.robot.subsystems.superstructure.Superstructure;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 
 public class LEDS extends SubsystemBase {
   private static LEDS instance;
@@ -153,7 +154,9 @@ public class LEDS extends SubsystemBase {
     if (estopped) {
       solid(Color.kRed);
     } else if (DriverStation.isDisabled()) {
-      if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
+      if (!Shooter.getInstance().isHomed) {
+        solid(Color.kRed);
+      } else if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
         // Auto fade
         solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
       } else if (lowBatteryAlert) {

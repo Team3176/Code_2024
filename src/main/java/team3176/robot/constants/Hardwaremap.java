@@ -71,7 +71,7 @@ public class Hardwaremap {
   public static final SwervePodHardwareID POD006 =
       new SwervePodHardwareID(6, 23, SWERVEPOD_CBN, 24, SWERVEPOD_CBN, -92.2);
   public static final SwervePodHardwareID POD007 =
-      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, -165.3);
+      new SwervePodHardwareID(7, 33, SWERVEPOD_CBN, 34, SWERVEPOD_CBN, 169.621);
   public static final SwervePodHardwareID POD008 =
       new SwervePodHardwareID(8, 43, SWERVEPOD_CBN, 44, SWERVEPOD_CBN, -22.357);
   public static final SwervePodHardwareID POD009 =

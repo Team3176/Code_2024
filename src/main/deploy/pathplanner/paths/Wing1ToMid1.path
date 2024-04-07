@@ -3,52 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.431788811968301,
-        "y": 4.313959357663443
+        "x": 2.5797215230794097,
+        "y": 7.0058881935945685
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3110120765696076,
-        "y": 4.337866857551897
+        "x": 3.5797215230794097,
+        "y": 7.0058881935945685
       },
       "isLocked": false,
-      "linkedName": "Wing3"
+      "linkedName": "Wing1"
     },
     {
       "anchor": {
-        "x": 1.2951743872237744,
-        "y": 5.51611216503683
+        "x": 6.422884056705613,
+        "y": 7.330524114173229
       },
       "prevControl": {
-        "x": 2.2778785401320802,
-        "y": 5.496739665354331
+        "x": 5.422884056705613,
+        "y": 7.330524114173229
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterStart"
+      "linkedName": "mid1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.6,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "aimSpeaker"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 2.5,
@@ -56,7 +38,7 @@
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.75,
     "rotation": 0,
     "rotateFast": false
   },
