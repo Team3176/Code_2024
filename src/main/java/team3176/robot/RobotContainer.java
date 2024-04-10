@@ -213,18 +213,7 @@ public class RobotContainer {
                 .alongWith(superstructure.intakeNote())
                 .alongWith(ledsRio.AutoDrive().asProxy())
                 .withName("intakeAutoDrive"));
-    /*
-        controller
-        .transStick
-        .button(4)
-        .whileTrue(
-            drivetrain
-                .chaseNoteTeleo(
-                    () -> controller.getForward(),
-                    () -> controller.getStrafe(),
-                    () -> controller.getSpin())
-                .alongWith(superstructure.intakeNote()));
-    */
+
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -318,6 +307,7 @@ public class RobotContainer {
         .whileTrue(Climb.getInstance().goToPosition(() -> 65))
         .onFalse(Climb.getInstance().stow());
     controller.driver.rightBumper().onTrue(Intake.getInstance().climbIntake());
+
     /*
      * Operator
      */
@@ -335,22 +325,8 @@ public class RobotContainer {
     controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
     controller.operator.leftTrigger().whileTrue(superstructure.aimClose());
     controller.operator.rightTrigger().whileTrue(superstructure.shoot());
-    /*
-    controller
-        .operator
-        .rightBumper()
-        .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
-        .onFalse(superstructure.stopClimbRight());
-        */
-    controller.operator.povUp().whileTrue(Intake.getInstance().EmergencyHold());
+    controller.operator.povUp().whileTrue(Intake.getInstance().manualUp());
     controller.operator.povDown().whileTrue(Intake.getInstance().manualDown());
-    // controller.operator.povDown().onTrue(superstructure.intakeNote());
-
-    controller
-        .operator
-        .start()
-        .and(controller.operator.povLeft())
-        .onTrue(Intake.getInstance().EmergencyHold());
 
     controller
         .switchBox

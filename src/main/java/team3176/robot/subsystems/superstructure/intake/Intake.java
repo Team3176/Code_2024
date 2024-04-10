@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
   }
 
-  public Command EmergencyHold() {
+  public Command manualUp() {
     return this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0));
   }
 
