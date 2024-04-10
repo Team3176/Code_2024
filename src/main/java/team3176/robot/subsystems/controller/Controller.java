@@ -23,6 +23,7 @@ public class Controller {
   public final CommandJoystick transStick;
   public final CommandJoystick rotStick;
   public final CommandXboxController operator;
+  public final CommandXboxController driver;
   public final CommandJoystick switchBox;
 
   /* First Part of Creating the Buttons on the Joysticks */
@@ -34,20 +35,21 @@ public class Controller {
     rotStick = new CommandJoystick(ControllerConstants.ROT_ID);
     operator = new CommandXboxController(ControllerConstants.OP_ID);
     switchBox = new CommandJoystick(3);
+    driver = new CommandXboxController(4);
   }
 
   /**
    * @return The scales magnitude vector of the Y axis of TransStick
    */
   public double getForward() {
-    return ControllerConstants.FORWARD_AXIS_INVERSION * Math.pow(transStick.getY(), 1);
+    return -driver.getLeftY();
   }
 
   /**
    * @return The scales magnitude vector of the X axis of TransStick
    */
   public double getStrafe() {
-    return ControllerConstants.STRAFE_AXIS_INVERSION * Math.pow(transStick.getX(), 1);
+    return -driver.getLeftX();
   }
 
   /**
@@ -57,7 +59,7 @@ public class Controller {
    */
   public double getSpin() {
 
-    return ControllerConstants.SPIN_AXIS_INVERSION * rotStick.getX();
+    return -driver.getRightX();
   }
 
   public double getXboxJoyLeft() {

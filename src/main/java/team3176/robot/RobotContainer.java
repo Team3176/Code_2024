@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import team3176.robot.commands.WheelRadiusCharacterization;
 import team3176.robot.commands.WheelRadiusCharacterization.Direction;
@@ -159,13 +161,28 @@ public class RobotContainer {
     ampOverride = controller.switchBox.button(2);
     intakeOverride = controller.switchBox.button(3);
     visionOverride = controller.switchBox.button(4);
+
+    Supplier<Command> aim =
+        () ->
+            Commands.either(
+                superstructure.aimClose().withName("shooterAimOverride"),
+                Commands.either(
+                    drivetrain
+                        .driveAndAimPass(
+                            () -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimPass())
+                        .withName("aimTuneAndDrive"),
+                    drivetrain
+                        .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimShooterLookup())
+                        .withName("aimTuneAndDrive"),
+                    () -> Shooter.getInstance().getDistance() > 9.0),
+                shooterOverride);
     /*
      * Translation Stick
      */
-    /*     controller
-    .transStick
-    .button(1)
-    .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE)); */
     controller
         .transStick
         .button(1)
@@ -218,26 +235,7 @@ public class RobotContainer {
      *  Rotation Stick
      */
     controller.rotStick.button(1).whileTrue(superstructure.shoot().withName("shoot"));
-    controller
-        .rotStick
-        .button(2)
-        .whileTrue(
-            Commands.either(
-                superstructure.aimShooterTune().withName("shooterAimOverride"),
-                Commands.either(
-                    drivetrain
-                        .driveAndAimPass(
-                            () -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()
-                        .alongWith(superstructure.aimPass())
-                        .withName("aimTuneAndDrive"),
-                    drivetrain
-                        .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()
-                        .alongWith(superstructure.aimShooterLookup())
-                        .withName("aimTuneAndDrive"),
-                    () -> Shooter.getInstance().getDistance() > 9.0),
-                shooterOverride));
+    controller.rotStick.button(2).whileTrue(aim.get());
     controller
         .rotStick
         .button(3)
@@ -262,7 +260,64 @@ public class RobotContainer {
         .rotStick
         .button(8)
         .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+    /*
+     * Driver
+     * copied heavily from
+     * https://github.com/Mechanical-Advantage/RobotCode2024/blob/main/src/main/java/org/littletonrobotics/frc2024/RobotContainer.java
+     */
 
+    // shooting and spiting
+    controller.driver.a().whileTrue(aim.get());
+
+    controller
+        .driver
+        .rightTrigger()
+        .and(controller.driver.a())
+        .onTrue(
+            Commands.parallel(
+                Commands.waitSeconds(0.5),
+                Commands.waitUntil(controller.driver.a().negate())
+                    .deadlineWith(superstructure.shootWhenReady(0.2))));
+    controller.driver.a().and(superstructure::readyToShoot).whileTrue(controllerRumbleCommand());
+
+    // controller.driver.rightTrigger().and(controller.driver.a().negate()).and(controller.driver.b().negate()).whileTrue(superstructure.spit());
+
+    // intaking
+
+    controller.driver.leftTrigger().whileTrue(superstructure.intakeNote());
+    controller
+        .driver
+        .leftTrigger()
+        .and(() -> Conveyor.getInstance().hasNote())
+        .onTrue(controllerRumbleCommand().withTimeout(0.5));
+    controller.driver.leftBumper().whileTrue(superstructure.spit());
+
+    // Amping
+
+    controller
+        .driver
+        .b()
+        .whileTrue(
+            superstructure
+                .aimAmp(false)
+                .alongWith(
+                    drivetrain.driveAndAimAmp(controller::getForward, controller::getStrafe)));
+    controller
+        .driver
+        .rightTrigger()
+        .and(controller.driver.b())
+        .onTrue(
+            Commands.parallel(
+                Commands.waitSeconds(0.75),
+                Commands.waitUntil(controller.driver.b().negate())
+                    .deadlineWith(superstructure.shoot())));
+    // climb
+    controller
+        .driver
+        .rightBumper()
+        .whileTrue(Climb.getInstance().goToPosition(() -> 65))
+        .onFalse(Climb.getInstance().stow());
+    controller.driver.rightBumper().onTrue(Intake.getInstance().climbIntake());
     /*
      * Operator
      */
@@ -360,5 +415,17 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autonChooser.get();
+  }
+
+  private Command controllerRumbleCommand() {
+    return Commands.startEnd(
+        () -> {
+          controller.driver.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+          controller.operator.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+        },
+        () -> {
+          controller.driver.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+          controller.operator.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+        });
   }
 }

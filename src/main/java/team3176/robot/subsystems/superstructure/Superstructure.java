@@ -2,6 +2,7 @@ package team3176.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.function.DoubleSupplier;
@@ -99,6 +100,10 @@ public class Superstructure {
 
   public Command shoot() {
     return conveyor.runShoot().withName("shoot");
+  }
+
+  public Command shootWhenReady(double timeout) {
+    return Commands.waitUntil(this::readyToShoot).withTimeout(timeout).andThen(shoot());
   }
 
   public Command intakeNote() {

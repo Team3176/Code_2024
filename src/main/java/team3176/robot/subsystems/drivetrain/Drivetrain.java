@@ -507,6 +507,10 @@ public class Drivetrain extends SubsystemBase {
     return difference.getAngle();
   }
 
+  private Rotation2d getAmpAngle() {
+    return AllianceFlipUtil.apply(FieldConstants.ampFace).getRotation();
+  }
+
   public Command swerveDefenseCommand() {
     return this.runOnce(
         () -> {
@@ -625,6 +629,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
     return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
+  }
+
+  public Command driveAndAimAmp(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAmpAngle);
   }
 
   public Command goToPoint(int x, int y) {
