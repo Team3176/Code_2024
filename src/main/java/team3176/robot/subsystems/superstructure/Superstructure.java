@@ -86,7 +86,7 @@ public class Superstructure {
   }
 
   private Command aimShooterAmp() {
-    return aimShooter(22, 22, 35, 0.35);
+    return aimShooter(20, 20, 35, 0.35);
   }
 
   public Command aimPodium() {
@@ -94,7 +94,7 @@ public class Superstructure {
   }
 
   public Command aimPass() {
-    return aimShooter(70, 40, 27, 0.6).withName("aimPass");
+    return aimShooter(60, 40, 27, 0.6).withName("aimPass");
   }
 
   public Command shoot() {
