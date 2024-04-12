@@ -28,13 +28,15 @@ import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -44,7 +46,7 @@ import team3176.robot.Constants.Mode;
 import team3176.robot.FieldConstants;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SwervePodHardwareID;
-import team3176.robot.subsystems.drivetrain.GyroIO.GyroIOInputs;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.LocalADStarAK;
@@ -57,12 +59,18 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
   public static final double MAX_WHEEL_SPEED = 4.2;
-  public static final double LENGTH = Units.inchesToMeters(20);
-  public static final double WIDTH = Units.inchesToMeters(20);
-
+  public static final double LENGTH =
+      switch (Constants.getRobot()) {
+        case ROBOT_2024C -> Units.inchesToMeters(18.7);
+        case ROBOT_DEFENSE -> Units.inchesToMeters(24.5);
+        default -> Units.inchesToMeters(20);
+      };
+  public static final double WIDTH = LENGTH;
   private static Drivetrain instance;
   private SwerveDriveOdometry odom;
   private SwerveDrivePoseEstimator poseEstimator;
+  private boolean visionOverride;
+  static final Lock odometryLock = new ReentrantLock();
 
   private final LoggedTunableNumber pitchkP;
   private final LoggedTunableNumber yawkP;
@@ -72,6 +80,12 @@ public class Drivetrain extends SubsystemBase {
   public enum coordType {
     FIELD_CENTRIC,
     ROBOT_CENTRIC
+  }
+
+  public enum orientationGoal {
+    PATHPLANNER,
+    NOTECAM,
+    SPEAKER
   }
 
   // private PowerDistribution PDH = new PowerDistribution();
@@ -88,17 +102,26 @@ public class Drivetrain extends SubsystemBase {
   };
   public static final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(SwerveModuleTranslations);
+  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 10.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
   private SwervePod podBR;
 
   Rotation2d wheelOnlyHeading = new Rotation2d();
+  private Rotation2d rawGyroRotation = new Rotation2d();
+
   private final GyroIO io;
-  private GyroIOInputs inputs;
+  private GyroIOInputsAutoLogged inputs;
   public Pose3d visionPose3d;
   SimNoNoiseOdom simNoNoiseOdom;
   SwerveSetpointGenerator setpointGenerator;
@@ -113,13 +136,13 @@ public class Drivetrain extends SubsystemBase {
           });
   private ChassisSpeeds desiredSpeeds;
   private TunablePID orientationPID;
-  // private final DrivetrainIOInputs inputs = new DrivetrainIOInputs();
+  private orientationGoal autonTarget;
 
   private Drivetrain(GyroIO io) {
     this.io = io;
     this.pitchkP = new LoggedTunableNumber("drivetrain/pitchkP", 0.1);
-    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.05);
-    inputs = new GyroIOInputs();
+    this.yawkP = new LoggedTunableNumber("drivetrain/yawkP", 0.07);
+    inputs = new GyroIOInputsAutoLogged();
 
     // check for duplicates
     assert (!SwervePodHardwareID.check_duplicates_all(
@@ -141,6 +164,21 @@ public class Drivetrain extends SubsystemBase {
           podBR =
               new SwervePod(
                   3, new SwervePodIOFalconSpark(Hardwaremap.BR, Hardwaremap.STEER_BR_CID));
+          break;
+        case ROBOT_DEFENSE:
+          System.out.println("[init] normal swervePods");
+          podFR =
+              new SwervePod(
+                  0, new SwervePodIOFalconSpark(Hardwaremap.POD006, Hardwaremap.STEER_FR_CID));
+          podFL =
+              new SwervePod(
+                  1, new SwervePodIOFalconSpark(Hardwaremap.POD001, Hardwaremap.STEER_FL_CID));
+          podBL =
+              new SwervePod(
+                  2, new SwervePodIOFalconSpark(Hardwaremap.POD009, Hardwaremap.STEER_BL_CID));
+          podBR =
+              new SwervePod(
+                  3, new SwervePodIOFalconSpark(Hardwaremap.POD003, Hardwaremap.STEER_BR_CID));
           break;
         case CTRL_BOARD:
         case ROBOT_SIMBOT:
@@ -169,6 +207,10 @@ public class Drivetrain extends SubsystemBase {
     pods.add(podBR);
 
     visionPose3d = new Pose3d();
+
+    PhoenixOdometryThread.getInstance().start();
+    SparkMaxOdometryThread.getInstance().start();
+
     odom =
         new SwerveDriveOdometry(
             kinematics,
@@ -180,12 +222,12 @@ public class Drivetrain extends SubsystemBase {
     poseEstimator =
         new SwerveDrivePoseEstimator(
             kinematics, getSensorYaw(), getSwerveModulePositions(), odom.getPoseMeters());
-
+    autonTarget = orientationGoal.PATHPLANNER;
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocity,
+        this::driveVelocityAuto,
         new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -251,9 +293,30 @@ public class Drivetrain extends SubsystemBase {
     //       output.chassisSpeeds().vxMetersPerSecond,
     //       output.chassisSpeeds().vyMetersPerSecond,
     //       output.chassisSpeeds().omegaRadiansPerSecond
-    //     });
+    //    });
     Logger.recordOutput("SwerveSetpoints/Setpoints", podStates);
     Logger.recordOutput("SwerveSetpoints/SetpointsOptimized", optimizedStates);
+  }
+
+  public void driveVelocityAuto(ChassisSpeeds speeds) {
+    switch (autonTarget) {
+      case NOTECAM -> {
+        speeds.omegaRadiansPerSecond = getNoteChaseSpeeds().omegaRadiansPerSecond;
+        driveVelocity(speeds);
+      }
+      case PATHPLANNER -> driveVelocity(speeds);
+      case SPEAKER -> {
+        Rotation2d aimAngle = getAimAngle();
+        speeds.omegaRadiansPerSecond =
+            MathUtil.clamp(
+                orientationPID.calculate(
+                    this.getPose().getRotation().getRadians(), aimAngle.getRadians()),
+                -2.5,
+                2.5);
+        driveVelocity(speeds);
+      }
+      default -> driveVelocity(speeds);
+    }
   }
 
   public void driveVelocityFieldCentric(ChassisSpeeds speeds) {
@@ -276,6 +339,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   @AutoLogOutput
+  public Pose2d getPoseFuture(double offsetSec) {
+    ChassisSpeeds speeds = getCurrentChassisSpeed();
+    Pose2d currentPose = getPose();
+    double futureX = currentPose.getX() + speeds.vxMetersPerSecond * offsetSec;
+    double futureY = currentPose.getY() + speeds.vyMetersPerSecond * offsetSec;
+    double futureRotation2d =
+        currentPose.getRotation().getRadians() + (speeds.omegaRadiansPerSecond * offsetSec);
+    Pose2d futurePose = new Pose2d(futureX, futureY, Rotation2d.fromRadians(futureRotation2d));
+    return futurePose;
+  }
+
+  @AutoLogOutput
   public Pose2d getSimNoNoisePose() {
     if (Constants.getMode() == Mode.SIM) {
       return simNoNoiseOdom.getPoseTrue();
@@ -283,9 +358,20 @@ public class Drivetrain extends SubsystemBase {
     return new Pose2d();
   }
 
+  public ChassisSpeeds getCurrentChassisSpeed() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public double distanceToPoint(Pose2d point) {
+    Transform2d dif = getPose().minus(point);
+    return dif.getTranslation().getNorm();
+  }
+
   public void addVisionMeasurement(Pose3d p, double time, Matrix<N3, N1> cov) {
-    visionPose3d = p;
-    poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
+    if (!visionOverride) {
+      visionPose3d = p;
+      poseEstimator.addVisionMeasurement(p.toPose2d(), time, cov);
+    }
   }
 
   public void resetPose(Pose2d pose) {
@@ -306,14 +392,6 @@ public class Drivetrain extends SubsystemBase {
       states[i] = pods.get(i).getState();
     }
     return states;
-  }
-  /**
-   * @return returns the chassis yaw wrapped between -pi and pi
-   */
-  public Rotation2d getPoseYawWrapped() {
-    // its ugly but rotation2d is continuos but I imagine most of our applications
-    // we want it bounded between -pi and pi
-    return Rotation2d.fromRadians(MathUtil.angleModulus(getPose().getRotation().getRadians()));
   }
 
   /**
@@ -351,13 +429,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetFieldOrientation() {
-    // do not need to invert because the navx rotation2D call returns a NWU
-    // coordsys!
-    // this.FieldAngleOffset = m_NavX.getRotation2d();
     Rotation2d redOrBlueZero = new Rotation2d();
-    // if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-    //   redOrBlueZero.plus(Rotation2d.fromDegrees(180));
-    // }
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+      redOrBlueZero.plus(Rotation2d.fromDegrees(180));
+    }
     resetPose(new Pose2d(getPose().getTranslation(), redOrBlueZero));
   }
 
@@ -367,29 +442,68 @@ public class Drivetrain extends SubsystemBase {
     };
   }
 
-  public void setCoastMode() {
+  private void setCoastMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustCoast();
     }
   }
 
-  public void setBrakeMode() {
+  private void setBrakeMode() {
     for (int idx = 0; idx < (pods.size()); idx++) {
       pods.get(idx).setThrustBrake();
     }
   }
 
-  // TODO
+  private ChassisSpeeds getNoteChaseSpeeds() {
+    if (PhotonVisionSystem.getInstance().seeNote) {
+      double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
+      double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
+      Logger.recordOutput("Drivetrain/yawError", yawError);
+      ChassisSpeeds speed =
+          new ChassisSpeeds(
+              MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -2.0, 2.0)
+                  * Math.cos(Units.degreesToRadians(yawError)),
+              0,
+              yawError * (yawkP.get()));
+      return speed;
+    } else {
+      if (PhotonVisionSystem.getInstance().notePitch < -12) {
+        return new ChassisSpeeds(0.7, 0.0, 0.0);
+      }
+      return new ChassisSpeeds();
+    }
+  }
+
   private Rotation2d getAimAngle() {
-    // get the position of the speaker
-    // FieldConstants.java
-    // AllianceFlipUtil.java
     Translation2d difference =
         (this.getPose()
             .getTranslation()
             .minus(
                 AllianceFlipUtil.apply(
                     FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
+
+  private Rotation2d getAimAngleFuture() {
+    Translation2d difference =
+        (this.getPoseFuture(Shooter.LOOKAHEAD_SEC)
+            .getTranslation()
+            .minus(
+                AllianceFlipUtil.apply(
+                    FieldConstants.Speaker.centerSpeakerOpening.toTranslation2d())));
+    return difference.getAngle();
+  }
+
+  @AutoLogOutput
+  public double aimErrorDegrees() {
+    return Math.abs(getPose().getRotation().minus(getAimAngle()).getDegrees());
+  }
+
+  private Rotation2d getAimAnglePass() {
+    Translation2d difference =
+        (this.getPose()
+            .getTranslation()
+            .minus(AllianceFlipUtil.apply(FieldConstants.passLocation.getTranslation())));
     return difference.getAngle();
   }
 
@@ -440,7 +554,7 @@ public class Drivetrain extends SubsystemBase {
         double omega = MathUtil.applyDeadband(spin.getAsDouble(), DEADBAND);
 
         // Square values
-        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0) * 0.9;
+        linearMagnitude = MathUtil.clamp(linearMagnitude * linearMagnitude, -1.0, 1.0);
         omega = Math.copySign(omega * omega, omega);
         // Calcaulate new linear velocity
         Translation2d linearVelocity =
@@ -477,7 +591,6 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           ChassisSpeeds speeds = baseJoystickSpeeds.get();
-
           if (angle != null) {
             speeds.omegaRadiansPerSecond =
                 MathUtil.clamp(
@@ -507,7 +620,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command driveAndAim(DoubleSupplier x, DoubleSupplier y) {
-    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngle);
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAngleFuture);
+  }
+
+  public Command driveAndAimPass(DoubleSupplier x, DoubleSupplier y) {
+    return swerveDriveJoysticks(x, y, () -> 0.0, true, this::getAimAnglePass);
   }
 
   public Command goToPoint(int x, int y) {
@@ -534,11 +651,9 @@ public class Drivetrain extends SubsystemBase {
     return this.run(
         () -> {
           if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -2 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
             ChassisSpeeds speed = baseJoy.get();
-            speed.omegaRadiansPerSecond = yawError * (1 / 20.0);
+            ChassisSpeeds chaseNote = getNoteChaseSpeeds();
+            speed.omegaRadiansPerSecond = chaseNote.omegaRadiansPerSecond;
             driveVelocityFieldCentric(speed);
           } else {
             driveVelocityFieldCentric(baseJoy.get());
@@ -549,72 +664,91 @@ public class Drivetrain extends SubsystemBase {
   public Command chaseNote() {
     return this.run(
         () -> {
-          if (PhotonVisionSystem.getInstance().seeNote) {
-            double yawError = 0 - PhotonVisionSystem.getInstance().noteYaw;
-            double pitchError = -25 - PhotonVisionSystem.getInstance().notePitch;
-            Logger.recordOutput("Drivetrain/yawError", yawError);
-            ChassisSpeeds speed =
-                new ChassisSpeeds(
-                    MathUtil.clamp(-1.0 * pitchError * (pitchkP.get()), -1.0, 1.0),
-                    0,
-                    yawError * (yawkP.get()));
-            driveVelocity(speed);
-          } else {
-            if (PhotonVisionSystem.getInstance().notePitch < -12) {
-              driveVelocity(new ChassisSpeeds(0.7, 0.0, 0.0));
-            }
-            driveVelocity(new ChassisSpeeds());
-          }
+          driveVelocity(getNoteChaseSpeeds());
         });
+  }
+
+  // Not protected by mutex lock to not interrupt the pathplanner command
+  public Command autoChaseTarget(orientationGoal goal) {
+    return Commands.runEnd(
+        () -> autonTarget = goal, () -> autonTarget = orientationGoal.PATHPLANNER);
+  }
+
+  public void runWheelRadiusCharacterization(double omegaSpeed) {
+    driveVelocity(new ChassisSpeeds(0, 0, omegaSpeed));
+  }
+
+  /** Get the position of all drive wheels in radians. */
+  public double[] getWheelRadiusCharacterizationPosition() {
+    return pods.stream().mapToDouble(SwervePod::getThrustPosition).toArray();
   }
 
   public Command stop() {
     return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
   }
 
-  private void resetPoseToVision() {
-    // call resetPose() and pass in visionPose3d
-    resetPose(visionPose3d.toPose2d());
-    // use the .toPose2d() method to convert a 3d pose into a 2d pose
-
-  }
-  // TODO: @Liam 11/27
   public Command resetPoseToVisionCommand() {
-    // we want to use a instant command
+    return new InstantCommand(() -> resetPose(visionPose3d.toPose2d()));
+  }
 
-    // InstantCommand takes in a function reference either () -> { your code here}
-    // or a reference to an existing function this::function_name
-    // here we want to use the resetPoseToVision function you created earlier
-    // use the this::function_name pattern and construct a new InstantCommand to be returned
-
-    // Replace with your command
-    return new InstantCommand(this::resetPoseToVision);
+  public Command setVisionOverride(boolean onoff) {
+    return new InstantCommand(() -> this.visionOverride = onoff);
   }
 
   @Override
   public void periodic() {
+    odometryLock.lock();
     io.updateInputs(inputs);
+    for (SwervePod p : pods) {
+      p.periodic();
+    }
+    odometryLock.unlock();
+    Logger.processInputs("Drivetrain/gyro", inputs);
+
     orientationPID.checkParemeterUpdate();
+
+    // Stop the drivetrain if disabled
     if (!DriverStation.isEnabled()) {
       prevSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
       driveVelocity(new ChassisSpeeds());
     }
-    Logger.processInputs("Drivetrain/gyro", inputs);
-    SwerveModulePosition[] deltas = new SwerveModulePosition[4];
 
-    for (int i = 0; i < pods.size(); i++) {
-      deltas[i] = pods.get(i).getDelta();
+    // odom updates
+
+    double[] sampleTimestamps = pods.get(0).getOdometryTimestamps();
+    int sampleCount = Math.min(sampleTimestamps.length, inputs.odometryYawTimestamps.length);
+    sampleCount = sampleCount == 0 ? 1 : sampleCount;
+    for (int i = 0; i < sampleCount; i++) {
+      // Read wheel positions and deltas from each module
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+        modulePositions[moduleIndex] = pods.get(moduleIndex).getOdometryPositions()[i];
+        moduleDeltas[moduleIndex] =
+            new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
+        lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+      }
+
+      if (inputs.isConnected) {
+        // Use the real gyro angle
+        rawGyroRotation = inputs.odometryYawPositions[i];
+      } else {
+        // Use the angle delta from the kinematics and module deltas
+        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+      }
+
+      // Apply update
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    Twist2d twist = kinematics.toTwist2d(deltas);
-    wheelOnlyHeading = getPoseOdom().exp(twist).getRotation();
-    // update encoders
-    this.poseEstimator.update(getSensorYaw(), getSwerveModulePositions());
+
     this.odom.update(getSensorYaw(), getSwerveModulePositions());
 
     if (Constants.getMode() == Mode.SIM) {
       simNoNoiseOdom.update();
     }
-
-    SmartDashboard.putNumber("NavYaw", getPoseYawWrapped().getDegrees());
   }
 }

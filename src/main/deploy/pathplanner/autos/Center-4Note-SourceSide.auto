@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2951743872237744,
+      "y": 5.51611216503683
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToMid3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid3ToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookupQuick"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

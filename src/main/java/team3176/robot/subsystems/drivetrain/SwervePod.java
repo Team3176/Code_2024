@@ -6,14 +6,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.util.LoggedTunableNumber;
 
-public class SwervePod implements Subsystem {
+public class SwervePod {
 
   /** Class Object holding the Motor controller for Drive Motor on the SwervePod */
   /** Current value in radians of the azimuthEncoder's position */
@@ -21,7 +19,8 @@ public class SwervePod implements Subsystem {
 
   private SwerveModuleState desiredState = new SwerveModuleState();
   boolean lastHasResetOccurred;
-  public static final double WHEEL_DIAMETER = Units.inchesToMeters(2.93); // Inches
+  public static final double WHEEL_DIAMETER = Units.inchesToMeters(2.99); // Inches
+  static final double ODOMETRY_FREQUENCY = 100.0;
 
   /**
    * Numerical identifier to differentiate between pods. For 4 Pods: 0 = FrontRight (FR), 1 =
@@ -46,6 +45,7 @@ public class SwervePod implements Subsystem {
   private String[] podNames = {"FR", "FL", "BL", "BR"};
 
   private LoggedTunableNumber offset;
+  private Rotation2d local_offset;
   private double turnMaxpercentLocal = 0.7;
   private double lastDistance = 0.0;
   private double lastDistanceSimNoNoise = 0.0;
@@ -60,6 +60,7 @@ public class SwervePod implements Subsystem {
 
   private SwervePodIO io;
   private SwervePodIOInputsAutoLogged inputs = new SwervePodIOInputsAutoLogged();
+  private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   public SwervePod(int id, SwervePodIO io) {
     this.id = podNames[id];
@@ -68,6 +69,7 @@ public class SwervePod implements Subsystem {
 
     // this.kP_Azimuth = 0.006;
     offset = new LoggedTunableNumber("Offsets/Module" + this.id, io.getOffset().getDegrees());
+    local_offset = Rotation2d.fromDegrees(io.getOffset().getDegrees());
     velMax.initDefault(900);
     velAcc.initDefault(900);
 
@@ -82,7 +84,6 @@ public class SwervePod implements Subsystem {
     turningPIDController.setP(this.kPAzimuth.get());
     turningPIDController.setI(this.kIAzimuth.get());
     turningPIDController.setD(this.kDAzimuth.get());
-    CommandScheduler.getInstance().registerSubsystem(this);
   }
 
   public void setModule(double speedMetersPerSecond, Rotation2d angle) {
@@ -161,7 +162,18 @@ public class SwervePod implements Subsystem {
     return inputs.driveVelocityRadPerSec;
   }
 
-  @Override
+  public double getThrustPosition() {
+    return inputs.drivePositionRad;
+  }
+
+  public double[] getOdometryTimestamps() {
+    return inputs.odometryTimestamps;
+  }
+
+  public SwerveModulePosition[] getOdometryPositions() {
+    return odometryPositions;
+  }
+
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drivetrain/Module" + this.id, inputs);
@@ -178,6 +190,7 @@ public class SwervePod implements Subsystem {
     }
     if (offset.hasChanged(hashCode())) {
       io.setOffset(Rotation2d.fromDegrees(offset.get()));
+      local_offset = Rotation2d.fromDegrees(offset.get());
     }
     if (kPAzimuth.hasChanged(hashCode())
         || kIAzimuth.hasChanged(hashCode())
@@ -215,8 +228,14 @@ public class SwervePod implements Subsystem {
         desiredState.speedMetersPerSecond * angleErrorPenalty);
     Logger.recordOutput("Drivetrain/Module" + this.id + "/MeasuredVelocity", getVelocity());
     io.setDrive(desiredState.speedMetersPerSecond * angleErrorPenalty);
-    // if(velAcc.hasChanged(hashCode()) || velMax.hasChanged(hashCode())){
-    //     turningPIDController.setConstraints(new Constraints(velMax.get(),velAcc.get()));
-    // }
+
+    int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
+    odometryPositions = new SwerveModulePosition[sampleCount];
+    for (int i = 0; i < sampleCount; i++) {
+      double positionMeters = inputs.odometryDrivePositionsRad[i] * WHEEL_DIAMETER / 2.0;
+      Rotation2d angle =
+          inputs.odometryTurnPositions[i].minus(offset != null ? local_offset : new Rotation2d());
+      odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+    }
   }
 }

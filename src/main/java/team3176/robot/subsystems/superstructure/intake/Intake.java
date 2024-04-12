@@ -5,10 +5,10 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
+import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
 import team3176.robot.util.LoggedTunableNumber;
 import team3176.robot.util.TunablePID;
@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 1.7;
+  private final double DEPLOY_POS = 2.1;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
@@ -42,44 +42,32 @@ public class Intake extends SubsystemBase {
 
   private Intake(IntakeIO io) {
     this.io = io;
-    this.pivotPID = new TunablePID("intakePivot", 4.0, 0.0, 0.0);
+    this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
-    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
+    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 7.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
-    // kG.put(27.0, 0.6);
-    // kG.put(,)
-  }
-
-  private void stopRoller() {
-    io.setRollerVolts(0.0);
-  }
-
-  private void pivotGoToPosition(int position) {
-    io.setPivotPIDPosition(position);
-  }
-
-  private void stopPivot() {
-    io.setPivotVolts(0.0);
-  }
-
-  @AutoLogOutput
-  public boolean hasNote() {
-    return inputs.laserCanMeasurement < 120;
   }
 
   public Command EmergencyHold() {
-    return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
+    return this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0));
+  }
+
+  public Command manualDown() {
+    return this.runEnd(
+        () -> {
+          io.setPivotVolts(2.5);
+          io.setRollerVolts(4.0);
+        },
+        () -> {
+          io.setPivotVolts(0.0);
+          io.setRollerVolts(0);
+        });
   }
 
   private void runPivot(double volts) {
-    // this assumes positive voltage deploys the intake and negative voltage retracks it.
+    // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
-    if ((inputs.lowerLimitSwitch && volts > 0.0)) {
-      volts = 0.0;
-    } else if ((inputs.upperLimitSwitch && volts < 0.0)) {
-      volts = -.2;
-    }
     io.setPivotVolts(volts);
   }
 
@@ -89,8 +77,8 @@ public class Intake extends SubsystemBase {
 
   public static Intake getInstance() {
     if (instance == null) {
-      if (Constants.getMode() == Mode.REAL) {
-        instance = new Intake(new IntakeIOTalonGrapple() {});
+      if (Constants.getMode() == Mode.REAL && Constants.getRobot() != RobotType.ROBOT_DEFENSE) {
+        instance = new Intake(new IntakeIOTalon() {});
       } else {
         instance = new Intake(new IntakeIOSim() {});
       }
@@ -102,8 +90,7 @@ public class Intake extends SubsystemBase {
   public Command deployPivot() {
     return this.runOnce(
         () -> {
-          this.pivotState = pivotStates.DEPLOY;
-          this.pivotSetpoint = 1.7;
+          this.pivotSetpoint = DEPLOY_POS;
           deployTime.restart();
         });
   }
@@ -112,16 +99,8 @@ public class Intake extends SubsystemBase {
     return this.runOnce(() -> this.pivotSetpoint = 0.0);
   }
 
-  public Command spinIntakeUntilPivot() {
-    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> hasNote())
-        .andThen(() -> io.setRollerVolts(0.0));
-  }
-
-  public Command spinIntakeUntilRoller() {
-    return this.run(() -> io.setRollerVolts(rollerVolts.get()))
-        .until(() -> rollerSwitch())
-        .andThen(() -> io.setRollerVolts(0.0));
+  public Command climbIntake() {
+    return this.runOnce(() -> this.pivotSetpoint = 0.45);
   }
 
   public Command spinIntake() {
@@ -135,31 +114,21 @@ public class Intake extends SubsystemBase {
   public Command stopRollers() {
     return this.runOnce(() -> io.setRollerVolts(0));
   }
-
+  /*
+   * this can be much simpler than before just needs to spin the intake and retract when done.
+   * keep the high level logic up in superstructure
+   */
   public Command intakeNote() {
     return (deployPivot()
-            .andThen(spinIntakeUntilPivot())
-            .andThen(retractPivot()) //
-            .andThen(stopRollers()))
+        .andThen(spinIntake())
         .finallyDo(
             () -> {
-              pivotState = pivotStates.RETRACT;
+              this.pivotSetpoint = 0.0;
               io.setRollerVolts(0.0);
-            });
+            }));
   }
 
-  public Command intakeNoteroller() {
-    return (deployPivot()
-            .andThen(spinIntakeUntilPivot())
-            .andThen(retractPivot()) //
-            .andThen(stopRollers()))
-        .finallyDo(
-            () -> {
-              pivotState = pivotStates.RETRACT;
-              io.setRollerVolts(0.0);
-            });
-  }
-
+  // TODO: might need to deploy the intake during a spit but maybe not
   public Command spit() {
     return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
   }
@@ -169,46 +138,25 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
-
-    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3, 1.0);
-    if (pivotSetpoint < 0.1) {
-      commandVolts -= 0.5;
+    double pivot_pos = inputs.pivotPosition - pivot_offset;
+    if (!ishomed && pivotSetpoint > 1.0) {
+      pivot_pos = -3.0;
     }
+    double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
+    if (pivot_pos <= 0.7) {
+      commandVolts *= 1.6;
+    }
+    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
+
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
-    Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
+    Logger.recordOutput("Intake/offsetPos", pivot_pos);
     runPivot(commandVolts);
     pivotPID.checkParemeterUpdate();
-    if (inputs.upperLimitSwitch && !ishomed) {
+    if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
-      pivot_offset = inputs.pivotPosition;
+      pivot_offset = inputs.pivotPosition - DEPLOY_POS;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
-    // pivot state machine
-    // switch (pivotState) {
-    //   case DEPLOY:
-    //     /*         if (deployTime.get() < 0.5) { */
-    //     runPivot(2.0);
-    //     /*         } else {
-    //       runPivot(0);
-    //     } */
-    //     if (inputs.lowerLimitSwitch) {
-    //       pivotState = pivotStates.IDLE;
-    //     }
-    //     break;
-    //   case RETRACT:
-    //     runPivot(-2);
-    //     if (inputs.upperLimitSwitch) {
-    //       pivotState = pivotStates.HOLD;
-    //     }
-    //     break;
-    //   case IDLE:
-    //     runPivot(0.0);
-    //     break;
-    //   case HOLD:
-    //     runPivot(-0.2);
-    //     break;
-    // }
   }
 }

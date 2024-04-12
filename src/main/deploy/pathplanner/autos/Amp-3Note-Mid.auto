@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7422668751587503,
-      "y": 4.462411893573787
+      "x": 0.7568917481584964,
+      "y": 6.6322409988569975
     },
-    "rotation": -59.30027744918559
+    "rotation": 58.776513625062954
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "shootLookup"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SourceToWing3"
+            "pathName": "AmpToWing1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Wing1ToMid1"
           }
         },
         {
@@ -32,13 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Wing3ToSource"
+            "pathName": "Mid1toShoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAim"
+            "name": "shootLookup"
           }
         }
       ]

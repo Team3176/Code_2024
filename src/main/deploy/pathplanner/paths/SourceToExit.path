@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7356638541402083,
-        "y": 4.482712090424181
+        "x": 0.6972462773050546,
+        "y": 4.478346456692914
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.003604624396749,
-        "y": 3.006909607569215
+        "x": 0.9651870475615945,
+        "y": 3.002543973837948
       },
       "isLocked": false,
       "linkedName": "SourceStart"
@@ -33,7 +33,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "Speaker",
   "previewStartingState": {
-    "rotation": -62.05112100535446,
+    "rotation": -61.75183513454364,
     "velocity": 0
   },
   "useDefaultConstraints": true

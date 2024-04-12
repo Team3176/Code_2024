@@ -34,8 +34,8 @@ public class SuperStructureConstants {
   public static final double CLIMBLEFT_kg = 0.2;
   public static final double CLIMBLEFT_TOLERANCE = 3;
   public static final double CLIMBLEFT_ZERO_POS = 0.39;
-  public static final double CLIMBLEFT_TOP_POS = 80 + CLIMBLEFT_ZERO_POS;
-  public static final double CLIMBLEFT_SIM_OFFSET = 80 + CLIMBLEFT_ZERO_POS;
+  public static final double CLIMBLEFT_TOP_POS = 75 + CLIMBLEFT_ZERO_POS;
+  public static final double CLIMBLEFT_SIM_OFFSET = 63 + CLIMBLEFT_ZERO_POS;
 
   public static final double CLIMBRIGHT_kP = 0.006;
   public static final double CLIMBRIGHT_kI = 0; // .0025
@@ -43,8 +43,8 @@ public class SuperStructureConstants {
   public static final double CLIMBRIGHT_kg = 0.2;
   public static final double CLIMBRIGHT_TOLERANCE = 3;
   public static final double CLIMBRIGHT_ZERO_POS = 0.39;
-  public static final double CLIMBRIGHT_TOP_POS = 80 + CLIMBRIGHT_ZERO_POS;
-  public static final double CLIMBRIGHT_SIM_OFFSET = 80 + CLIMBRIGHT_ZERO_POS;
+  public static final double CLIMBRIGHT_TOP_POS = 75 + CLIMBRIGHT_ZERO_POS;
+  public static final double CLIMBRIGHT_SIM_OFFSET = 63 + CLIMBRIGHT_ZERO_POS;
 
   public static final double INTAKE_PIVOT_kP = 0.006;
   public static final double INTAKE_PIVOT_kI = 0; // .0025
@@ -55,8 +55,8 @@ public class SuperStructureConstants {
   public static final double INTAKE_PIVOT_PICKUP_POS = 70 + INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_CARRY_POS = INTAKE_PIVOT_ZERO_POS;
   public static final double INTAKE_PIVOT_SIM_OFFSET = 75 + INTAKE_PIVOT_ZERO_POS;
-  public static final int INTAKE_LASERCAN_DIST_TO_NOTE = 200;
-
+  /*   public static final int INTAKE_LASERCAN_DIST_TO_NOTE = 200;
+   */
   public static final double INTAKE_ROLLER_kP = 0.006;
   public static final double INTAKE_ROLLER_kI = 0; // .0025
   public static final double INTAKE_ROLLER_kD = 0; // .001
@@ -68,18 +68,6 @@ public class SuperStructureConstants {
   public static final double TRANSFER_kD = 0; // .001
   public static final double TRANSFER_kg = 0.2;
   public static final double TRANSFER_TOLERANCE = 3;
-
-  public static final double ELEVATOR_kP = 0.006;
-  public static final double ELEVATOR_kI = 0; // .0025
-  public static final double ELEVATOR_kD = 0; // .001
-  public static final double ELEVATOR_kg = 0.2;
-  public static final double ELEVATOR_TOLERANCE = 3;
-  public static final double ELEVATOR_ZERO_POS = 150;
-  public static final double ELEVATOR_PICKUP_POS = ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_AMP_POS = 20 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_TRAP_POS = 45 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_TOP_POS = 100 + ELEVATOR_ZERO_POS;
-  public static final double ELEVATOR_SIM_OFFSET = 70 + ELEVATOR_ZERO_POS;
 
   public static final double ANGLER_kP = 0.006;
   public static final double ANGLER_kI = 0; // .0025

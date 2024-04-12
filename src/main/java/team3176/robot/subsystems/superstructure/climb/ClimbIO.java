@@ -18,10 +18,10 @@ public interface ClimbIO {
     public double rightPosition = 0.0;
     public double leftError = 0.0;
     public double rightError = 0.0;
-    // public double VelocityRadPerSec = 0.0;
-    // public double AppliedVolts = 0.0;
-    // public double[] CurrentAmps = new double[] {};
-    // public double[] TempCelcius = new double[] {};
+    public double leftVolts = 0.0;
+    public double rightVolts = 0.0;
+    public double leftAmpsStator = 0.0;
+    public double rightAmpsStator = 0.0;
     public boolean isLeftLimitswitch = true;
     public boolean isRightLimitswitch = true;
 
@@ -40,6 +40,8 @@ public interface ClimbIO {
 
   public default void setRightPIDPosition(double rotations) {}
 
+  public default void setClimbVoltage(double voltage) {}
+
   // public default void stopLeft() {}
 
   // public default void stopRight() {}
@@ -53,6 +55,8 @@ public interface ClimbIO {
   public default void setLeftVoltage(double voltage) {}
 
   public default void setRightVoltage(double voltage) {}
+
+  public default void setClimbVoltge(double voltage) {}
 
   public default void reset() {}
 }

@@ -40,13 +40,15 @@ public class IntakeIOTalon implements IntakeIO {
   DigitalInput lowerLimitSwitch;
 
   private final StatusSignal<Double> pivotAppliedVolts;
-  private final StatusSignal<Double> pivotCurrentAmps;
+  private final StatusSignal<Double> pivotCurrentAmpsStator;
+  private final StatusSignal<Double> pivotCurrentAmpsSupply;
   private final StatusSignal<Double> pivotVelocity;
   private final StatusSignal<Double> pivotPosition;
   private final StatusSignal<Double> pivotTemp;
 
   private final StatusSignal<Double> rollerAppliedVolts;
-  private final StatusSignal<Double> rollerCurrentAmps;
+  private final StatusSignal<Double> rollerCurrentAmpsStator;
+  private final StatusSignal<Double> rollerCurrentAmpsSupply;
   private final StatusSignal<Double> rollerVelocity;
   private final StatusSignal<Double> rollerTemp;
 
@@ -58,8 +60,8 @@ public class IntakeIOTalon implements IntakeIO {
     // voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
     // voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
-    rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
-    pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
+    // rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
+    // pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
 
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
@@ -75,13 +77,13 @@ public class IntakeIOTalon implements IntakeIO {
 
     // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
     // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
-    pivotConfigs.Voltage.PeakForwardVoltage = 12;
-    pivotConfigs.Voltage.PeakReverseVoltage = 12;
+    pivotConfigs.Voltage.PeakForwardVoltage = 8;
+    pivotConfigs.Voltage.PeakReverseVoltage = -10;
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     pivotConfigs.Feedback.SensorToMechanismRatio = 20.0;
 
-    // pivotConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    // pivotConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimit = 60;
+    pivotConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     TalonUtils.applyTalonFxConfigs(rollerController, rollerConfigs);
@@ -89,27 +91,33 @@ public class IntakeIOTalon implements IntakeIO {
     pivotController.setPosition(0, 0);
 
     pivotAppliedVolts = pivotController.getMotorVoltage();
-    pivotCurrentAmps = pivotController.getStatorCurrent();
+    pivotCurrentAmpsStator = pivotController.getStatorCurrent();
+    pivotCurrentAmpsSupply = pivotController.getSupplyCurrent();
     pivotVelocity = pivotController.getVelocity();
     pivotPosition = pivotController.getPosition();
     pivotTemp = pivotController.getDeviceTemp();
 
     rollerAppliedVolts = rollerController.getMotorVoltage();
-    rollerCurrentAmps = rollerController.getStatorCurrent();
+    rollerCurrentAmpsStator = rollerController.getStatorCurrent();
+    rollerCurrentAmpsSupply = rollerController.getSupplyCurrent();
     rollerVelocity = rollerController.getVelocity();
     rollerTemp = rollerController.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         pivotAppliedVolts,
-        pivotCurrentAmps,
+        pivotCurrentAmpsStator,
         pivotVelocity,
         pivotPosition,
         pivotTemp,
+        pivotCurrentAmpsSupply);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
         rollerAppliedVolts,
         rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        rollerCurrentAmpsStator,
+        rollerTemp,
+        rollerCurrentAmpsSupply);
 
     rollerController.optimizeBusUtilization();
     pivotController.optimizeBusUtilization();
@@ -119,29 +127,34 @@ public class IntakeIOTalon implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         pivotAppliedVolts,
-        pivotCurrentAmps,
+        pivotCurrentAmpsStator,
         pivotVelocity,
         pivotPosition,
         pivotTemp,
+        pivotCurrentAmpsSupply);
+    BaseStatusSignal.refreshAll(
         rollerAppliedVolts,
         rollerVelocity,
-        rollerCurrentAmps,
-        rollerTemp);
+        rollerCurrentAmpsStator,
+        rollerTemp,
+        rollerCurrentAmpsSupply);
 
-    inputs.isRollerLinebreak = (!rollerLinebreak.get());
-    inputs.isPivotLinebreak = (!pivotLinebreak.get());
+    // inputs.isRollerLinebreak = (!rollerLinebreak.get());
+    // inputs.isPivotLinebreak = (!pivotLinebreak.get());
 
     inputs.upperLimitSwitch = (!upperLimitSwitch.get());
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
-    inputs.pivotCurrentAmps = pivotCurrentAmps.getValueAsDouble();
+    inputs.pivotAmpsStator = pivotCurrentAmpsStator.getValueAsDouble();
+    inputs.pivotAmpsSupply = pivotCurrentAmpsSupply.getValue();
     inputs.pivotTempCelcius = pivotTemp.getValueAsDouble();
     inputs.pivotPosition = Units.rotationsToRadians(pivotPosition.getValueAsDouble());
     inputs.pivotVelocityRadPerSec = Units.rotationsToRadians(pivotVelocity.getValueAsDouble());
 
     inputs.rollerAppliedVolts = rollerAppliedVolts.getValueAsDouble();
-    inputs.rollerCurrentAmps = rollerCurrentAmps.getValueAsDouble();
+    inputs.rollerAmpsStator = rollerCurrentAmpsStator.getValueAsDouble();
+    inputs.rollerAmpsSupply = rollerCurrentAmpsSupply.getValueAsDouble();
     inputs.rollerTempCelcius = rollerTemp.getValueAsDouble();
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
   }

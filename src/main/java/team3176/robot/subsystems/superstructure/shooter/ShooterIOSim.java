@@ -10,6 +10,7 @@ package team3176.robot.subsystems.superstructure.shooter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import team3176.robot.Constants;
@@ -32,10 +33,10 @@ public class ShooterIOSim implements ShooterIO {
             50.0,
             1.0,
             0.2,
-            Shooter.LOWER_LIMIT.getRadians(),
-            Shooter.UPPER_LIMIT.getRadians(),
+            Units.degreesToRadians(0.0),
+            Units.degreesToRadians(30),
             false,
-            Shooter.LOWER_LIMIT.getRadians());
+            0.0);
   }
   /** Updates the set of loggable inputs. */
   @Override
@@ -45,19 +46,19 @@ public class ShooterIOSim implements ShooterIO {
     pivotSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.pivotAppliedVolts = pivotAppliedVolts;
     inputs.pivotPosition = Rotation2d.fromRadians(pivotSim.getAngleRads());
-    inputs.wheelUpperVelocityRadPerSec = wheelSimUpper.getAngularVelocityRadPerSec();
-    inputs.wheelLowerVelocityRadPerSec = wheelSimLower.getAngularVelocityRadPerSec();
-    inputs.wheelUpperAppliedVolts = wheelUpperAppliedVolts;
-    inputs.wheelLowerAppliedVolts = wheelLowerAppliedVolts;
+    inputs.wheelLeftVelocityRadPerSec = wheelSimUpper.getAngularVelocityRadPerSec();
+    inputs.wheelRightVelocityRadPerSec = wheelSimLower.getAngularVelocityRadPerSec();
+    inputs.wheelLeftAppliedVolts = wheelUpperAppliedVolts;
+    inputs.wheelRightAppliedVolts = wheelLowerAppliedVolts;
   }
 
   @Override
-  public void setWheelUpperVoltage(double voltage) {
+  public void setWheelLeftVoltage(double voltage) {
     wheelUpperAppliedVolts = MathUtil.clamp(voltage, -12, 12);
     wheelSimUpper.setInputVoltage(wheelUpperAppliedVolts);
   }
 
-  public void setWheelLowerVoltage(double voltage) {
+  public void setWheelRightVoltage(double voltage) {
     wheelLowerAppliedVolts = MathUtil.clamp(voltage, -12, 12);
     wheelSimLower.setInputVoltage(wheelLowerAppliedVolts);
   }

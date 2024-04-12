@@ -21,10 +21,13 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
+import team3176.robot.Constants;
+import team3176.robot.Constants.Mode;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunableTransform3d;
 
@@ -50,9 +53,9 @@ public class LoggedAprilPhotonCam {
           new Rotation3d(
               Units.degreesToRadians(0), Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
   private TunableTransform3d robot2CameraTune;
-  // private PhotonCamera realCam;
   private PhotonCameraIO io;
   private PhotonCameraInputsAutoLogged inputs;
+  // private LoggedPhotonCamera cam;
   private List<Pose3d> targets = new ArrayList<Pose3d>();
   private List<Pose3d> estimates = new ArrayList<Pose3d>();
   String name = "";
@@ -62,7 +65,7 @@ public class LoggedAprilPhotonCam {
 
   public LoggedAprilPhotonCam(String name, Transform3d robot2Camera) {
     this.name = name;
-
+    // this.cam = new LoggedPhotonCamera(name);
     this.io = new PhotonCameraIO(name);
     this.inputs = new PhotonCameraInputsAutoLogged();
     this.robot2Camera = robot2Camera;
@@ -84,6 +87,7 @@ public class LoggedAprilPhotonCam {
     estimator =
         new PhotonPoseEstimator(
             field, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robot2Camera);
+    estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
   }
 
   public Transform3d getRobot2Camera() {
@@ -181,17 +185,23 @@ public class LoggedAprilPhotonCam {
         }
       }
     }
-    Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    // TODO: Remember to fix me for camera2
+    if (!name.equals("camera2")) {
+      Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    }
   }
 
   public void periodic() {
     LogCameraPose();
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
-    var results = inputs.results;
-    // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    PhotonPipelineResult results = io.getResult(inputs.rawBytes);
+    results.setTimestampSeconds(inputs.timestamp);
+    if (Constants.getMode() == Mode.REPLAY) {
+      Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    }
     generateLoggingData(results);
-    // estimator.setRobotToCameraTransform(robot2Camera);
+    // Logger.recordOutput("photonvision/" + name + "/timestamp", results.getTimestampSeconds());
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());
