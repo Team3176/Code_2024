@@ -23,11 +23,14 @@ import team3176.robot.constants.Hardwaremap;
 import team3176.robot.subsystems.Visualization;
 import team3176.robot.subsystems.controller.Controller;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
+import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
 import team3176.robot.subsystems.leds.LEDS;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -53,6 +56,10 @@ public class RobotContainer {
   private Alliance currentAlliance = Alliance.Blue;
   private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
   private Trigger hasNote = new Trigger(() -> Conveyor.getInstance().hasNote());
+  private Trigger shooterOverride;
+  private Trigger ampOverride;
+  private Trigger intakeOverride;
+  private Trigger visionOverride;
   private LEDS ledsRio;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -82,23 +89,61 @@ public class RobotContainer {
                 () -> controller.getSpin())
             .withName("default drive"));
     leds.setDefaultCommand(leds.DefaultLED());
-    NamedCommands.registerCommand(
-        "shoot",
-        superstructure
-            .aimClose()
-            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
-            .withTimeout(1.5)
-            .withName("shooting"));
+    // These all need to be sped up
+    NamedCommands.registerCommand("shoot", new WaitCommand(1.0));
+    // NamedCommands.registerCommand(
+    //     "shoot",
+    //     superstructure
+    //         .aimClose()
+    //         .alongWith(new WaitCommand(0.5).andThen(superstructure.shoot().withTimeout(0.3)))
+    //         .withTimeout(0.8)
+    //         .withName("shooting"));
     NamedCommands.registerCommand(
         "shootAim",
         superstructure
             .aimClose()
-            .alongWith(drivetrain.driveAndAim(() -> 0, () -> 0))
-            .alongWith(new WaitCommand(1.0).andThen(superstructure.shoot().withTimeout(0.5)))
-            .withTimeout(1.5)
-            .withName("shooting"));
+            .asProxy()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.5)
+                    .andThen(superstructure.shoot().withTimeout(0.5).asProxy())
+                    .withName("shooting")));
     NamedCommands.registerCommand(
-        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(2.5));
+        "shootLookup",
+        superstructure
+            .aimShooterLookup()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.7) // .until(() -> superstructure.readyToShoot())
+                    .andThen(superstructure.shoot().withTimeout(0.4))
+                    .withName("shooting")));
+    NamedCommands.registerCommand(
+        "shootLookupQuick",
+        superstructure
+            .aimShooterLookup()
+            .raceWith(drivetrain.driveAndAim(() -> 0, () -> 0))
+            .raceWith(
+                new WaitCommand(0.1) // .until(() -> superstructure.readyToShoot())
+                    .andThen(superstructure.shoot().withTimeout(0.4))
+                    .withName("shooting")));
+    NamedCommands.registerCommand(
+        "chaseNote", drivetrain.chaseNote().raceWith(superstructure.intakeNote()).withTimeout(1.5));
+
+    Command chaseNoteAuto =
+        drivetrain
+            .autoChaseTarget(orientationGoal.NOTECAM)
+            .until(() -> Conveyor.getInstance().hasNote())
+            .withTimeout(2.0);
+    NamedCommands.registerCommand("deployIntake", Intake.getInstance().deployPivot());
+    // using schedule to prevent intake from being cancelled if the path ends
+    NamedCommands.registerCommand("intake", superstructure.intakeNote().withTimeout(3.0));
+    NamedCommands.registerCommand(
+        "aimSpeaker",
+        drivetrain
+            .autoChaseTarget(orientationGoal.SPEAKER)
+            .alongWith(superstructure.aimShooterLookup())
+            .withTimeout(1.0));
+    NamedCommands.registerCommand("score", superstructure.shoot().withTimeout(0.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
@@ -107,6 +152,13 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    /*
+     * overrides
+     */
+    shooterOverride = controller.switchBox.button(1);
+    ampOverride = controller.switchBox.button(2);
+    intakeOverride = controller.switchBox.button(3);
+    visionOverride = controller.switchBox.button(4);
     /*
      * Translation Stick
      */
@@ -127,17 +179,25 @@ public class RobotContainer {
     controller
         .transStick
         .button(2)
-        .onTrue(superstructure.intakeNote())
-        .onFalse(Intake.getInstance().stopRollers().andThen(Intake.getInstance().retractPivot()));
+        .onTrue(
+            superstructure
+                .intakeNote()
+                .withName("intakeNote")
+                .alongWith(ledsRio.Intaking().asProxy()))
+        .onFalse(superstructure.retractIntakePivot());
+
     controller
         .transStick
         .button(3)
         .whileTrue(
             drivetrain
                 .chaseNote()
+                .until(() -> Conveyor.getInstance().isLaserIntakeSide())
                 .alongWith(superstructure.intakeNote())
-                .alongWith(ledsRio.AutoDrive().asProxy()));
-    controller
+                .alongWith(ledsRio.AutoDrive().asProxy())
+                .withName("intakeAutoDrive"));
+    /*
+        controller
         .transStick
         .button(4)
         .whileTrue(
@@ -147,7 +207,7 @@ public class RobotContainer {
                     () -> controller.getStrafe(),
                     () -> controller.getSpin())
                 .alongWith(superstructure.intakeNote()));
-
+    */
     controller.transStick.button(5).onTrue(drivetrain.resetPoseToVisionCommand());
     controller
         .transStick
@@ -157,22 +217,47 @@ public class RobotContainer {
     /*
      *  Rotation Stick
      */
-    controller.rotStick.button(1).whileTrue(superstructure.shoot());
+    controller.rotStick.button(1).whileTrue(superstructure.shoot().withName("shoot"));
     controller
         .rotStick
         .button(2)
         .whileTrue(
-            drivetrain
-                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimShooterTune()));
-    controller.rotStick.button(3).whileTrue(superstructure.aimClose());
+            Commands.either(
+                superstructure.aimShooterTune().withName("shooterAimOverride"),
+                Commands.either(
+                    drivetrain
+                        .driveAndAimPass(
+                            () -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimPass())
+                        .withName("aimTuneAndDrive"),
+                    drivetrain
+                        .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()
+                        .alongWith(superstructure.aimShooterLookup())
+                        .withName("aimTuneAndDrive"),
+                    () -> Shooter.getInstance().getDistance() > 9.0),
+                shooterOverride));
+    controller
+        .rotStick
+        .button(3)
+        .whileTrue(superstructure.aimShooterTune().withName("aimShooterTune"));
+    // this is reverse switch once we prove out the auto score
     controller
         .rotStick
         .button(4)
         .whileTrue(
-            drivetrain
-                .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                .alongWith(superstructure.aimPodium()));
+            Commands.either(
+                superstructure
+                    .aimAmp(true)
+                    .withName("aimAmp")
+                    .alongWith(ledsRio.Amping().asProxy()),
+                superstructure
+                    .aimAmp(false)
+                    .withName("aimAmpDrive")
+                    .alongWith(ledsRio.Amping().asProxy()),
+                ampOverride))
+        .onFalse(Climb.getInstance().stow());
     controller
         .rotStick
         .button(8)
@@ -187,10 +272,14 @@ public class RobotContainer {
         .operator
         .leftBumper()
         .whileTrue(
-            superstructure.moveClimbLeftRightPosition(
-                () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY()))
+            superstructure
+                .moveClimbLeftRightPosition(
+                    () -> -controller.operator.getLeftY(), () -> -controller.operator.getRightY())
+                .alongWith(ledsRio.Climbing().asProxy()))
         .onFalse(superstructure.stopClimbLeftRight());
-
+    controller.operator.leftBumper().onTrue(Intake.getInstance().climbIntake());
+    controller.operator.leftTrigger().whileTrue(superstructure.aimClose());
+    controller.operator.rightTrigger().whileTrue(superstructure.shoot());
     /*
     controller
         .operator
@@ -198,8 +287,9 @@ public class RobotContainer {
         .whileTrue(superstructure.moveClimbRightPosition(() -> controller.operator.getRightY()))
         .onFalse(superstructure.stopClimbRight());
         */
-    controller.operator.povUp().onTrue(Intake.getInstance().retractPivot());
-    controller.operator.povDown().onTrue(superstructure.intakeNote());
+    controller.operator.povUp().whileTrue(Intake.getInstance().EmergencyHold());
+    controller.operator.povDown().whileTrue(Intake.getInstance().manualDown());
+    // controller.operator.povDown().onTrue(superstructure.intakeNote());
 
     controller
         .operator
@@ -207,19 +297,16 @@ public class RobotContainer {
         .and(controller.operator.povLeft())
         .onTrue(Intake.getInstance().EmergencyHold());
 
-    /*
-     * SwitchBox
-     */
+    controller
+        .switchBox
+        .button(5)
+        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
 
     controller
         .switchBox
-        .button(1)
-        .whileTrue(new WheelRadiusCharacterization(drivetrain, Direction.CLOCKWISE));
-    controller
-        .switchBox
-        .button(2)
-        .whileTrue(
-            Commands.run(() -> ledsRio.hasNote = true).finallyDo(() -> ledsRio.hasNote = false));
+        .button(4)
+        .onTrue(drivetrain.setVisionOverride(true))
+        .onFalse(drivetrain.setVisionOverride(false));
   }
 
   public void clearCanFaults() {

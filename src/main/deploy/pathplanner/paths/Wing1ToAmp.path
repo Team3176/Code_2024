@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6176424481650402,
-        "y": 6.961013421132389
+        "x": 2.5797215230794097,
+        "y": 7.0058881935945685
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9876269303215046,
-        "y": 6.962759674624896
+        "x": 1.9497060052358743,
+        "y": 7.007634447087075
       },
       "isLocked": false,
       "linkedName": "Wing1"
@@ -33,7 +33,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },

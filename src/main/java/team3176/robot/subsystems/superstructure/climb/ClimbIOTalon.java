@@ -156,7 +156,8 @@ public class ClimbIOTalon implements ClimbIO {
     climbLeft.setVoltage(voltage);
   }
 
-  public void setClimbVoltage(double voltage) {
+  @Override
+  public void setClimbVoltge(double voltage) {
     climbLeft.setVoltage(voltage);
     climbRight.setVoltage(voltage);
   }

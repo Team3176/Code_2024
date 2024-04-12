@@ -3,37 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.431788811968301,
-        "y": 4.313959357663443
+        "x": 0.7568917481584964,
+        "y": 6.6322409988569975
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3110120765696076,
-        "y": 4.337866857551897
+        "x": 1.7568917481584965,
+        "y": 6.6322409988569975
       },
       "isLocked": false,
-      "linkedName": "Wing3"
+      "linkedName": "AmpStart"
     },
     {
       "anchor": {
-        "x": 1.2951743872237744,
-        "y": 5.51611216503683
+        "x": 6.422884056705613,
+        "y": 7.330524114173229
       },
       "prevControl": {
-        "x": 2.2778785401320802,
-        "y": 5.496739665354331
+        "x": 4.499059672384216,
+        "y": 7.257095702557908
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterStart"
+      "linkedName": "mid1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.6,
+      "waypointRelativePos": 0.55,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,7 +47,7 @@
             {
               "type": "named",
               "data": {
-                "name": "aimSpeaker"
+                "name": "intake"
               }
             }
           ]
@@ -56,14 +62,14 @@
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.5,
     "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Speaker",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 59.29258106093234,
     "velocity": 0
   },
   "useDefaultConstraints": true

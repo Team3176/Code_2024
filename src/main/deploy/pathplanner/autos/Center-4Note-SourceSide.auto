@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Wing2ToCenter"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "shootLookup"
@@ -38,13 +32,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToWing3"
+            "pathName": "CenterToMid3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Wing3ToCenter"
+            "pathName": "Mid3ToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookupQuick"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToWing3"
           }
         },
         {

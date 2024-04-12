@@ -13,6 +13,7 @@ public class PhotonCameraIO {
   public static class PhotonCameraInputs {
     byte[] rawBytes = new byte[1];
     boolean isConnected = false;
+    double timestamp = 0.0;
   }
 
   public PhotonCameraIO(String name) {
@@ -25,6 +26,7 @@ public class PhotonCameraIO {
       PhotonPipelineResult result = this.cam.getLatestResult();
       packet = new Packet(result.getPacketSize());
       PhotonPipelineResult.serde.pack(packet, result);
+      inputs.timestamp = result.getTimestampSeconds();
     } else {
       PhotonPipelineResult result = new PhotonPipelineResult();
       packet = new Packet(result.getPacketSize());

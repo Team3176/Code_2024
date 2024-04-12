@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.List;
 import java.util.Optional;
+import team3176.robot.subsystems.superstructure.Superstructure;
+import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
+import team3176.robot.subsystems.superstructure.shooter.Shooter;
 
 public class LEDS extends SubsystemBase {
   private static LEDS instance;
@@ -63,7 +66,7 @@ public class LEDS extends SubsystemBase {
   // Constants
   private static final boolean prideLeds = false;
   private static final int minLoopCycleCount = 10;
-  private static final int length = 30;
+  private static final int length = 48;
   private static final int staticSectionLength = 20;
   private static final double strobeFastDuration = 0.1;
   private static final double strobeSlowDuration = 0.2;
@@ -81,7 +84,7 @@ public class LEDS extends SubsystemBase {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private LEDS() {
-    leds = new AddressableLED(3);   //PWM port
+    leds = new AddressableLED(1); // PWM port
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
@@ -99,6 +102,18 @@ public class LEDS extends SubsystemBase {
 
   public Command AutoDrive() {
     return this.runEnd(() -> autoDrive = true, () -> autoDrive = false);
+  }
+
+  public Command Intaking() {
+    return this.runEnd(() -> intaking = true, () -> intaking = false);
+  }
+
+  public Command Amping() {
+    return this.runEnd(() -> requestAmp = true, () -> requestAmp = false);
+  }
+
+  public Command Climbing() {
+    return this.runEnd(() -> climbing = true, () -> climbing = false);
   }
 
   public synchronized void periodic() {
@@ -139,7 +154,9 @@ public class LEDS extends SubsystemBase {
     if (estopped) {
       solid(Color.kRed);
     } else if (DriverStation.isDisabled()) {
-      if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
+      if (!Shooter.getInstance().isHomed) {
+        solid(Color.kRed);
+      } else if (lastEnabledAuto && Timer.getFPGATimestamp() - lastEnabledTime < autoFadeMaxTime) {
         // Auto fade
         solid(1.0 - ((Timer.getFPGATimestamp() - lastEnabledTime) / autoFadeTime), Color.kGreen);
       } else if (lowBatteryAlert) {
@@ -181,14 +198,23 @@ public class LEDS extends SubsystemBase {
         solid((Timer.getFPGATimestamp() - autoFinishedTime) / fullTime, Color.kPurple);
       }
     } else { // Enabled
-      if (requestAmp) {
+      if (false) { /// Not convinced this will ever execute. Chk above. Likey a dead conditional
+        // branch IMO:w
+
         strobe(Color.kWhite, strobeFastDuration);
-      } else if (hasNote) {
-        solid(Color.kGreen);
-      } else if (trapping || climbing || autoDrive || autoShoot) {
+      } else if (Conveyor.getInstance().hasNote()) {
+        if (Superstructure.getInstance().readyToShoot()) {
+          solid(Color.kBlue);
+        } else {
+          solid(Color.kGreen);
+        }
+
+      } else if (autoDrive || autoShoot) {
         rainbow(rainbowCycleLength, rainbowDuration);
       } else if (wantNote) {
         solid(Color.kOrange);
+      } else if (climbing || trapping) {
+        strobe(Color.kCrimson, strobeFastDuration);
       } else {
         wave(teamColor, secondaryDisabledColor, waveAllianceCycleLength, waveAllianceDuration);
       }
@@ -200,6 +226,10 @@ public class LEDS extends SubsystemBase {
 
     // Update LEDs
     leds.setData(buffer);
+  }
+
+  public void setWantNote(boolean doISeeNote) {
+    this.wantNote = doISeeNote;
   }
 
   private void solid(Color color) {

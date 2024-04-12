@@ -16,24 +16,48 @@
     },
     {
       "anchor": {
-        "x": 1.6176424481650402,
-        "y": 6.961013421132389
+        "x": 2.5797215230794097,
+        "y": 7.0058881935945685
       },
       "prevControl": {
-        "x": 1.0814880555437552,
-        "y": 7.011654772415091
+        "x": 1.059135936453691,
+        "y": 7.0058881935945685
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Wing1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "intake",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 1.8,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
@@ -48,5 +72,5 @@
     "rotation": 59.62383818064382,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

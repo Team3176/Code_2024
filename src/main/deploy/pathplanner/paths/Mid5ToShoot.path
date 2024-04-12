@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.431788811968301,
-        "y": 4.313959357663443
+        "x": 6.448259302768606,
+        "y": 0.984638922402846
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3110120765696076,
-        "y": 4.337866857551897
+        "x": 5.459170410526472,
+        "y": 1.082865681358987
       },
       "isLocked": false,
-      "linkedName": "Wing3"
+      "linkedName": "Mid5"
     },
     {
       "anchor": {
-        "x": 1.2951743872237744,
-        "y": 5.51611216503683
+        "x": 1.8232420006879377,
+        "y": 3.583306486827643
       },
       "prevControl": {
-        "x": 2.2778785401320802,
-        "y": 5.496739665354331
+        "x": 2.964915032273438,
+        "y": 2.759824989512536
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterStart"
+      "linkedName": "shootSourceSide"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.6,
+      "name": "aim",
+      "waypointRelativePos": 0.7,
       "command": {
         "type": "parallel",
         "data": {
@@ -51,13 +51,13 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -35.76719580888665,
     "rotateFast": false
   },
   "reversed": false,
@@ -66,5 +66,5 @@
     "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

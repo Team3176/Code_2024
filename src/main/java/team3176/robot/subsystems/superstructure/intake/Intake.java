@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 1.7;
+  private final double DEPLOY_POS = 2.1;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
@@ -44,23 +44,30 @@ public class Intake extends SubsystemBase {
     this.io = io;
     this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
     this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
-    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 3.5);
+    this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 7.0);
     this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
     this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
   }
 
   public Command EmergencyHold() {
-    return this.runEnd(() -> io.setPivotVolts(-2.0), () -> io.setPivotVolts(0.0));
+    return this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0));
+  }
+
+  public Command manualDown() {
+    return this.runEnd(
+        () -> {
+          io.setPivotVolts(2.5);
+          io.setRollerVolts(4.0);
+        },
+        () -> {
+          io.setPivotVolts(0.0);
+          io.setRollerVolts(0);
+        });
   }
 
   private void runPivot(double volts) {
-    // this assumes positive voltage deploys the intake and negative voltage retracks it.
+    // this assumes positive voltage deploys the intake and negative voltage retracts it.
     // invert the motor if that is NOT true
-    if ((inputs.lowerLimitSwitch && volts > 0.0)) {
-      volts = 0.0;
-    } else if ((inputs.upperLimitSwitch && volts < 0.0)) {
-      volts = -.2;
-    }
     io.setPivotVolts(volts);
   }
 
@@ -90,6 +97,10 @@ public class Intake extends SubsystemBase {
 
   public Command retractPivot() {
     return this.runOnce(() -> this.pivotSetpoint = 0.0);
+  }
+
+  public Command climbIntake() {
+    return this.runOnce(() -> this.pivotSetpoint = 0.45);
   }
 
   public Command spinIntake() {
@@ -127,21 +138,24 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
+    double pivot_pos = inputs.pivotPosition - pivot_offset;
+    if (!ishomed && pivotSetpoint > 1.0) {
+      pivot_pos = -3.0;
+    }
+    double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
+    if (pivot_pos <= 0.7) {
+      commandVolts *= 1.6;
+    }
+    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
 
-    double commandVolts = pivotPID.calculate(inputs.pivotPosition - pivot_offset, pivotSetpoint);
-    commandVolts = MathUtil.clamp(commandVolts, -3.0, 2.0);
-    // TODO: check if we need this to hold the intake in still I think not
-    // if (pivotSetpoint < 0.1) {
-    //   commandVolts -= 0.5;
-    // }
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
-    Logger.recordOutput("Intake/offsetPos", inputs.pivotPosition - pivot_offset);
+    Logger.recordOutput("Intake/offsetPos", pivot_pos);
     runPivot(commandVolts);
     pivotPID.checkParemeterUpdate();
-    if (inputs.upperLimitSwitch && !ishomed) {
+    if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
-      pivot_offset = inputs.pivotPosition;
+      pivot_offset = inputs.pivotPosition - DEPLOY_POS;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
   }

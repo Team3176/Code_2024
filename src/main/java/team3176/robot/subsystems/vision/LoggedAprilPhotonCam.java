@@ -21,10 +21,13 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
+import team3176.robot.Constants;
+import team3176.robot.Constants.Mode;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.util.TunableTransform3d;
 
@@ -84,6 +87,7 @@ public class LoggedAprilPhotonCam {
     estimator =
         new PhotonPoseEstimator(
             field, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robot2Camera);
+    estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
   }
 
   public Transform3d getRobot2Camera() {
@@ -181,7 +185,10 @@ public class LoggedAprilPhotonCam {
         }
       }
     }
-    Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    // TODO: Remember to fix me for camera2
+    if (!name.equals("camera2")) {
+      Drivetrain.getInstance().addVisionMeasurement(p.estimatedPose, p.timestampSeconds, cov);
+    }
   }
 
   public void periodic() {
@@ -189,10 +196,12 @@ public class LoggedAprilPhotonCam {
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
     PhotonPipelineResult results = io.getResult(inputs.rawBytes);
-
-    // Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    results.setTimestampSeconds(inputs.timestamp);
+    if (Constants.getMode() == Mode.REPLAY) {
+      Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
+    }
     generateLoggingData(results);
-    // estimator.setRobotToCameraTransform(robot2Camera);
+    // Logger.recordOutput("photonvision/" + name + "/timestamp", results.getTimestampSeconds());
     Optional<EstimatedRobotPose> poseEst = estimator.update(results);
     if (poseEst.isPresent()) {
       filterAndAddVisionPose(poseEst.get());
