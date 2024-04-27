@@ -1,0 +1,60 @@
+
+# 2024-04-22 21:11:29.175893
++tell me where the buttons triggers are bound to Commands
+
+# 2024-04-22 21:17:39.781801
++what files are in your context?
+
+# 2024-04-22 21:19:58.254626
++`exit`
+
+# 2024-04-22 21:20:12.278894
++/exit
+
+# 2024-04-22 21:23:48.037248
++do you see files?
+
+# 2024-04-22 21:29:31.197494
++do you see files
+
+# 2024-04-22 21:33:41.833517
++please tell me what buttons are already assigned within this project
+
+# 2024-04-22 21:34:17.202249
++/add src/main/java/team3176/robot/RobotContainer.java
+
+# 2024-04-22 21:34:33.384438
++what are the buttons that are in use
+
+# 2024-04-22 21:35:20.067459
++can you see files
+
+# 2024-04-22 21:37:40.140700
++/add src/main/java/team3176/robot/RobotContainer.java
+
+# 2024-04-22 21:37:51.583898
++what buttons are in use
+
+# 2024-04-22 21:38:18.918919
++what buttons are in use in the bindButtons() function?
+
+# 2024-04-22 21:39:34.367801
++please do not suggest changes only explain the code that is written. What button is linked to shooting?
+
+# 2024-04-22 21:40:20.484119
++could you bind the shoot command to the y button on the operator?
+
+# 2024-04-22 21:40:51.250026
++please make that change
+
+# 2024-04-22 21:44:22.590880
++/clear
+
+# 2024-04-22 21:44:30.426691
++/ls
+
+# 2024-04-22 21:44:53.938563
++/add src/main/java/team3176/robot/subsystems/superstructure/Superstructure.java
+
+# 2024-04-22 21:45:42.899748
++what commands are available from superstructer
