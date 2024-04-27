@@ -10,6 +10,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -246,6 +247,20 @@ public class Shooter extends SubsystemBase {
         });
   }
 
+  public Command aimDemo(DoubleSupplier angle) {
+
+    return this.runEnd(
+        () -> {
+          io.setFlywheelRightVelocity(flywheelRightVelocity.get());
+          io.setFlywheelLeftVelocity(flywheelLeftVelocity.get());
+          this.pivotSetpoint = Rotation2d.fromDegrees(angle.getAsDouble());
+        },
+        () -> {
+          io.setFlywheelVelocity(flywheelIdle.get());
+          pivotSetpoint = new Rotation2d();
+        });
+  }
+
   public Command aimLookup() {
 
     return this.runEnd(
@@ -287,6 +302,10 @@ public class Shooter extends SubsystemBase {
 
   public Command pivotVoltage(double volts) {
     return this.run(() -> io.setPivotVoltage(volts));
+  }
+
+  public Rotation2d getPivotMaxRotation2d() {
+    return this.pivotTopPosition;
   }
 
   @Override

@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -27,10 +25,8 @@ import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
 import team3176.robot.subsystems.leds.LEDS;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
-import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
-import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
 
 /**
@@ -159,6 +155,7 @@ public class RobotContainer {
     ampOverride = controller.switchBox.button(2);
     intakeOverride = controller.switchBox.button(3);
     visionOverride = controller.switchBox.button(4);
+
     /*
      * Translation Stick
      */
@@ -186,6 +183,7 @@ public class RobotContainer {
                 .alongWith(ledsRio.Intaking().asProxy()))
         .onFalse(superstructure.retractIntakePivot());
 
+    /*
     controller
         .transStick
         .button(3)
@@ -196,6 +194,8 @@ public class RobotContainer {
                 .alongWith(superstructure.intakeNote())
                 .alongWith(ledsRio.AutoDrive().asProxy())
                 .withName("intakeAutoDrive"));
+    */
+
     /*
         controller
         .transStick
@@ -218,50 +218,45 @@ public class RobotContainer {
      *  Rotation Stick
      */
     controller.rotStick.button(1).whileTrue(superstructure.shoot().withName("shoot"));
+
     controller
         .rotStick
         .button(2)
         .whileTrue(
-            Commands.either(
-                superstructure.aimShooterTune().withName("shooterAimOverride"),
-                Commands.either(
+            superstructure
+                .aimDemoUpper()
+                .withName("shooterDemoUpper")
+                .alongWith(
                     drivetrain
                         .driveAndAimPass(
                             () -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()
-                        .alongWith(superstructure.aimPass())
-                        .withName("aimTuneAndDrive"),
-                    drivetrain
-                        .driveAndAim(() -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()
-                        .alongWith(superstructure.aimShooterLookup())
-                        .withName("aimTuneAndDrive"),
-                    () -> Shooter.getInstance().getDistance() > 9.0),
-                shooterOverride));
+                        .asProxy()));
+
     controller
         .rotStick
         .button(3)
-        .whileTrue(superstructure.aimShooterTune().withName("aimShooterTune"));
-    // this is reverse switch once we prove out the auto score
+        .whileTrue(
+            superstructure
+                .aimDemoMid()
+                .withName("shooterDemoMid")
+                .alongWith(
+                    drivetrain
+                        .driveAndAimPass(
+                            () -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()));
+
     controller
         .rotStick
         .button(4)
         .whileTrue(
-            Commands.either(
-                superstructure
-                    .aimAmp(true)
-                    .withName("aimAmp")
-                    .alongWith(ledsRio.Amping().asProxy()),
-                superstructure
-                    .aimAmp(false)
-                    .withName("aimAmpDrive")
-                    .alongWith(ledsRio.Amping().asProxy()),
-                ampOverride))
-        .onFalse(Climb.getInstance().stow());
-    controller
-        .rotStick
-        .button(8)
-        .whileTrue(new InstantCommand(drivetrain::resetFieldOrientation, drivetrain));
+            superstructure
+                .aimDemoLow()
+                .withName("shooterDemoLow")
+                .alongWith(
+                    drivetrain
+                        .driveAndAimPass(
+                            () -> controller.getForward(), () -> controller.getStrafe())
+                        .asProxy()));
 
     /*
      * Operator
@@ -295,7 +290,7 @@ public class RobotContainer {
         .operator
         .start()
         .and(controller.operator.povLeft())
-        .onTrue(Intake.getInstance().EmergencyHold());
+        .whileTrue(Intake.getInstance().EmergencyHold());
 
     controller
         .switchBox

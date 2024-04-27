@@ -97,6 +97,18 @@ public class Superstructure {
     return aimShooter(60, 40, 27, 0.6).withName("aimPass");
   }
 
+  public Command aimDemoUpper() {
+    return aimShooter(90, 40, shooter.getPivotMaxRotation2d().getDegrees(), 0.6);
+  }
+
+  public Command aimDemoMid() {
+    return aimShooter(90, 40, shooter.getPivotMaxRotation2d().getDegrees() * 0.6, 0.6);
+  }
+
+  public Command aimDemoLow() {
+    return aimShooter(90, 40, shooter.getPivotMaxRotation2d().getDegrees() * 0.3, 0.6);
+  }
+
   public Command shoot() {
     return conveyor.runShoot().withName("shoot");
   }
