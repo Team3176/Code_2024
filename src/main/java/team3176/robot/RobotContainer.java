@@ -226,11 +226,7 @@ public class RobotContainer {
             superstructure
                 .aimDemoUpper()
                 .withName("shooterDemoUpper")
-                .alongWith(
-                    drivetrain
-                        .driveAndAimPass(
-                            () -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()));
+        );
 
     controller
         .rotStick
@@ -239,11 +235,7 @@ public class RobotContainer {
             superstructure
                 .aimDemoMid()
                 .withName("shooterDemoMid")
-                .alongWith(
-                    drivetrain
-                        .driveAndAimPass(
-                            () -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()));
+        );
 
     controller
         .rotStick
@@ -252,11 +244,7 @@ public class RobotContainer {
             superstructure
                 .aimDemoLow()
                 .withName("shooterDemoLow")
-                .alongWith(
-                    drivetrain
-                        .driveAndAimPass(
-                            () -> controller.getForward(), () -> controller.getStrafe())
-                        .asProxy()));
+        );
 
     /*
      * Operator
