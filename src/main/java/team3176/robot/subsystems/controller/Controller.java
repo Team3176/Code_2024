@@ -6,10 +6,10 @@ package team3176.robot.subsystems.controller;
 
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import team3176.robot.constants.ControllerConstants;
 
 public class Controller {
   private static Controller instance;
+  private static final Double DEADBAND = 0.02;
 
   public static Controller getInstance() {
     if (instance == null) {
@@ -23,6 +23,7 @@ public class Controller {
   public final CommandJoystick transStick;
   public final CommandJoystick rotStick;
   public final CommandXboxController operator;
+  public final CommandXboxController driver;
   public final CommandJoystick switchBox;
 
   /* First Part of Creating the Buttons on the Joysticks */
@@ -30,24 +31,31 @@ public class Controller {
   public Controller() {
     /* Finish Creating the Objects */
 
-    transStick = new CommandJoystick(ControllerConstants.TRANS_ID);
-    rotStick = new CommandJoystick(ControllerConstants.ROT_ID);
-    operator = new CommandXboxController(ControllerConstants.OP_ID);
+    transStick = new CommandJoystick(1);
+    rotStick = new CommandJoystick(0);
+    operator = new CommandXboxController(2);
     switchBox = new CommandJoystick(3);
+    driver = new CommandXboxController(4);
   }
 
   /**
    * @return The scales magnitude vector of the Y axis of TransStick
    */
   public double getForward() {
-    return ControllerConstants.FORWARD_AXIS_INVERSION * Math.pow(transStick.getY(), 1);
+    if (Math.abs(driver.getLeftY()) < DEADBAND) {
+      return -transStick.getY();
+    }
+    return -driver.getLeftY();
   }
 
   /**
    * @return The scales magnitude vector of the X axis of TransStick
    */
   public double getStrafe() {
-    return ControllerConstants.STRAFE_AXIS_INVERSION * Math.pow(transStick.getX(), 1);
+    if (Math.abs(driver.getLeftX()) < DEADBAND) {
+      return -transStick.getX();
+    }
+    return -driver.getLeftX();
   }
 
   /**
@@ -57,7 +65,10 @@ public class Controller {
    */
   public double getSpin() {
 
-    return ControllerConstants.SPIN_AXIS_INVERSION * rotStick.getX();
+    if (Math.abs(driver.getRightX()) < DEADBAND) {
+      return -rotStick.getX();
+    }
+    return -driver.getRightX();
   }
 
   public double getXboxJoyLeft() {
