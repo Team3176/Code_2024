@@ -98,15 +98,15 @@ public class Superstructure {
   }
 
   public Command aimDemoUpper() {
-    return aimShooter(30, 30, shooter.getPivotMaxRotation2d().getDegrees(), 0.3);
+    return aimShooter(20, 40, shooter.getPivotMaxRotation2d().getDegrees(), 0.3);
   }
 
   public Command aimDemoMid() {
-    return aimShooter(30, 30, shooter.getPivotMaxRotation2d().getDegrees() * 0.6, 0.3);
+    return aimShooter(20, 40, shooter.getPivotMaxRotation2d().getDegrees() * 0.6, 0.3);
   }
 
   public Command aimDemoLow() {
-    return aimShooter(30, 30, shooter.getPivotMaxRotation2d().getDegrees() * 0.3, 0.3);
+    return aimShooter(20, 40, shooter.getPivotMaxRotation2d().getDegrees() * 0.3, 0.3);
   }
 
   public Command shoot() {

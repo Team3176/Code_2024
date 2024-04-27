@@ -222,29 +222,11 @@ public class RobotContainer {
     controller
         .rotStick
         .button(2)
-        .whileTrue(
-            superstructure
-                .aimDemoUpper()
-                .withName("shooterDemoUpper")
-        );
+        .whileTrue(superstructure.aimDemoUpper().withName("shooterDemoUpper"));
 
-    controller
-        .rotStick
-        .button(3)
-        .whileTrue(
-            superstructure
-                .aimDemoMid()
-                .withName("shooterDemoMid")
-        );
+    controller.rotStick.button(3).whileTrue(superstructure.aimDemoMid().withName("shooterDemoMid"));
 
-    controller
-        .rotStick
-        .button(4)
-        .whileTrue(
-            superstructure
-                .aimDemoLow()
-                .withName("shooterDemoLow")
-        );
+    controller.rotStick.button(4).whileTrue(superstructure.aimDemoLow().withName("shooterDemoLow"));
 
     /*
      * Operator
