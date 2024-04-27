@@ -70,7 +70,7 @@ public class Conveyor extends SubsystemBase {
   }
 
   public Command spit() {
-    return this.runEnd(() -> io.setController(-2.0), () -> io.setController(0));
+    return this.runEnd(() -> io.setController(-1.0), () -> io.setController(0));
   }
 
   public Command runSlowReverse() {

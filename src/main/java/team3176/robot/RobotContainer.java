@@ -8,10 +8,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -25,6 +27,7 @@ import team3176.robot.subsystems.drivetrain.Drivetrain.orientationGoal;
 import team3176.robot.subsystems.leds.LEDS;
 import team3176.robot.subsystems.leds.LEDSubsystem;
 import team3176.robot.subsystems.superstructure.*;
+import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
 import team3176.robot.subsystems.superstructure.intake.Intake;
 import team3176.robot.subsystems.vision.PhotonVisionSystem;
@@ -272,6 +275,58 @@ public class RobotContainer {
         .button(4)
         .onTrue(drivetrain.setVisionOverride(true))
         .onFalse(drivetrain.setVisionOverride(false));
+    // shooting and spiting
+    controller.driver.a().whileTrue(superstructure.aimDemoMid());
+
+    controller
+        .driver
+        .rightTrigger()
+        .and(controller.driver.a())
+        .onTrue(
+            Commands.parallel(
+                Commands.waitSeconds(0.5),
+                Commands.waitUntil(controller.driver.a().negate())
+                    .deadlineWith(superstructure.shoot())));
+    // controller.driver.a().and(superstructure::readyToShoot).whileTrue(controllerRumbleCommand());
+
+    // controller.driver.rightTrigger().and(controller.driver.a().negate()).and(controller.driver.b().negate()).whileTrue(superstructure.spit());
+
+    // intaking
+
+    controller.driver.leftTrigger().whileTrue(superstructure.intakeNote());
+    controller
+        .driver
+        .leftTrigger()
+        .and(() -> Conveyor.getInstance().hasNote())
+        .onTrue(controllerRumbleCommand().withTimeout(0.5));
+    controller.driver.leftBumper().whileTrue(superstructure.spit());
+
+    // Amping
+
+    // controller
+    //     .driver
+    //     .b()
+    //     .whileTrue(
+    //         superstructure
+    //             .aimAmp(false)
+    //             .alongWith(
+    //                 drivetrain.driveAndAimAmp(controller::getForward, controller::getStrafe)));
+    controller
+        .driver
+        .rightTrigger()
+        .and(controller.driver.b())
+        .onTrue(
+            Commands.parallel(
+                Commands.waitSeconds(0.75),
+                Commands.waitUntil(controller.driver.b().negate())
+                    .deadlineWith(superstructure.shoot())));
+    // climb
+    controller
+        .driver
+        .rightBumper()
+        .whileTrue(Climb.getInstance().goToPosition(() -> 65))
+        .onFalse(Climb.getInstance().stow());
+    controller.driver.rightBumper().onTrue(Intake.getInstance().climbIntake());
   }
 
   public void clearCanFaults() {
@@ -306,6 +361,18 @@ public class RobotContainer {
 
   public void checkAutonomousSelection() {
     checkAutonomousSelection(false);
+  }
+
+  private Command controllerRumbleCommand() {
+    return Commands.startEnd(
+        () -> {
+          controller.driver.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+          controller.operator.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+        },
+        () -> {
+          controller.driver.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+          controller.operator.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+        });
   }
 
   public void checkAllaince() {

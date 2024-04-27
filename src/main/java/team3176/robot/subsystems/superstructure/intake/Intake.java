@@ -130,7 +130,7 @@ public class Intake extends SubsystemBase {
 
   // TODO: might need to deploy the intake during a spit but maybe not
   public Command spit() {
-    return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
+    return this.runEnd(() -> io.setRollerVolts(-1.0), () -> io.setRollerVolts(0));
   }
 
   @Override

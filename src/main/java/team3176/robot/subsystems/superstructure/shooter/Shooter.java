@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.7);
-    this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 20);
+    this.flywheelIdle = new LoggedTunableNumber("shooter/idleVel", 0);
     pivotLookup = new InterpolatingDoubleTreeMap();
     pivotLookup.put(1.07, 38.0);
     pivotLookup.put(1.62, 25.0);
