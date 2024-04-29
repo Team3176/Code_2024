@@ -683,6 +683,18 @@ public class Drivetrain extends SubsystemBase {
     return pods.stream().mapToDouble(SwervePod::getThrustPosition).toArray();
   }
 
+  public void runCharacterization(double input) {
+    pods.forEach((p) -> p.runCharacterization(input));
+  }
+
+  public double getCharacterizationVelocity() {
+    double driveVelocityAverage = 0.0;
+    for (var module : pods) {
+      driveVelocityAverage += module.getThrustEncoderVelocity();
+    }
+    return driveVelocityAverage / 4.0;
+  }
+
   public Command stop() {
     return new InstantCommand(() -> driveVelocity(new ChassisSpeeds()));
   }

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import team3176.robot.commands.FeedForwardCharacterization;
+import team3176.robot.commands.StaticCharacterization;
 import team3176.robot.commands.WheelRadiusCharacterization;
 import team3176.robot.commands.WheelRadiusCharacterization.Direction;
 import team3176.robot.constants.Hardwaremap;
@@ -52,6 +55,7 @@ public class RobotContainer {
   private PhotonVisionSystem vision;
   private Visualization visualization;
   private LoggedDashboardChooser<Command> autonChooser;
+  private LoggedDashboardChooser<Command> characterizationChooser;
   private Command choosenAutonomousCommand = new WaitCommand(1.0);
   private Alliance currentAlliance = Alliance.Blue;
   private Trigger endMatchAlert = new Trigger(() -> DriverStation.getMatchTime() < 20);
@@ -146,6 +150,22 @@ public class RobotContainer {
     NamedCommands.registerCommand("score", superstructure.shoot().withTimeout(0.5));
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
+    SendableChooser<Command> chose = new SendableChooser<Command>();
+    chose.addOption(
+        "Drive Static Characterization",
+        new StaticCharacterization(
+                drivetrain,
+                drivetrain::runCharacterization,
+                drivetrain::getCharacterizationVelocity)
+            .withName("drive Static"));
+    chose.addOption(
+        "Drive FF Characterization",
+        new FeedForwardCharacterization(
+                drivetrain,
+                drivetrain::runCharacterization,
+                drivetrain::getCharacterizationVelocity)
+            .withName("drive ff"));
+    characterizationChooser = new LoggedDashboardChooser<>("characterization", chose);
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
     configureBindings();
@@ -360,5 +380,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autonChooser.get();
+  }
+
+  public Command getCharacterizationCommand() {
+    return characterizationChooser.get();
   }
 }

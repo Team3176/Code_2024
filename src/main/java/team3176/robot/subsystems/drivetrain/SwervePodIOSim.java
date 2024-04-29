@@ -75,6 +75,11 @@ public class SwervePodIOSim implements SwervePodIO {
   }
 
   @Override
+  public void runCharacterization(double value) {
+    driveSim.setInputVoltage(value);
+  }
+
+  @Override
   public void setDrive(double velMetersPerSecond) {
     double freeSpeedRadPerSec = 142.0;
     double driveSpeedError =
