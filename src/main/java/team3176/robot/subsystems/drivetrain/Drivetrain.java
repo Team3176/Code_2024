@@ -700,7 +700,7 @@ public class Drivetrain extends SubsystemBase {
     odometryLock.lock();
     io.updateInputs(inputs);
     for (SwervePod p : pods) {
-      p.periodic();
+      p.updateInputs();
     }
     odometryLock.unlock();
     Logger.processInputs("Drivetrain/gyro", inputs);

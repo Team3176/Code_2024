@@ -101,6 +101,19 @@ public class SwervePod {
             desiredState, Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees));
     this.desiredOptimizedAzimuthPosition = desiredOptimized.angle.getDegrees();
     this.desiredState = desiredOptimized;
+    setTurn(desiredState.angle);
+    double angleErrorPenalty =
+        Math.abs(
+            Math.cos(
+                desiredState
+                    .angle
+                    .minus(Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees))
+                    .getRadians()));
+    Logger.recordOutput(
+        "Drivetrain/Module" + this.id + "/CommandOutput",
+        desiredState.speedMetersPerSecond * angleErrorPenalty);
+
+    io.setDrive(desiredState.speedMetersPerSecond * angleErrorPenalty);
     return desiredOptimized;
   }
   /*
@@ -174,7 +187,22 @@ public class SwervePod {
     return odometryPositions;
   }
 
-  public void periodic() {
+  private void setTurn(Rotation2d angle) {
+    double turnOutput =
+        turningPIDController.calculate(inputs.turnAbsolutePositionDegrees, angle.getDegrees());
+    // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) + "", id);
+    io.setTurn(MathUtil.clamp(turnOutput, -turnMaxpercentLocal, turnMaxpercentLocal));
+    Logger.recordOutput(
+        "Drivetrain/Module" + this.id + "/error", turningPIDController.getPositionError());
+    Logger.recordOutput("Drivetrain/Module" + this.id + "/deltanonoise", this.deltaSimNoNoise);
+  }
+
+  public void runCharacterization(double value) {
+    setTurn(Rotation2d.fromDegrees(0.0));
+    io.runCharacterization(value);
+  }
+
+  public void updateInputs() {
     io.updateInputs(inputs);
     Logger.processInputs("Drivetrain/Module" + this.id, inputs);
 
@@ -202,33 +230,7 @@ public class SwervePod {
     if (turnMaxpercent.hasChanged(hashCode())) {
       turnMaxpercentLocal = turnMaxpercent.get();
     }
-
-    double turnOutput;
-
-    turnOutput =
-        turningPIDController.calculate(
-            inputs.turnAbsolutePositionDegrees, desiredState.angle.getDegrees());
-
-    // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) + "", id);
-    io.setTurn(MathUtil.clamp(turnOutput, -turnMaxpercentLocal, turnMaxpercentLocal));
-    Logger.recordOutput(
-        "Drivetrain/Module" + this.id + "/error", turningPIDController.getPositionError());
-    Logger.recordOutput("Drivetrain/Module" + this.id + "/deltanonoise", this.deltaSimNoNoise);
-    // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) +
-    // "/setpoint",turningPIDController.getSetpoint().position);
-    double angleErrorPenalty =
-        Math.abs(
-            Math.cos(
-                desiredState
-                    .angle
-                    .minus(Rotation2d.fromDegrees(inputs.turnAbsolutePositionDegrees))
-                    .getRadians()));
-    Logger.recordOutput(
-        "Drivetrain/Module" + this.id + "/CommandOutput",
-        desiredState.speedMetersPerSecond * angleErrorPenalty);
     Logger.recordOutput("Drivetrain/Module" + this.id + "/MeasuredVelocity", getVelocity());
-    io.setDrive(desiredState.speedMetersPerSecond * angleErrorPenalty);
-
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {

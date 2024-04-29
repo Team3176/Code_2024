@@ -40,6 +40,8 @@ public interface SwervePodIO {
   public default Rotation2d getOffset() {
     return new Rotation2d();
   }
+
+  public default void runCharacterization(double value) {}
   /** Enable or disable brake mode on the drive motor. */
   public default void setDriveBrakeMode(boolean enable) {}
 

@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -38,6 +39,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
       new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
+  final TorqueCurrentFOC rawCurrentFOC = new TorqueCurrentFOC(0.0);
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
@@ -225,5 +227,10 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   @Override
   public void setOffset(Rotation2d offset) {
     this.offset = offset;
+  }
+
+  @Override
+  public void runCharacterization(double value) {
+    thrustFalcon.setControl(rawCurrentFOC.withOutput(value));
   }
 }
