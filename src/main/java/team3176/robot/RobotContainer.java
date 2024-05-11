@@ -276,6 +276,7 @@ public class RobotContainer {
         .onTrue(drivetrain.setVisionOverride(true))
         .onFalse(drivetrain.setVisionOverride(false));
     // shooting and spiting
+    controller.driver.start().whileTrue(Commands.runOnce(drivetrain::resetFieldOrientation));
     controller.driver.a().whileTrue(superstructure.aimDemoMid());
 
     controller

@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
   private final TunablePID pivotPID;
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
-  private final double DEPLOY_POS = 2.1;
+  private final double DEPLOY_POS = 1.8;
   private double pivot_offset = 0;
   private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
   private boolean ishomed = false;
@@ -143,10 +143,10 @@ public class Intake extends SubsystemBase {
       pivot_pos = -3.0;
     }
     double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    if (pivot_pos <= 0.7) {
-      commandVolts *= 1.6;
-    }
-    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
+    // if (pivot_pos <= 0.7) {
+    //   commandVolts *= 1.6;
+    // }
+    commandVolts = MathUtil.clamp(commandVolts, -3.5, 1.5);
 
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
@@ -155,7 +155,7 @@ public class Intake extends SubsystemBase {
     pivotPID.checkParemeterUpdate();
     if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
-      pivot_offset = inputs.pivotPosition - DEPLOY_POS;
+      pivot_offset = inputs.pivotPosition - 2.1;
     }
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
   }
