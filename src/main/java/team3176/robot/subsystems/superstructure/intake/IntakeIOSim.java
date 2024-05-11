@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
-import team3176.robot.constants.SuperStructureConstants;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOSim implements IntakeIO {
@@ -27,7 +26,7 @@ public class IntakeIOSim implements IntakeIO {
   public IntakeIOSim() {
     pivotSim =
         new SingleJointedArmSim(
-            DCMotor.getFalcon500(1), 20, 0.5, 0.7, -1.0 * Math.PI, 3.14, true, 0.0);
+            DCMotor.getFalcon500(1), 20, 0.5, 0.3, -0.1, 2.1, false, Units.degreesToRadians(0));
     rollerSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
   }
   /** Updates the set of loggable inputs. */
@@ -35,10 +34,7 @@ public class IntakeIOSim implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     pivotSim.update(Constants.LOOP_PERIODIC_SECS);
     rollerSim.update(Constants.LOOP_PERIODIC_SECS);
-    inputs.pivotPosition =
-        Units.radiansToDegrees(pivotSim.getAngleRads())
-            + 90
-            + SuperStructureConstants.INTAKE_PIVOT_SIM_OFFSET;
+    inputs.pivotPosition = pivotSim.getAngleRads();
     inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
     inputs.pivotAppliedVolts = appliedVolts;
     inputs.pivotAmpsStator = pivotSim.getCurrentDrawAmps();

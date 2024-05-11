@@ -1,7 +1,10 @@
 package team3176.robot.subsystems.superstructure.intake;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,6 +25,8 @@ public class Intake extends SubsystemBase {
   private final LoggedTunableNumber retractPivotVolts;
   private final LoggedTunableNumber waitTime;
   private final TunablePID pivotPID;
+  private final ProfiledPIDController profiledPID =
+      new ProfiledPIDController(0.1, 0, 0, new Constraints(1.0, 1.0));
   private Timer deployTime = new Timer();
   private double pivotSetpoint;
   private final double DEPLOY_POS = 2.1;
@@ -139,15 +144,18 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("Intake/state", pivotState);
     double pivot_pos = inputs.pivotPosition - pivot_offset;
-    if (!ishomed && pivotSetpoint > 1.0) {
-      pivot_pos = -3.0;
-    }
-    double commandVolts = pivotPID.calculate(pivot_pos, pivotSetpoint);
-    if (pivot_pos <= 0.7) {
-      commandVolts *= 1.6;
-    }
+    // if (!ishomed && pivotSetpoint > 1.0) {
+    //   pivot_pos = -3.0;
+    // }
+    double commandVolts = profiledPID.calculate(pivot_pos, pivotSetpoint);
+    double ffVolts = Units.radiansToRotations(profiledPID.getSetpoint().velocity) * 20.0 * 0.1;
+    commandVolts += ffVolts;
+    // if (pivot_pos <= 0.7) {
+    //   commandVolts *= 1.6;
+    // }
+    Logger.recordOutput("Intake/Setpoint_position", profiledPID.getSetpoint().position);
+    Logger.recordOutput("Intake/Setpoint_velocity", profiledPID.getSetpoint().velocity);
     commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
-
     Logger.recordOutput("Intake/PID_out", commandVolts);
     Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
     Logger.recordOutput("Intake/offsetPos", pivot_pos);
