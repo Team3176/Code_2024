@@ -26,7 +26,7 @@ public class IntakeIOSim implements IntakeIO {
   public IntakeIOSim() {
     pivotSim =
         new SingleJointedArmSim(
-            DCMotor.getFalcon500(1), 20, 0.5, 0.3, -0.1, 2.1, false, Units.degreesToRadians(0));
+            DCMotor.getFalcon500(1), 20, 3.0, 0.3, -0.2, 2.2, false, Units.degreesToRadians(0));
     rollerSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
   }
   /** Updates the set of loggable inputs. */
@@ -43,6 +43,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollerAppliedVolts = appliedVolts;
     inputs.rollerAmpsStator = rollerSim.getCurrentDrawAmps();
     inputs.rollerTempCelcius = 0.0;
+    inputs.lowerLimitSwitch = pivotSim.getAngleRads() > 2.09;
     Logger.recordOutput("Intake/SimPivotPos", pivotSim.getAngleRads());
   }
 

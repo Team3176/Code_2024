@@ -2,56 +2,59 @@ package team3176.robot.subsystems.superstructure.intake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 import team3176.robot.Constants.Mode;
 import team3176.robot.Constants.RobotType;
 import team3176.robot.constants.*;
 import team3176.robot.util.LoggedTunableNumber;
-import team3176.robot.util.TunablePID;
 
-public class Intake extends SubsystemBase {
+public class Intake extends ProfiledPIDSubsystem {
   private static Intake instance;
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final LoggedTunableNumber deployPivotVolts;
+  private final DCMotor motor = DCMotor.getFalcon500(1).withReduction(20);
+  private final SimpleMotorFeedforward motorFeedforward =
+      new SimpleMotorFeedforward(0.0, 1.0 / motor.KvRadPerSecPerVolt);
   private final LoggedTunableNumber rollerVolts;
-  private final LoggedTunableNumber retractPivotVolts;
-  private final LoggedTunableNumber waitTime;
-  private final TunablePID pivotPID;
-  private final ProfiledPIDController profiledPID =
-      new ProfiledPIDController(0.1, 0, 0, new Constraints(1.0, 1.0));
-  private Timer deployTime = new Timer();
-  private double pivotSetpoint;
   private final double DEPLOY_POS = 2.1;
   private double pivot_offset = 0;
-  private InterpolatingDoubleTreeMap kG = new InterpolatingDoubleTreeMap();
-  private boolean ishomed = false;
+  @AutoLogOutput private boolean ishomed = false;
   private double lastRollerSpeed = 0.0;
 
-  private enum pivotStates {
-    DEPLOY,
-    RETRACT,
-    IDLE,
-    HOLD
-  };
-
-  private pivotStates pivotState = pivotStates.HOLD;
   // DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
 
   private Intake(IntakeIO io) {
+    super(new ProfiledPIDController(0.1, 0, 0, new Constraints(1.0, 1.0)));
     this.io = io;
-    this.pivotPID = new TunablePID("intakePivot", 3.0, 0.0, 0.0);
-    this.deployPivotVolts = new LoggedTunableNumber("intake/rollerDeployVolts", 0);
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 7.0);
-    this.retractPivotVolts = new LoggedTunableNumber("intake/rollerRetractVolts", 0);
-    this.waitTime = new LoggedTunableNumber("intake/waitTime", 0);
+    this.enable();
+  }
+
+  @Override
+  protected double getMeasurement() {
+    return inputs.pivotPosition - pivot_offset;
+  }
+
+  @Override
+  protected void useOutput(double output, State setpoint) {
+    Logger.recordOutput("Intake/Setpoint_position", setpoint.position);
+    Logger.recordOutput("Intake/Setpoint_velocity", setpoint.velocity);
+    double ffVolts = motorFeedforward.calculate(setpoint.velocity);
+    Logger.recordOutput("Intake/ffvolts", ffVolts);
+    if (!ishomed) {
+      runPivot(ffVolts);
+    } else {
+      output = MathUtil.clamp(output, -3.5, 2.0);
+      runPivot(output + ffVolts);
+    }
   }
 
   public Command EmergencyHold() {
@@ -91,21 +94,16 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
-  // Example command to show how to set the pivot state
-  public Command deployPivot() {
-    return this.runOnce(
-        () -> {
-          this.pivotSetpoint = DEPLOY_POS;
-          deployTime.restart();
-        });
+  public Command retractPivot() {
+    return this.runOnce(() -> this.setGoal(0.0));
   }
 
-  public Command retractPivot() {
-    return this.runOnce(() -> this.pivotSetpoint = 0.0);
+  public Command deployPivot() {
+    return this.runOnce(() -> this.setGoal(DEPLOY_POS));
   }
 
   public Command climbIntake() {
-    return this.runOnce(() -> this.pivotSetpoint = 0.45);
+    return this.runOnce(() -> this.setGoal(0.0));
   }
 
   public Command spinIntake() {
@@ -128,7 +126,7 @@ public class Intake extends SubsystemBase {
         .andThen(spinIntake())
         .finallyDo(
             () -> {
-              this.pivotSetpoint = 0.0;
+              setGoal(0.0);
               io.setRollerVolts(0.0);
             }));
   }
@@ -142,25 +140,9 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    Logger.recordOutput("Intake/state", pivotState);
-    double pivot_pos = inputs.pivotPosition - pivot_offset;
-    // if (!ishomed && pivotSetpoint > 1.0) {
-    //   pivot_pos = -3.0;
-    // }
-    double commandVolts = profiledPID.calculate(pivot_pos, pivotSetpoint);
-    double ffVolts = Units.radiansToRotations(profiledPID.getSetpoint().velocity) * 20.0 * 0.1;
-    commandVolts += ffVolts;
-    // if (pivot_pos <= 0.7) {
-    //   commandVolts *= 1.6;
-    // }
-    Logger.recordOutput("Intake/Setpoint_position", profiledPID.getSetpoint().position);
-    Logger.recordOutput("Intake/Setpoint_velocity", profiledPID.getSetpoint().velocity);
-    commandVolts = MathUtil.clamp(commandVolts, -3.5, 2.0);
-    Logger.recordOutput("Intake/PID_out", commandVolts);
-    Logger.recordOutput("Intake/setpoint", this.pivotSetpoint);
-    Logger.recordOutput("Intake/offsetPos", pivot_pos);
-    runPivot(commandVolts);
-    pivotPID.checkParemeterUpdate();
+    super.periodic();
+    Logger.recordOutput("Intake/setpoint", this.getMeasurement());
+
     if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
       pivot_offset = inputs.pivotPosition - DEPLOY_POS;
