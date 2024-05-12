@@ -15,13 +15,15 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
+import team3176.robot.util.SimulationUtils;
 
 /** Template hardware interface for a closed loop subsystem. */
 public class IntakeIOSim implements IntakeIO {
 
   private SingleJointedArmSim pivotSim;
   private FlywheelSim rollerSim;
-  private double appliedVolts;
+  private double pivotAppliedVolts;
+  private double rollerAppliedVolts;
 
   public IntakeIOSim() {
     pivotSim =
@@ -36,11 +38,11 @@ public class IntakeIOSim implements IntakeIO {
     rollerSim.update(Constants.LOOP_PERIODIC_SECS);
     inputs.pivotPosition = pivotSim.getAngleRads();
     inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
-    inputs.pivotAppliedVolts = appliedVolts;
+    inputs.pivotAppliedVolts = pivotAppliedVolts;
     inputs.pivotAmpsStator = pivotSim.getCurrentDrawAmps();
     inputs.pivotTempCelcius = 0.0;
     inputs.rollerVelocityRadPerSec = rollerSim.getAngularVelocityRadPerSec();
-    inputs.rollerAppliedVolts = appliedVolts;
+    inputs.rollerAppliedVolts = rollerAppliedVolts;
     inputs.rollerAmpsStator = rollerSim.getCurrentDrawAmps();
     inputs.rollerTempCelcius = 0.0;
     inputs.lowerLimitSwitch = pivotSim.getAngleRads() > 2.09;
@@ -49,12 +51,12 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void setPivotVolts(double volts) {
-    if (DriverStation.isEnabled()) {
-      appliedVolts = volts;
-    } else {
-      appliedVolts = 0.0;
-    }
-    appliedVolts = MathUtil.clamp(appliedVolts, -12, 12);
-    pivotSim.setInputVoltage(appliedVolts);
+    pivotAppliedVolts = SimulationUtils.simulationVoltsClamp(volts);
+    pivotSim.setInputVoltage(pivotAppliedVolts);
+  }
+  @Override
+  public void setRollerVolts(double volts) {
+    rollerAppliedVolts = SimulationUtils.simulationVoltsClamp(volts);
+    rollerSim.setInputVoltage(rollerAppliedVolts);
   }
 }

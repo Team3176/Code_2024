@@ -27,8 +27,6 @@ public interface IntakeIO {
     public double rollerAmpsSupply = 0.0;
     public double rollerTempCelcius = 0.0;
 
-    public boolean isRollerLinebreak = false;
-    public boolean isPivotLinebreak = false;
     public boolean upperLimitSwitch = false;
     public boolean lowerLimitSwitch = false;
 
@@ -43,11 +41,7 @@ public interface IntakeIO {
 
   public default void setRollerVolts(double volts) {}
 
-  public default void setRollerPIDVelocity(double rpm) {}
-
   public default void setPivotVolts(double volts) {}
-
-  public default void setPivotPIDPosition(double position) {}
 
   public default void setCoastMode(boolean isCoastMode) {}
 }

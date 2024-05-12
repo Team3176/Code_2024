@@ -57,26 +57,12 @@ public class IntakeIOTalon implements IntakeIO {
     TalonFXConfiguration rollerConfigs = new TalonFXConfiguration();
     TalonFXConfiguration pivotConfigs = new TalonFXConfiguration();
 
-    // voltVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
-    // voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
-
-    // rollerLinebreak = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
-    // pivotLinebreak = new DigitalInput(Hardwaremap.intakePivotLinebreak_DIO);
-
     upperLimitSwitch = new DigitalInput(Hardwaremap.intakeUpperLimitSwitch_DIO);
     lowerLimitSwitch = new DigitalInput(Hardwaremap.intakeLowerLimitSwitch_DIO);
 
     rollerController = new TalonFX(Hardwaremap.intakeRoller_CID, Hardwaremap.intakeRoller_CBN);
     pivotController = new TalonFX(Hardwaremap.intakePivot_CID, Hardwaremap.intakePivot_CBN);
 
-    // config setting
-    // rollerConfigs.CurrentLimits.StatorCurrentLimit = 50;
-    // rollerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-
-    // pivot configs
-
-    // pivotConfigs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
-    // pivotConfigs.Slot0.kD = 0.1; // A change of 1 rotation per second results in 0.1 volts output
     pivotConfigs.Voltage.PeakForwardVoltage = 8;
     pivotConfigs.Voltage.PeakReverseVoltage = -10;
     pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -139,9 +125,6 @@ public class IntakeIOTalon implements IntakeIO {
         rollerTemp,
         rollerCurrentAmpsSupply);
 
-    // inputs.isRollerLinebreak = (!rollerLinebreak.get());
-    // inputs.isPivotLinebreak = (!pivotLinebreak.get());
-
     inputs.upperLimitSwitch = (!upperLimitSwitch.get());
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
 
@@ -159,19 +142,10 @@ public class IntakeIOTalon implements IntakeIO {
     inputs.rollerVelocityRadPerSec = Units.rotationsToRadians(rollerVelocity.getValueAsDouble());
   }
 
-  /*   @Override
-  public Boolean getRollerLinebreak() {
-    return
-  } */
 
   @Override
   public void setRollerVolts(double volts) {
     rollerController.setControl(rollerVolts.withOutput(volts));
-  }
-
-  @Override
-  public void setPivotPIDPosition(double position) {
-    pivotPID.setReference(position, CANSparkBase.ControlType.kPosition);
   }
 
   @Override
