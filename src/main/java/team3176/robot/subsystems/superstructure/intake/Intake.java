@@ -3,9 +3,11 @@ package team3176.robot.subsystems.superstructure.intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -19,23 +21,27 @@ import team3176.robot.util.LoggedTunableNumber;
 public class Intake extends ProfiledPIDSubsystem {
   private static Intake instance;
   private final IntakeIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final DCMotor motor = DCMotor.getFalcon500(1).withReduction(20);
-  private final SimpleMotorFeedforward motorFeedforward =
+  private final IntakeIOInputsAutoLogged inputs;
+  private final static DCMotor motor = DCMotor.getFalcon500(1).withReduction(20);
+  private final static SimpleMotorFeedforward motorFeedforward =
       new SimpleMotorFeedforward(0.0, 1.0 / motor.KvRadPerSecPerVolt);
   private final LoggedTunableNumber rollerVolts;
-  private final double DEPLOY_POS = 2.1;
+  private final static double DEPLOY_POS = 2.1;
   private double pivot_offset = 0;
   @AutoLogOutput private boolean ishomed = false;
   private double lastRollerSpeed = 0.0;
+  private LinearFilter rollerAcceleration;
 
   // DigitalInput linebreak1 = new DigitalInput(Hardwaremap.intakeRollerLinebreak_DIO);
 
   private Intake(IntakeIO io) {
     super(new ProfiledPIDController(0.1, 0, 0, new Constraints(1.0, 1.0)));
     this.io = io;
+    this.inputs = new IntakeIOInputsAutoLogged();
     this.rollerVolts = new LoggedTunableNumber("intake/rollerVolts", 7.0);
+    rollerAcceleration = LinearFilter.movingAverage(5);
     this.enable();
+
   }
 
   @Override
@@ -57,12 +63,19 @@ public class Intake extends ProfiledPIDSubsystem {
     }
   }
 
+  /*
+   * manual control
+   */
+
+  private Command disableControl() {
+    return this.runOnce(this::disable);
+  }
   public Command EmergencyHold() {
-    return this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0));
+    return disableControl().andThen(this.runEnd(() -> io.setPivotVolts(-2.5), () -> io.setPivotVolts(0.0)));
   }
 
   public Command manualDown() {
-    return this.runEnd(
+    return disableControl().andThen(this.runEnd(
         () -> {
           io.setPivotVolts(2.5);
           io.setRollerVolts(4.0);
@@ -70,7 +83,7 @@ public class Intake extends ProfiledPIDSubsystem {
         () -> {
           io.setPivotVolts(0.0);
           io.setRollerVolts(0);
-        });
+        }));
   }
 
   private void runPivot(double volts) {
@@ -93,17 +106,22 @@ public class Intake extends ProfiledPIDSubsystem {
     }
     return instance;
   }
-
+  private void setGoalandEnable(double goal) {
+    if(!this.isEnabled()){
+      this.enable();
+    }
+    this.setGoal(goal);
+  }
   public Command retractPivot() {
-    return this.runOnce(() -> this.setGoal(0.0));
+    return this.runOnce(() -> this.setGoalandEnable(0.0));
   }
 
   public Command deployPivot() {
-    return this.runOnce(() -> this.setGoal(DEPLOY_POS));
+    return this.runOnce(() -> this.setGoalandEnable(DEPLOY_POS));
   }
 
   public Command climbIntake() {
-    return this.runOnce(() -> this.setGoal(0.0));
+    return this.runOnce(() -> this.setGoalandEnable(0.7));
   }
 
   public Command spinIntake() {
@@ -131,9 +149,13 @@ public class Intake extends ProfiledPIDSubsystem {
             }));
   }
 
-  // TODO: might need to deploy the intake during a spit but maybe not
   public Command spit() {
     return this.runEnd(() -> io.setRollerVolts(-1.5), () -> io.setRollerVolts(0));
+  }
+
+  @AutoLogOutput
+  public double getRollerAcceleration() {
+     return rollerAcceleration.calculate(inputs.rollerVelocityRadPerSec - lastRollerSpeed);
   }
 
   @Override
@@ -141,12 +163,13 @@ public class Intake extends ProfiledPIDSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     super.periodic();
-    Logger.recordOutput("Intake/setpoint", this.getMeasurement());
-
+    
+    // Homing Logic
     if (inputs.lowerLimitSwitch && !ishomed) {
       ishomed = true;
       pivot_offset = inputs.pivotPosition - DEPLOY_POS;
     }
+   
     lastRollerSpeed = inputs.rollerVelocityRadPerSec;
   }
 }
