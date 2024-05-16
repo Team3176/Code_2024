@@ -102,7 +102,7 @@ public class Superstructure {
   }
 
   public Command aimDemoMid() {
-    return aimShooter(60, 80, shooter.getPivotMaxRotation2d().getDegrees() * 0.6, 0.3);
+    return aimShooter(40, 90, 0, 0.6);
   }
 
   public Command aimDemoLow() {

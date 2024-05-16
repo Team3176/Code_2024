@@ -58,7 +58,7 @@ import team3176.robot.util.swerve.SwerveSetpointGenerator;
 
 public class Drivetrain extends SubsystemBase {
 
-  public static final double MAX_WHEEL_SPEED = 3.0;
+  public static final double MAX_WHEEL_SPEED = 2.5;
   public static final double LENGTH =
       switch (Constants.getRobot()) {
         case ROBOT_2024C -> Units.inchesToMeters(18.7);
@@ -111,7 +111,7 @@ public class Drivetrain extends SubsystemBase {
       };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(MAX_WHEEL_SPEED, 10.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
@@ -277,12 +277,12 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Drivetrain/speedsRaw", discreteSpeeds);
     Logger.recordOutput(
         "SwerveSetpoints/BeforePoofs", kinematics.toSwerveModuleStates(discreteSpeeds));
-    // SwerveSetpoint output =
-    //     setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
-    // SwerveModuleState[] podStates = output.moduleStates();
-    // prevSetpoint = output;
-    SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(podStates, MAX_WHEEL_SPEED);
+    SwerveSetpoint output =
+        setpointGenerator.generateSetpoint(moduleLimits, prevSetpoint, discreteSpeeds, 0.02);
+    SwerveModuleState[] podStates = output.moduleStates();
+    prevSetpoint = output;
+    // SwerveModuleState[] podStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(podStates, 4.2);
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
     for (int idx = 0; idx < (pods.size()); idx++) {
       optimizedStates[idx] = pods.get(idx).setModule(podStates[idx]);
