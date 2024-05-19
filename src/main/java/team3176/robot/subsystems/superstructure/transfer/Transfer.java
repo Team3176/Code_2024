@@ -39,7 +39,7 @@ public class Transfer extends SubsystemBase {
   }
 
   public Command spit() {
-    return this.runEnd(() -> io.setTransferController(-1.0), () -> io.setTransferController(0));
+    return this.runEnd(() -> io.setTransferController(-0.3), () -> io.setTransferController(0));
   }
 
   @Override

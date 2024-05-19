@@ -102,7 +102,7 @@ public class Superstructure {
   }
 
   public Command aimDemoMid() {
-    return aimShooter(40, 90, 0, 0.6);
+    return aimShooter(40, 90, 15.0, 0.6);
   }
 
   public Command aimDemoLow() {

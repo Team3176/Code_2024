@@ -111,7 +111,7 @@ public class Drivetrain extends SubsystemBase {
       };
   // TODO: Update values
   public static ModuleLimits moduleLimits =
-      new ModuleLimits(MAX_WHEEL_SPEED, 8.0, Units.degreesToRadians(700.0));
+      new ModuleLimits(MAX_WHEEL_SPEED, 4.0, Units.degreesToRadians(700.0));
   private SwervePod podFR;
   private SwervePod podFL;
   private SwervePod podBL;
