@@ -19,6 +19,8 @@ public interface GyroIO {
     boolean isConnected = false;
     public double[] odometryYawTimestamps = new double[] {};
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
+    boolean wasJerked = false;
+    double accelerometerX, accelerometerY, accelerometerZ = 0.0;
   }
 
   /** Updates the set of loggable inputs. */
