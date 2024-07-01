@@ -66,6 +66,19 @@ public class Superstructure {
     return aimShooter(90, 40, 38, 0.5).withName("aimClose");
   }
 
+  public Command shooterPivotBP() {
+    return aimShooter(0, 0, 38, 0.0).withName("BPshooterPivot");
+  }
+  public Command shooterUpperBP() {
+    return aimShooter(100, 0, 0, 0.0).withName("BPshooterPivot");
+  }
+  public Command shooterLowerBP() {
+    return aimShooter(0, 100 , 0, 0.0).withName("BPshooterPivot");
+  }
+  public Command shooterTransferBP() {
+    return aimShooter(0, 0, 0, 0).withName("BPshooterTransfer");
+  }
+
   public Command aimAmp(boolean withDrive) {
     if (withDrive) {
       return Drivetrain.getInstance()
