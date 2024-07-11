@@ -71,6 +71,13 @@ public class Intake extends SubsystemBase {
     io.setPivotVolts(volts);
   }
 
+  public Command runRollerBP(double x) {
+    return this.run(() -> io.setRollerVolts(x));
+  }
+  public Command runPivotBP(double x) {
+    return this.run(() -> io.setPivotVolts(x));
+  }
+
   private boolean rollerSwitch() {
     return lastRollerSpeed - inputs.rollerVelocityRadPerSec > 15.0;
   }

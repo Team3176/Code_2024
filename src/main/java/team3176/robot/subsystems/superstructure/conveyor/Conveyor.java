@@ -2,6 +2,9 @@ package team3176.robot.subsystems.superstructure.conveyor;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -77,6 +80,10 @@ public class Conveyor extends SubsystemBase {
     return this.runEnd(() -> io.setController(-.1), () -> io.setController(0));
   }
 
+  public Command runConveyorBP(double x) {
+    return this.run(() -> io.setController(x));
+  }
+  
   public Command centerNote() {
     return (this.runSlow()
             .until(() -> !isLaserIntakeSide())

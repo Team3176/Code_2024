@@ -79,6 +79,26 @@ public class Superstructure {
     return aimShooter(0, 0, 0, 0).withName("BPshooterTransfer");
   }
 
+  public Command conveyorShooterBP() {
+    return conveyor.runConveyorBP(2).withName("BPConveyorForward");
+  }
+  public Command conveyorIntakeBP() {
+    return conveyor.runConveyorBP(-2).withName("BPConveyorBackward");
+  }
+
+  public Command intakeRollersBP() {
+    return intake.runRollerBP(2).withName("BPIntakeRollers");
+  }
+  public Command intakeRollersSpitBP() {
+    return intake.runRollerBP(-2).withName("BPIntakeRollersSpit");
+  }
+  public Command intakePivotDownBP() {
+    return intake.runPivotBP(2).withName("BPIntakePivotDown");
+  }
+  public Command intakePivotUpBP() {
+    return intake.runPivotBP(-2).withName("BPIntakePivotUp");
+  }
+
   public Command aimAmp(boolean withDrive) {
     if (withDrive) {
       return Drivetrain.getInstance()

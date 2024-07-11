@@ -149,6 +149,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("BPshooterLower", superstructure.shooterLowerBP().withTimeout(0.5));
     NamedCommands.registerCommand("BPshooterTransfer", superstructure.shooterTransferBP().withTimeout(0.5));
 
+    NamedCommands.registerCommand("BPConveyorForward", superstructure.conveyorShooterBP().withTimeout(0.5));
+    NamedCommands.registerCommand("BPConveyorBackward", superstructure.conveyorIntakeBP().withTimeout(0.5));
+
+    NamedCommands.registerCommand("BPIntakeRollers", superstructure.intakeRollersBP().withTimeout(0.5));
+    NamedCommands.registerCommand("BPIntakeRollersSpit", superstructure.intakeRollersSpitBP().withTimeout(0.5));
+    NamedCommands.registerCommand("BPIntakPivotDown", superstructure.intakePivotDownBP().withTimeout(0.5));
+    NamedCommands.registerCommand("BPIntakPivotUp", superstructure.intakePivotUpBP().withTimeout(0.5));
+
+
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
     SmartDashboard.putData("Auton Choice", autonChooser.getSendableChooser());
