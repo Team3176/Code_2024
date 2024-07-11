@@ -134,18 +134,18 @@ public class Climb extends SubsystemBase {
     io.setRightPIDPosition(position);
   }
 
-  public Command setLeftPosition(DoubleSupplier position) {
+  public Command setLeftPosition(double position) {
     return this.runEnd(
         () -> {
-          leftGoToPosition((position.getAsDouble()));
+          leftGoToPosition((position));
         },
         () -> io.setLeftVoltage(0.0));
   }
 
-  public Command setRightPosition(DoubleSupplier position) {
+  public Command setRightPosition(double position) {
     return this.runEnd(
         () -> {
-          rightGoToPosition((position.getAsDouble()));
+          rightGoToPosition((position));
         },
         () -> io.setRightVoltage(0.0));
   }

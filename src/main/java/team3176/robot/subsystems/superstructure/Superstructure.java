@@ -16,6 +16,7 @@ import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.NoteVisualizer;
+import team3176.robot.constants.SuperStructureConstants;
 
 public class Superstructure {
   private static Superstructure instance;
@@ -99,6 +100,17 @@ public class Superstructure {
     return intake.runPivotBP(-2).withName("BPIntakePivotUp");
   }
 
+  public Command climbLeftBP() {
+    return climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS)
+                .andThen(climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS).withTimeout(0.5))
+                .withName("BPClimbLeft");
+  }
+  public Command climbRightBP() {
+    return climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS)
+                .andThen(climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS).withTimeout(0.5))
+                .withName("BPClimbRight");
+  }
+
   public Command aimAmp(boolean withDrive) {
     if (withDrive) {
       return Drivetrain.getInstance()
@@ -152,14 +164,15 @@ public class Superstructure {
   public Command shooterPivotPID(int Position) {
     return shooter.pivotSetPositionOnce(Position);
   }
-
+//Change back to double supplier in climb if need be
+/* 
   public Command setClimbLeftPosition(DoubleSupplier position) {
     return climb.setLeftPosition(position);
   }
 
   public Command setClimbRightPosition(DoubleSupplier position) {
     return climb.setRightPosition(position);
-  }
+  } */
 
   public Command moveClimbLeftPosition(DoubleSupplier position) {
     return climb.moveLeftPosition(position);

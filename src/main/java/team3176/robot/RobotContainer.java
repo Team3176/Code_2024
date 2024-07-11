@@ -157,6 +157,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("BPIntakPivotDown", superstructure.intakePivotDownBP().withTimeout(0.5));
     NamedCommands.registerCommand("BPIntakPivotUp", superstructure.intakePivotUpBP().withTimeout(0.5));
 
+    NamedCommands.registerCommand("BPClimbLeft", superstructure.climbLeftBP().withTimeout(0.5));
+    NamedCommands.registerCommand("BPClimbRight", superstructure.climbRightBP().withTimeout(0.5));
+
 
     autonChooser = new LoggedDashboardChooser<>("autonChoice", AutoBuilder.buildAutoChooser());
 
