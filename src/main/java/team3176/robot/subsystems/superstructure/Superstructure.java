@@ -102,12 +102,12 @@ public class Superstructure {
 
   public Command climbLeftBP() {
     return climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS)
-                .andThen(climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS).withTimeout(0.5))
+                .andThen(climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_ZERO_POS).withTimeout(0.5))
                 .withName("BPClimbLeft");
   }
   public Command climbRightBP() {
     return climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS)
-                .andThen(climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS).withTimeout(0.5))
+                .andThen(climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_ZERO_POS).withTimeout(0.5))
                 .withName("BPClimbRight");
   }
 
