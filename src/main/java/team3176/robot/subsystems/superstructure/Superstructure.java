@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import team3176.robot.FieldConstants;
 // import java.util.function.IntSupplier;
+import team3176.robot.constants.SuperStructureConstants;
 import team3176.robot.subsystems.drivetrain.Drivetrain;
 import team3176.robot.subsystems.superstructure.climb.Climb;
 import team3176.robot.subsystems.superstructure.conveyor.Conveyor;
@@ -16,7 +17,6 @@ import team3176.robot.subsystems.superstructure.shooter.Shooter;
 import team3176.robot.subsystems.superstructure.transfer.Transfer;
 import team3176.robot.util.AllianceFlipUtil;
 import team3176.robot.util.NoteVisualizer;
-import team3176.robot.constants.SuperStructureConstants;
 
 public class Superstructure {
   private static Superstructure instance;
@@ -70,12 +70,15 @@ public class Superstructure {
   public Command shooterPivotBP() {
     return aimShooter(0, 0, 38, 0.0).withName("BPshooterPivot");
   }
+
   public Command shooterUpperBP() {
     return aimShooter(100, 0, 0, 0.0).withName("BPshooterPivot");
   }
+
   public Command shooterLowerBP() {
-    return aimShooter(0, 100 , 0, 0.0).withName("BPshooterPivot");
+    return aimShooter(0, 100, 0, 0.0).withName("BPshooterPivot");
   }
+
   public Command shooterTransferBP() {
     return aimShooter(0, 0, 0, 0).withName("BPshooterTransfer");
   }
@@ -83,6 +86,7 @@ public class Superstructure {
   public Command conveyorShooterBP() {
     return conveyor.runConveyorBP(2).withName("BPConveyorForward");
   }
+
   public Command conveyorIntakeBP() {
     return conveyor.runConveyorBP(-2).withName("BPConveyorBackward");
   }
@@ -90,25 +94,32 @@ public class Superstructure {
   public Command intakeRollersBP() {
     return intake.runRollerBP(2).withName("BPIntakeRollers");
   }
+
   public Command intakeRollersSpitBP() {
     return intake.runRollerBP(-2).withName("BPIntakeRollersSpit");
   }
+
   public Command intakePivotDownBP() {
     return intake.runPivotBP(2).withName("BPIntakePivotDown");
   }
+
   public Command intakePivotUpBP() {
     return intake.runPivotBP(-2).withName("BPIntakePivotUp");
   }
 
   public Command climbLeftBP() {
-    return climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS)
-                .andThen(climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_ZERO_POS).withTimeout(0.5))
-                .withName("BPClimbLeft");
+    return climb
+        .setLeftPosition(SuperStructureConstants.CLIMBLEFT_TOP_POS)
+        .andThen(climb.setLeftPosition(SuperStructureConstants.CLIMBLEFT_ZERO_POS).withTimeout(0.5))
+        .withName("BPClimbLeft");
   }
+
   public Command climbRightBP() {
-    return climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS)
-                .andThen(climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_ZERO_POS).withTimeout(0.5))
-                .withName("BPClimbRight");
+    return climb
+        .setRightPosition(SuperStructureConstants.CLIMBRIGHT_TOP_POS)
+        .andThen(
+            climb.setRightPosition(SuperStructureConstants.CLIMBRIGHT_ZERO_POS).withTimeout(0.5))
+        .withName("BPClimbRight");
   }
 
   public Command aimAmp(boolean withDrive) {
@@ -164,8 +175,8 @@ public class Superstructure {
   public Command shooterPivotPID(int Position) {
     return shooter.pivotSetPositionOnce(Position);
   }
-//Change back to double supplier in climb if need be
-/* 
+  // Change back to double supplier in climb if need be
+  /*
   public Command setClimbLeftPosition(DoubleSupplier position) {
     return climb.setLeftPosition(position);
   }

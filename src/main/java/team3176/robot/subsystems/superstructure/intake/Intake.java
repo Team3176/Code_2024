@@ -74,6 +74,7 @@ public class Intake extends SubsystemBase {
   public Command runRollerBP(double x) {
     return this.run(() -> io.setRollerVolts(x));
   }
+
   public Command runPivotBP(double x) {
     return this.run(() -> io.setPivotVolts(x));
   }
