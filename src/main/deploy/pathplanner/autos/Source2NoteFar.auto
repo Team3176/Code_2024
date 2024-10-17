@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6972462773050546,
+      "y": 4.478346456692914
+    },
+    "rotation": -59.837856126916186
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SourceToMid4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "chaseNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootLookup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid4ToShoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

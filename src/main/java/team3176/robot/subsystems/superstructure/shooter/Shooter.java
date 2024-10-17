@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
     pivotPIDController.setIntegratorRange(-0.5, 0.5);
     pivotPIDController.setIZone(Units.degreesToRadians(6));
     pivotPIDController.setTolerance(Units.degreesToRadians(1.0));
-    this.aimAngle = new LoggedTunableNumber("shooter/angle", 16.5);
+    this.aimAngle = new LoggedTunableNumber("shooter/angle", 40);
     this.flywheelLeftVelocity = new LoggedTunableNumber("shooter/velocityLeft", 90.0);
     this.flywheelRightVelocity = new LoggedTunableNumber("shooter/velocityRight", 40.0);
     this.forwardPivotVoltageOffset = new LoggedTunableNumber("shooter/pivotOffset", 0.7);
