@@ -25,14 +25,14 @@ public class PhotonCameraIO {
     if (this.cam.isConnected()) {
       PhotonPipelineResult result = this.cam.getLatestResult();
       packet = new Packet(result.getPacketSize());
-      PhotonPipelineResult.serde.pack(packet, result);
+      PhotonPipelineResult.photonStruct.pack(packet, result);
       inputs.timestamp = result.getTimestampSeconds();
     } else {
       PhotonPipelineResult result = new PhotonPipelineResult();
       packet = new Packet(result.getPacketSize());
-      PhotonPipelineResult.serde.pack(packet, result);
+      PhotonPipelineResult.photonStruct.pack(packet, result);
     }
-    inputs.rawBytes = packet.getData();
+    inputs.rawBytes = packet.getWrittenDataCopy();
     inputs.isConnected = this.cam.isConnected();
   }
 
@@ -40,7 +40,7 @@ public class PhotonCameraIO {
     if (b == null || b.length == 1) {
       return new PhotonPipelineResult();
     }
-    return PhotonPipelineResult.serde.unpack(new Packet(b));
+    return PhotonPipelineResult.photonStruct.unpack(new Packet(b));
   }
 
   public PhotonCamera getCamera() {

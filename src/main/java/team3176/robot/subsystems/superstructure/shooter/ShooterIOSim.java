@@ -10,6 +10,7 @@ package team3176.robot.subsystems.superstructure.shooter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -25,8 +26,17 @@ public class ShooterIOSim implements ShooterIO {
   private double pivotAppliedVolts;
 
   public ShooterIOSim() {
-    wheelSimUpper = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
-    wheelSimLower = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+
+    wheelSimUpper =
+        new FlywheelSim(
+            LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), 0.025, 1.0),
+            DCMotor.getFalcon500(1),
+            0.0);
+    wheelSimLower =
+        new FlywheelSim(
+            LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), 0.025, 1.0),
+            DCMotor.getFalcon500(1),
+            0.0);
     pivotSim =
         new SingleJointedArmSim(
             DCMotor.getFalcon500(1),

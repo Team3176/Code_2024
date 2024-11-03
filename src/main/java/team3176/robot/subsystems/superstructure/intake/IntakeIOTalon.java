@@ -19,6 +19,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.util.TalonUtils;
@@ -39,18 +44,18 @@ public class IntakeIOTalon implements IntakeIO {
   DigitalInput upperLimitSwitch;
   DigitalInput lowerLimitSwitch;
 
-  private final StatusSignal<Double> pivotAppliedVolts;
-  private final StatusSignal<Double> pivotCurrentAmpsStator;
-  private final StatusSignal<Double> pivotCurrentAmpsSupply;
-  private final StatusSignal<Double> pivotVelocity;
-  private final StatusSignal<Double> pivotPosition;
-  private final StatusSignal<Double> pivotTemp;
+  private final StatusSignal<Voltage> pivotAppliedVolts;
+  private final StatusSignal<Current> pivotCurrentAmpsStator;
+  private final StatusSignal<Current> pivotCurrentAmpsSupply;
+  private final StatusSignal<AngularVelocity> pivotVelocity;
+  private final StatusSignal<Angle> pivotPosition;
+  private final StatusSignal<Temperature> pivotTemp;
 
-  private final StatusSignal<Double> rollerAppliedVolts;
-  private final StatusSignal<Double> rollerCurrentAmpsStator;
-  private final StatusSignal<Double> rollerCurrentAmpsSupply;
-  private final StatusSignal<Double> rollerVelocity;
-  private final StatusSignal<Double> rollerTemp;
+  private final StatusSignal<Voltage> rollerAppliedVolts;
+  private final StatusSignal<Current> rollerCurrentAmpsStator;
+  private final StatusSignal<Current> rollerCurrentAmpsSupply;
+  private final StatusSignal<AngularVelocity> rollerVelocity;
+  private final StatusSignal<Temperature> rollerTemp;
 
   public IntakeIOTalon() {
 
@@ -147,7 +152,7 @@ public class IntakeIOTalon implements IntakeIO {
 
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
     inputs.pivotAmpsStator = pivotCurrentAmpsStator.getValueAsDouble();
-    inputs.pivotAmpsSupply = pivotCurrentAmpsSupply.getValue();
+    inputs.pivotAmpsSupply = pivotCurrentAmpsSupply.getValueAsDouble();
     inputs.pivotTempCelcius = pivotTemp.getValueAsDouble();
     inputs.pivotPosition = Units.rotationsToRadians(pivotPosition.getValueAsDouble());
     inputs.pivotVelocityRadPerSec = Units.rotationsToRadians(pivotVelocity.getValueAsDouble());

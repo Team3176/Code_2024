@@ -13,6 +13,9 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
@@ -24,10 +27,10 @@ public class ConveyorIOTalon implements ConveyorIO {
   private DigitalInput frontLinebreak = new DigitalInput(Hardwaremap.conveyorFrontLinebreak);
   private DigitalInput backLinebreak = new DigitalInput(Hardwaremap.conveyorBackLinebreak);
   private TalonFXConfiguration configs = new TalonFXConfiguration();
-  private final StatusSignal<Double> wheelVelocity;
-  private final StatusSignal<Double> appliedVolts;
-  private final StatusSignal<Double> current;
-  private final StatusSignal<Double> currentSupply;
+  private final StatusSignal<AngularVelocity> wheelVelocity;
+  private final StatusSignal<Voltage> appliedVolts;
+  private final StatusSignal<Current> current;
+  private final StatusSignal<Current> currentSupply;
 
   public ConveyorIOTalon() {
     /*     laserCanIntakeSide = new LaserCan(Hardwaremap.LaserCanIntakeSide_CID);
@@ -59,10 +62,10 @@ public class ConveyorIOTalon implements ConveyorIO {
   @Override
   public void updateInputs(ConveyorIOInputs inputs) {
     BaseStatusSignal.refreshAll(wheelVelocity, appliedVolts, current, currentSupply);
-    inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValue());
-    inputs.appliedVolts = appliedVolts.getValue();
-    inputs.ampsStator = current.getValue();
-    inputs.ampsSupply = currentSupply.getValue();
+    inputs.WheelVelocity = Units.rotationsToRadians(wheelVelocity.getValueAsDouble());
+    inputs.appliedVolts = appliedVolts.getValueAsDouble();
+    inputs.ampsStator = current.getValueAsDouble();
+    inputs.ampsSupply = currentSupply.getValueAsDouble();
     inputs.isFrontLinebreak = !frontLinebreak.get();
     inputs.isBackLinebreak = !backLinebreak.get();
     /*     var measurement1 = laserCanIntakeSide.getMeasurement();

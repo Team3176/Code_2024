@@ -5,11 +5,15 @@
 package team3176.robot.subsystems.drivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+// import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
+// import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -25,6 +29,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.*;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -223,12 +228,27 @@ public class Drivetrain extends SubsystemBase {
         new SwerveDrivePoseEstimator(
             kinematics, getSensorYaw(), getSwerveModulePositions(), odom.getPoseMeters());
     autonTarget = orientationGoal.PATHPLANNER;
-    AutoBuilder.configureHolonomic(
+    RobotConfig config;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      config =
+          new RobotConfig(
+              1, 1, new ModuleConfig(1.0, 1.0, 1.0, DCMotor.getFalcon500(1), 1.0, 1), 1.0);
+      e.printStackTrace();
+    }
+    AutoBuilder.configure(
         this::getPose,
         this::resetPose,
         () -> kinematics.toChassisSpeeds(getModuleStates()),
-        this::driveVelocityAuto,
-        new HolonomicPathFollowerConfig(4.0, LENGTH, new ReplanningConfig()),
+        (speeds, feedforward) -> this.driveVelocityAuto(speeds),
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+            // controller for holonomic drive trains
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+        config,
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
           // This will flip the path being followed to the red side of the field.

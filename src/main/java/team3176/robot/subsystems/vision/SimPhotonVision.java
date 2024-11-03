@@ -1,7 +1,7 @@
 package team3176.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -55,23 +55,27 @@ public class SimPhotonVision extends SubsystemBase {
     prop.setCalibration(
         1280,
         720,
-        Matrix.mat(Nat.N3(), Nat.N3())
-            .fill( // intrinsic
-                879.0720598169321,
-                0,
-                604.9212300278572,
-                0,
-                879.1507505285007,
-                389.16742755726875,
-                0.0,
-                0.0,
-                1.0),
+        MatBuilder.fill(
+            Nat.N3(),
+            Nat.N3(), // intrinsic
+            879.0720598169321,
+            0,
+            604.9212300278572,
+            0,
+            879.1507505285007,
+            389.16742755726875,
+            0.0,
+            0.0,
+            1.0),
         VecBuilder.fill( // distort
             -0.05910651726620547,
             0.04721812350044875,
             0.0023418721710541947,
             0.00018013724744152414,
-            0.1608556267669461));
+            0.1608556267669461,
+            0,
+            0,
+            0));
     prop.setCalibError(0.37, 0.06);
     prop.setFPS(35);
     prop.setAvgLatencyMs(25);

@@ -9,6 +9,7 @@ package team3176.robot.subsystems.superstructure.intake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -28,7 +29,11 @@ public class IntakeIOSim implements IntakeIO {
     pivotSim =
         new SingleJointedArmSim(
             DCMotor.getFalcon500(1), 20, 0.5, 0.7, -1.0 * Math.PI, 3.14, true, 0.0);
-    rollerSim = new FlywheelSim(DCMotor.getFalcon500(1), 1.0, 0.025);
+    rollerSim =
+        new FlywheelSim(
+            LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), 0.025, 1.0),
+            DCMotor.getFalcon500(1),
+            0.0);
   }
   /** Updates the set of loggable inputs. */
   @Override

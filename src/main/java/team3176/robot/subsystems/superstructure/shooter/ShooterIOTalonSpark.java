@@ -24,6 +24,9 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 
@@ -55,14 +58,14 @@ public class ShooterIOTalonSpark implements ShooterIO {
   private DigitalInput lowerLimitSwitch;
   private DigitalInput upperLimitSwitch;
 
-  private final StatusSignal<Double> leftAppliedVolts;
-  private final StatusSignal<Double> rightAppliedVolts;
-  private final StatusSignal<Double> leftCurrentAmpsStator;
-  private final StatusSignal<Double> rightCurrentAmpsStator;
-  private final StatusSignal<Double> leftCurrentAmpsSupply;
-  private final StatusSignal<Double> rightCurrentAmpsSupply;
-  private final StatusSignal<Double> leftVelocity;
-  private final StatusSignal<Double> rightVelocity;
+  private final StatusSignal<Voltage> leftAppliedVolts;
+  private final StatusSignal<Voltage> rightAppliedVolts;
+  private final StatusSignal<Current> leftCurrentAmpsStator;
+  private final StatusSignal<Current> rightCurrentAmpsStator;
+  private final StatusSignal<Current> leftCurrentAmpsSupply;
+  private final StatusSignal<Current> rightCurrentAmpsSupply;
+  private final StatusSignal<AngularVelocity> leftVelocity;
+  private final StatusSignal<AngularVelocity> rightVelocity;
   private double leftSetpoint;
   private double rightSetpoint;
 
@@ -153,22 +156,22 @@ public class ShooterIOTalonSpark implements ShooterIO {
         rightVelocity);
     inputs.pivotPosition = Rotation2d.fromRotations(pivotEncoder.getPosition() * 18 / 255);
     inputs.pivotAppliedVolts = pivotShooter.getAppliedOutput() * pivotShooter.getBusVoltage();
-    inputs.wheelLeftVelocityRadPerSec = Units.rotationsToRadians(leftVelocity.getValue());
-    inputs.wheelRightVelocityRadPerSec = Units.rotationsToRadians(rightVelocity.getValue());
+    inputs.wheelLeftVelocityRadPerSec = Units.rotationsToRadians(leftVelocity.getValueAsDouble());
+    inputs.wheelRightVelocityRadPerSec = Units.rotationsToRadians(rightVelocity.getValueAsDouble());
 
     inputs.leftWheelReference = leftSetpoint;
     inputs.rightWheelReference = rightSetpoint;
 
-    inputs.wheelLeftAppliedVolts = leftAppliedVolts.getValue();
-    inputs.wheelRightAppliedVolts = rightAppliedVolts.getValue();
+    inputs.wheelLeftAppliedVolts = leftAppliedVolts.getValueAsDouble();
+    inputs.wheelRightAppliedVolts = rightAppliedVolts.getValueAsDouble();
 
     inputs.lowerLimitSwitch = !lowerLimitSwitch.get();
     inputs.upperLimitSwitch = !upperLimitSwitch.get();
 
     inputs.wheelRightAmpsStator = rightCurrentAmpsStator.getValueAsDouble();
     inputs.wheelLeftAmpsStator = leftCurrentAmpsStator.getValueAsDouble();
-    inputs.wheelLeftAmpsSupply = leftCurrentAmpsSupply.getValue();
-    inputs.wheelRightAmpsSupply = rightCurrentAmpsSupply.getValue();
+    inputs.wheelLeftAmpsSupply = leftCurrentAmpsSupply.getValueAsDouble();
+    inputs.wheelRightAmpsSupply = rightCurrentAmpsSupply.getValueAsDouble();
 
     inputs.pivotAmpsStator = pivotShooter.getOutputCurrent();
   }

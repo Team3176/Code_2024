@@ -17,6 +17,11 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
@@ -32,25 +37,23 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public static final double THRUST_ENCODER_UNITS_PER_REVOLUTION = 2048;
   private int id;
   private CANSparkMax turnSparkMax;
-  final VelocityVoltage thrustVelocity =
-      new VelocityVoltage(0.0, 0.0, false, 0.0, 0, false, false, false);
+  final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
   // private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new
   // VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
-  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
-      new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
   private TalonFX thrustFalcon;
   private CANcoder azimuthEncoder;
 
   private Rotation2d offset;
 
-  private final StatusSignal<Double> drivePosition;
-  private final StatusSignal<Double> driveVelocity;
-  private final StatusSignal<Double> driveAppliedVolts;
-  private final StatusSignal<Double> driveCurrentStator;
-  private final StatusSignal<Double> driveCurrentSupply;
-  private final StatusSignal<Double> driveTemps;
+  private final StatusSignal<Angle> drivePosition;
+  private final StatusSignal<AngularVelocity> driveVelocity;
+  private final StatusSignal<Voltage> driveAppliedVolts;
+  private final StatusSignal<Current> driveCurrentStator;
+  private final StatusSignal<Current> driveCurrentSupply;
+  private final StatusSignal<Temperature> driveTemps;
 
-  private final StatusSignal<Double> turnAbsolutePosition;
+  private final StatusSignal<Angle> turnAbsolutePosition;
 
   private final Queue<Double> turnPositionQueue;
   private final Queue<Double> drivePositionQueue;
@@ -144,7 +147,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         Units.rotationsToRadians(driveVelocity.getValueAsDouble()) * (THRUST_GEAR_RATIO);
     inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     inputs.driveAmpsStator = driveCurrentStator.getValueAsDouble();
-    inputs.driveAmpsSupply = driveCurrentSupply.getValue();
+    inputs.driveAmpsSupply = driveCurrentSupply.getValueAsDouble();
     inputs.driveTempCelcius = driveTemps.getValueAsDouble();
 
     inputs.turnAbsolutePositionDegrees =

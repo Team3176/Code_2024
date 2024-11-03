@@ -12,6 +12,9 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import team3176.robot.constants.Hardwaremap;
 
 public class TransferIOTalon implements TransferIO {
@@ -20,10 +23,10 @@ public class TransferIOTalon implements TransferIO {
       new TalonFX(Hardwaremap.shooterTransfer_CID, Hardwaremap.shooterTransfer_CBN);
 
   private TalonFXConfiguration configs = new TalonFXConfiguration();
-  private StatusSignal<Double> velocity;
-  private StatusSignal<Double> volts;
-  private StatusSignal<Double> ampsStator;
-  private StatusSignal<Double> ampsSupply;
+  private StatusSignal<AngularVelocity> velocity;
+  private StatusSignal<Voltage> volts;
+  private StatusSignal<Current> ampsStator;
+  private StatusSignal<Current> ampsSupply;
 
   public TransferIOTalon() {
     configs.CurrentLimits.SupplyCurrentLimit = 50;
@@ -40,10 +43,10 @@ public class TransferIOTalon implements TransferIO {
   @Override
   public void updateInputs(TransferIOInputs inputs) {
     BaseStatusSignal.refreshAll(velocity, volts, ampsStator, ampsSupply);
-    inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValue());
-    inputs.transferAppliedVolts = volts.getValue();
-    inputs.ampsStator = ampsStator.getValue();
-    inputs.ampsSupply = ampsSupply.getValue();
+    inputs.transferWheelVelocity = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.transferAppliedVolts = volts.getValueAsDouble();
+    inputs.ampsStator = ampsStator.getValueAsDouble();
+    inputs.ampsSupply = ampsSupply.getValueAsDouble();
   }
 
   @Override

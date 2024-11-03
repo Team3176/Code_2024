@@ -196,7 +196,8 @@ public class LoggedAprilPhotonCam {
     io.updateInputs(inputs);
     Logger.processInputs("photonvision/" + this.name, inputs);
     PhotonPipelineResult results = io.getResult(inputs.rawBytes);
-    results.setTimestampSeconds(inputs.timestamp);
+    // TODO: read about the new timestamp process
+    // results.setTimestampSeconds(inputs.timestamp);
     if (Constants.getMode() == Mode.REPLAY) {
       Logger.recordOutput("photonvision/" + name + "/raw", PhotonPipelineResult.proto, results);
     }

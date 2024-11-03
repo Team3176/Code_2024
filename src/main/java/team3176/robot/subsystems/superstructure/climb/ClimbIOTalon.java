@@ -14,6 +14,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import team3176.robot.constants.Hardwaremap;
 import team3176.robot.constants.SuperStructureConstants;
@@ -27,20 +30,20 @@ public class ClimbIOTalon implements ClimbIO {
   NeutralOut brake;
   DigitalInput climbLBLimitswitch, climbRBLimitswitch;
   TalonFXConfiguration configsLeft, configsRight;
-  private final StatusSignal<Double> rightPosition;
-  private final StatusSignal<Double> leftPosition;
+  private final StatusSignal<Angle> rightPosition;
+  private final StatusSignal<Angle> leftPosition;
   private final StatusSignal<Double> rightError;
   private final StatusSignal<Double> leftError;
-  private final StatusSignal<Double> rightVolts;
-  private final StatusSignal<Double> leftVolts;
-  private final StatusSignal<Double> rightAmps;
-  private final StatusSignal<Double> leftAmps;
+  private final StatusSignal<Voltage> rightVolts;
+  private final StatusSignal<Voltage> leftVolts;
+  private final StatusSignal<Current> rightAmps;
+  private final StatusSignal<Current> leftAmps;
 
   public ClimbIOTalon() {
     configsLeft = new TalonFXConfiguration();
     configsRight = new TalonFXConfiguration();
     brake = new NeutralOut();
-    voltPosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+    voltPosition = new PositionVoltage(0);
     climbLBLimitswitch = new DigitalInput(Hardwaremap.climbLBLimitSwitch_DIO);
     climbRBLimitswitch = new DigitalInput(Hardwaremap.climbRBLimitSwitch_DIO);
     climbLeft = new TalonFX(Hardwaremap.climbLeft_CID, Hardwaremap.climbLeft_CBN);
@@ -120,10 +123,10 @@ public class ClimbIOTalon implements ClimbIO {
     inputs.rightPosition = rightPosition.getValueAsDouble();
     inputs.leftError = leftError.getValue();
     inputs.rightError = rightError.getValue();
-    inputs.rightAmpsStator = rightAmps.getValue();
-    inputs.leftAmpsStator = leftAmps.getValue();
-    inputs.rightVolts = rightVolts.getValue();
-    inputs.leftVolts = leftVolts.getValue();
+    inputs.rightAmpsStator = rightAmps.getValueAsDouble();
+    inputs.leftAmpsStator = leftAmps.getValueAsDouble();
+    inputs.rightVolts = rightVolts.getValueAsDouble();
+    inputs.leftVolts = leftVolts.getValueAsDouble();
   }
 
   @Override

@@ -3,6 +3,7 @@ package team3176.robot.subsystems.drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -12,8 +13,16 @@ import org.littletonrobotics.junction.Logger;
 import team3176.robot.Constants;
 
 public class SwervePodIOSim implements SwervePodIO {
-  private FlywheelSim driveSim = new FlywheelSim(DCMotor.getFalcon500(1), 4.714, 0.025);
-  private FlywheelSim turnSim = new FlywheelSim(DCMotor.getNeo550(1), 70.0, 0.0005);
+  private FlywheelSim driveSim =
+      new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), 0.025, 4.714),
+          DCMotor.getFalcon500(1).withReduction(4.714),
+          0.0);
+  private FlywheelSim turnSim =
+      new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(DCMotor.getNeo550(1), 0.0005, 70),
+          DCMotor.getNeo550(1).withReduction(70),
+          0.0);
   // private PIDController drivePID = new PIDController(.03, 0, 0.0,.045);
   private double turnAbsolutePositionRad = Math.random() * 2.0 * Math.PI;
   private double driveAppliedVolts = 0.0;
