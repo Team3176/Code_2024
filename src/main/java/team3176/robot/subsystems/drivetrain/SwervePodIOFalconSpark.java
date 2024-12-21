@@ -10,9 +10,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -35,7 +32,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   public static final double AZIMUTH_ENCODER_UNITS_PER_REVOLUTION = 4096;
   public static final double THRUST_ENCODER_UNITS_PER_REVOLUTION = 2048;
   private int id;
-  private CANSparkMax turnSparkMax;
+  private TalonFX turnTalonFX;
   final VelocityVoltage thrustVelocity = new VelocityVoltage(0.0);
   // private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new
   // VelocityTorqueCurrentFOC(0).withUpdateFreqHz(0);
@@ -52,6 +49,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   private final StatusSignal<Current> driveCurrentSupply;
   private final StatusSignal<Temperature> driveTemps;
 
+  private final StatusSignal<Angle> turnPosition;
+  private final StatusSignal<AngularVelocity> turnVelocity;
+  private final StatusSignal<Voltage> turnAppliedVolts;
+  private final StatusSignal<Current> turnCurrentStator;
+  private final StatusSignal<Current> turnCurrentSupply;
+  private final StatusSignal<Temperature> turnTemps;
+
   private final StatusSignal<Angle> turnAbsolutePosition;
 
   private final Queue<Double> turnPositionQueue;
@@ -63,14 +67,15 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   // DrivetrainConstants.THRUST_ENCODER_UNITS_PER_REVOLUTION;
   public SwervePodIOFalconSpark(SwervePodHardwareID id, int sparkMaxID) {
     this.id = id.SERIAL;
-    turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
+    turnTalonFX = new TalonFX(id.AZIMUTH_CID, id.AZIMUTH_CBN);
+    // turnSparkMax = new CANSparkMax(sparkMaxID, MotorType.kBrushless);
     thrustFalcon = new TalonFX(id.THRUST_CID, id.THRUST_CBN);
     azimuthEncoder = new CANcoder(id.CANCODER_CID, id.CANCODER_CBN);
 
     offset = Rotation2d.fromDegrees(id.OFFSET);
     // reset the motor controllers
     // thrustFalcon.configFactoryDefault();
-    turnSparkMax.restoreFactoryDefaults();
+    // turnSparkMax.restoreFactoryDefaults();
     var thrustFalconConfig = new TalonFXConfiguration();
 
     thrustFalconConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -93,9 +98,26 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     thrustFalconConfig.Slot1.kD = 0.001;
 
     thrustFalcon.getConfigurator().apply(thrustFalconConfig);
+
+    var turnTalonFXConfig = new TalonFXConfiguration();
+    turnTalonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    turnTalonFXConfig.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+    turnTalonFXConfig.TorqueCurrent.PeakReverseTorqueCurrent = -80;
+    turnTalonFXConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
+    turnTalonFXConfig.Slot0.kP = 0.2;
+    turnTalonFXConfig.Slot0.kI = 0.0;
+    turnTalonFXConfig.Slot0.kD = 0.0;
+    turnTalonFXConfig.Slot0.kV = 0.12;
+
+    turnTalonFXConfig.Slot1.kP = 5.0;
+    turnTalonFXConfig.Slot1.kI = 0;
+    turnTalonFXConfig.Slot1.kD = 0.001;
+
+    turnTalonFX.getConfigurator().apply(turnTalonFXConfig);
+
     // turnSparkMax.setOpenLoopRampRate(0.0);
-    turnSparkMax.setSmartCurrentLimit(25);
-    turnSparkMax.setInverted(true);
+    // turnSparkMax.setSmartCurrentLimit(25);
+    // turnSparkMax.setInverted(true);
 
     var azimuthEncoderConfig = new CANcoderConfiguration();
     azimuthEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
@@ -111,6 +133,13 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
     driveCurrentStator = thrustFalcon.getStatorCurrent();
     driveCurrentSupply = thrustFalcon.getSupplyCurrent();
     driveTemps = thrustFalcon.getDeviceTemp();
+
+    turnPosition = turnTalonFX.getPosition();
+    turnVelocity = turnTalonFX.getVelocity();
+    turnAppliedVolts = turnTalonFX.getMotorVoltage();
+    turnCurrentStator = turnTalonFX.getStatorCurrent();
+    turnCurrentSupply = turnTalonFX.getSupplyCurrent();
+    turnTemps = turnTalonFX.getDeviceTemp();
 
     turnAbsolutePosition = azimuthEncoder.getAbsolutePosition();
     // BaseStatusSignal.setUpdateFrequencyForAll(50.0, drivePosition);
@@ -138,6 +167,12 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         driveCurrentStator,
         driveCurrentSupply,
         driveTemps,
+        turnPosition,
+        turnVelocity,
+        turnAppliedVolts,
+        turnCurrentStator,
+        turnCurrentSupply,
+        turnTemps,
         turnAbsolutePosition);
     inputs.drivePositionRad =
         Units.rotationsToRadians(drivePosition.getValueAsDouble()) * (THRUST_GEAR_RATIO);
@@ -161,10 +196,14 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
         "Drivetrain/IO/degreesNoOffset_enc" + id,
         Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble()).getDegrees());
 
+    inputs.turnVelocityRPM =
+        turnVelocity.getValueAsDouble(); // TODO:  Double check the math.  Does need modifier?
     // inputs.turnVelocityRPM = turnSparkMax.getEncoder().getVelocity();
-    inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
-    inputs.turnAmpsStator = turnSparkMax.getOutputCurrent();
-    inputs.turnTempCelcius = turnSparkMax.getMotorTemperature();
+    inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
+    // inputs.turnAppliedVolts = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
+    inputs.turnAmpsStator = turnCurrentStator.getValueAsDouble();
+    inputs.turnAmpsSupply = turnCurrentSupply.getValueAsDouble();
+    inputs.turnTempCelcius = turnTemps.getValueAsDouble();
 
     inputs.odometryTimestamps =
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
@@ -195,7 +234,7 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   /** Run the turn motor at the specified voltage. */
   @Override
   public void setTurn(double percent) {
-    turnSparkMax.set(percent);
+    turnTalonFX.set(percent);
   }
 
   /** Enable or disable brake mode on the drive motor. */
@@ -212,9 +251,9 @@ public class SwervePodIOFalconSpark implements SwervePodIO {
   @Override
   public void setTurnBrakeMode(boolean enable) {
     if (enable) {
-      turnSparkMax.setIdleMode(IdleMode.kBrake);
+      turnTalonFX.setNeutralMode(NeutralModeValue.Brake);
     } else {
-      turnSparkMax.setIdleMode(IdleMode.kCoast);
+      turnTalonFX.setNeutralMode(NeutralModeValue.Coast);
     }
   }
 
