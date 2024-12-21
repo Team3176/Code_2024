@@ -306,7 +306,7 @@ public class Shooter extends SubsystemBase {
     }
     Logger.recordOutput("Shooter/desired", pivotSetpoint);
 
-    Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getPositionError());
+    Logger.recordOutput("Shooter/position-error", this.pivotPIDController.getError());
     if (isHomed) {
       PIDPositionPeriodic();
     } else {

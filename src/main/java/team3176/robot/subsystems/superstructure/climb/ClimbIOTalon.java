@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
@@ -76,10 +77,13 @@ public class ClimbIOTalon implements ClimbIO {
     configsRight.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         SuperStructureConstants.CLIMBRIGHT_ZERO_POS;
     configsRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configsRight.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    configsLeft.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     TalonUtils.applyTalonFxConfigs(climbLeft, configsLeft);
     TalonUtils.applyTalonFxConfigs(climbRight, configsRight);
-    climbLeft.setInverted(true);
-    climbRight.setInverted(false);
+    // climbLeft.setInverted(true);
+    // climbRight.setInverted(false);
 
     leftPosition = climbLeft.getPosition();
     rightPosition = climbRight.getPosition();

@@ -211,8 +211,7 @@ public class SwervePod {
 
     // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) + "", id);
     io.setTurn(MathUtil.clamp(turnOutput, -turnMaxpercentLocal, turnMaxpercentLocal));
-    Logger.recordOutput(
-        "Drivetrain/Module" + this.id + "/error", turningPIDController.getPositionError());
+    Logger.recordOutput("Drivetrain/Module" + this.id + "/error", turningPIDController.getError());
     Logger.recordOutput("Drivetrain/Module" + this.id + "/deltanonoise", this.deltaSimNoNoise);
     // Logger.recordOutput("Drive/Module" + Integer.toString(this.id) +
     // "/setpoint",turningPIDController.getSetpoint().position);
